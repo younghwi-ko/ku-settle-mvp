@@ -13,10 +13,33 @@ import { places, products, tasks } from "./data";
 type Page = "home" | "onboarding" | "marketplace" | "guide";
 type Product = (typeof products)[number];
 
-const taskWeights: Record<string, number> = { dorm: 25, account: 25, arc: 10, sim: 15, bank: 10, courses: 10, campus: 5 };
 const defaultDone = ["dorm", "account", "courses", "campus"];
+const validTaskIds = new Set(tasks.map((task) => task.id));
 const productIcons = { cooking: CookingPot, lamp: LampDesk, bed: BedDouble, kettle: Zap, fan: Sparkles, box: Box };
 const categoryIcons: Record<string, typeof Hospital> = { Hospital, Halal: Utensils, Vegan, Pharmacy: HeartPulse, Cafe: Store, Grocery: ShoppingBag };
+
+function normalizeDone(value: unknown) {
+  if (!Array.isArray(value)) return defaultDone;
+  return [...new Set(value.filter((id): id is string => typeof id === "string" && validTaskIds.has(id)))];
+}
+
+function getTaskPreviews(done: string[]) {
+  const taskById = new Map(tasks.map((task) => [task.id, task]));
+  const recent = done.slice().reverse().map((id) => taskById.get(id)).filter((task): task is (typeof tasks)[number] => Boolean(task)).slice(0, 2);
+  const next = tasks.filter((task) => !done.includes(task.id)).slice(0, 3);
+  const previews = [...recent.map((task) => ({ task, kind: "recent" as const })), ...next.map((task) => ({ task, kind: "next" as const }))];
+  const selected = new Set(previews.map(({ task }) => task.id));
+
+  for (const task of tasks) {
+    if (previews.length === 5) break;
+    if (!selected.has(task.id)) {
+      previews.push({ task, kind: done.includes(task.id) ? "recent" : "next" });
+      selected.add(task.id);
+    }
+  }
+
+  return previews;
+}
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("en");
@@ -40,7 +63,7 @@ export default function Home() {
     const savedDone = localStorage.getItem("ku-settle-checklist");
     const savedVerified = localStorage.getItem("ku-settle-verified");
     if (savedLang === "en" || savedLang === "ko") setLang(savedLang);
-    if (savedDone) { try { setDone(JSON.parse(savedDone)); } catch {} }
+    if (savedDone) { try { setDone(normalizeDone(JSON.parse(savedDone))); } catch { setDone(defaultDone); } }
     if (savedVerified === "true") setVerified(true);
     setHydrated(true);
   }, []);
@@ -50,7 +73,8 @@ export default function Home() {
   useEffect(() => { if (hydrated) localStorage.setItem("ku-settle-verified", String(verified)); }, [verified, hydrated]);
 
   const t = copy[lang];
-  const progress = Object.entries(taskWeights).reduce((sum, [id, weight]) => sum + (done.includes(id) ? weight : 0), 0);
+  const completedCount = tasks.filter((task) => done.includes(task.id)).length;
+  const progress = tasks.length ? Math.round((completedCount / tasks.length) * 100) : 0;
   const navItems: { key: Page; icon: typeof GraduationCap; label: string }[] = [
     { key: "home", icon: GraduationCap, label: t.nav.home },
     { key: "onboarding", icon: FileCheck2, label: t.nav.onboarding },
@@ -82,13 +106,13 @@ export default function Home() {
       {menuOpen && <nav className="mobile-nav" aria-label="Mobile navigation">{navItems.map(({ key, label, icon: Icon }) => <button key={key} onClick={() => go(key)} className={page === key ? "active" : ""}><Icon size={18}/>{label}</button>)}</nav>}
 
       <main>
-        {page === "home" && <Dashboard lang={lang} t={t} progress={progress} done={done} go={go}/>} 
+        {page === "home" && <Dashboard lang={lang} t={t} progress={progress} completedCount={completedCount} done={done} go={go}/>}
         {page === "onboarding" && <Onboarding lang={lang} t={t} progress={progress} done={done} toggleTask={toggleTask}/>} 
         {page === "marketplace" && <Marketplace lang={lang} t={t} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} selectProduct={setSelectedProduct}/>} 
         {page === "guide" && <LocalGuide lang={lang} t={t} category={guideCategory} setCategory={setGuideCategory}/>} 
       </main>
 
-      <footer><div className="footer-brand"><span className="brand-mark small">KU</span><span><strong>KU Settle</strong><small>{lang === "en" ? "A presentation-ready campus onboarding prototype." : "창업 발표용 캠퍼스 정착 프로토타입입니다."}</small></span></div><span>© 2026 KU Settle · {t.common.demo}</span></footer>
+      <footer><div className="footer-brand"><span className="brand-mark small">KU</span><span><strong>KU Settle</strong><small>© 2026 KU Settle</small></span></div><span className="footer-notice">{t.footer.notice}</span></footer>
 
       {profileOpen && <VerificationModal t={t} email={email} setEmail={setEmail} verified={verified} verifyError={verifyError} close={() => setProfileOpen(false)} verify={() => { const ok = /^[^@\s]+@korea\.ac\.kr$/i.test(email); setVerifyError(!ok); if (ok) setVerified(true); }}/>} 
       {selectedProduct && <ProductModal lang={lang} t={t} product={selectedProduct} close={() => setSelectedProduct(null)} contact={() => { setSelectedProduct(null); setContactOpen(true); }}/>} 
@@ -97,8 +121,8 @@ export default function Home() {
   );
 }
 
-function Dashboard({ lang, t, progress, done, go }: { lang: Lang; t: typeof copy[Lang]; progress: number; done: string[]; go: (p: Page) => void }) {
-  const previews = tasks.slice(0, 5);
+function Dashboard({ lang, t, progress, completedCount, done, go }: { lang: Lang; t: typeof copy[Lang]; progress: number; completedCount: number; done: string[]; go: (p: Page) => void }) {
+  const previews = getTaskPreviews(done);
   return <>
     <section className="hero section-pad">
       <div className="hero-copy">
@@ -110,8 +134,8 @@ function Dashboard({ lang, t, progress, done, go }: { lang: Lang; t: typeof copy
       <div className="setup-card">
         <div className="setup-top"><div><span>{t.home.setup}</span><strong>{progress}%</strong></div><div className="progress-ring" style={{ "--progress": `${progress * 3.6}deg` } as React.CSSProperties}><span>{progress}%</span></div></div>
         <div className="progress-track"><i style={{ width: `${progress}%` }}/></div>
-        <div className="setup-label"><span>{done.length} / {tasks.length} {t.common.completed}</span><b>{progress}% {t.common.complete}</b></div>
-        <div className="mini-list">{previews.map((task) => <div key={task.id} className={done.includes(task.id) ? "done" : ""}><span>{done.includes(task.id) ? <Check size={14}/> : null}</span>{task.title[lang]}</div>)}</div>
+        <div className="setup-label"><span>{completedCount} / {tasks.length} {t.common.completed}</span><b>{progress}% {t.common.complete}</b></div>
+        <div className="mini-list">{previews.map(({ task, kind }) => <div key={task.id} className={done.includes(task.id) ? "done" : ""}><span>{done.includes(task.id) ? <Check size={14}/> : null}</span><div><strong>{task.title[lang]}</strong><small>{kind === "recent" ? t.home.recent : t.home.upNext}</small></div></div>)}</div>
         <button className="text-button" onClick={() => go("onboarding")}>{t.home.viewAll}<ChevronRight size={16}/></button>
       </div>
     </section>
@@ -120,7 +144,7 @@ function Dashboard({ lang, t, progress, done, go }: { lang: Lang; t: typeof copy
         <div className="next-icon"><FileCheck2/></div><div><span className="label">{t.home.next}</span><h2>{t.home.arcTitle}</h2><p>{t.home.arcBody}</p><button onClick={() => go("onboarding")}>{t.home.viewGuide}<ArrowRight size={17}/></button></div>
         <span className="step-badge">03</span>
       </article>
-      <article className="checklist-preview"><div className="section-heading"><div><span className="label">{t.home.checklist}</span><h2>{lang === "en" ? "Your first-week essentials" : "첫 주 필수 할 일"}</h2></div><button onClick={() => go("onboarding")}>{t.home.viewAll}</button></div><div className="preview-tasks">{tasks.slice(0, 4).map((task) => <div key={task.id}><span className={done.includes(task.id) ? "checked" : ""}>{done.includes(task.id) && <Check size={14}/>}</span><div><strong>{task.title[lang]}</strong><small>{task.category[lang]}</small></div></div>)}</div></article>
+      <article className="checklist-preview"><div className="section-heading"><div><span className="label">{t.home.checklist}</span><h2>{lang === "en" ? "Your first-week essentials" : "첫 주 필수 할 일"}</h2></div><button onClick={() => go("onboarding")}>{t.home.viewAll}</button></div><div className="preview-tasks">{previews.map(({ task, kind }) => <div key={task.id}><span className={done.includes(task.id) ? "checked" : ""}>{done.includes(task.id) && <Check size={14}/>}</span><div><strong>{task.title[lang]}</strong><small>{kind === "recent" ? t.home.recent : t.home.upNext} · {task.category[lang]}</small></div></div>)}</div></article>
     </section>
     <section className="feature-section section-pad compact"><div className="section-title"><span className="eyebrow">{lang === "en" ? "ONE CAMPUS, ONE STARTING POINT" : "하나의 캠퍼스, 하나의 시작점"}</span><h2>{lang === "en" ? "Everything for your first weeks" : "첫 몇 주에 필요한 모든 것"}</h2></div><div className="feature-grid">{([
       ["onboarding", FileCheck2, t.nav.onboarding, t.home.cards[0], "01"], ["marketplace", ShoppingBag, t.nav.marketplace, t.home.cards[1], "02"], ["guide", MapPin, t.nav.guide, t.home.cards[2], "03"]
@@ -136,6 +160,7 @@ function Onboarding({ lang, t, progress, done, toggleTask }: { lang: Lang; t: ty
       <button className="task-check" onClick={() => toggleTask(task.id)} aria-label={`${t.onboarding.mark}: ${task.title[lang]}`}>{isDone && <Check size={18}/>}</button>
       <div className="task-main"><div className="task-title-row"><div><span className="task-category">{String(index + 1).padStart(2, "0")} · {task.category[lang]}</span><h2>{task.title[lang]}</h2></div><span className={`status ${isDone ? "complete" : task.featured ? "progress" : ""}`}>{isDone ? t.common.completed : task.featured ? t.common.inProgress : t.common.notStarted}</span></div><p>{task.description[lang]}</p>
         <div className="task-details"><div><span className="detail-label"><PackageCheck size={16}/>{t.onboarding.need}</span><ul>{task.needs.map((need) => <li key={need.en}>{need[lang]}</li>)}</ul></div><div><span className="detail-label"><Clock3 size={16}/>{t.onboarding.time}</span><strong>{task.time} {t.common.min}</strong></div><div className="tip"><span className="detail-label"><Lightbulb size={16}/>{t.onboarding.tip}</span><p>{task.tip[lang]}</p></div></div>
+        {task.officialGuidance && <div className="official-guidance"><div><span className="detail-label"><Clock3 size={16}/>{t.onboarding.recommendedTiming}</span><p>{task.officialGuidance.recommendedTiming[lang]}</p></div><div><span className="detail-label"><MapPin size={16}/>{t.onboarding.applicationLocation}</span><p>{task.officialGuidance.applicationLocation[lang]}</p></div><div><span className="detail-label"><FileCheck2 size={16}/>{t.onboarding.officialLink}</span><a href={task.officialGuidance.link.href} target="_blank" rel="noopener noreferrer">{task.officialGuidance.link.label[lang]}<ArrowRight size={14}/></a></div><div><span className="detail-label"><CheckCircle2 size={16}/>{t.onboarding.lastUpdated}</span><p>{task.officialGuidance.lastUpdated[lang]}</p></div></div>}
       </div>
     </article>; })}</div>
   </section>;
