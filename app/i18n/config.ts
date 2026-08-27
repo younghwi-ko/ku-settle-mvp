@@ -1,0 +1,38 @@
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import en from "./locales/en.json";
+import ko from "./locales/ko.json";
+import ja from "./locales/ja.json";
+import zhCN from "./locales/zh-CN.json";
+
+export const namespaces = ["common", "navigation", "home", "onboarding", "marketplace", "localGuide", "verification", "profile", "reset", "validation", "errors", "accessibility"] as const;
+export const resources = {
+  en: Object.fromEntries(namespaces.map((namespace) => [namespace, en[namespace]])),
+  ko: Object.fromEntries(namespaces.map((namespace) => [namespace, ko[namespace]])),
+  ja: Object.fromEntries(namespaces.map((namespace) => [namespace, ja[namespace]])),
+  "zh-CN": Object.fromEntries(namespaces.map((namespace) => [namespace, zhCN[namespace]]))
+};
+
+if (!i18n.isInitialized) {
+  void i18n.use(initReactI18next).init({
+    resources,
+    lng: "en",
+    fallbackLng: "en",
+    supportedLngs: ["en", "ko", "ja", "zh-CN"],
+    nonExplicitSupportedLngs: false,
+    ns: [...namespaces],
+    defaultNS: "common",
+    fallbackNS: "common",
+    interpolation: { escapeValue: false },
+    returnNull: false,
+    returnEmptyString: false,
+    saveMissing: process.env.NODE_ENV !== "production",
+    missingKeyHandler: (languages, namespace, key) => {
+      if (process.env.NODE_ENV !== "production") console.warn(`[i18n] Missing translation: ${languages.join(",")} ${namespace}:${key}`);
+    },
+    parseMissingKeyHandler: () => en.errors.missingTranslation,
+    initAsync: false
+  });
+}
+
+export default i18n;

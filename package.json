@@ -1,6 +1,7 @@
 {
   "name": "ku-settle",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,13 +9,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit --incremental false"
+    "typecheck": "tsc --noEmit --incremental false",
+    "test": "pnpm run test:i18n",
+    "test:i18n": "node --experimental-strip-types scripts/validate-i18n.mjs"
   },
   "dependencies": {
+    "i18next": "^26.4.0",
     "lucide-react": "^0.468.0",
     "next": "^16.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-i18next": "^17.0.12"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
