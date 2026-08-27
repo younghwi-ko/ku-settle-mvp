@@ -8,13 +8,15 @@ import {
   Search, ShieldCheck, ShoppingBag, Sparkles, Store, Tag, Utensils, Vegan, X, Zap
 } from "lucide-react";
 import { copy, type Lang } from "./i18n";
-import { places, products, tasks, type Bilingual, type MarketProduct, type ProductCategory, type ProductIcon, type Task } from "./data";
+import { lifecycleStages, places, products, tasks, type Bilingual, type LifecycleStage, type MarketProduct, type ProductCategory, type ProductIcon, type Task, type TaskAction } from "./data";
 
 type Page = "home" | "onboarding" | "marketplace" | "guide";
 type Housing = "dorm" | "off-campus";
 type ProfileMode = "personalized" | "demo";
 type UserProfile = { name: string; arrivalDate: string; housing: Housing; mode: ProfileMode };
 type MarketMode = "incoming" | "leaving";
+type StageStat = { stage: (typeof lifecycleStages)[number]; completed: number; total: number; progress: number };
+type NavigationIntent = { stage?: LifecycleStage; taskId?: string; highlight?: boolean; marketMode?: MarketMode; guideCategory?: string };
 
 const storageKeys = {
   language: "ku-settle-language",
@@ -24,7 +26,7 @@ const storageKeys = {
   userProducts: "ku-settle-user-products"
 } as const;
 const demoProfile: UserProfile = { name: "Alex", arrivalDate: "", housing: "dorm", mode: "demo" };
-const defaultDone = ["dorm", "account", "courses", "campus"];
+const demoDone = ["housing-reserve", "sim-compare", "airport-route", "arrival-essentials", "dorm", "account", "courses"];
 const productCategories: ProductCategory[] = ["Home", "Kitchen", "Electronics", "Bedding"];
 const productIcons: Record<ProductIcon, typeof Box> = { cooking: CookingPot, lamp: LampDesk, bed: BedDouble, kettle: Zap, fan: Sparkles, box: Box };
 const categoryIcons: Record<string, typeof Hospital> = { Hospital, Halal: Utensils, Vegan, Pharmacy: HeartPulse, Cafe: Store, Grocery: ShoppingBag };
@@ -53,8 +55,8 @@ function normalizeProfile(value: unknown): UserProfile | null {
 }
 
 function getActiveTasks(housing: Housing) {
-  const excluded = housing === "dorm" ? "residence" : "dorm";
-  return tasks.filter((task) => task.id !== excluded);
+  const excluded = new Set(housing === "dorm" ? ["residence", "move-out"] : ["dorm", "dorm-checkout"]);
+  return tasks.filter((task) => !excluded.has(task.id));
 }
 
 function normalizeDone(value: unknown, activeTasks: Task[], fallback: string[]) {
@@ -86,21 +88,12 @@ function normalizeUserProducts(value: unknown): MarketProduct[] {
   });
 }
 
-function getTaskPreviews(done: string[], activeTasks: Task[]) {
-  const taskById = new Map(activeTasks.map((task) => [task.id, task]));
-  const recent = done.slice().reverse().map((id) => taskById.get(id)).filter((task): task is Task => Boolean(task)).slice(0, 2);
-  const next = activeTasks.filter((task) => !done.includes(task.id)).slice(0, 3);
-  const previews = [...recent.map((task) => ({ task, kind: "recent" as const })), ...next.map((task) => ({ task, kind: "next" as const }))];
-  const selected = new Set(previews.map(({ task }) => task.id));
-
-  for (const task of activeTasks) {
-    if (previews.length === 5) break;
-    if (!selected.has(task.id)) {
-      previews.push({ task, kind: done.includes(task.id) ? "recent" : "next" });
-      selected.add(task.id);
-    }
-  }
-  return previews;
+function getStageStats(activeTasks: Task[], done: string[]): StageStat[] {
+  return lifecycleStages.map((stage) => {
+    const stageTasks = activeTasks.filter((task) => task.stage === stage.id);
+    const completed = stageTasks.filter((task) => done.includes(task.id)).length;
+    return { stage, completed, total: stageTasks.length, progress: stageTasks.length ? Math.round((completed / stageTasks.length) * 100) : 0 };
+  });
 }
 
 export default function Home() {
@@ -112,7 +105,9 @@ export default function Home() {
   const [hydrated, setHydrated] = useState(false);
   const [setupOpen, setSetupOpen] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
-  const [focusRecommended, setFocusRecommended] = useState(false);
+  const [selectedStage, setSelectedStage] = useState<LifecycleStage>("before-arrival");
+  const [focusTaskId, setFocusTaskId] = useState<string | null>(null);
+  const [highlightTaskId, setHighlightTaskId] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<MarketProduct | null>(null);
@@ -136,7 +131,7 @@ export default function Home() {
       if (savedLang === "en" || savedLang === "ko") setLang(savedLang);
       if (loadedProfile) {
         setProfile(loadedProfile);
-        const fallback = loadedProfile.mode === "demo" ? defaultDone : [];
+        const fallback = loadedProfile.mode === "demo" ? demoDone : [];
         try { setDone(normalizeDone(savedDone ? JSON.parse(savedDone) : null, getActiveTasks(loadedProfile.housing), fallback)); } catch { setDone(fallback); }
       } else {
         setDone([]);
@@ -158,6 +153,11 @@ export default function Home() {
     if (profile) localStorage.setItem(storageKeys.profile, JSON.stringify(profile));
     else localStorage.removeItem(storageKeys.profile);
   }, [profile, hydrated]);
+  useEffect(() => {
+    if (!highlightTaskId) return;
+    const timer = window.setTimeout(() => setHighlightTaskId(null), 1800);
+    return () => window.clearTimeout(timer);
+  }, [highlightTaskId]);
 
   const t = copy[lang];
   const currentProfile = profile ?? demoProfile;
@@ -165,6 +165,7 @@ export default function Home() {
   const completedCount = activeTasks.filter((task) => done.includes(task.id)).length;
   const progress = activeTasks.length ? Math.round((completedCount / activeTasks.length) * 100) : 0;
   const recommendedTask = activeTasks.find((task) => !done.includes(task.id)) ?? null;
+  const stageStats = useMemo(() => getStageStats(activeTasks, done), [activeTasks, done]);
   const marketplaceProducts = useMemo(() => [...userProducts, ...products], [userProducts]);
   const navItems: { key: Page; icon: typeof GraduationCap; label: string }[] = [
     { key: "home", icon: GraduationCap, label: t.nav.home },
@@ -173,16 +174,32 @@ export default function Home() {
     { key: "guide", icon: MapPin, label: t.nav.guide }
   ];
 
-  const go = (target: Page, shouldFocus = false) => {
+  const go = (target: Page, intent: NavigationIntent = {}) => {
+    if (target === "onboarding") {
+      const targetStage = intent.stage ?? recommendedTask?.stage ?? selectedStage;
+      setSelectedStage(targetStage);
+      setFocusTaskId(intent.taskId ?? null);
+      setHighlightTaskId(intent.highlight ? intent.taskId ?? null : null);
+    }
+    if (target === "marketplace" && intent.marketMode) {
+      setMarketMode(intent.marketMode);
+      setMarketSearch("");
+      setMarketCategory("All");
+    }
+    if (target === "guide" && intent.guideCategory) setGuideCategory(intent.guideCategory);
     setPage(target);
-    setFocusRecommended(target === "onboarding" && shouldFocus);
     setMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const openTaskAction = (action: TaskAction) => {
+    if (action.kind === "external") return;
+    if (action.target === "marketplace") go("marketplace", { marketMode: action.marketMode });
+    else go("guide", { guideCategory: action.guideCategory });
+  };
   const toggleTask = (id: string) => setDone((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   const toggleLang = () => setLang((current) => current === "en" ? "ko" : "en");
-  const startPersonalizedPlan = (nextProfile: UserProfile) => { setProfile(nextProfile); setDone([]); setVerified(false); setSetupOpen(false); };
-  const skipForDemo = () => { setProfile(demoProfile); setDone(defaultDone); setVerified(false); setSetupOpen(false); };
+  const startPersonalizedPlan = (nextProfile: UserProfile) => { setProfile(nextProfile); setDone([]); setVerified(false); setSelectedStage("before-arrival"); setFocusTaskId(null); setHighlightTaskId(null); setSetupOpen(false); };
+  const skipForDemo = () => { setProfile(demoProfile); setDone(demoDone); setVerified(false); setSelectedStage("first-weeks"); setSetupOpen(false); };
   const resetDemo = () => {
     [storageKeys.profile, storageKeys.checklist, storageKeys.verified, storageKeys.userProducts].forEach((key) => localStorage.removeItem(key));
     setProfile(null);
@@ -195,10 +212,12 @@ export default function Home() {
     setSelectedProduct(null);
     setContactOpen(false);
     setGuideCategory("All");
+    setSelectedStage("before-arrival");
+    setFocusTaskId(null);
+    setHighlightTaskId(null);
     setResetOpen(false);
     setProfileOpen(false);
     setPage("home");
-    setFocusRecommended(false);
     setSetupOpen(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -223,8 +242,8 @@ export default function Home() {
       {menuOpen && <nav className="mobile-nav" aria-label="Mobile navigation">{navItems.map(({ key, label, icon: Icon }) => <button key={key} onClick={() => go(key)} className={page === key ? "active" : ""}><Icon size={18}/>{label}</button>)}</nav>}
 
       <main>
-        {page === "home" && <Dashboard lang={lang} t={t} profile={currentProfile} activeTasks={activeTasks} progress={progress} completedCount={completedCount} done={done} recommendedTask={recommendedTask} go={go}/>}
-        {page === "onboarding" && <Onboarding lang={lang} t={t} activeTasks={activeTasks} progress={progress} done={done} recommendedTaskId={recommendedTask?.id ?? null} focusRecommended={focusRecommended} toggleTask={toggleTask}/>}
+        {page === "home" && <Dashboard lang={lang} t={t} profile={currentProfile} activeTasks={activeTasks} stageStats={stageStats} progress={progress} completedCount={completedCount} recommendedTask={recommendedTask} go={go}/>}
+        {page === "onboarding" && <Onboarding lang={lang} t={t} activeTasks={activeTasks} stageStats={stageStats} progress={progress} done={done} recommendedTask={recommendedTask} selectedStage={selectedStage} setSelectedStage={setSelectedStage} focusTaskId={focusTaskId} highlightTaskId={highlightTaskId} go={go} openTaskAction={openTaskAction} toggleTask={toggleTask}/>}
         {page === "marketplace" && <Marketplace lang={lang} t={t} profile={currentProfile} products={marketplaceProducts} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} addProduct={(product) => setUserProducts((current) => [product, ...current])} selectProduct={setSelectedProduct}/>}
         {page === "guide" && <LocalGuide lang={lang} t={t} category={guideCategory} setCategory={setGuideCategory}/>}
       </main>
@@ -253,9 +272,9 @@ export default function Home() {
   );
 }
 
-function Dashboard({ lang, t, profile, activeTasks, progress, completedCount, done, recommendedTask, go }: { lang: Lang; t: typeof copy[Lang]; profile: UserProfile; activeTasks: Task[]; progress: number; completedCount: number; done: string[]; recommendedTask: Task | null; go: (page: Page, focus?: boolean) => void }) {
-  const previews = getTaskPreviews(done, activeTasks);
+function Dashboard({ lang, t, profile, activeTasks, stageStats, progress, completedCount, recommendedTask, go }: { lang: Lang; t: typeof copy[Lang]; profile: UserProfile; activeTasks: Task[]; stageStats: StageStat[]; progress: number; completedCount: number; recommendedTask: Task | null; go: (page: Page, intent?: NavigationIntent) => void }) {
   const recommendedIndex = recommendedTask ? activeTasks.findIndex((task) => task.id === recommendedTask.id) : -1;
+  const recommendedStage = recommendedTask ? lifecycleStages.find((stage) => stage.id === recommendedTask.stage) : null;
   return <>
     <section className="hero section-pad">
       <div className="hero-copy">
@@ -268,39 +287,42 @@ function Dashboard({ lang, t, profile, activeTasks, progress, completedCount, do
         <div className="setup-top"><div><span>{t.home.setup}</span><strong>{progress}%</strong></div><div className="progress-ring" style={{ "--progress": `${progress * 3.6}deg` } as React.CSSProperties}><span>{progress}%</span></div></div>
         <div className="progress-track"><i style={{ width: `${progress}%` }}/></div>
         <div className="setup-label"><span>{completedCount} / {activeTasks.length} {t.common.completed}</span><b>{progress}% {t.common.complete}</b></div>
-        <div className="mini-list">{previews.map(({ task, kind }) => <div key={task.id} className={done.includes(task.id) ? "done" : ""}><span>{done.includes(task.id) ? <Check size={14}/> : null}</span><div><strong>{task.title[lang]}</strong><small>{kind === "recent" ? t.home.recent : t.home.upNext}</small></div></div>)}</div>
+        <div className="home-lifecycle" aria-label={t.home.lifecycle}>{stageStats.map(({ stage, completed, total, progress: stageProgress }) => <button key={stage.id} onClick={() => go("onboarding", { stage: stage.id })} aria-label={`${stage.label[lang]}: ${completed}/${total}, ${stageProgress}%`}><span className="lifecycle-number">{stage.number}</span><span><strong>{stage.label[lang]}</strong><small>{completed}/{total} · {stageProgress}%</small></span><ChevronRight size={15}/></button>)}</div>
         <button className="text-button" onClick={() => go("onboarding")}>{t.home.viewAll}<ChevronRight size={16}/></button>
       </div>
     </section>
-    <section className="dashboard-grid section-pad compact">
-      <button className={`next-card next-card-button ${recommendedTask ? "" : "all-complete"}`} onClick={() => go("onboarding", true)}>
-        <span className="next-icon">{recommendedTask ? <FileCheck2/> : <CheckCircle2/>}</span><span className="next-content"><span className="label">{t.home.next}</span><strong className="next-title">{recommendedTask ? recommendedTask.title[lang] : t.home.allCompletedTitle}</strong><span className="next-description">{recommendedTask ? recommendedTask.description[lang] : t.home.allCompletedBody}</span><span className="next-link">{recommendedTask ? t.home.viewGuide : t.home.reviewTasks}<ArrowRight size={17}/></span></span>
+    <section className="dashboard-grid single section-pad compact">
+      <button className={`next-card next-card-button ${recommendedTask ? "" : "all-complete"}`} onClick={() => go("onboarding", recommendedTask ? { stage: recommendedTask.stage, taskId: recommendedTask.id, highlight: true } : { stage: "departure" })}>
+        <span className="next-icon">{recommendedTask ? <FileCheck2/> : <CheckCircle2/>}</span><span className="next-content"><span className="label">{t.home.next}{recommendedStage ? ` · ${recommendedStage.label[lang]}` : ""}</span><strong className="next-title">{recommendedTask ? recommendedTask.title[lang] : t.home.allCompletedTitle}</strong><span className="next-description">{recommendedTask ? recommendedTask.description[lang] : t.home.allCompletedBody}</span><span className="next-link">{recommendedTask ? t.home.viewGuide : t.home.reviewTasks}<ArrowRight size={17}/></span></span>
         <span className="step-badge">{recommendedTask ? String(recommendedIndex + 1).padStart(2, "0") : "✓"}</span>
       </button>
-      <article className="checklist-preview"><div className="section-heading"><div><span className="label">{t.home.checklist}</span><h2>{lang === "en" ? "Your first-week essentials" : "첫 주 필수 할 일"}</h2></div><button onClick={() => go("onboarding")}>{t.home.viewAll}</button></div><div className="preview-tasks">{previews.map(({ task, kind }) => <div key={task.id}><span className={done.includes(task.id) ? "checked" : ""}>{done.includes(task.id) && <Check size={14}/>}</span><div><strong>{task.title[lang]}</strong><small>{kind === "recent" ? t.home.recent : t.home.upNext} · {task.category[lang]}</small></div></div>)}</div></article>
     </section>
-    <section className="feature-section section-pad compact"><div className="section-title"><span className="eyebrow">{lang === "en" ? "ONE CAMPUS, ONE STARTING POINT" : "하나의 캠퍼스, 하나의 시작점"}</span><h2>{lang === "en" ? "Everything for your first weeks" : "첫 몇 주에 필요한 모든 것"}</h2></div><div className="feature-grid">{([
+    <section className="feature-section section-pad compact"><div className="section-title"><span className="eyebrow">{lang === "en" ? "INFORMATION → ACTION" : "정보에서 실행으로"}</span><h2>{lang === "en" ? "One journey, four connected stages" : "하나로 연결된 4단계 유학생 여정"}</h2></div><div className="feature-grid">{([
       ["onboarding", FileCheck2, t.nav.onboarding, t.home.cards[0], "01"], ["marketplace", ShoppingBag, t.nav.marketplace, t.home.cards[1], "02"], ["guide", MapPin, t.nav.guide, t.home.cards[2], "03"]
     ] as const).map(([target, Icon, title, text, number]) => <button className="feature-card" key={target} onClick={() => go(target)}><span className="feature-number">{number}</span><span className="feature-icon"><Icon/></span><h3>{title}</h3><p>{text}</p><span className="learn">{lang === "en" ? "Explore" : "둘러보기"}<ArrowRight size={17}/></span></button>)}</div></section>
   </>;
 }
 
-function Onboarding({ lang, t, activeTasks, progress, done, recommendedTaskId, focusRecommended, toggleTask }: { lang: Lang; t: typeof copy[Lang]; activeTasks: Task[]; progress: number; done: string[]; recommendedTaskId: string | null; focusRecommended: boolean; toggleTask: (id: string) => void }) {
-  const recommendedRef = useRef<HTMLElement | null>(null);
+function Onboarding({ lang, t, activeTasks, stageStats, progress, done, recommendedTask, selectedStage, setSelectedStage, focusTaskId, highlightTaskId, go, openTaskAction, toggleTask }: { lang: Lang; t: typeof copy[Lang]; activeTasks: Task[]; stageStats: StageStat[]; progress: number; done: string[]; recommendedTask: Task | null; selectedStage: LifecycleStage; setSelectedStage: (stage: LifecycleStage) => void; focusTaskId: string | null; highlightTaskId: string | null; go: (page: Page, intent?: NavigationIntent) => void; openTaskAction: (action: TaskAction) => void; toggleTask: (id: string) => void }) {
+  const taskRef = useRef<HTMLElement | null>(null);
+  const selectedTasks = useMemo(() => activeTasks.filter((task) => task.stage === selectedStage), [activeTasks, selectedStage]);
+  const selectedStat = stageStats.find(({ stage }) => stage.id === selectedStage) ?? stageStats[0];
+  const overallCompleted = activeTasks.filter((task) => done.includes(task.id)).length;
   useEffect(() => {
-    if (!focusRecommended || !recommendedTaskId) return;
-    const frame = requestAnimationFrame(() => recommendedRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
+    if (!focusTaskId || !selectedTasks.some((task) => task.id === focusTaskId)) return;
+    const frame = requestAnimationFrame(() => taskRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
     return () => cancelAnimationFrame(frame);
-  }, [focusRecommended, recommendedTaskId]);
+  }, [focusTaskId, selectedStage, selectedTasks]);
 
   return <section className="page section-pad">
-    <div className="page-hero"><div><span className="eyebrow"><FileCheck2 size={14}/>{t.onboarding.eyebrow}</span><h1>{t.onboarding.title}</h1><p>{t.onboarding.body}</p></div><div className="progress-summary"><div><strong>{progress}%</strong><span>{t.common.complete}</span></div><div className="progress-track"><i style={{ width: `${progress}%` }}/></div><small><CheckCircle2 size={14}/>{t.onboarding.saved}</small></div></div>
-    <div className="timeline-note"><Lightbulb size={20}/><span>{t.onboarding.searchHint}</span></div>
-    <div className="task-list">{activeTasks.map((task, index) => { const isDone = done.includes(task.id); const isRecommended = !isDone && task.id === recommendedTaskId; return <article ref={isRecommended ? recommendedRef : undefined} data-task-id={task.id} aria-current={isRecommended ? "step" : undefined} className={`task-card ${isRecommended ? "featured recommended" : ""} ${isDone ? "is-done" : ""}`} key={task.id}>
+    <div className="page-hero lifecycle-hero"><div><span className="eyebrow"><FileCheck2 size={14}/>{t.onboarding.eyebrow}</span><h1>{t.onboarding.title}</h1><p>{t.onboarding.body}</p></div><div className="progress-panels"><div className="progress-summary"><div><span>{t.onboarding.overallProgress}</span><strong>{progress}%</strong></div><div className="progress-track"><i style={{ width: `${progress}%` }}/></div><small><CheckCircle2 size={14}/>{overallCompleted}/{activeTasks.length} {t.onboarding.tasksComplete}</small></div><div className="progress-summary selected"><div><span>{t.onboarding.stageProgress}</span><strong>{selectedStat.progress}%</strong></div><div className="progress-track"><i style={{ width: `${selectedStat.progress}%` }}/></div><small>{selectedStat.stage.label[lang]} · {selectedStat.completed}/{selectedStat.total}</small></div></div></div>
+    <div className="lifecycle-tabs" role="tablist" aria-label={t.home.lifecycle}>{stageStats.map(({ stage, completed, total, progress: stageProgress }) => <button role="tab" aria-selected={selectedStage === stage.id} className={selectedStage === stage.id ? "active" : ""} key={stage.id} onClick={() => setSelectedStage(stage.id)}><span>{stage.number}</span><strong>{stage.label[lang]}</strong><small>{completed}/{total} · {stageProgress}%</small><i><b style={{ width: `${stageProgress}%` }}/></i></button>)}</div>
+    <div className="timeline-note"><Lightbulb size={20}/><span>{t.onboarding.searchHint}</span>{recommendedTask && recommendedTask.stage !== selectedStage && <button onClick={() => go("onboarding", { stage: recommendedTask.stage, taskId: recommendedTask.id, highlight: true })}>{t.onboarding.viewNext}<ArrowRight size={15}/></button>}</div>
+    <div className="task-list">{selectedTasks.map((task, index) => { const isDone = done.includes(task.id); const isRecommended = !isDone && task.id === recommendedTask?.id; const isHighlighted = task.id === highlightTaskId; return <article ref={task.id === focusTaskId ? taskRef : undefined} data-task-id={task.id} aria-current={isRecommended ? "step" : undefined} className={`task-card ${isRecommended ? "featured recommended" : ""} ${isHighlighted ? "attention-flash" : ""} ${isDone ? "is-done" : ""}`} key={task.id}>
       <button className="task-check" onClick={() => toggleTask(task.id)} aria-label={`${t.onboarding.mark}: ${task.title[lang]}`}>{isDone && <Check size={18}/>}</button>
       <div className="task-main"><div className="task-title-row"><div><span className="task-category">{String(index + 1).padStart(2, "0")} · {task.category[lang]}</span><h2>{task.title[lang]}</h2></div><span className={`status ${isDone ? "complete" : isRecommended ? "progress" : ""}`}>{isDone ? t.common.completed : isRecommended ? t.common.inProgress : t.common.notStarted}</span></div><p>{task.description[lang]}</p>
         <div className="task-details"><div><span className="detail-label"><PackageCheck size={16}/>{t.onboarding.need}</span><ul>{task.needs.map((need) => <li key={need.en}>{need[lang]}</li>)}</ul></div><div><span className="detail-label"><Clock3 size={16}/>{t.onboarding.time}</span><strong>{task.time} {t.common.min}</strong></div><div className="tip"><span className="detail-label"><Lightbulb size={16}/>{t.onboarding.tip}</span><p>{task.tip[lang]}</p></div></div>
-        {task.officialGuidance && <div className="official-guidance"><div><span className="detail-label"><Clock3 size={16}/>{t.onboarding.recommendedTiming}</span><p>{task.officialGuidance.recommendedTiming[lang]}</p></div><div><span className="detail-label"><MapPin size={16}/>{t.onboarding.applicationLocation}</span><p>{task.officialGuidance.applicationLocation[lang]}</p></div><div><span className="detail-label"><FileCheck2 size={16}/>{t.onboarding.officialLink}</span><a href={task.officialGuidance.link.href} target="_blank" rel="noopener noreferrer">{task.officialGuidance.link.label[lang]}<ArrowRight size={14}/></a></div><div><span className="detail-label"><CheckCircle2 size={16}/>{t.onboarding.lastUpdated}</span><p>{task.officialGuidance.lastUpdated[lang]}</p></div></div>}
+        {task.officialGuidance ? <div className="official-guidance"><div><span className="detail-label"><ShieldCheck size={16}/>{t.onboarding.officialGuidance}</span><p>{task.officialGuidance.message[lang]}</p></div><a href={task.officialGuidance.link.href} target="_blank" rel="noopener noreferrer">{task.officialGuidance.link.label[lang]}<ArrowRight size={14}/></a></div> : task.action && (task.action.kind === "external" ? <a className="task-action" href={task.action.href} target="_blank" rel="noopener noreferrer">{task.action.label[lang]}<ArrowRight size={15}/></a> : <button className="task-action" onClick={() => openTaskAction(task.action!)}>{task.action.label[lang]}<ArrowRight size={15}/></button>)}
       </div>
     </article>; })}</div>
   </section>;
@@ -315,7 +337,7 @@ function Marketplace({ lang, t, profile, products: marketplaceProducts, search, 
   const completeListing = (product: MarketProduct) => { addProduct(product); setSearch(""); setCategory("All"); setMode("incoming"); setSuccess(true); };
 
   return <section className="page section-pad market-page">
-    <div className="page-hero market-hero"><div><span className="eyebrow"><ShoppingBag size={14}/>{t.market.eyebrow}</span><h1>{t.market.title}</h1><p>{t.market.body}</p></div><div className="mode-switch"><button className={mode === "incoming" ? "active" : ""} onClick={() => changeMode("incoming")}><ShoppingBag size={18}/>{t.market.incoming}</button><button className={mode === "leaving" ? "active" : ""} onClick={() => changeMode("leaving")}><Tag size={18}/>{t.market.leaving}</button></div></div>
+    <div className="page-hero market-hero"><div><span className="eyebrow"><ShoppingBag size={14}/>{t.market.eyebrow}</span><h1>{t.market.title}</h1><p>{t.market.body}</p></div><div className="mode-switch"><button aria-pressed={mode === "incoming"} className={mode === "incoming" ? "active" : ""} onClick={() => changeMode("incoming")}><ShoppingBag size={18}/>{t.market.incoming}</button><button aria-pressed={mode === "leaving"} className={mode === "leaving" ? "active" : ""} onClick={() => changeMode("leaving")}><Tag size={18}/>{t.market.leaving}</button></div></div>
     <div className="market-flow">{t.market.flow.map((step, index) => <div key={step}><span>{index === 0 ? <BadgeCheck/> : index === 1 ? <ShoppingBag/> : index === 2 ? <MapPin/> : <Banknote/>}</span><strong>{step}</strong>{index < 3 && <ChevronRight/>}</div>)}</div>
     {mode === "leaving" ? <ListingForm lang={lang} t={t} profile={profile} submit={completeListing}/> : <>
       {success && <div className="success-banner" role="status"><CheckCircle2 size={18}/>{t.market.success}</div>}
@@ -378,14 +400,14 @@ function LocalGuide({ lang, t, category, setCategory }: { lang: Lang; t: typeof 
   const categoryLabel = (value: string) => value === "All" ? t.guide.all : ({ Food: lang === "en" ? "Food" : "음식", Halal: lang === "en" ? "Halal" : "할랄", Vegan: lang === "en" ? "Vegan" : "비건", Hospital: lang === "en" ? "Hospital" : "병원", Pharmacy: lang === "en" ? "Pharmacy" : "약국", "Hair Salon": lang === "en" ? "Hair Salon" : "미용실", Cafe: lang === "en" ? "Cafe" : "카페", Grocery: lang === "en" ? "Grocery" : "식료품" } as Record<string,string>)[value];
   const filtered = places.filter((place) => category === "All" || place.category === category || (category === "Food" && ["Halal", "Vegan"].includes(place.category)));
   return <section className="page section-pad guide-page"><div className="page-hero"><div><span className="eyebrow"><MapPin size={14}/>{t.guide.eyebrow}</span><h1>{t.guide.title}</h1><p>{t.guide.body}</p></div><div className="guide-visual"><span><MapPin/></span><i/><b>KU</b><i/><span><Utensils/></span></div></div>
-    <div className="chips guide-chips">{categories.map((item) => <button key={item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{categoryLabel(item)}</button>)}</div>
+    <div className="chips guide-chips">{categories.map((item) => <button key={item} aria-pressed={category === item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{categoryLabel(item)}</button>)}</div>
     {filtered.length ? <div className="place-grid">{filtered.map((place) => { const Icon = categoryIcons[place.category] || MapPin; return <article className="place-card" key={place.id}><div className="place-top"><span className="place-icon"><Icon/></span><span className="demo-pill">{t.common.demo}</span></div><span className="place-category">{categoryLabel(place.category)}</span><h2>{place.name[lang]}</h2><p>{place.description[lang]}</p><div className="place-meta"><span className={place.english ? "yes" : "no"}><MessageCircle size={16}/>{t.guide.english} {place.english ? <Check size={14}/> : "—"}</span><span><MapPin size={16}/>{place.location[lang]} · {place.distance} {t.guide.distance}</span></div><div className="student-tip"><Lightbulb size={17}/><div><strong>{t.guide.tip}</strong><p>{place.tip[lang]}</p></div></div></article>; })}</div> : <EmptyState icon={MapPin} text={t.guide.empty}/>} 
   </section>;
 }
 
-function Modal({ children, close, label, className = "" }: { children: React.ReactNode; close: () => void; label: string; className?: string }) {
-  useEffect(() => { const handler = (event: KeyboardEvent) => event.key === "Escape" && close(); document.body.style.overflow = "hidden"; window.addEventListener("keydown", handler); return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", handler); }; }, [close]);
-  return <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}><div className={`modal ${className}`} role="dialog" aria-modal="true" aria-label={label}>{children}</div></div>;
+function Modal({ children, close, label, className = "", dismissible = true }: { children: React.ReactNode; close: () => void; label: string; className?: string; dismissible?: boolean }) {
+  useEffect(() => { const handler = (event: KeyboardEvent) => { if (dismissible && event.key === "Escape") close(); }; document.body.style.overflow = "hidden"; window.addEventListener("keydown", handler); return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", handler); }; }, [close, dismissible]);
+  return <div className="modal-backdrop" onMouseDown={(event) => { if (dismissible && event.target === event.currentTarget) close(); }}><div className={`modal ${className}`} role="dialog" aria-modal="true" aria-label={label}>{children}</div></div>;
 }
 
 function SetupModal({ lang, t, submit, skip }: { lang: Lang; t: typeof copy[Lang]; submit: (profile: UserProfile) => void; skip: () => void }) {
@@ -395,7 +417,7 @@ function SetupModal({ lang, t, submit, skip }: { lang: Lang; t: typeof copy[Lang
   const [error, setError] = useState(false);
   const handleSubmit = (event: React.FormEvent) => { event.preventDefault(); if (!name.trim() || !arrivalDate) { setError(true); return; } submit({ name: name.trim(), arrivalDate, housing, mode: "personalized" }); };
 
-  return <Modal close={skip} label={t.setup.title} className="setup-modal"><div className="modal-icon"><Sparkles/></div><span className="eyebrow">{t.setup.eyebrow}</span><h2>{t.setup.title}</h2><p>{t.setup.body}</p><form onSubmit={handleSubmit}>
+  return <Modal close={skip} label={t.setup.title} className="setup-modal" dismissible={false}><div className="modal-icon"><Sparkles/></div><span className="eyebrow">{t.setup.eyebrow}</span><h2>{t.setup.title}</h2><p>{t.setup.body}</p><form onSubmit={handleSubmit}>
     <label className="field"><span>{t.setup.name}</span><input autoFocus value={name} onChange={(event) => setName(event.target.value)} placeholder={t.setup.namePlaceholder}/></label>
     <label className="field"><span>{t.setup.arrival}</span><input type="date" value={arrivalDate} onChange={(event) => setArrivalDate(event.target.value)}/></label>
     <fieldset className="housing-options"><legend>{t.setup.housing}</legend><label className={housing === "dorm" ? "selected" : ""}><input type="radio" name="housing" value="dorm" checked={housing === "dorm"} onChange={() => setHousing("dorm")}/><House/><span><strong>{t.setup.dorm}</strong></span></label><label className={housing === "off-campus" ? "selected" : ""}><input type="radio" name="housing" value="off-campus" checked={housing === "off-campus"} onChange={() => setHousing("off-campus")}/><MapPin/><span><strong>{t.setup.offCampus}</strong></span></label></fieldset>
