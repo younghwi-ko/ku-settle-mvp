@@ -23,3 +23,7 @@ export function formatDate(locale: Locale, isoDate: string) {
 export function formatDistance(locale: Locale, meters: number) {
   return new Intl.NumberFormat(localeTags[locale], { style: "unit", unit: "meter", unitDisplay: "short" }).format(meters);
 }
+
+export function joinOptionalLabel(label: string, detail?: string | null) {
+  return [label.trim(), detail?.trim()].filter(Boolean).join(" · ");
+}

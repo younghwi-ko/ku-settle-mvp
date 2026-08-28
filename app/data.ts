@@ -36,7 +36,7 @@ export type MarketProduct = {
   userCreated?: boolean;
 };
 export type PlaceCategory = "Food" | "Halal" | "Vegan" | "Hospital" | "Pharmacy" | "Hair Salon" | "Cafe" | "Grocery";
-export type Place = { id: number; category: PlaceCategory; nameKey: TranslationKey; descriptionKey: TranslationKey; locationKey: TranslationKey; distanceMeters: number; english: boolean; tipKey: TranslationKey };
+export type Place = { id: number; category: PlaceCategory; nameKey: TranslationKey; descriptionKey: TranslationKey; locationKey: TranslationKey; distanceMeters: number; english: boolean; languageSupportNoteKey?: TranslationKey | null; tipKey: TranslationKey };
 
 export const lifecycleStages: { id: LifecycleStage; labelKey: TranslationKey; number: string }[] = [
   { id: "before-arrival", labelKey: "onboarding:stages.beforeArrival", number: "01" },

@@ -85,7 +85,7 @@
       "arrival-essentials": { "title": "准备抵达必需品", "description": "把预计会用到的文件、联系方式和首日用品集中整理好。", "category": "行前准备", "preparation": ["旅行文件", "重要联系方式", "首日必需品"], "practicalNote": "建议将电子副本与原件分开保存。" },
       "dorm": { "title": "办理宿舍入住", "description": "完成宿舍入住步骤，并查看最新住宿说明。", "category": "住房", "preparation": ["宿舍确认材料", "要求的身份证明"], "practicalNote": "请以宿舍发送的最新说明为准。" },
       "residence": { "title": "确认居住信息", "description": "核对当前住房信息，并保存可能需要的居住证明材料。", "category": "住房", "preparation": ["当前住房信息", "住房联系人"], "practicalNote": "准备行政申请材料前，请先查看官方指南。" },
-      "arc": { "title": "了解外国人登陆证（ARC）办理流程", "description": "查看在韩国办理居留登记的最新官方说明。", "category": "居留登记", "preparation": ["最新官方指南", "根据本人居留资格要求的材料"], "practicalNote": "相关要求可能变化，请以 HiKorea 的最新信息为准。" },
+      "arc": { "title": "了解外国人登录证（ARC）办理流程", "description": "查看在韩国办理居留登记的最新官方说明。", "category": "居留登记", "preparation": ["最新官方指南", "根据本人居留资格要求的材料"], "practicalNote": "相关要求可能变化，请以 HiKorea 的最新信息为准。" },
       "bank": { "title": "开立银行账户", "description": "前往银行前，请先确认当前开户要求。", "category": "银行", "preparation": ["银行要求的身份证明", "最新办理条件"], "practicalNote": "不同银行的要求和语言支持可能不同，请在到访前确认。" },
       "sim": { "title": "办理韩国 SIM 卡", "description": "根据当前可用的身份证明和使用需求选择通信方案。", "category": "通信", "preparation": ["已解锁的手机", "当前持有的身份证明"], "practicalNote": "办理前请确认最新套餐条款和身份证明要求。" },
       "account": { "title": "激活 KU 账号", "description": "开通 KU Portal 及本人可使用的校内数字服务。", "category": "校内系统", "preparation": ["学号等学生身份信息", "KU 账号指南"], "practicalNote": "请按照高丽大学数字信息部门的最新说明操作。" },

@@ -14,7 +14,7 @@ import {
   type TranslationKey
 } from "./data";
 import {
-  formatCurrency, formatDate, formatDistance, formatNumber, formatPercent, localeNames, supportedLocales,
+  formatCurrency, formatDate, formatDistance, formatNumber, formatPercent, joinOptionalLabel, localeNames, supportedLocales,
   useAppI18n, type Locale
 } from "./i18n";
 
@@ -411,7 +411,7 @@ function LocalGuide({ locale, t, category, setCategory }: { locale: Locale; t: T
   const filtered = places.filter((place) => category === "All" || place.category === category || (category === "Food" && ["Halal", "Vegan"].includes(place.category)));
   return <section className="page section-pad guide-page"><div className="page-hero"><div><span className="eyebrow"><MapPin size={14}/>{tr(t, "localGuide:eyebrow")}</span><h1>{tr(t, "localGuide:title")}</h1><p>{tr(t, "localGuide:body")}</p></div><div className="guide-visual"><span><MapPin/></span><i/><b>KU</b><i/><span><Utensils/></span></div></div>
     <div className="chips guide-chips">{categories.map((item) => <button key={item} aria-pressed={category === item} aria-label={tr(t, "accessibility:placeCategory", { category: categoryLabel(item) })} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{categoryLabel(item)}</button>)}</div>
-    {filtered.length ? <div className="place-grid">{filtered.map((place) => { const Icon = categoryIcons[place.category] || MapPin; return <article className="place-card" key={place.id}><div className="place-top"><span className="place-icon"><Icon/></span><span className="demo-pill">{tr(t, "common:demoData")}</span></div><span className="place-category">{categoryLabel(place.category)}</span><h2>{tr(t, place.nameKey)}</h2><p>{tr(t, place.descriptionKey)}</p><div className="place-meta"><span className={place.english ? "yes" : "no"}><MessageCircle size={16}/>{tr(t, "localGuide:englishAvailable")} {place.english ? <Check size={14}/> : "—"}</span><span><MapPin size={16}/>{tr(t, place.locationKey)} · {tr(t, "localGuide:distanceFromKu", { distance: formatDistance(locale, place.distanceMeters) })}</span></div><div className="student-tip"><Lightbulb size={17}/><div><strong>{tr(t, "localGuide:studentTip")}</strong><p>{tr(t, place.tipKey)}</p></div></div></article>; })}</div> : <EmptyState icon={MapPin} text={tr(t, "localGuide:empty")}/>}
+    {filtered.length ? <div className="place-grid">{filtered.map((place) => { const Icon = categoryIcons[place.category] || MapPin; const supportNote = place.languageSupportNoteKey ? tr(t, place.languageSupportNoteKey) : undefined; return <article className="place-card" key={place.id}><div className="place-top"><span className="place-icon"><Icon/></span><span className="demo-pill">{tr(t, "common:demoData")}</span></div><span className="place-category">{categoryLabel(place.category)}</span><h2>{tr(t, place.nameKey)}</h2><p>{tr(t, place.descriptionKey)}</p><div className="place-meta"><span className={place.english ? "yes" : "no"}><MessageCircle size={16}/>{joinOptionalLabel(tr(t, "localGuide:englishAvailable"), supportNote)}{place.english && <Check size={14} aria-hidden="true"/>}</span><span><MapPin size={16}/>{tr(t, place.locationKey)} · {tr(t, "localGuide:distanceFromKu", { distance: formatDistance(locale, place.distanceMeters) })}</span></div><div className="student-tip"><Lightbulb size={17}/><div><strong>{tr(t, "localGuide:studentTip")}</strong><p>{tr(t, place.tipKey)}</p></div></div></article>; })}</div> : <EmptyState icon={MapPin} text={tr(t, "localGuide:empty")}/>}
   </section>;
 }
 

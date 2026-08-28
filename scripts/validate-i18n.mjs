@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import i18next from "i18next";
+import { joinOptionalLabel } from "../app/i18n/formatters.ts";
 import { detectLocale, supportedLocales } from "../app/i18n/types.ts";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
@@ -52,6 +53,13 @@ assert.equal(detectLocale(null, null, ["ja-JP"]), "ja", "Japanese browser detect
 assert.equal(detectLocale(null, null, ["zh-Hans-CN"]), "zh-CN", "Simplified Chinese browser detection failed");
 assert.equal(detectLocale(null, null, ["zh-TW"]), "en", "Traditional Chinese must currently fall back to English");
 assert.equal(detectLocale(null, null, ["fr-FR"]), "en", "unsupported language must fall back to English");
+assert.ok(!JSON.stringify(locales["zh-CN"]).includes("外国人登陆证"), "Simplified Chinese ARC terminology still contains 外国人登陆证");
+assert.ok(JSON.stringify(locales["zh-CN"]).includes("外国人登录证（ARC）"), "Simplified Chinese ARC terminology is missing 外国人登录证（ARC）");
+assert.equal(joinOptionalLabel("English available", "Call ahead"), "English available · Call ahead", "non-empty optional guidance must include a separator");
+assert.equal(joinOptionalLabel("English available", ""), "English available", "empty optional guidance must not include a separator");
+assert.equal(joinOptionalLabel("English available", "   "), "English available", "whitespace-only optional guidance must not include a separator");
+assert.equal(joinOptionalLabel("English available", null), "English available", "null optional guidance must not include a separator");
+assert.equal(joinOptionalLabel("English available", undefined), "English available", "undefined optional guidance must not include a separator");
 
 const fallbackResources = Object.fromEntries(supportedLocales.map((locale) => [locale, { common: structuredClone(locales[locale].common) }]));
 delete fallbackResources.ja.common.cancel;
