@@ -47,6 +47,8 @@ for (const key of referencedKeys) {
 }
 
 assert.equal(detectLocale("ja", "ko", ["en-US"]), "ja", "URL locale must take priority");
+assert.equal(detectLocale("invalid", "ko", ["ja-JP"]), "ko", "invalid URL locale must fall back to storage");
+assert.equal(detectLocale("invalid", "invalid", ["ja-JP"]), "ja", "invalid URL and storage locales must fall back to the browser");
 assert.equal(detectLocale(null, "ko", ["ja-JP"]), "ko", "existing KO storage value must migrate safely");
 assert.equal(detectLocale(null, "en", ["ko-KR"]), "en", "existing EN storage value must migrate safely");
 assert.equal(detectLocale(null, null, ["ja-JP"]), "ja", "Japanese browser detection failed");

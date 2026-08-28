@@ -124,7 +124,7 @@ function productSeller(product: MarketProduct, t: TFunction, profile: UserProfil
 }
 
 export default function Home() {
-  const { t, locale, changeLocale } = useAppI18n();
+  const { t, locale, localeReady, changeLocale } = useAppI18n();
   const [page, setPage] = useState<Page>("home");
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [done, setDone] = useState<string[]>([]);
@@ -181,7 +181,9 @@ export default function Home() {
     const timer = window.setTimeout(() => setHighlightTaskId(null), 1800);
     return () => window.clearTimeout(timer);
   }, [highlightTaskId]);
-  useEffect(() => { document.title = `KU Settle — ${tr(t, "navigation:brandTagline")}`; }, [locale, t]);
+  useEffect(() => {
+    if (localeReady && hydrated) document.title = `KU Settle — ${tr(t, "navigation:brandTagline")}`;
+  }, [hydrated, locale, localeReady, t]);
 
   const currentProfile = profile ?? demoProfile;
   const activeTasks = useMemo(() => getActiveTasks(currentProfile.housing), [currentProfile.housing]);
@@ -231,6 +233,8 @@ export default function Home() {
     setResetOpen(false); setProfileOpen(false); setPage("home"); setSetupOpen(true); window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  if (!localeReady || !hydrated) return <InitialLoading/>;
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -266,6 +270,10 @@ export default function Home() {
       {contactOpen && <ContactModal t={t} close={() => setContactOpen(false)}/>}
     </div>
   );
+}
+
+function InitialLoading() {
+  return <div className="initial-loading" aria-busy="true"><span className="brand-mark">KU</span><strong>KU Settle</strong><i aria-hidden="true"/></div>;
 }
 
 function LanguageSelector({ locale, changeLocale, t }: { locale: Locale; changeLocale: (locale: Locale) => Promise<void>; t: TFunction }) {

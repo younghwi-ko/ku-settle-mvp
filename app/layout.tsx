@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "KU Settle — International Student Lifecycle Companion",
+  title: "KU Settle",
   description: "A multilingual action-oriented companion for international students from arrival preparation through departure.",
 };
 
