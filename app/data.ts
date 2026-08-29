@@ -44,7 +44,7 @@ export type MarketProduct = {
   reportDraft?: string;
 };
 export type PlaceCategory = "Food" | "Halal" | "Vegan" | "Hospital" | "Pharmacy" | "Hair Salon" | "Cafe" | "Grocery";
-export type Place = { id: number; category: PlaceCategory; nameKey: TranslationKey; descriptionKey: TranslationKey; locationKey: TranslationKey; distanceMeters: number; english: boolean; languageSupportNoteKey?: TranslationKey | null; tipKey: TranslationKey; officialUrl?: string; mapUrl?: string; sourceName?: string; lastVerifiedAt?: string; verificationStatus?: VerificationStatus; languageSupport?: "confirmed" | "ask_provider" | "unknown" };
+export type Place = { id: number; category: PlaceCategory; nameKey: TranslationKey; descriptionKey: TranslationKey; locationKey: TranslationKey; distanceMeters: number; english: boolean; languageSupportNoteKey?: TranslationKey | null; tipKey: TranslationKey; displayName?: string; displayDescription?: string; displayLocation?: string; address?: string; phone?: string; hours?: string; closedDays?: string; officialUrl?: string; mapUrl?: string; sourceName?: string; lastVerifiedAt?: string; verificationStatus?: VerificationStatus; languageSupport?: "confirmed" | "ask_provider" | "unknown" };
 export type LifeGuideCategory = "housing" | "arrival" | "immigration" | "mobile-banking" | "academic" | "healthcare" | "daily" | "departure";
 export type VerificationStatus = "official" | "verified" | "needs_confirmation" | "demo";
 export type GuideLocaleCopy = { title: string; summary: string; content: string; checklist?: string[]; steps?: string[]; cautions?: string[] };
@@ -110,7 +110,7 @@ const sampleProducts: MarketProduct[] = [
 export const products: MarketProduct[] = sampleProducts.map((product) => ({ ...product, source: "sample" }));
 
 export const places: Place[] = [
-  { id: 1, category: "Hospital", nameKey: "localGuide:places.anamClinic.name", descriptionKey: "localGuide:places.anamClinic.description", locationKey: "localGuide:places.anamClinic.location", distanceMeters: 350, english: true, tipKey: "localGuide:places.anamClinic.tip" },
+  { id: 1, category: "Hospital", nameKey: "localGuide:places.anamClinic.name", descriptionKey: "localGuide:places.anamClinic.description", locationKey: "localGuide:places.anamClinic.location", distanceMeters: 350, english: true, tipKey: "localGuide:places.anamClinic.tip", address: "서울특별시 성북구 고려대로 73", phone: "1577-0083", officialUrl: "https://anam.kumc.or.kr/", sourceName: "고려대학교 공식 안내", lastVerifiedAt: "2026-08-29", verificationStatus: "official", languageSupport: "unknown" },
   { id: 2, category: "Pharmacy", nameKey: "localGuide:places.kuPharmacy.name", descriptionKey: "localGuide:places.kuPharmacy.description", locationKey: "localGuide:places.kuPharmacy.location", distanceMeters: 220, english: false, tipKey: "localGuide:places.kuPharmacy.tip" },
   { id: 3, category: "Halal", nameKey: "localGuide:places.seoulKitchen.name", descriptionKey: "localGuide:places.seoulKitchen.description", locationKey: "localGuide:places.seoulKitchen.location", distanceMeters: 480, english: true, tipKey: "localGuide:places.seoulKitchen.tip" },
   { id: 4, category: "Vegan", nameKey: "localGuide:places.greenTable.name", descriptionKey: "localGuide:places.greenTable.description", locationKey: "localGuide:places.greenTable.location", distanceMeters: 620, english: true, tipKey: "localGuide:places.greenTable.tip" },

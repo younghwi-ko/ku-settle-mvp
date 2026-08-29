@@ -1,4 +1,4 @@
-import type { LifecycleStage, MarketProduct } from "../data";
+import type { LifecycleStage, MarketProduct, Place } from "../data";
 import type { StoredProfile } from "./domain";
 
 export const LOCAL_DATA_VERSION = 6;
@@ -7,10 +7,11 @@ export type LocalReservation = { id: string; productId: string; buyerName: strin
 export type MarketplaceReview = { productId: string; rating: number; text: string; createdAt: string };
 export type ReportDraft = { productId: string; reason: string; detail?: string; status: "new" | "reviewed" | "resolved"; createdAt: string };
 export type GuideMetadata = { contentCheckedAt: string; contentOrigin: "official-guide" | "demo"; sourceStatus: "verified" | "needs_confirmation" | "unavailable"; officialUrl?: string; officialUrls?: Partial<Record<"en" | "ko" | "ja" | "zh-CN", string>>; sourceName?: string };
-export type LocalPreferences = { dueDates: Record<string, string>; notes: Record<string, string>; important: string[]; hiddenCompleted: boolean; customTasks: PersonalTask[]; guideFavorites: string[]; placeFavorites: number[]; reports: Record<string, string>; reservedProductIds: string[]; reservations: LocalReservation[]; favoriteProductIds: string[]; reviews: MarketplaceReview[]; inquiryDrafts: Record<string, string>; reportDrafts: ReportDraft[]; progressHistory: { date: string; progress: number }[]; guideMetadata: Record<string, GuideMetadata> };
+export type LocalPlaceOverride = Partial<Pick<Place, "category" | "address" | "phone" | "hours" | "closedDays" | "officialUrl" | "mapUrl" | "sourceName" | "lastVerifiedAt" | "verificationStatus" | "languageSupport">> & { id: number };
+export type LocalPreferences = { dueDates: Record<string, string>; notes: Record<string, string>; important: string[]; hiddenCompleted: boolean; customTasks: PersonalTask[]; guideFavorites: string[]; placeFavorites: number[]; placeOverrides: Record<string, LocalPlaceOverride>; customPlaces: Place[]; deletedPlaceIds: number[]; reports: Record<string, string>; reservedProductIds: string[]; reservations: LocalReservation[]; favoriteProductIds: string[]; reviews: MarketplaceReview[]; inquiryDrafts: Record<string, string>; reportDrafts: ReportDraft[]; progressHistory: { date: string; progress: number }[]; guideMetadata: Record<string, GuideMetadata> };
 export type LocalData = { version: number; profile: StoredProfile | null; done: string[]; products: MarketProduct[]; verified: boolean; preferences: LocalPreferences };
 
-export const emptyPreferences = (): LocalPreferences => ({ dueDates: {}, notes: {}, important: [], hiddenCompleted: false, customTasks: [], guideFavorites: [], placeFavorites: [], reports: {}, reservedProductIds: [], reservations: [], favoriteProductIds: [], reviews: [], inquiryDrafts: {}, reportDrafts: [], progressHistory: [], guideMetadata: {} });
+export const emptyPreferences = (): LocalPreferences => ({ dueDates: {}, notes: {}, important: [], hiddenCompleted: false, customTasks: [], guideFavorites: [], placeFavorites: [], placeOverrides: {}, customPlaces: [], deletedPlaceIds: [], reports: {}, reservedProductIds: [], reservations: [], favoriteProductIds: [], reviews: [], inquiryDrafts: {}, reportDrafts: [], progressHistory: [], guideMetadata: {} });
 const asRecord = (value: unknown): Record<string, unknown> => value && typeof value === "object" ? value as Record<string, unknown> : {};
 const strings = (value: unknown) => Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
 const stringRecord = (value: unknown): Record<string, string> => { const result: Record<string, string> = {}; for (const [key, item] of Object.entries(asRecord(value))) if (typeof item === "string") result[key] = item; return result; };
@@ -30,6 +31,9 @@ export function migrateLocalData(raw: unknown): LocalData {
     notes: stringRecord(preferences.notes),
     important: strings(preferences.important), hiddenCompleted: preferences.hiddenCompleted === true, customTasks,
     guideFavorites: strings(preferences.guideFavorites), placeFavorites: Array.isArray(preferences.placeFavorites) ? preferences.placeFavorites.filter((x): x is number => typeof x === "number") : [],
+    placeOverrides: Object.fromEntries(Object.entries(asRecord(preferences.placeOverrides)).flatMap(([id, value]) => { const x = asRecord(value); return typeof x.id === "number" ? [[id, { ...x, id: x.id } as LocalPlaceOverride]] : []; })),
+    customPlaces: Array.isArray(preferences.customPlaces) ? preferences.customPlaces.filter((item): item is Place => { const x = asRecord(item); return typeof x.id === "number" && typeof x.nameKey === "string" && typeof x.category === "string" && typeof x.locationKey === "string" && typeof x.descriptionKey === "string" && typeof x.tipKey === "string" && typeof x.distanceMeters === "number" && typeof x.displayName === "string"; }) : [],
+    deletedPlaceIds: Array.isArray(preferences.deletedPlaceIds) ? preferences.deletedPlaceIds.filter((x): x is number => typeof x === "number") : [],
     reports: stringRecord(preferences.reports), reservedProductIds, reservations, favoriteProductIds: strings(preferences.favoriteProductIds),
     reviews: Array.isArray(preferences.reviews) ? preferences.reviews.filter((item): item is MarketplaceReview => { const x = asRecord(item); return typeof x.productId === "string" && typeof x.rating === "number" && typeof x.text === "string" && typeof x.createdAt === "string"; }) : [],
     inquiryDrafts: stringRecord(preferences.inquiryDrafts),
