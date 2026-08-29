@@ -37,6 +37,11 @@ export type MarketProduct = {
   source?: "sample" | "demo" | "live";
   ownedByCurrentUser?: boolean;
   serviceStatus?: "active" | "sold" | "hidden" | "deleted";
+  description?: string;
+  imageDataUrl?: string;
+  availableHours?: string;
+  sellerInquiryDraft?: string;
+  reportDraft?: string;
 };
 export type PlaceCategory = "Food" | "Halal" | "Vegan" | "Hospital" | "Pharmacy" | "Hair Salon" | "Cafe" | "Grocery";
 export type Place = { id: number; category: PlaceCategory; nameKey: TranslationKey; descriptionKey: TranslationKey; locationKey: TranslationKey; distanceMeters: number; english: boolean; languageSupportNoteKey?: TranslationKey | null; tipKey: TranslationKey; officialUrl?: string; mapUrl?: string; sourceName?: string; lastVerifiedAt?: string; verificationStatus?: VerificationStatus; languageSupport?: "confirmed" | "ask_provider" | "unknown" };

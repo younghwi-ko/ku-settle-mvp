@@ -1,7 +1,7 @@
 import type { LifecycleStage, MarketProduct } from "../data";
 import type { StoredProfile } from "./domain";
 
-export const LOCAL_DATA_VERSION = 2;
+export const LOCAL_DATA_VERSION = 3;
 export type PersonalTask = { id: string; title: string; stage: LifecycleStage; dueDate: string; note: string; completed: boolean };
 export type LocalPreferences = { dueDates: Record<string, string>; notes: Record<string, string>; important: string[]; hiddenCompleted: boolean; customTasks: PersonalTask[]; guideFavorites: string[]; placeFavorites: number[]; reports: Record<string, string> };
 export type LocalData = { version: number; profile: StoredProfile | null; done: string[]; products: MarketProduct[]; verified: boolean; preferences: LocalPreferences };

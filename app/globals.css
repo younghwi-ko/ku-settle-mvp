@@ -267,6 +267,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .details-link { display: flex; justify-content: space-between; align-items: center; color: var(--blue); border-top: 1px solid #edf0f5; margin-top: 13px; padding-top: 12px; font-size: 10px; font-weight: 750; }
 .success-banner { display: flex; align-items: center; gap: 9px; background: #e7f7f2; color: var(--green); border: 1px solid #c5eadf; border-radius: 12px; padding: 12px 14px; margin-bottom: 18px; font-size: 11px; font-weight: 750; }
 .listing-form { background: white; border: 1px solid var(--line); border-radius: 19px; padding: 25px; box-shadow: 0 12px 34px rgba(29,54,96,.06); }
+.listing-image-preview { display: block; width: 120px; height: 90px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); margin-top: 8px; }
+.modal-listing-image { display: block; width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; margin: 12px 0; }
+.listing-description, .listing-hours { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 8px 0; }
 .listing-heading { display: flex; align-items: center; gap: 15px; margin-bottom: 18px; }
 .listing-heading h2 { color: var(--navy); font-size: 20px; margin: 0 0 5px; }
 .listing-heading p { color: var(--muted); font-size: 11px; line-height: 1.55; margin: 0; }
