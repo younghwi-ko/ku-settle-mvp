@@ -27,6 +27,23 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .initial-loading { min-height: 100vh; display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--navy); background: var(--surface); }
 .initial-loading strong { font-size: 18px; letter-spacing: -.02em; }
 .initial-loading i { width: 18px; height: 18px; border: 2px solid #c9d6ea; border-top-color: var(--blue); border-radius: 50%; animation: loading-spin .7s linear infinite; }
+.service-status { position: fixed; z-index: 80; right: 20px; bottom: 20px; max-width: min(420px, calc(100vw - 40px)); padding: 12px 14px; border-radius: 12px; background: var(--navy); color: white; display: flex; align-items: center; gap: 10px; box-shadow: 0 16px 35px #0e172633; font-size: 13px; }
+.service-status.error { background: #8b1e31; }
+.service-status button { margin-left: auto; border: 0; background: transparent; color: inherit; cursor: pointer; }
+.configuration-warning, .auth-security-note { padding: 12px; border-radius: 10px; background: #fff7e8; color: #70531a; font-size: 13px; line-height: 1.55; }
+.auth-email { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin: 14px 0; padding: 10px 12px; border-radius: 10px; background: var(--soft); font-size: 13px; overflow-wrap: anywhere; }
+.auth-email button, .danger-link { border: 0; background: transparent; color: var(--crimson); font-weight: 700; cursor: pointer; }
+.verified-badge { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--green); background: #edf8f2; border-radius: 999px; padding: 6px 10px; font-size: 12px; font-weight: 750; margin-bottom: 12px; }
+.account-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; }
+.owner-listing-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+.owner-listing-actions .danger-link { margin-left: auto; }
+.import-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 18px 0; }
+.import-summary span { padding: 12px 8px; border-radius: 10px; background: var(--soft); text-align: center; font-size: 12px; }
+.import-summary strong { display: block; font-size: 20px; color: var(--crimson); }
+.delete-list { margin: 14px 0 18px; padding-left: 20px; line-height: 1.8; color: var(--muted); }
+.auth-gate { text-align: center; display: grid; justify-items: center; gap: 10px; }
+.auth-gate > svg { width: 36px; height: 36px; color: var(--crimson); }
+.source-pill { position: absolute; left: 10px; bottom: 10px; padding: 4px 7px; border-radius: 999px; background: #ffffffe8; color: var(--navy); font-size: 10px; font-weight: 800; }
 @keyframes loading-spin { to { transform: rotate(360deg); } }
 
 .topbar { height: 76px; padding: 0 max(24px, calc((100vw - 1220px) / 2)); display: flex; align-items: center; justify-content: space-between; gap: 24px; background: rgba(255,255,255,.96); border-bottom: 1px solid rgba(223,230,240,.9); position: sticky; top: 0; z-index: 30; backdrop-filter: blur(14px); }
@@ -351,6 +368,8 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
 }
 
 @media (max-width: 700px) {
+  .import-summary { grid-template-columns: 1fr; }
+  .service-status { right: 12px; bottom: 12px; max-width: calc(100vw - 24px); }
   .topbar { height: 68px; padding: 0 15px; }
   .brand small { display: none; }
   .brand-mark { width: 35px; height: 35px; }

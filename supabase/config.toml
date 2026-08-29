@@ -1,0 +1,50 @@
+project_id = "ku-settle-local"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+
+[db]
+port = 54322
+major_version = 17
+
+[studio]
+enabled = true
+port = 54323
+
+[local_smtp]
+enabled = true
+port = 54324
+smtp_port = 54325
+sender_name = "KU Settle"
+admin_email = "no-reply@local.ku-settle.test"
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://127.0.0.1:3000/**", "http://localhost:3000/**"]
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+otp_length = 6
+otp_expiry = 600
+
+[auth.hook.before_user_created]
+enabled = true
+uri = "pg-functions://postgres/private/before_user_created"
+
+# Disabled locally because no Resend credentials exist. Mailpit validates the OTP flow;
+# the signed Send Email Hook is tested separately with a mocked provider.
+[auth.hook.send_email]
+enabled = false
+uri = "http://host.docker.internal:54321/functions/v1/send-email"
+
+[functions.send-email]
+verify_jwt = false
+
+[functions.delete-account]
+verify_jwt = true

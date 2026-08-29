@@ -4,7 +4,7 @@ KU Settle은 고려대학교 외국인 학생이 입국 준비부터 귀국까�
 
 > **Information → Action: 입국부터 귀국까지 이어지는 유학생 lifecycle 온보딩**
 
-English, 한국어, 日本語, 简体中文을 지원하며 모든 콘텐츠와 데모 데이터가 프로젝트에 포함되어 있습니다. 외부 API Key, 백엔드, 데이터베이스가 없어도 전체 발표 시나리오를 실행할 수 있습니다.
+English, 한국어, 日本語, 简体中文을 지원합니다. Supabase가 설정되지 않은 환경에서는 기존 Guest/Demo 발표 시나리오가 그대로 동작하고, 설정된 환경에서는 고려대 이메일 OTP 계정과 기기 간 데이터 동기화를 사용합니다.
 
 ## 주요 기능
 
@@ -13,8 +13,10 @@ English, 한국어, 日本語, 简体中文을 지원하며 모든 콘텐츠와 
 - 전체·단계별 진행률과 첫 번째 미완료 작업 자동 추천
 - HiKorea·KU 공식 안내, Local Guide 필터, Marketplace 모드로 이어지는 action
 - 입국 학생 상품 탐색 및 출국 학생 상품 등록 데모
-- `@korea.ac.kr` 형식만 확인하는 명시적인 데모 학생 인증
-- 사용자 설정, 체크리스트, 인증, 등록 상품, 언어를 브라우저 `localStorage`에 저장
+- Guest/Demo의 명시적인 데모 인증과 실제 사용자의 Supabase 6자리 이메일 OTP 인증을 분리
+- 실제 사용자의 프로필·진행률·상품은 Postgres와 RLS로 보호하고 Guest/Demo 상태는 `localStorage`에 저장
+- 사용자가 확인한 경우에만 기존 개인화 Guest 데이터를 계정으로 가져오는 멱등 import
+- 실제 상품 등록·판매 완료·숨김·삭제와 본인 소유권 검증
 - Reset demo 실행 시 언어를 제외한 데모 상태만 초기화
 - 320px 모바일부터 데스크톱까지 대응하는 CJK 안전 반응형 UI
 
@@ -57,6 +59,8 @@ Lifecycle, 상품, 장소 데이터에는 번역문 대신 `titleKey`, `descript
 - Tailwind CSS 4 및 프로젝트 전용 CSS
 - lucide-react
 - Next.js Static Export (`output: "export"`)
+- Supabase Auth, Postgres RLS, Edge Functions
+- Vitest와 pgTAP
 
 ## 로컬 실행 방법
 
@@ -72,7 +76,7 @@ pnpm dev
 ```bash
 pnpm run lint
 pnpm run typecheck
-pnpm run test:i18n
+pnpm test
 pnpm run build
 ```
 
@@ -83,7 +87,12 @@ pnpm run build
 1. GitHub 저장소에 변경사항을 push합니다.
 2. Vercel에서 **Add New → Project**를 선택하고 저장소를 Import합니다.
 3. Framework Preset이 **Next.js**인지 확인합니다.
-4. 환경 변수 없이 **Deploy**를 누릅니다.
+4. Guest/Demo만 배포하려면 환경 변수 없이 배포합니다. 계정 기능을 사용할 때는 아래 Supabase 공개 변수 두 개를 Vercel에 설정합니다.
+
+```text
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+```
 
 현재 저장소가 Vercel 프로젝트와 연결되어 있다면 `main` push 뒤 자동으로 새 Production Deployment가 생성됩니다. `vercel.json`과 `next.config.ts`에 정적 배포 설정이 포함되어 있습니다.
 
@@ -108,29 +117,81 @@ app/
 │  ├─ types.ts              # locale 정규화·감지
 │  ├─ use-app-i18n.ts       # URL·localStorage·document 동기화
 │  └─ locales/              # en, ko, ja, zh-CN JSON 리소스
-├─ page.tsx                 # 화면, 상태, 접근 가능한 모달과 선택기
+├─ lib/                     # Supabase client, repository, validation·migration
+├─ page.tsx                 # Guest/Demo/Auth 화면과 접근 가능한 모달
 ├─ globals.css              # 디자인 시스템과 CJK 반응형 스타일
 └─ layout.tsx               # 메타데이터와 루트 레이아웃
 scripts/
 └─ validate-i18n.mjs        # 키 일치·빈 값·fallback·locale 감지 검사
+supabase/
+├─ migrations/              # schema, trigger, constraints, RLS policies
+├─ functions/               # signed email hook, self-service account deletion
+├─ tests/                   # pgTAP tenant isolation and security tests
+├─ config.toml              # local Auth, 6-digit OTP, 10-minute expiry, Mailpit
+└─ seed.sql                 # local-only security test users; no Alex data
+tests/
+└─ domain.test.ts           # email, validation, migration, error and email-template tests
 ```
 
-## localStorage와 다음 백엔드 단계
+## Supabase 로컬 개발
+
+Docker Desktop이 실행 중이어야 합니다. CLI는 프로젝트 dev dependency이므로 전역 설치가 필요 없습니다.
+
+```bash
+pnpm install
+pnpm supabase:start
+pnpm supabase:reset
+pnpm test:db
+```
+
+`pnpm supabase:start`가 표시하는 API URL과 publishable/anon key를 `.env.local`의 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`에 넣습니다. 로컬 OTP 이메일은 Supabase가 제공하는 Mailpit UI에서 확인합니다. 실제 Resend 발송은 로컬 기본 흐름에 사용하지 않습니다.
+
+전체 로컬 검증:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm test:db
+```
+
+## 원격 Supabase와 이메일 설정
+
+1. Supabase 프로젝트를 만든 뒤 `supabase link --project-ref <ref>`로 연결합니다.
+2. `supabase db push`로 검증된 migration을 적용합니다.
+3. Dashboard의 Site URL과 Redirect allowlist에 실제 Vercel URL을 등록합니다.
+4. 이메일 OTP를 6자리, 만료 600초로 설정하고 `private.before_user_created`를 Before User Created Hook으로 활성화합니다.
+5. Resend에서 발신 도메인을 검증한 뒤 Edge Function secret `RESEND_API_KEY`, `SEND_EMAIL_HOOK_SECRET`, `AUTH_EMAIL_FROM`, `AUTH_EMAIL_REPLY_TO`, `APP_URL`을 설정합니다.
+6. `send-email`을 배포하고 Standard Webhooks secret과 일치하는 Send Email Hook을 활성화합니다.
+7. `delete-account`를 JWT 검증이 켜진 상태로 배포합니다.
+8. 마지막으로 Vercel에 공개 변수 두 개만 설정합니다. service-role key와 Edge Function secret은 Vercel 클라이언트 환경에 넣지 않습니다.
+
+실제 원격 적용 전에는 pgTAP, Auth OTP, 네 언어 이메일, 계정 삭제 cascade를 별도 staging 프로젝트에서 확인하세요. `.env.example`은 변수명만 제공하며 실제 secret은 커밋하지 않습니다.
+
+## 앱 상태와 localStorage
+
+앱 상태는 다음처럼 분리됩니다.
+
+- `guest`: 계정 없이 기기 내 lifecycle을 체험합니다. 실제 Marketplace DB에는 쓸 수 없습니다.
+- `demo`: 사용자가 **Try demo**를 선택했을 때만 Alex preset을 사용하며 모든 변경은 로컬에만 남습니다.
+- `authenticated`: 유효한 Supabase 세션과 정확한 `@korea.ac.kr` 이메일을 사용하며 DB가 source of truth입니다.
 
 현재 저장 키:
 
 - `ku-settle-profile`: 이름, 입국 예정일, 주거 유형, 데모 여부
 - `ku-settle-checklist`: 완료 작업 ID 배열
-- `ku-settle-verified`: 데모 인증 상태
+- `ku-settle-verified`: Demo 전용 legacy 인증 상태이며 실제 인증 판정에는 사용하지 않음
 - `ku-settle-user-products`: 사용자가 등록한 언어 중립 상품 데이터
 - `ku-settle-language`: 선택 locale
 
-실제 서비스에서는 앞의 네 영역을 인증 사용자 기반 API와 데이터베이스로 옮기고 서버 측 검증·권한·동기화를 추가해야 합니다. 언어는 계정 환경설정과 브라우저 기본값을 조합할 수 있습니다. 기존 상품 형식과 체크리스트 ID는 읽을 때 검증·정규화하여 이전 데모 저장값도 안전하게 처리합니다.
+인증 사용자는 언어와 안전한 UI 상태, Supabase SDK가 관리하는 세션 외의 서비스 데이터를 localStorage의 source of truth로 사용하지 않습니다. 기존 개인화 Guest 데이터는 로그인 직후 요약 모달에서 사용자가 확인한 경우에만 가져오며, Alex Demo 데이터는 가져오지 않습니다.
 
 ## 데모 한계
 
-- 계정 생성, 실제 이메일 발송, 학교 SSO, 결제, 예약, 채팅, 배송, 지도, 푸시 알림은 없습니다.
-- 상품·장소·진행 정보는 브라우저별 데모 데이터이며 여러 기기 사이에 동기화되지 않습니다.
+- Supabase를 설정하지 않으면 계정과 실제 이메일 발송은 비활성화되고 Guest/Demo만 동작합니다.
+- 학교 SSO, 결제, 예약, 실제 채팅, 배송, 지도, 푸시 알림은 없습니다.
+- Sample 상품과 장소는 계속 정적 데모 데이터이며 DB 실제 상품과 UI에서 구분됩니다.
 - 행정·비자·법률·의료 요건은 변경될 수 있으므로 화면에서도 공식 출처 확인을 안내합니다.
 - Marketplace 인증은 실제 인증이 아닌 발표용 형식 검증입니다.
 - 일본어·중국어는 출시 전 원어민 및 도메인 전문가 검수가 필요합니다.

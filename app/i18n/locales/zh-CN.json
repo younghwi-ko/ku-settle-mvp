@@ -9,7 +9,7 @@
     "verified": "已验证高丽大学学生身份",
     "close": "关闭",
     "cancel": "取消",
-    "demoData": "演示数据",
+    "demoData": "演示数据", "sampleData": "示例", "liveData": "真实发布商品", "saving": "正在保存…", "saved": "已保存",
     "sample": "示例",
     "yes": "是",
     "no": "否",
@@ -125,7 +125,7 @@
     "empty": "没有符合搜索条件的商品。",
     "form": { "title": "为下一位同学发布商品", "body": "沿用现有图标卡片即可完成简单发布。本演示不需要上传图片。", "itemName": "商品名称", "price": "价格", "category": "分类", "condition": "成色", "pickup": "取货地点", "availability": "商品状态", "submit": "发布商品", "success": "商品已发布，新到校学生现在可以看到。", "itemPlaceholder": "例如：学习椅", "pricePlaceholder": "例如：20000", "pickupPlaceholder": "例如：高丽大学正门" },
     "actions": { "browse": "浏览校园集市", "list": "发布商品" },
-    "userSeller": "KU 学生 · {{name}}",
+    "userSeller": "KU 学生 · {{name}}", "authRequiredTitle": "登录后发布真实商品", "authRequiredBody": "访客计划只保存在当前设备。验证高丽大学邮箱后即可在学生校园集市发布商品。", "markSold": "标记为已售", "markActive": "恢复在售", "hideListing": "隐藏商品", "deleteListing": "删除商品",
     "products": {
       "riceCooker": { "name": "电饭煲", "pickup": "安岩站3号出口", "seller": "交换生 · Mia" },
       "deskLamp": { "name": "书桌台灯", "pickup": "高丽大学正门", "seller": "KU 学生 · Joon" },
@@ -156,6 +156,7 @@
     }
   },
   "verification": {
+    "signIn": "登录", "continue": "使用高丽大学邮箱继续", "authTitle": "使用高丽大学邮箱继续", "authBody": "我们会向严格以 @korea.ac.kr 结尾的邮箱发送登录链接。", "sendCode": "发送登录链接", "sending": "正在发送…", "linkSent": "登录链接已发送到您的邮箱。", "openLink": "请打开邮件中的登录链接以继续。", "code": "验证码", "verifyCode": "验证代码", "verifying": "正在验证…", "resend": "重新发送链接", "resendCooldown": "{{seconds}}秒后可重新发送", "changeEmail": "更换邮箱", "signOut": "退出登录", "verifiedKu": "高丽大学邮箱已验证", "securityNote": "KU Settle不会要求您提供密码。如非本人请求，请忽略该验证码。",
     "title": "学生身份演示认证",
     "body": "本原型只检查 KU 邮箱格式，不会实际发送邮件。正式服务需要通过高丽大学邮箱完成认证。",
     "email": "大学邮箱",
@@ -165,6 +166,7 @@
     "student": "交换生"
   },
   "profile": {
+    "guestName": "访客", "accountTitle": "我的账号", "accountTasks": "项已完成任务", "accountListings": "件发布商品", "save": "保存个人资料", "deleteAccount": "删除账号", "deleteTitle": "永久删除账号？", "deleteBody": "此操作无法撤销。个人资料、留学周期进度和所有发布商品都会被删除。", "deleteProfile": "账号和个人资料", "deleteProgress": "留学周期进度", "deleteListings": "所有在售、已售、隐藏和已删除商品", "typeEmail": "请输入邮箱以确认", "continueDelete": "继续", "deleteForever": "永久删除", "deleteSuccess": "账号已删除。", "importTitle": "导入当前设备上的计划？", "importBody": "只有在您确认后才会上传，演示数据绝不会导入。", "importProfile": " 个人资料", "importTasks": "项已完成任务", "importProducts": "件本地商品", "importConfirm": "导入数据", "importSuccess": "已导入当前设备上的计划。", "notNow": "暂不导入",
     "arrival": "预计抵达日期",
     "housing": "住房类型",
     "demoArrival": "演示资料",
@@ -190,12 +192,12 @@
   "validation": {
     "requiredFields": "请填写所有项目。",
     "validEmail": "请输入有效的 @korea.ac.kr 邮箱地址。",
-    "positivePrice": "请输入大于零的价格。"
+    "positivePrice": "请输入大于零的价格。", "nameRequired": "请输入不超过80个字符的姓名。", "invalidDate": "请输入有效日期。", "itemRequired": "请输入商品名称。", "validPrice": "请输入有效的韩元价格。", "pickupRequired": "请输入取货地点。", "otpLength": "请输入6位验证码。"
   },
   "errors": {
     "generic": "出现问题，请重试。",
     "storage": "无法读取已保存的数据，已恢复为安全的默认值。",
-    "missingTranslation": "该内容暂时以英语显示。"
+    "missingTranslation": "该内容暂时以英语显示。", "supabaseNotConfigured": "账号服务尚未连接。需要配置Supabase公开URL和publishable key后才能登录。", "rateLimit": "尝试次数过多，请稍后再试。", "sessionExpired": "登录会话已过期，请重新登录。", "permissionDenied": "您无权执行此操作。", "offline": "网络似乎已断开，修改未保存。", "supabaseUnavailable": "账号服务暂时不可用。", "invalidOtp": "验证码错误或已过期，请获取新验证码。", "saveFailed": "商品未保存，请重试。"
   },
   "accessibility": {
     "brandHome": "KU Settle 首页",

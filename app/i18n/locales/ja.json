@@ -9,7 +9,7 @@
     "verified": "高麗大学の学生として認証済み",
     "close": "閉じる",
     "cancel": "キャンセル",
-    "demoData": "デモデータ",
+    "demoData": "デモデータ", "sampleData": "サンプル", "liveData": "実際の出品", "saving": "保存中…", "saved": "保存しました",
     "sample": "サンプル",
     "yes": "はい",
     "no": "いいえ",
@@ -125,7 +125,7 @@
     "empty": "検索条件に合う商品はありません。",
     "form": { "title": "次の学生のために商品を登録", "body": "既存のアイコンカードを使って簡単に登録できます。このデモでは画像のアップロードは不要です。", "itemName": "商品名", "price": "価格", "category": "カテゴリー", "condition": "状態", "pickup": "受け取り場所", "availability": "販売状況", "submit": "商品を登録", "success": "商品を登録しました。これからKUへ来る学生の画面に表示されます。", "itemPlaceholder": "例：勉強用の椅子", "pricePlaceholder": "例：20000", "pickupPlaceholder": "例：高麗大学 正門" },
     "actions": { "browse": "マーケットを見る", "list": "商品を登録する" },
-    "userSeller": "KU学生 · {{name}}",
+    "userSeller": "KU学生 · {{name}}", "authRequiredTitle": "実際に出品するにはログインしてください", "authRequiredBody": "ゲストのプランはこの端末だけに保存されます。高麗大学メールを認証すると学生マーケットに出品できます。", "markSold": "売却済みにする", "markActive": "出品中に戻す", "hideListing": "出品を非表示", "deleteListing": "出品を削除",
     "products": {
       "riceCooker": { "name": "炊飯器", "pickup": "安岩駅3番出口", "seller": "交換留学生 · Mia" },
       "deskLamp": { "name": "デスクライト", "pickup": "高麗大学 正門", "seller": "KU学生 · Joon" },
@@ -156,6 +156,7 @@
     }
   },
   "verification": {
+    "signIn": "ログイン", "continue": "高麗大学メールで続ける", "authTitle": "高麗大学メールで続ける", "authBody": "末尾が正確に@korea.ac.krのメールへログインリンクを送信します。", "sendCode": "ログインリンクを送信", "sending": "送信中…", "linkSent": "ログインリンクをメールに送信しました。", "openLink": "メールのログインリンクを開いて続行してください。", "code": "認証コード", "verifyCode": "コードを確認", "verifying": "確認中…", "resend": "リンクを再送信", "resendCooldown": "{{seconds}}秒後に再送信", "changeEmail": "メールを変更", "signOut": "ログアウト", "verifiedKu": "高麗大学メール認証済み", "securityNote": "KU Settleがパスワードを求めることはありません。心当たりのないコードは無視してください。",
     "title": "学生認証デモ",
     "body": "このプロトタイプではKUメールの形式のみを確認し、実際のメールは送信しません。実際のサービスでは、高麗大学のメールによる認証が必要です。",
     "email": "大学メール",
@@ -165,6 +166,7 @@
     "student": "交換留学生"
   },
   "profile": {
+    "guestName": "ゲスト", "accountTitle": "アカウント", "accountTasks": "件の完了タスク", "accountListings": "件の出品", "save": "プロフィールを保存", "deleteAccount": "アカウントを削除", "deleteTitle": "アカウントを完全に削除しますか？", "deleteBody": "元に戻せません。プロフィール、ライフサイクルの進捗、すべての出品が削除されます。", "deleteProfile": "アカウントとプロフィール", "deleteProgress": "ライフサイクルの進捗", "deleteListings": "出品中・売却済み・非表示・削除済みの全商品", "typeEmail": "確認のためメールアドレスを入力", "continueDelete": "続ける", "deleteForever": "完全に削除", "deleteSuccess": "アカウントを削除しました。", "importTitle": "この端末のプランを取り込みますか？", "importBody": "確認するまでアップロードされません。デモデータは取り込みません。", "importProfile": " プロフィール", "importTasks": "件の完了タスク", "importProducts": "件のローカル出品", "importConfirm": "データを取り込む", "importSuccess": "端末のプランを取り込みました。", "notNow": "後で",
     "arrival": "到着予定日",
     "housing": "住居タイプ",
     "demoArrival": "デモプロフィール",
@@ -190,12 +192,12 @@
   "validation": {
     "requiredFields": "すべての項目を入力してください。",
     "validEmail": "有効な@korea.ac.krのメールアドレスを入力してください。",
-    "positivePrice": "0より大きい価格を入力してください。"
+    "positivePrice": "0より大きい価格を入力してください。", "nameRequired": "80文字以内で名前を入力してください。", "invalidDate": "正しい日付を入力してください。", "itemRequired": "商品名を入力してください。", "validPrice": "正しいウォン価格を入力してください。", "pickupRequired": "受け取り場所を入力してください。", "otpLength": "6桁の認証コードを入力してください。"
   },
   "errors": {
     "generic": "問題が発生しました。もう一度お試しください。",
     "storage": "保存データを読み込めなかったため、安全な初期値に戻しました。",
-    "missingTranslation": "この内容は一時的に英語で表示されています。"
+    "missingTranslation": "この内容は一時的に英語で表示されています。", "supabaseNotConfigured": "アカウントサービスはまだ接続されていません。ログインにはSupabaseの公開URLとpublishable keyが必要です。", "rateLimit": "試行回数が多すぎます。しばらく待ってから再度お試しください。", "sessionExpired": "セッションの有効期限が切れました。再度ログインしてください。", "permissionDenied": "この操作を行う権限がありません。", "offline": "オフラインのようです。変更は保存されませんでした。", "supabaseUnavailable": "アカウントサービスを一時的に利用できません。", "invalidOtp": "コードが正しくないか期限切れです。新しいコードを取得してください。", "saveFailed": "商品を保存できませんでした。もう一度お試しください。"
   },
   "accessibility": {
     "brandHome": "KU Settle ホーム",

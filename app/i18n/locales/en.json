@@ -10,6 +10,10 @@
     "close": "Close",
     "cancel": "Cancel",
     "demoData": "Demo data",
+    "sampleData": "Sample",
+    "liveData": "Live listing",
+    "saving": "Saving…",
+    "saved": "Saved",
     "sample": "Sample",
     "yes": "Yes",
     "no": "No",
@@ -126,6 +130,9 @@
     "form": { "title": "List an item for the next student", "body": "Add a simple listing using the same icon-based cards. No image upload is needed for this demo.", "itemName": "Item name", "price": "Price", "category": "Category", "condition": "Condition", "pickup": "Pickup location", "availability": "Availability", "submit": "Add listing", "success": "Your item was added. It is now visible to incoming students.", "itemPlaceholder": "e.g. Study chair", "pricePlaceholder": "e.g. 20000", "pickupPlaceholder": "e.g. KU Main Gate" },
     "actions": { "browse": "Browse Marketplace", "list": "List an item" },
     "userSeller": "KU student · {{name}}",
+    "authRequiredTitle": "Sign in to list a real item",
+    "authRequiredBody": "Guest plans stay on this device. Verify your KU email to publish a listing to the student marketplace.",
+    "markSold": "Mark as sold", "markActive": "Mark as available", "hideListing": "Hide listing", "deleteListing": "Delete listing",
     "products": {
       "riceCooker": { "name": "Rice Cooker", "pickup": "Anam Station, Exit 3", "seller": "Exchange student · Mia" },
       "deskLamp": { "name": "Desk Lamp", "pickup": "KU Main Gate", "seller": "KU student · Joon" },
@@ -156,6 +163,8 @@
     }
   },
   "verification": {
+    "signIn": "Sign in", "continue": "Continue with KU email", "authTitle": "Continue with your KU email", "authBody": "We will send a six-digit code to an email ending exactly in @korea.ac.kr.",
+    "sendCode": "Send verification code", "sending": "Sending code…", "linkSent": "We sent a sign-in link to your email.", "openLink": "Open the sign-in link in that email to continue.", "code": "Verification code", "verifyCode": "Verify code", "verifying": "Verifying…", "resend": "Resend code", "resendCooldown": "Resend in {{seconds}}s", "changeEmail": "Change email", "signOut": "Sign out", "verifiedKu": "Verified KU email", "securityNote": "KU Settle never asks for your password. Ignore any code you did not request.",
     "title": "Demo student verification",
     "body": "This prototype checks only the KU email format and does not send an email. A live service would require verification through an actual Korea University email.",
     "email": "University email",
@@ -165,6 +174,8 @@
     "student": "Exchange student"
   },
   "profile": {
+    "guestName": "Guest", "accountTitle": "Your account", "accountTasks": " completed tasks", "accountListings": " listings", "save": "Save profile", "deleteAccount": "Delete account", "deleteTitle": "Permanently delete your account?", "deleteBody": "This cannot be undone. Your profile, lifecycle progress, and every marketplace listing will be removed.", "deleteProfile": "Account and profile", "deleteProgress": "Lifecycle progress", "deleteListings": "All active, sold, hidden, and deleted listings", "typeEmail": "Type your email to confirm", "continueDelete": "Continue", "deleteForever": "Delete permanently", "deleteSuccess": "Your account was deleted.",
+    "importTitle": "Import this device's plan?", "importBody": "Nothing is uploaded until you confirm. Demo data is never imported.", "importProfile": " profile", "importTasks": " completed tasks", "importProducts": " local listings", "importConfirm": "Import selected data", "importSuccess": "Your device plan was imported.", "notNow": "Not now",
     "arrival": "Expected arrival",
     "housing": "Housing",
     "demoArrival": "Demo profile",
@@ -190,12 +201,12 @@
   "validation": {
     "requiredFields": "Please complete every field.",
     "validEmail": "Enter a valid @korea.ac.kr email.",
-    "positivePrice": "Enter a price greater than zero."
+    "positivePrice": "Enter a price greater than zero.", "nameRequired": "Enter a name up to 80 characters.", "invalidDate": "Enter a valid date.", "itemRequired": "Enter an item name.", "validPrice": "Enter a valid positive KRW price.", "pickupRequired": "Enter a pickup location.", "otpLength": "Enter the six-digit code."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
     "storage": "Saved data could not be read. Safe defaults were restored.",
-    "missingTranslation": "This content is temporarily shown in English."
+    "missingTranslation": "This content is temporarily shown in English.", "supabaseNotConfigured": "Account services are not connected yet. Configure the public Supabase URL and publishable key to enable sign-in.", "rateLimit": "Too many attempts. Wait before trying again.", "sessionExpired": "Your session expired. Sign in again.", "permissionDenied": "You do not have permission to perform this action.", "offline": "You appear to be offline. Your change was not saved.", "supabaseUnavailable": "The account service is temporarily unavailable.", "invalidOtp": "The code is incorrect or expired. Request a new code.", "saveFailed": "The item was not saved. Please try again."
   },
   "accessibility": {
     "brandHome": "KU Settle home",

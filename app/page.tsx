@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import type { User } from "@supabase/supabase-js";
 import type { TFunction } from "i18next";
 import {
   ArrowRight, BadgeCheck, Banknote, BedDouble, Box, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronRight,
@@ -17,11 +18,14 @@ import {
   formatCurrency, formatDate, formatDistance, formatNumber, formatPercent, joinOptionalLabel, localeNames, supportedLocales,
   useAppI18n, type Locale
 } from "./i18n";
+import { getSupabaseClient, isSupabaseConfigured } from "./lib/supabase";
+import { createMarketplaceItem, deleteAccount, importGuestData, loadAccount, saveProfile, saveProgress, sendEmailOtp, signOut, updateMarketplaceItemStatus } from "./lib/repository";
+import { isKuEmail, mapServiceError, profileRowToStored, type AppMode, type ProfileRow, type StoredProfile } from "./lib/domain";
+import { canCreateMarketplaceListing, shouldShowVerifiedBadge } from "./lib/verification";
 
 type Page = "home" | "onboarding" | "marketplace" | "guide";
 type Housing = "dorm" | "off-campus";
-type ProfileMode = "personalized" | "demo";
-type UserProfile = { name: string; arrivalDate: string; housing: Housing; mode: ProfileMode };
+type UserProfile = StoredProfile;
 type MarketMode = "incoming" | "leaving";
 type StageStat = { stage: (typeof lifecycleStages)[number]; completed: number; total: number; progress: number };
 type NavigationIntent = { stage?: LifecycleStage; taskId?: string; highlight?: boolean; marketMode?: MarketMode; guideCategory?: string };
@@ -32,6 +36,7 @@ const storageKeys = {
   verified: "ku-settle-verified",
   profile: "ku-settle-profile",
   userProducts: "ku-settle-user-products"
+  , importState: "ku-settle-guest-import-state"
 } as const;
 const demoProfile: UserProfile = { name: "Alex", arrivalDate: "", housing: "dorm", mode: "demo" };
 const demoDone = ["housing-reserve", "sim-compare", "airport-route", "arrival-essentials", "dorm", "account", "courses"];
@@ -120,7 +125,7 @@ function productPickup(product: MarketProduct, t: TFunction) {
 }
 
 function productSeller(product: MarketProduct, t: TFunction, profile: UserProfile) {
-  return product.userCreated ? tr(t, "marketplace:userSeller", { name: profile.name }) : tr(t, product.sellerKey as TranslationKey);
+  return product.seller ?? (product.userCreated ? tr(t, "marketplace:userSeller", { name: profile.name }) : tr(t, product.sellerKey as TranslationKey));
 }
 
 export default function Home() {
@@ -146,36 +151,80 @@ export default function Home() {
   const [email, setEmail] = useState("student@korea.ac.kr");
   const [verified, setVerified] = useState(false);
   const [verifyError, setVerifyError] = useState(false);
+  const [appMode, setAppMode] = useState<AppMode>("guest");
+  const [authUser, setAuthUser] = useState<User | null>(null);
+  const [serverProfile, setServerProfile] = useState<ProfileRow | null>(null);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [guestCandidate, setGuestCandidate] = useState<{ profile: UserProfile; done: string[]; products: MarketProduct[] } | null>(null);
+  const guestCandidateRef = useRef<{ profile: UserProfile; done: string[]; products: MarketProduct[] } | null>(null);
+  const [serviceMessage, setServiceMessage] = useState<string | null>(null);
+  const [serverBusy, setServerBusy] = useState(false);
+
+  const applyAuthenticatedAccount = useCallback(async (user: User, candidate?: { profile: UserProfile; done: string[]; products: MarketProduct[] } | null) => {
+    setServerBusy(true);
+    try {
+      const account = await loadAccount(user);
+      setAuthUser(user); setServerProfile(account.profile); setProfile(profileRowToStored(account.profile)); setDone(account.done); setUserProducts(account.products); setAppMode("authenticated");
+      setSetupOpen(!account.profile.onboarding_completed);
+      if (candidate?.profile.mode === "personalized" && !account.profile.guest_data_imported_at && (candidate.done.length || candidate.products.length || !account.profile.onboarding_completed)) {
+        setGuestCandidate(candidate); guestCandidateRef.current = candidate; setImportOpen(true);
+      }
+    } catch (error) { setServiceMessage(mapServiceError(error)); }
+    finally { setServerBusy(false); }
+  }, []);
 
   useEffect(() => {
-    const frame = requestAnimationFrame(() => {
+    const supabase = getSupabaseClient();
+    const hydrationTimer = window.setTimeout(() => {
       const savedProfile = localStorage.getItem(storageKeys.profile);
       const savedDone = localStorage.getItem(storageKeys.checklist);
       const savedProducts = localStorage.getItem(storageKeys.userProducts);
       const loadedProfile = savedProfile ? (() => { try { return normalizeProfile(JSON.parse(savedProfile)); } catch { return null; } })() : null;
+      let candidate: { profile: UserProfile; done: string[]; products: MarketProduct[] } | null = null;
+      let loadedDone: string[] = []; let loadedProducts: MarketProduct[] = [];
       if (loadedProfile) {
         setProfile(loadedProfile);
         const fallback = loadedProfile.mode === "demo" ? demoDone : [];
-        try { setDone(normalizeDone(savedDone ? JSON.parse(savedDone) : null, getActiveTasks(loadedProfile.housing), fallback)); } catch { setDone(fallback); }
+        try { loadedDone = normalizeDone(savedDone ? JSON.parse(savedDone) : null, getActiveTasks(loadedProfile.housing), fallback); } catch { loadedDone = fallback; }
+        setDone(loadedDone); setAppMode(loadedProfile.mode === "demo" ? "demo" : "guest");
       } else {
         setDone([]);
         setSetupOpen(true);
       }
-      if (savedProducts) { try { setUserProducts(normalizeUserProducts(JSON.parse(savedProducts))); } catch { setUserProducts([]); } }
+      if (savedProducts) { try { loadedProducts = normalizeUserProducts(JSON.parse(savedProducts)).map((product) => ({ ...product, source: "demo" })); } catch { loadedProducts = []; } }
+      setUserProducts(loadedProducts);
+      if (loadedProfile?.mode === "personalized") {
+        candidate = { profile: loadedProfile, done: loadedDone, products: loadedProducts };
+        setGuestCandidate(candidate);
+        guestCandidateRef.current = candidate;
+      }
       setVerified(localStorage.getItem(storageKeys.verified) === "true");
       setHydrated(true);
-    });
-    return () => cancelAnimationFrame(frame);
-  }, []);
+      if (supabase) void supabase.auth.getSession().then(async ({ data }) => {
+        if (!data.session) return;
+        const { data: verifiedSession, error } = await supabase.auth.getUser();
+        if (!error && verifiedSession.user) await applyAuthenticatedAccount(verifiedSession.user, candidate);
+      });
+    }, 0);
+    const subscription = supabase?.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") { setAuthUser(null); setServerProfile(null); setAppMode("guest"); setProfile(null); setDone([]); setUserProducts([]); setSetupOpen(false); }
+      else if (session?.user && event !== "INITIAL_SESSION") void applyAuthenticatedAccount(session.user, guestCandidateRef.current);
+    }).data.subscription;
+    return () => { window.clearTimeout(hydrationTimer); subscription?.unsubscribe(); };
+  }, [applyAuthenticatedAccount]);
 
-  useEffect(() => { if (hydrated) localStorage.setItem(storageKeys.checklist, JSON.stringify(done)); }, [done, hydrated]);
-  useEffect(() => { if (hydrated) localStorage.setItem(storageKeys.verified, String(verified)); }, [verified, hydrated]);
-  useEffect(() => { if (hydrated) localStorage.setItem(storageKeys.userProducts, JSON.stringify(userProducts)); }, [userProducts, hydrated]);
+  useEffect(() => { if (hydrated && appMode !== "authenticated") localStorage.setItem(storageKeys.checklist, JSON.stringify(done)); }, [done, hydrated, appMode]);
+  useEffect(() => { if (hydrated && appMode !== "authenticated") localStorage.setItem(storageKeys.verified, String(verified)); }, [verified, hydrated, appMode]);
+  useEffect(() => { if (hydrated && appMode !== "authenticated") localStorage.setItem(storageKeys.userProducts, JSON.stringify(userProducts)); }, [userProducts, hydrated, appMode]);
   useEffect(() => {
     if (!hydrated) return;
+    if (appMode === "authenticated") return;
     if (profile) localStorage.setItem(storageKeys.profile, JSON.stringify(profile));
     else localStorage.removeItem(storageKeys.profile);
-  }, [profile, hydrated]);
+  }, [profile, hydrated, appMode]);
   useEffect(() => {
     if (!highlightTaskId) return;
     const timer = window.setTimeout(() => setHighlightTaskId(null), 1800);
@@ -185,7 +234,9 @@ export default function Home() {
     if (localeReady && hydrated) document.title = `KU Settle — ${tr(t, "navigation:brandTagline")}`;
   }, [hydrated, locale, localeReady, t]);
 
-  const currentProfile = profile ?? demoProfile;
+  const currentProfile = profile ?? { ...demoProfile, name: tr(t, "profile:guestName"), mode: "personalized" as const };
+  const actualVerified = Boolean(authUser?.email_confirmed_at && authUser.email && isKuEmail(authUser.email));
+  const showVerifiedBadge = shouldShowVerifiedBadge(appMode, actualVerified, verified);
   const activeTasks = useMemo(() => getActiveTasks(currentProfile.housing), [currentProfile.housing]);
   const completedCount = activeTasks.filter((task) => done.includes(task.id)).length;
   const progress = activeTasks.length ? Math.round((completedCount / activeTasks.length) * 100) : 0;
@@ -221,16 +272,61 @@ export default function Home() {
     if (action.target === "marketplace") go("marketplace", { marketMode: action.marketMode });
     else go("guide", { guideCategory: action.guideCategory });
   };
-  const toggleTask = (id: string) => setDone((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
-  const startPersonalizedPlan = (nextProfile: UserProfile) => {
-    setProfile(nextProfile); setDone([]); setVerified(false); setSelectedStage("before-arrival"); setFocusTaskId(null); setHighlightTaskId(null); setSetupOpen(false);
+  const toggleTask = (id: string) => {
+    const wasDone = done.includes(id); const next = wasDone ? done.filter((item) => item !== id) : [...done, id]; setDone(next);
+    if (appMode === "authenticated" && authUser) void saveProgress(authUser.id, id, !wasDone).catch((error) => { setDone(done); setServiceMessage(mapServiceError(error)); });
   };
-  const skipForDemo = () => { setProfile(demoProfile); setDone(demoDone); setVerified(false); setSelectedStage("first-weeks"); setSetupOpen(false); };
+  const startPersonalizedPlan = (nextProfile: UserProfile) => {
+    if (appMode === "authenticated" && authUser) {
+      setServerBusy(true); void saveProfile(authUser.id, nextProfile, locale).then((row) => { setServerProfile(row); setProfile(profileRowToStored(row)); setSetupOpen(false); }).catch((error) => setServiceMessage(mapServiceError(error))).finally(() => setServerBusy(false)); return;
+    }
+    setProfile(nextProfile); setAppMode("guest"); setDone([]); setVerified(false); setSelectedStage("before-arrival"); setFocusTaskId(null); setHighlightTaskId(null); setSetupOpen(false);
+  };
+  const skipForDemo = () => { setProfile(demoProfile); setAppMode("demo"); setDone(demoDone); setVerified(false); setSelectedStage("first-weeks"); setSetupOpen(false); };
   const resetDemo = () => {
     [storageKeys.profile, storageKeys.checklist, storageKeys.verified, storageKeys.userProducts].forEach((key) => localStorage.removeItem(key));
-    setProfile(null); setDone([]); setVerified(false); setUserProducts([]); setMarketSearch(""); setMarketCategory("All"); setMarketMode("incoming");
+    setProfile(null); setDone([]); setVerified(false); setUserProducts([]); setGuestCandidate(null); guestCandidateRef.current = null; setAppMode("guest"); setMarketSearch(""); setMarketCategory("All"); setMarketMode("incoming");
     setSelectedProduct(null); setContactOpen(false); setGuideCategory("All"); setSelectedStage("before-arrival"); setFocusTaskId(null); setHighlightTaskId(null);
     setResetOpen(false); setProfileOpen(false); setPage("home"); setSetupOpen(true); window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const changeMarketplaceStatus = async (product: MarketProduct, status: "active" | "sold" | "hidden" | "deleted") => {
+    if (!authUser || product.source !== "live" || !product.ownedByCurrentUser) return;
+    setServerBusy(true);
+    try {
+      const updated = await updateMarketplaceItemStatus(String(product.id), status, authUser.id);
+      setUserProducts((current) => status === "deleted" || status === "hidden" ? current.filter((item) => item.id !== product.id) : current.map((item) => item.id === product.id ? updated : item));
+      setSelectedProduct(null); setServiceMessage("common:saved");
+    } catch (error) { setServiceMessage(mapServiceError(error)); }
+    finally { setServerBusy(false); }
+  };
+
+  const addMarketplaceProduct = async (product: MarketProduct) => {
+    if (appMode === "authenticated" && authUser) {
+      setServerBusy(true);
+      try { const created = await createMarketplaceItem(product, authUser.id, currentProfile.name); setUserProducts((current) => [created, ...current]); setServiceMessage("common:saved"); }
+      catch (error) { setServiceMessage(mapServiceError(error)); throw error; }
+      finally { setServerBusy(false); }
+      return;
+    }
+    if (appMode === "demo") { setUserProducts((current) => [{ ...product, source: "demo" }, ...current]); return; }
+    setAuthOpen(true); throw new Error("Authentication required");
+  };
+
+  const completeGuestImport = async () => {
+    if (!authUser || !serverProfile || !guestCandidate) return;
+    setServerBusy(true);
+    try {
+      const imported = await importGuestData(authUser.id, serverProfile, guestCandidate.profile, guestCandidate.done, guestCandidate.products, getActiveTasks(guestCandidate.profile.housing).map((task) => task.id), locale);
+      localStorage.setItem(storageKeys.importState, JSON.stringify({ imported, completedAt: new Date().toISOString() }));
+      [storageKeys.profile, storageKeys.checklist, storageKeys.verified, storageKeys.userProducts].forEach((key) => localStorage.removeItem(key));
+      setImportOpen(false); setGuestCandidate(null); guestCandidateRef.current = null; await applyAuthenticatedAccount(authUser, null); setServiceMessage("profile:importSuccess");
+    } catch (error) {
+      const imported = isRecord(error) && Array.isArray(error.imported) ? error.imported.filter((id): id is string => typeof id === "string") : [];
+      if (imported.length) localStorage.setItem(storageKeys.importState, JSON.stringify({ imported, partial: true, updatedAt: new Date().toISOString() }));
+      setServiceMessage(mapServiceError(error));
+    }
+    finally { setServerBusy(false); }
   };
 
   if (!localeReady || !hydrated) return <InitialLoading/>;
@@ -246,9 +342,9 @@ export default function Home() {
         </nav>
         <div className="header-actions">
           <LanguageSelector locale={locale} changeLocale={changeLocale} t={t}/>
-          <button className="profile-button" onClick={() => setProfileOpen(true)} aria-label={tr(t, "accessibility:profile")}>
-            {verified ? <BadgeCheck size={20} className="verified-icon"/> : <CircleUserRound size={20}/>}<span>{currentProfile.name}</span>
-          </button>
+          {appMode !== "guest" && <button className="profile-button" onClick={() => appMode === "authenticated" ? setAccountOpen(true) : setProfileOpen(true)} aria-label={tr(t, "accessibility:profile")}>
+            {showVerifiedBadge ? <BadgeCheck size={20} className="verified-icon"/> : <CircleUserRound size={20}/>}<span>{currentProfile.name}</span>
+          </button>}
           <button className="mobile-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label={tr(t, menuOpen ? "navigation:closeMenu" : "navigation:openMenu")} aria-expanded={menuOpen}>{menuOpen ? <X/> : <Menu/>}</button>
         </div>
       </header>
@@ -257,16 +353,34 @@ export default function Home() {
       <main>
         {page === "home" && <Dashboard locale={locale} t={t} profile={currentProfile} activeTasks={activeTasks} stageStats={stageStats} progress={progress} completedCount={completedCount} recommendedTask={recommendedTask} go={go}/>}
         {page === "onboarding" && <Onboarding locale={locale} t={t} activeTasks={activeTasks} stageStats={stageStats} progress={progress} done={done} recommendedTask={recommendedTask} selectedStage={selectedStage} setSelectedStage={setSelectedStage} focusTaskId={focusTaskId} highlightTaskId={highlightTaskId} go={go} openTaskAction={openTaskAction} toggleTask={toggleTask}/>}
-        {page === "marketplace" && <Marketplace locale={locale} t={t} profile={currentProfile} products={marketplaceProducts} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} addProduct={(product) => setUserProducts((current) => [product, ...current])} selectProduct={setSelectedProduct}/>}
+        {page === "marketplace" && <Marketplace locale={locale} t={t} profile={currentProfile} appMode={appMode} products={marketplaceProducts} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} addProduct={addMarketplaceProduct} selectProduct={setSelectedProduct}/>}
         {page === "guide" && <LocalGuide locale={locale} t={t} category={guideCategory} setCategory={setGuideCategory}/>}
       </main>
 
-      <footer><div className="footer-brand"><span className="brand-mark small">KU</span><span><strong>KU Settle</strong><small>{tr(t, "common:copyright", { year: formatNumber(locale, new Date().getFullYear(), { useGrouping: false }) })}</small></span></div><div className="footer-actions"><span className="footer-notice">{tr(t, "navigation:footerNotice")}</span><button className="reset-demo" onClick={() => setResetOpen(true)}><RotateCcw size={13}/>{tr(t, "reset:button")}</button></div></footer>
+      <footer><div className="footer-brand"><span className="brand-mark small">KU</span><span><strong>KU Settle</strong><small>{tr(t, "common:copyright", { year: formatNumber(locale, new Date().getFullYear(), { useGrouping: false }) })}</small></span></div><div className="footer-actions"><span className="footer-notice">{tr(t, "navigation:footerNotice")}</span>{appMode !== "authenticated" && <button className="reset-demo" onClick={() => setResetOpen(true)}><RotateCcw size={13}/>{tr(t, "reset:button")}</button>}</div></footer>
 
-      {setupOpen && <SetupModal t={t} submit={startPersonalizedPlan} skip={skipForDemo}/>}
+      {(serverBusy || serviceMessage) && <div className={`service-status ${serviceMessage?.startsWith("errors:") ? "error" : ""}`} role="status">{serverBusy ? tr(t, "common:saving") : serviceMessage ? tr(t, serviceMessage) : ""}{serviceMessage && <button onClick={() => setServiceMessage(null)} aria-label={tr(t, "common:close")}><X size={14}/></button>}</div>}
+
+      {setupOpen && (
+        <SetupModal t={t} submit={startPersonalizedPlan} skip={skipForDemo}/>
+      )}
       {resetOpen && <ResetModal t={t} close={() => setResetOpen(false)} confirm={resetDemo}/>}
-      {profileOpen && <VerificationModal locale={locale} t={t} profile={currentProfile} email={email} setEmail={setEmail} verified={verified} verifyError={verifyError} close={() => setProfileOpen(false)} verify={() => { const ok = /^[^@\s]+@korea\.ac\.kr$/i.test(email); setVerifyError(!ok); if (ok) setVerified(true); }}/>}
-      {selectedProduct && <ProductModal locale={locale} t={t} profile={currentProfile} product={selectedProduct} close={() => setSelectedProduct(null)} contact={() => { setSelectedProduct(null); setContactOpen(true); }}/>}
+      {profileOpen && (
+        <VerificationModal locale={locale} t={t} profile={currentProfile} email={email} setEmail={setEmail} verified={verified} verifyError={verifyError} close={() => setProfileOpen(false)} verify={() => { const ok = /^[^@\s]+@korea\.ac\.kr$/i.test(email); setVerifyError(!ok); if (ok) setVerified(true); }}/>
+      )}
+      {authOpen && <AuthModal locale={locale} t={t} close={() => setAuthOpen(false)} configured={isSupabaseConfigured()} />}
+      {accountOpen && authUser && (
+        <AccountModal t={t} user={authUser} profile={currentProfile} taskCount={completedCount} listingCount={userProducts.filter((product) => product.ownedByCurrentUser).length} close={() => setAccountOpen(false)} save={(next) => startPersonalizedPlan(next)} signout={() => { setServerBusy(true); void signOut().catch((error) => setServiceMessage(mapServiceError(error))).finally(() => { setServerBusy(false); setAccountOpen(false); }); }} openDelete={() => { setAccountOpen(false); setDeleteOpen(true); }}/>
+      )}
+      {deleteOpen && authUser && (
+        <DeleteAccountModal t={t} email={authUser.email ?? ""} close={() => setDeleteOpen(false)} confirm={() => { setServerBusy(true); void deleteAccount().then(async () => { await getSupabaseClient()?.auth.signOut({ scope: "local" }); [storageKeys.profile, storageKeys.checklist, storageKeys.verified, storageKeys.userProducts, storageKeys.importState].forEach((key) => localStorage.removeItem(key)); setDeleteOpen(false); setServiceMessage("profile:deleteSuccess"); }).catch((error) => setServiceMessage(mapServiceError(error))).finally(() => setServerBusy(false)); }}/>
+      )}
+      {importOpen && guestCandidate && (
+        <GuestImportModal t={t} candidate={guestCandidate} close={() => setImportOpen(false)} confirm={() => void completeGuestImport()}/>
+      )}
+      {selectedProduct && (
+        <ProductModal locale={locale} t={t} profile={currentProfile} product={selectedProduct} close={() => setSelectedProduct(null)} contact={() => { setSelectedProduct(null); setContactOpen(true); }} changeStatus={(status) => void changeMarketplaceStatus(selectedProduct, status)}/>
+      )}
       {contactOpen && <ContactModal t={t} close={() => setContactOpen(false)}/>}
     </div>
   );
@@ -368,37 +482,39 @@ function Onboarding({ locale, t, activeTasks, stageStats, progress, done, recomm
   </section>;
 }
 
-function Marketplace({ locale, t, profile, products: marketplaceProducts, search, setSearch, category, setCategory, mode, setMode, addProduct, selectProduct }: { locale: Locale; t: TFunction; profile: UserProfile; products: MarketProduct[]; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; mode: MarketMode; setMode: (value: MarketMode) => void; addProduct: (product: MarketProduct) => void; selectProduct: (product: MarketProduct) => void }) {
+function Marketplace({ locale, t, profile, appMode, products: marketplaceProducts, search, setSearch, category, setCategory, mode, setMode, addProduct, selectProduct }: { locale: Locale; t: TFunction; profile: UserProfile; appMode: AppMode; products: MarketProduct[]; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; mode: MarketMode; setMode: (value: MarketMode) => void; addProduct: (product: MarketProduct) => Promise<void>; selectProduct: (product: MarketProduct) => void }) {
   const [success, setSuccess] = useState(false);
   const categories = ["All", ...productCategories];
   const categoryLabel = (value: string) => value === "All" ? tr(t, "marketplace:all") : tr(t, `marketplace:categories.${value}`);
   const filtered = useMemo(() => marketplaceProducts.filter((product) => (category === "All" || product.category === category) && productName(product, t).toLocaleLowerCase(locale).includes(search.toLocaleLowerCase(locale))), [marketplaceProducts, category, search, locale, t]);
   const changeMode = (nextMode: MarketMode) => { setMode(nextMode); setSuccess(false); };
-  const completeListing = (product: MarketProduct) => { addProduct(product); setSearch(""); setCategory("All"); setMode("incoming"); setSuccess(true); };
+  const completeListing = async (product: MarketProduct) => { await addProduct(product); setSearch(""); setCategory("All"); setMode("incoming"); setSuccess(true); };
 
   return <section className="page section-pad market-page">
     <div className="page-hero market-hero"><div><span className="eyebrow"><ShoppingBag size={14}/>{tr(t, "marketplace:eyebrow")}</span><h1>{tr(t, "marketplace:title")}</h1><p>{tr(t, "marketplace:body")}</p></div><div className="mode-switch" aria-label={tr(t, "accessibility:marketMode")}><button aria-pressed={mode === "incoming"} className={mode === "incoming" ? "active" : ""} onClick={() => changeMode("incoming")}><ShoppingBag size={18}/>{tr(t, "marketplace:incoming")}</button><button aria-pressed={mode === "leaving"} className={mode === "leaving" ? "active" : ""} onClick={() => changeMode("leaving")}><Tag size={18}/>{tr(t, "marketplace:leaving")}</button></div></div>
     <div className="market-flow">{(["verification", "listing", "pickup", "transaction"] as const).map((step, index) => <div key={step}><span>{index === 0 ? <BadgeCheck/> : index === 1 ? <ShoppingBag/> : index === 2 ? <MapPin/> : <Banknote/>}</span><strong>{tr(t, `marketplace:flow.${step}`)}</strong>{index < 3 && <ChevronRight/>}</div>)}</div>
-    {mode === "leaving" ? <ListingForm t={t} submit={completeListing}/> : <>
+    {mode === "leaving" ? !canCreateMarketplaceListing(appMode) ? <article className="listing-form auth-gate"><ShieldCheck/><h2>{tr(t, "marketplace:authRequiredTitle")}</h2><p>{tr(t, "marketplace:authRequiredBody")}</p></article> : <ListingForm t={t} submit={completeListing}/> : <>
       {success && <div className="success-banner" role="status"><CheckCircle2 size={18}/>{tr(t, "marketplace:form.success")}</div>}
       <div className="filters"><label className="search-box"><Search size={19}/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr(t, "marketplace:search")}/>{search && <button onClick={() => setSearch("")} aria-label={tr(t, "marketplace:clearSearch")}><X size={16}/></button>}</label><div className="chips">{categories.map((item) => <button key={item} aria-pressed={category === item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{categoryLabel(item)}</button>)}</div></div>
       {filtered.length ? <div className="product-grid">{filtered.map((product) => {
         const Icon = productIcons[product.icon]; const SellerIcon = product.userCreated ? Tag : BadgeCheck; const name = productName(product, t);
-        return <button className="product-card" key={product.id} aria-label={tr(t, "accessibility:productDetails", { product: name })} onClick={() => selectProduct(product)}><div className={`product-visual ${product.userCreated ? "tone-user" : `tone-${product.id}`}`}><Icon/><span className={`availability ${product.status === "Reserved" ? "reserved" : ""}`}>{tr(t, product.status === "Available" ? "common:available" : "common:reserved")}</span></div><div className="product-info"><div><h2>{name}</h2><strong className="price">{formatCurrency(locale, product.priceKrw)}</strong></div><dl><div><dt>{tr(t, "marketplace:condition")}</dt><dd>{tr(t, `marketplace:conditions.${product.condition}`)}</dd></div><div><dt>{tr(t, "marketplace:pickup")}</dt><dd><MapPin size={14}/>{productPickup(product, t)}</dd></div></dl><span className="seller"><SellerIcon size={16}/>{productSeller(product, t, profile)}</span><span className="details-link">{tr(t, "marketplace:details")}<ArrowRight size={16}/></span></div></button>;
+        return <button className="product-card" key={product.id} aria-label={tr(t, "accessibility:productDetails", { product: name })} onClick={() => selectProduct(product)}><div className={`product-visual ${product.userCreated ? "tone-user" : `tone-${product.id}`}`}><Icon/><span className={`availability ${product.status === "Reserved" ? "reserved" : ""}`}>{tr(t, product.status === "Available" ? "common:available" : "common:reserved")}</span><span className="source-pill">{tr(t, product.source === "live" ? "common:liveData" : product.source === "demo" ? "common:demoData" : "common:sampleData")}</span></div><div className="product-info"><div><h2>{name}</h2><strong className="price">{formatCurrency(locale, product.priceKrw)}</strong></div><dl><div><dt>{tr(t, "marketplace:condition")}</dt><dd>{tr(t, `marketplace:conditions.${product.condition}`)}</dd></div><div><dt>{tr(t, "marketplace:pickup")}</dt><dd><MapPin size={14}/>{productPickup(product, t)}</dd></div></dl><span className="seller"><SellerIcon size={16}/>{productSeller(product, t, profile)}</span><span className="details-link">{tr(t, "marketplace:details")}<ArrowRight size={16}/></span></div></button>;
       })}</div> : <EmptyState icon={Search} text={tr(t, "marketplace:empty")}/>}
     </>}
   </section>;
 }
 
-function ListingForm({ t, submit }: { t: TFunction; submit: (product: MarketProduct) => void }) {
+function ListingForm({ t, submit }: { t: TFunction; submit: (product: MarketProduct) => Promise<void> }) {
   const [itemName, setItemName] = useState(""); const [price, setPrice] = useState(""); const [category, setCategory] = useState<ProductCategory>("Home"); const [condition, setCondition] = useState<ProductCondition>("good"); const [pickup, setPickup] = useState(""); const [availability, setAvailability] = useState<ProductStatus>("Available"); const [errorKey, setErrorKey] = useState<string | null>(null);
-  const handleSubmit = (event: React.FormEvent) => {
+  const [saving, setSaving] = useState(false);
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!itemName.trim() || !price.trim() || !pickup.trim()) { setErrorKey("validation:requiredFields"); return; }
     const priceKrw = Number(price.replace(/[^0-9]/g, ""));
     if (!priceKrw) { setErrorKey("validation:positivePrice"); return; }
-    submit({ id: `user-${Date.now()}`, name: itemName.trim(), priceKrw, category, condition, pickup: pickup.trim(), status: availability, icon: categoryProductIcons[category], userCreated: true });
-    setItemName(""); setPrice(""); setPickup(""); setErrorKey(null);
+    setSaving(true);
+    try { await submit({ id: `user-${Date.now()}`, name: itemName.trim(), priceKrw, category, condition, pickup: pickup.trim(), status: availability, icon: categoryProductIcons[category], userCreated: true }); setItemName(""); setPrice(""); setPickup(""); setErrorKey(null); }
+    catch { setErrorKey("errors:saveFailed"); } finally { setSaving(false); }
   };
   return <article className="listing-form"><div className="listing-heading"><span className="eyebrow"><PlusCircleIcon/>{tr(t, "marketplace:leaving")}</span><h2>{tr(t, "marketplace:form.title")}</h2><p>{tr(t, "marketplace:form.body")}</p></div><form onSubmit={handleSubmit} className="listing-grid">
     <label className="field"><span>{tr(t, "marketplace:form.itemName")}</span><input value={itemName} onChange={(event) => setItemName(event.target.value)} placeholder={tr(t, "marketplace:form.itemPlaceholder")}/></label>
@@ -407,7 +523,7 @@ function ListingForm({ t, submit }: { t: TFunction; submit: (product: MarketProd
     <label className="field"><span>{tr(t, "marketplace:form.condition")}</span><select value={condition} onChange={(event) => setCondition(event.target.value as ProductCondition)}>{productConditions.map((value) => <option key={value} value={value}>{tr(t, `marketplace:conditions.${value}`)}</option>)}</select></label>
     <label className="field field-wide"><span>{tr(t, "marketplace:form.pickup")}</span><input value={pickup} onChange={(event) => setPickup(event.target.value)} placeholder={tr(t, "marketplace:form.pickupPlaceholder")}/></label>
     <label className="field"><span>{tr(t, "marketplace:form.availability")}</span><select value={availability} onChange={(event) => setAvailability(event.target.value as ProductStatus)}><option value="Available">{tr(t, "common:available")}</option><option value="Reserved">{tr(t, "common:reserved")}</option></select></label>
-    {errorKey && <p className="error-text form-error" role="alert">{tr(t, errorKey)}</p>}<button className="primary listing-submit" type="submit"><ShoppingBag size={18}/>{tr(t, "marketplace:form.submit")}</button>
+    {errorKey && <p className="error-text form-error" role="alert">{tr(t, errorKey)}</p>}<button className="primary listing-submit" type="submit" disabled={saving}><ShoppingBag size={18}/>{tr(t, saving ? "common:saving" : "marketplace:form.submit")}</button>
   </form></article>;
 }
 
@@ -460,13 +576,34 @@ function VerificationModal({ locale, t, profile, email, setEmail, verified, veri
   return <Modal close={close} label={tr(t, "verification:title")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className="modal-icon verify"><ShieldCheck/></div><h2>{tr(t, "verification:title")}</h2><p>{tr(t, "verification:body")}</p><div className="profile-summary"><strong>{profile.name}</strong><span><CalendarDays size={15}/>{tr(t, "profile:arrival")}: {profile.arrivalDate ? formatDate(locale, profile.arrivalDate) : tr(t, "profile:demoArrival")}</span><span><House size={15}/>{tr(t, "profile:housing")}: {tr(t, profile.housing === "dorm" ? "profile:dorm" : "profile:offCampus")}</span></div>{verified ? <div className="verified-success"><BadgeCheck/><div><strong>{tr(t, "common:verified")}</strong><span>{tr(t, "verification:success")}</span></div></div> : <><label className="field"><span>{tr(t, "verification:email")}</span><input value={email} onChange={(event) => setEmail(event.target.value)} type="email" placeholder={tr(t, "verification:emailPlaceholder")}/></label>{verifyError && <p className="error-text">{tr(t, "validation:validEmail")}</p>}<button className="primary full" onClick={verify}>{tr(t, "verification:submit")}<ArrowRight size={18}/></button></>}</Modal>;
 }
 
+function AuthModal({ locale, t, close, configured }: { locale: Locale; t: TFunction; close: () => void; configured: boolean }) {
+  const [step, setStep] = useState<"email" | "sent">("email"); const [email, setEmail] = useState(""); const [busy, setBusy] = useState(false); const [errorKey, setErrorKey] = useState<string | null>(null); const [cooldown, setCooldown] = useState(0);
+  useEffect(() => { if (!cooldown) return; const timer = window.setInterval(() => setCooldown((value) => Math.max(0, value - 1)), 1000); return () => clearInterval(timer); }, [cooldown]);
+  const send = async () => { if (!isKuEmail(email)) { setErrorKey("validation:validEmail"); return; } setBusy(true); setErrorKey(null); try { setEmail(await sendEmailOtp(email, locale)); setStep("sent"); setCooldown(60); } catch (error) { setErrorKey(mapServiceError(error)); } finally { setBusy(false); } };
+  return <Modal close={close} label={tr(t, "verification:authTitle")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className="modal-icon verify"><ShieldCheck/></div><h2>{tr(t, "verification:authTitle")}</h2><p>{tr(t, step === "sent" ? "verification:linkSent" : "verification:authBody")}</p>{!configured ? <div className="configuration-warning" role="alert">{tr(t, "errors:supabaseNotConfigured")}</div> : step === "email" ? <><label className="field"><span>{tr(t, "verification:email")}</span><input autoFocus value={email} onChange={(event) => setEmail(event.target.value)} type="email" autoComplete="email" placeholder={tr(t, "verification:emailPlaceholder")}/></label><button className="primary full" disabled={busy} onClick={() => void send()}>{tr(t, busy ? "verification:sending" : "verification:sendCode")}</button></> : <><div className="auth-email"><span>{email}</span><button onClick={() => { setStep("email"); setErrorKey(null); }}>{tr(t, "verification:changeEmail")}</button></div><p>{tr(t, "verification:openLink")}</p><button className="skip-button" disabled={busy || cooldown > 0} onClick={() => void send()}>{cooldown ? tr(t, "verification:resendCooldown", { seconds: cooldown }) : tr(t, "verification:resend")}</button></>}{errorKey && <p className="error-text" role="alert">{tr(t, errorKey)}</p>}<p className="auth-security-note">{tr(t, "verification:securityNote")}</p></Modal>;
+}
+
+function AccountModal({ t, user, profile, taskCount, listingCount, close, save, signout, openDelete }: { t: TFunction; user: User; profile: UserProfile; taskCount: number; listingCount: number; close: () => void; save: (profile: UserProfile) => void; signout: () => void; openDelete: () => void }) {
+  const [name, setName] = useState(profile.name); const [arrivalDate, setArrivalDate] = useState(profile.arrivalDate); const [housing, setHousing] = useState<Housing>(profile.housing);
+  return <Modal close={close} label={tr(t, "profile:accountTitle")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className="modal-icon verify"><BadgeCheck/></div><h2>{tr(t, "profile:accountTitle")}</h2><span className="verified-badge"><BadgeCheck size={15}/>{tr(t, "verification:verifiedKu")}</span><div className="import-summary"><span><strong>{taskCount}</strong>{tr(t, "profile:accountTasks")}</span><span><strong>{listingCount}</strong>{tr(t, "profile:accountListings")}</span></div><label className="field"><span>{tr(t, "verification:email")}</span><input value={user.email ?? ""} readOnly/></label><label className="field"><span>{tr(t, "profile:name")}</span><input value={name} onChange={(event) => setName(event.target.value)}/></label><label className="field"><span>{tr(t, "profile:arrivalDate")}</span><input type="date" value={arrivalDate} onChange={(event) => setArrivalDate(event.target.value)}/></label><label className="field"><span>{tr(t, "profile:housingType")}</span><select value={housing} onChange={(event) => setHousing(event.target.value as Housing)}><option value="dorm">{tr(t, "profile:dorm")}</option><option value="off-campus">{tr(t, "profile:offCampus")}</option></select></label><button className="primary full" onClick={() => save({ name, arrivalDate, housing, mode: "personalized" })}>{tr(t, "profile:save")}</button><div className="account-actions"><button className="secondary" onClick={signout}>{tr(t, "verification:signOut")}</button><button className="danger-link" onClick={openDelete}>{tr(t, "profile:deleteAccount")}</button></div></Modal>;
+}
+
+function GuestImportModal({ t, candidate, close, confirm }: { t: TFunction; candidate: { profile: UserProfile; done: string[]; products: MarketProduct[] }; close: () => void; confirm: () => void }) {
+  return <Modal close={close} label={tr(t, "profile:importTitle")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className="modal-icon"><PackageCheck/></div><h2>{tr(t, "profile:importTitle")}</h2><p>{tr(t, "profile:importBody")}</p><div className="import-summary"><span><strong>{candidate.profile.name}</strong>{tr(t, "profile:importProfile")}</span><span><strong>{candidate.done.length}</strong>{tr(t, "profile:importTasks")}</span><span><strong>{candidate.products.length}</strong>{tr(t, "profile:importProducts")}</span></div><div className="modal-actions"><button className="secondary" onClick={close}>{tr(t, "profile:notNow")}</button><button className="primary" onClick={confirm}>{tr(t, "profile:importConfirm")}</button></div></Modal>;
+}
+
+function DeleteAccountModal({ t, email, close, confirm }: { t: TFunction; email: string; close: () => void; confirm: () => void }) {
+  const [step, setStep] = useState(1); const [typed, setTyped] = useState("");
+  return <Modal close={close} label={tr(t, "profile:deleteTitle")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className="modal-icon reset"><RotateCcw/></div><h2>{tr(t, "profile:deleteTitle")}</h2><p>{tr(t, "profile:deleteBody")}</p><ul className="delete-list"><li>{tr(t, "profile:deleteProfile")}</li><li>{tr(t, "profile:deleteProgress")}</li><li>{tr(t, "profile:deleteListings")}</li></ul>{step === 2 && <label className="field"><span>{tr(t, "profile:typeEmail")}</span><input autoFocus value={typed} onChange={(event) => setTyped(event.target.value)} placeholder={email}/></label>}<div className="modal-actions"><button className="secondary" onClick={close}>{tr(t, "common:cancel")}</button>{step === 1 ? <button className="danger-button" onClick={() => setStep(2)}>{tr(t, "profile:continueDelete")}</button> : <button className="danger-button" disabled={typed.trim().toLowerCase() !== email.toLowerCase()} onClick={confirm}>{tr(t, "profile:deleteForever")}</button>}</div></Modal>;
+}
+
 function ResetModal({ t, close, confirm }: { t: TFunction; close: () => void; confirm: () => void }) {
   return <Modal close={close} label={tr(t, "reset:title")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className="modal-icon reset"><RotateCcw/></div><h2>{tr(t, "reset:title")}</h2><p>{tr(t, "reset:body")}</p><div className="modal-actions"><button className="secondary" onClick={close}>{tr(t, "common:cancel")}</button><button className="danger-button" onClick={confirm}>{tr(t, "reset:confirm")}</button></div></Modal>;
 }
 
-function ProductModal({ locale, t, profile, product, close, contact }: { locale: Locale; t: TFunction; profile: UserProfile; product: MarketProduct; close: () => void; contact: () => void }) {
+function ProductModal({ locale, t, profile, product, close, contact, changeStatus }: { locale: Locale; t: TFunction; profile: UserProfile; product: MarketProduct; close: () => void; contact: () => void; changeStatus: (status: "active" | "sold" | "hidden" | "deleted") => void }) {
   const Icon = productIcons[product.icon]; const SellerIcon = product.userCreated ? Tag : BadgeCheck; const name = productName(product, t);
-  return <Modal close={close} label={name}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className={`modal-product-visual ${product.userCreated ? "tone-user" : `tone-${product.id}`}`}><Icon/><span className={`availability ${product.status === "Reserved" ? "reserved" : ""}`}>{tr(t, product.status === "Available" ? "common:available" : "common:reserved")}</span></div><span className="seller"><SellerIcon size={16}/>{product.userCreated ? tr(t, "common:demoData") : tr(t, "common:verified")}</span><h2>{name}</h2><strong className="modal-price">{formatCurrency(locale, product.priceKrw)}</strong><div className="product-modal-details"><div><span>{tr(t, "marketplace:condition")}</span><strong>{tr(t, `marketplace:conditions.${product.condition}`)}</strong></div><div><span>{tr(t, "marketplace:pickup")}</span><strong><MapPin size={16}/>{productPickup(product, t)}</strong></div><div><span>{tr(t, "marketplace:seller")}</span><strong>{productSeller(product, t, profile)}</strong></div></div><button className="primary full" disabled={product.status === "Reserved"} onClick={contact}><MessageCircle size={18}/>{tr(t, "marketplace:contact")}</button></Modal>;
+  return <Modal close={close} label={name}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className={`modal-product-visual ${product.userCreated ? "tone-user" : `tone-${product.id}`}`}><Icon/><span className={`availability ${product.status === "Reserved" ? "reserved" : ""}`}>{tr(t, product.status === "Available" ? "common:available" : "common:reserved")}</span></div><span className="seller"><SellerIcon size={16}/>{product.source === "live" ? tr(t, "common:verified") : product.source === "sample" ? tr(t, "common:sample") : tr(t, "common:demoData")}</span><h2>{name}</h2><strong className="modal-price">{formatCurrency(locale, product.priceKrw)}</strong><div className="product-modal-details"><div><span>{tr(t, "marketplace:condition")}</span><strong>{tr(t, `marketplace:conditions.${product.condition}`)}</strong></div><div><span>{tr(t, "marketplace:pickup")}</span><strong><MapPin size={16}/>{productPickup(product, t)}</strong></div><div><span>{tr(t, "marketplace:seller")}</span><strong>{productSeller(product, t, profile)}</strong></div></div>{product.ownedByCurrentUser ? <div className="owner-listing-actions"><button className="secondary" onClick={() => changeStatus(product.serviceStatus === "sold" ? "active" : "sold")}>{tr(t, product.serviceStatus === "sold" ? "marketplace:markActive" : "marketplace:markSold")}</button><button className="secondary" onClick={() => changeStatus("hidden")}>{tr(t, "marketplace:hideListing")}</button><button className="danger-link" onClick={() => changeStatus("deleted")}>{tr(t, "marketplace:deleteListing")}</button></div> : <button className="primary full" disabled={product.status === "Reserved"} onClick={contact}><MessageCircle size={18}/>{tr(t, "marketplace:contact")}</button>}</Modal>;
 }
 
 function ContactModal({ t, close }: { t: TFunction; close: () => void }) {

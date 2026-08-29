@@ -34,6 +34,9 @@ export type MarketProduct = {
   status: ProductStatus;
   icon: ProductIcon;
   userCreated?: boolean;
+  source?: "sample" | "demo" | "live";
+  ownedByCurrentUser?: boolean;
+  serviceStatus?: "active" | "sold" | "hidden" | "deleted";
 };
 export type PlaceCategory = "Food" | "Halal" | "Vegan" | "Hospital" | "Pharmacy" | "Hair Salon" | "Cafe" | "Grocery";
 export type Place = { id: number; category: PlaceCategory; nameKey: TranslationKey; descriptionKey: TranslationKey; locationKey: TranslationKey; distanceMeters: number; english: boolean; languageSupportNoteKey?: TranslationKey | null; tipKey: TranslationKey };
@@ -81,7 +84,7 @@ export const tasks: Task[] = [
   task("move-out", "departure", 2, [20, 30])
 ];
 
-export const products: MarketProduct[] = [
+const sampleProducts: MarketProduct[] = [
   { id: 1, nameKey: "marketplace:products.riceCooker.name", priceKrw: 20000, category: "Kitchen", condition: "good", pickupKey: "marketplace:products.riceCooker.pickup", sellerKey: "marketplace:products.riceCooker.seller", status: "Available", icon: "cooking" },
   { id: 2, nameKey: "marketplace:products.deskLamp.name", priceKrw: 8000, category: "Home", condition: "likeNew", pickupKey: "marketplace:products.deskLamp.pickup", sellerKey: "marketplace:products.deskLamp.seller", status: "Available", icon: "lamp" },
   { id: 3, nameKey: "marketplace:products.beddingSet.name", priceKrw: 15000, category: "Bedding", condition: "clean", pickupKey: "marketplace:products.beddingSet.pickup", sellerKey: "marketplace:products.beddingSet.seller", status: "Reserved", icon: "bed" },
@@ -89,6 +92,7 @@ export const products: MarketProduct[] = [
   { id: 5, nameKey: "marketplace:products.miniFan.name", priceKrw: 7000, category: "Electronics", condition: "good", pickupKey: "marketplace:products.miniFan.pickup", sellerKey: "marketplace:products.miniFan.seller", status: "Available", icon: "fan" },
   { id: 6, nameKey: "marketplace:products.storageBoxes.name", priceKrw: 10000, category: "Home", condition: "used", pickupKey: "marketplace:products.storageBoxes.pickup", sellerKey: "marketplace:products.storageBoxes.seller", status: "Available", icon: "box" }
 ];
+export const products: MarketProduct[] = sampleProducts.map((product) => ({ ...product, source: "sample" }));
 
 export const places: Place[] = [
   { id: 1, category: "Hospital", nameKey: "localGuide:places.anamClinic.name", descriptionKey: "localGuide:places.anamClinic.description", locationKey: "localGuide:places.anamClinic.location", distanceMeters: 350, english: true, tipKey: "localGuide:places.anamClinic.tip" },
