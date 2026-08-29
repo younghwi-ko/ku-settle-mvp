@@ -311,6 +311,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .muted-copy { color: var(--muted); font-size: 12px; margin: 0; }
 @media (max-width: 640px) { .service-option-grid { grid-template-columns: 1fr; } }
 .kakao-guide-toolbar label { display: inline-flex; gap: 7px; align-items: center; color: var(--ink); font-weight: 700; }
+.dietary-status { display: inline-flex; margin: 4px 0 0 6px; padding: 3px 8px; border-radius: 999px; background: #eef8ef; color: #276749; font-size: 11px; font-weight: 800; }
 .map-result-summary { margin: 0 0 12px; color: var(--muted); font-size: 12px; }
 .map-status { display: flex; align-items: center; gap: 10px; margin: 10px 0; padding: 10px 12px; border-radius: 10px; background: var(--blue-light); color: var(--navy); font-size: 12px; }
 .map-status.map-error { background: #fff0f1; color: #8b1e31; }

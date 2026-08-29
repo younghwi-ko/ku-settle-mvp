@@ -38,6 +38,13 @@ describe("Kakao place integration helpers", () => {
     const place = kakaoPlaceToPlace({ id: "44", place_name: "Example Vegan Cafe", category_group_code: "CE7", category_group_name: "카페", x: "127.032", y: "37.590" }, fetchedAtForTest(), "Vegan");
     expect(place?.category).toBe("Vegan");
     expect(place?.verificationStatus).toBe("needs_confirmation");
+    expect(place?.veganStatus).toBe("needs-menu-check");
+  });
+
+  it("marks keyword halal results as menu-level confirmation only", () => {
+    const place = kakaoPlaceToPlace({ id: "45", place_name: "Example Halal Restaurant", category_group_code: "FD6", x: "127.032", y: "37.590" }, fetchedAtForTest(), "Halal");
+    expect(place?.halalStatus).toBe("needs-menu-check");
+    expect(place?.verificationStatus).toBe("needs_confirmation");
   });
 });
 

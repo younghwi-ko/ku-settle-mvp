@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, dedupePlaces, isKakaoPlaceAllowed, KAKAO_SUPPORTED_GROUP_CODES, KAKAO_DEFAULT_RADIUS_METERS } from "@/app/lib/kakao";
+import { kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, KU_SCIENCE_CENTER, dedupePlaces, isKakaoPlaceAllowed, KAKAO_SUPPORTED_GROUP_CODES, KAKAO_DEFAULT_RADIUS_METERS, isValidCoordinates } from "@/app/lib/kakao";
 import { canUseKakaoCall, kakaoMonthlyLimit, recordKakaoCall } from "@/app/lib/kakao-quota";
 
 const cache = new Map<string, { expiresAt: number; body: object }>();
@@ -27,13 +27,15 @@ export async function GET(request: Request) {
   const query = (url.searchParams.get("query") ?? "").trim();
   const radius = Math.min(20_000, Math.max(100, Number(url.searchParams.get("radius") ?? KAKAO_DEFAULT_RADIUS_METERS)));
   const page = Math.min(45, Math.max(1, Number(url.searchParams.get("page") ?? 1)));
-  if (!Number.isInteger(radius) || !Number.isInteger(page) || query.length > 80 || !/^[\p{L}\p{N}\s.,&'()\-]*$/u.test(query)) return NextResponse.json({ error: "invalid_request" }, { status: 400 });
+  const requestedCenter = { lat: Number(url.searchParams.get("lat") ?? KU_CENTER.lat), lng: Number(url.searchParams.get("lng") ?? KU_CENTER.lng) };
+  if (!Number.isInteger(radius) || !Number.isInteger(page) || query.length > 80 || !/^[\p{L}\p{N}\s.,&'()\-]*$/u.test(query) || !isValidCoordinates(requestedCenter)) return NextResponse.json({ error: "invalid_request" }, { status: 400 });
+  const center = requestedCenter.lat === KU_SCIENCE_CENTER.lat && requestedCenter.lng === KU_SCIENCE_CENTER.lng ? KU_SCIENCE_CENTER : KU_CENTER;
   const code = kakaoCategoryCode(category);
   const keyword = kakaoKeyword(category);
   if (category !== "All" && !code && !keyword && !["Halal", "Vegan", "Food", "Cafe", "Grocery", "Hospital", "Pharmacy", "Hair Salon"].includes(category)) return NextResponse.json({ error: "invalid_category" }, { status: 400 });
   const restKey = process.env.KAKAO_REST_API_KEY;
   if (!restKey) return NextResponse.json({ error: "not_configured" }, { status: 503 });
-  const cacheKey = JSON.stringify({ category, query, radius, page });
+  const cacheKey = JSON.stringify({ category, query, radius, page, center });
   const cached = cache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) return NextResponse.json(cached.body);
   const monthlyLimit = kakaoMonthlyLimit();
@@ -46,7 +48,7 @@ export async function GET(request: Request) {
   for (const categoryCode of categoryCodes) {
     if (!canUseKakaoCall(monthlyLimit)) { rateLimited = true; break; }
     recordKakaoCall();
-    const params = new URLSearchParams({ x: String(KU_CENTER.lng), y: String(KU_CENTER.lat), radius: String(radius), page: String(page), size: "15", sort: "distance", category_group_code: categoryCode });
+    const params = new URLSearchParams({ x: String(center.lng), y: String(center.lat), radius: String(radius), page: String(page), size: "15", sort: "distance", category_group_code: categoryCode });
     if (query) params.set("query", query);
     const result = await fetchKakao(endpoint, params, restKey);
     if (!result.ok) { if (result.status === 429) rateLimited = true; continue; }
@@ -57,7 +59,7 @@ export async function GET(request: Request) {
   if (!categoryCodes.length) {
     if (!canUseKakaoCall(monthlyLimit)) return NextResponse.json({ error: "free_quota_limit", limit: monthlyLimit }, { status: 429 });
     recordKakaoCall();
-    const params = new URLSearchParams({ x: String(KU_CENTER.lng), y: String(KU_CENTER.lat), radius: String(radius), page: String(page), size: "15", sort: "distance", query: query || keyword || "고려대학교" });
+    const params = new URLSearchParams({ x: String(center.lng), y: String(center.lat), radius: String(radius), page: String(page), size: "15", sort: "distance", query: query || keyword || "고려대학교" });
     const result = await fetchKakao(endpoint, params, restKey);
     if (!result.ok) return NextResponse.json({ error: result.status === 429 ? "rate_limited" : "upstream_unavailable" }, { status: 502 });
     successfulCalls = 1;
