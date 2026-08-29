@@ -22,7 +22,7 @@ import { getSupabaseClient, isSupabaseConfigured } from "./lib/supabase";
 import { createMarketplaceItem, deleteAccount, importGuestData, loadAccount, saveProfile, saveProgress, sendEmailOtp, signOut, updateMarketplaceItemStatus } from "./lib/repository";
 import { isKuEmail, mapServiceError, profileRowToStored, type AppMode, type ProfileRow, type StoredProfile } from "./lib/domain";
 import { shouldShowVerifiedBadge } from "./lib/verification";
-import { emptyPreferences, readLocalData, writeLocalData, type LocalPreferences } from "./lib/local-data";
+import { emptyPreferences, migrateLocalData, readLocalData, writeLocalData, type LocalPreferences } from "./lib/local-data";
 
 type Page = "home" | "onboarding" | "marketplace" | "guide" | "life-guide";
 type Housing = "dorm" | "off-campus";
@@ -37,7 +37,7 @@ const storageKeys = {
   verified: "ku-settle-verified",
   profile: "ku-settle-profile",
   userProducts: "ku-settle-user-products"
-  , importState: "ku-settle-guest-import-state", data: "ku-settle-local-data-v2"
+  , importState: "ku-settle-guest-import-state", data: "ku-settle-local-data-v4"
 } as const;
 const demoProfile: UserProfile = { name: "Alex", arrivalDate: "", housing: "dorm", mode: "demo" };
 const demoDone = ["housing-reserve", "sim-compare", "airport-route", "arrival-essentials", "dorm", "account", "courses"];
@@ -236,7 +236,7 @@ export default function Home() {
   }, [profile, hydrated, appMode]);
   useEffect(() => {
     if (!hydrated || appMode === "authenticated") return;
-    writeLocalData(localStorage, storageKeys.data, { version: 2, profile, done, products: userProducts, verified, preferences: localPreferences });
+    writeLocalData(localStorage, storageKeys.data, { version: 4, profile, done, products: userProducts, verified, preferences: localPreferences });
   }, [done, hydrated, localPreferences, profile, userProducts, verified, appMode]);
   useEffect(() => {
     if (!highlightTaskId) return;
@@ -255,7 +255,7 @@ export default function Home() {
   const progress = activeTasks.length ? Math.round((completedCount / activeTasks.length) * 100) : 0;
   const recommendedTask = activeTasks.find((task) => !done.includes(task.id)) ?? null;
   const stageStats = useMemo(() => getStageStats(activeTasks, done), [activeTasks, done]);
-  const marketplaceProducts = useMemo(() => [...userProducts, ...products].map((product) => localPreferences.reservedProductIds.includes(String(product.id)) && !product.ownedByCurrentUser ? { ...product, status: "Reserved" as const } : product), [userProducts, products, localPreferences.reservedProductIds]);
+  const marketplaceProducts = useMemo(() => [...userProducts, ...products].map((product) => localPreferences.reservedProductIds.includes(String(product.id)) && product.serviceStatus !== "sold" ? { ...product, status: "Reserved" as const } : product), [userProducts, products, localPreferences.reservedProductIds]);
   const navItems: { key: Page; icon: typeof GraduationCap; labelKey: string }[] = [
     { key: "home", icon: GraduationCap, labelKey: "navigation:home" },
     { key: "onboarding", icon: FileCheck2, labelKey: "navigation:onboarding" },
@@ -288,6 +288,7 @@ export default function Home() {
   };
   const toggleTask = (id: string) => {
     const wasDone = done.includes(id); const next = wasDone ? done.filter((item) => item !== id) : [...done, id]; setDone(next);
+    setLocalPreferences((current) => ({ ...current, progressHistory: [...current.progressHistory, { date: new Date().toLocaleDateString("en-CA"), progress: activeTasks.length ? Math.round((activeTasks.filter((task) => next.includes(task.id)).length / activeTasks.length) * 100) : 0 }].slice(-100) }));
     if (appMode === "authenticated" && authUser) void saveProgress(authUser.id, id, !wasDone).catch((error) => { setDone(done); setServiceMessage(mapServiceError(error)); });
   };
   const startPersonalizedPlan = (nextProfile: UserProfile) => {
@@ -334,6 +335,7 @@ export default function Home() {
     setAuthOpen(true); throw new Error("Authentication required");
   };
   const reserveMarketplaceProduct = (product: MarketProduct) => {
+    if (product.serviceStatus === "sold") { setServiceMessage("marketplace:soldUnavailable"); return; }
     setLocalPreferences((current) => ({ ...current, reservedProductIds: [...new Set([...current.reservedProductIds, String(product.id)])] }));
     setSelectedProduct(null); setServiceMessage("common:saved");
   };
@@ -344,6 +346,10 @@ export default function Home() {
   const updateLocalProduct = (product: MarketProduct) => {
     setUserProducts((current) => current.map((item) => item.id === product.id ? { ...item, ...product, source: "demo", ownedByCurrentUser: true } : item));
     setEditingProduct(null); setSelectedProduct(null); setServiceMessage("common:saved");
+  };
+  const toggleProductFavorite = (product: MarketProduct) => {
+    const id = String(product.id);
+    setLocalPreferences((current) => ({ ...current, favoriteProductIds: current.favoriteProductIds.includes(id) ? current.favoriteProductIds.filter((item) => item !== id) : [...current.favoriteProductIds, id] }));
   };
 
   const completeGuestImport = async () => {
@@ -360,6 +366,13 @@ export default function Home() {
       setServiceMessage(mapServiceError(error));
     }
     finally { setServerBusy(false); }
+  };
+  const exportDemoData = () => {
+    const blob = new Blob([JSON.stringify({ version: 4, profile, done, products: userProducts, verified, preferences: localPreferences }, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = "ku-settle-demo-data.json"; anchor.click(); URL.revokeObjectURL(url);
+  };
+  const importDemoData = (file: File) => {
+    const reader = new FileReader(); reader.onload = () => { try { const data = migrateLocalData(JSON.parse(String(reader.result))); setProfile(data.profile); setDone(data.done); setUserProducts(data.products.map((product) => ({ ...product, source: "demo", userCreated: true, ownedByCurrentUser: true }))); setVerified(data.verified); setLocalPreferences(data.preferences); setServiceMessage("common:saved"); } catch { setServiceMessage("errors:generic"); } }; reader.readAsText(file);
   };
 
   if (!localeReady || !hydrated) return <InitialLoading/>;
@@ -386,12 +399,12 @@ export default function Home() {
       <main>
         {page === "home" && <Dashboard locale={locale} t={t} profile={currentProfile} activeTasks={activeTasks} stageStats={stageStats} progress={progress} completedCount={completedCount} recommendedTask={recommendedTask} go={go}/>}
         {page === "onboarding" && <Onboarding locale={locale} t={t} activeTasks={activeTasks} stageStats={stageStats} progress={progress} done={done} recommendedTask={recommendedTask} selectedStage={selectedStage} setSelectedStage={setSelectedStage} focusTaskId={focusTaskId} highlightTaskId={highlightTaskId} go={go} openTaskAction={openTaskAction} toggleTask={toggleTask} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
-        {page === "marketplace" && <Marketplace locale={locale} t={t} profile={currentProfile} appMode={appMode} products={marketplaceProducts} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} addProduct={addMarketplaceProduct} selectProduct={setSelectedProduct}/>}
+        {page === "marketplace" && <Marketplace locale={locale} t={t} profile={currentProfile} appMode={appMode} products={marketplaceProducts} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} addProduct={addMarketplaceProduct} selectProduct={setSelectedProduct} preferences={localPreferences} setPreferences={setLocalPreferences} toggleFavorite={toggleProductFavorite}/>}
         {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go}/>}
         {page === "guide" && <LocalGuide locale={locale} t={t} category={guideCategory} setCategory={setGuideCategory} search={guideSearch} setSearch={setGuideSearch} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
       </main>
 
-      <footer><div className="footer-brand"><span className="brand-mark small">KU</span><span><strong>KU Settle</strong><small>{tr(t, "common:copyright", { year: formatNumber(locale, new Date().getFullYear(), { useGrouping: false }) })}</small></span></div><div className="footer-actions"><span className="footer-notice">{tr(t, "navigation:footerNotice")}</span>{(["about", "terms", "privacy", "safety", "sources", "disclaimer"] as const).map((item) => <button key={item} onClick={() => setInfoPage(item)}>{item}</button>)}{appMode !== "authenticated" && <button className="reset-demo" onClick={() => setResetOpen(true)}><RotateCcw size={13}/>{tr(t, "reset:button")}</button>}</div></footer>
+      <footer><div className="footer-brand"><span className="brand-mark small">KU</span><span><strong>KU Settle</strong><small>{tr(t, "common:copyright", { year: formatNumber(locale, new Date().getFullYear(), { useGrouping: false }) })}</small></span></div><div className="footer-actions"><span className="footer-notice">{tr(t, "navigation:footerNotice")}</span>{(["about", "terms", "privacy", "safety", "sources", "disclaimer"] as const).map((item) => <button key={item} onClick={() => setInfoPage(item)}>{item}</button>)}{appMode !== "authenticated" && <><button className="reset-demo" onClick={exportDemoData}>{locale === "ko" ? "내보내기" : locale === "ja" ? "エクスポート" : locale === "zh-CN" ? "导出" : "Export"}</button><label className="reset-demo">{locale === "ko" ? "가져오기" : locale === "ja" ? "インポート" : locale === "zh-CN" ? "导入" : "Import"}<input type="file" accept="application/json" hidden onChange={(e) => { const file = e.target.files?.[0]; if (file) importDemoData(file); }}/></label><button className="reset-demo" onClick={() => setResetOpen(true)}><RotateCcw size={13}/>{tr(t, "reset:button")}</button></>}</div></footer>
 
       {(serverBusy || serviceMessage) && <div className={`service-status ${serviceMessage?.startsWith("errors:") ? "error" : ""}`} role="status">{serverBusy ? tr(t, "common:saving") : serviceMessage ? tr(t, serviceMessage) : ""}{serviceMessage && <button onClick={() => setServiceMessage(null)} aria-label={tr(t, "common:close")}><X size={14}/></button>}</div>}
 
@@ -493,9 +506,10 @@ function Dashboard({ locale, t, profile, activeTasks, stageStats, progress, comp
 function Onboarding({ locale, t, activeTasks, stageStats, progress, done, recommendedTask, selectedStage, setSelectedStage, focusTaskId, highlightTaskId, go, openTaskAction, toggleTask, preferences, setPreferences }: { locale: Locale; t: TFunction; activeTasks: Task[]; stageStats: StageStat[]; progress: number; done: string[]; recommendedTask: Task | null; selectedStage: LifecycleStage; setSelectedStage: (stage: LifecycleStage) => void; focusTaskId: string | null; highlightTaskId: string | null; go: (page: Page, intent?: NavigationIntent) => void; openTaskAction: (action: TaskAction) => void; toggleTask: (id: string) => void; preferences: import("./lib/local-data").LocalPreferences; setPreferences: Dispatch<SetStateAction<import("./lib/local-data").LocalPreferences>> }) {
   const taskRef = useRef<HTMLElement | null>(null);
   const [dateFilter, setDateFilter] = useState<"all" | "today" | "week" | "none">("all");
+  const [taskSearch, setTaskSearch] = useState(""); const [taskSort, setTaskSort] = useState<"default" | "due" | "status">("default");
   const [customTitle, setCustomTitle] = useState(""); const [customDate, setCustomDate] = useState(""); const [customNote, setCustomNote] = useState("");
   const selectedTasks = useMemo(() => activeTasks.filter((task) => task.stage === selectedStage), [activeTasks, selectedStage]);
-  const visibleTasks = selectedTasks.filter((task) => { const due = preferences.dueDates[task.id] ?? ""; if (preferences.hiddenCompleted && done.includes(task.id)) return false; if (dateFilter === "none") return !due; const today = new Date().toLocaleDateString("en-CA"); if (dateFilter === "today") return due === today; if (dateFilter === "week") { const end = new Date(); end.setDate(end.getDate() + 7); return Boolean(due && due >= today && due <= end.toLocaleDateString("en-CA")); } return true; });
+  const visibleTasks = [...selectedTasks.filter((task) => { const due = preferences.dueDates[task.id] ?? ""; if (!tr(t, task.titleKey).toLocaleLowerCase(locale).includes(taskSearch.toLocaleLowerCase(locale))) return false; if (preferences.hiddenCompleted && done.includes(task.id)) return false; if (dateFilter === "none") return !due; const today = new Date().toLocaleDateString("en-CA"); if (dateFilter === "today") return due === today; if (dateFilter === "week") { const end = new Date(); end.setDate(end.getDate() + 7); return Boolean(due && due >= today && due <= end.toLocaleDateString("en-CA")); } return true; })].sort((a, b) => taskSort === "due" ? (preferences.dueDates[a.id] || "9999").localeCompare(preferences.dueDates[b.id] || "9999") : taskSort === "status" ? Number(done.includes(a.id)) - Number(done.includes(b.id)) : 0);
   const selectedStat = stageStats.find(({ stage }) => stage.id === selectedStage) ?? stageStats[0];
   const overallCompleted = activeTasks.filter((task) => done.includes(task.id)).length;
   useEffect(() => {
@@ -507,7 +521,7 @@ function Onboarding({ locale, t, activeTasks, stageStats, progress, done, recomm
   return <section className="page section-pad">
     <div className="page-hero lifecycle-hero"><div><span className="eyebrow"><FileCheck2 size={14}/>{tr(t, "onboarding:eyebrow")}</span><h1>{tr(t, "onboarding:title")}</h1><p>{tr(t, "onboarding:body")}</p></div><div className="progress-panels"><div className="progress-summary"><div><span>{tr(t, "onboarding:overallProgress")}</span><strong>{formatPercent(locale, progress)}</strong></div><div className="progress-track"><i style={{ width: `${progress}%` }}/></div><small><CheckCircle2 size={14}/>{tr(t, "onboarding:taskCount", { count: overallCompleted })}</small></div><div className="progress-summary selected"><div><span>{tr(t, "onboarding:selectedStage")}</span><strong>{formatPercent(locale, selectedStat.progress)}</strong></div><div className="progress-track"><i style={{ width: `${selectedStat.progress}%` }}/></div><small>{tr(t, selectedStat.stage.labelKey)} · {tr(t, "common:countOfTotal", { completed: formatNumber(locale, selectedStat.completed), total: formatNumber(locale, selectedStat.total) })}</small></div></div></div>
     <div className="lifecycle-tabs" role="tablist" aria-label={tr(t, "accessibility:lifecycleTabs")}>{stageStats.map(({ stage, completed, total, progress: stageProgress }) => <button role="tab" aria-selected={selectedStage === stage.id} className={selectedStage === stage.id ? "active" : ""} key={stage.id} onClick={() => setSelectedStage(stage.id)}><span>{stage.number}</span><strong>{tr(t, stage.labelKey)}</strong><small>{tr(t, "common:countOfTotal", { completed: formatNumber(locale, completed), total: formatNumber(locale, total) })} · {formatPercent(locale, stageProgress)}</small><i><b style={{ width: `${stageProgress}%` }}/></i></button>)}</div>
-    <div className="chips"><button aria-pressed={preferences.hiddenCompleted} onClick={() => setPreferences((p) => ({ ...p, hiddenCompleted: !p.hiddenCompleted }))}>{preferences.hiddenCompleted ? ui(locale, "show") : ui(locale, "hide")}</button>{(["all", "today", "week", "none"] as const).map((item) => <button key={item} aria-pressed={dateFilter === item} onClick={() => setDateFilter(item)}>{ui(locale, item === "all" ? "allDates" : item)}</button>)}</div>
+    <div className="filters"><label className="search-field"><Search size={17}/><input value={taskSearch} onChange={(e) => setTaskSearch(e.target.value)} placeholder={locale === "ko" ? "작업 검색" : "Search tasks"}/></label><label className="sort-control"><span>{locale === "ko" ? "정렬" : "Sort"}</span><select value={taskSort} onChange={(e) => setTaskSort(e.target.value as "default" | "due" | "status")}><option value="default">{locale === "ko" ? "기본" : "Default"}</option><option value="due">{locale === "ko" ? "예정일순" : "Due date"}</option><option value="status">{locale === "ko" ? "미완료 우선" : "Incomplete first"}</option></select></label></div><div className="chips"><button aria-pressed={preferences.hiddenCompleted} onClick={() => setPreferences((p) => ({ ...p, hiddenCompleted: !p.hiddenCompleted }))}>{preferences.hiddenCompleted ? ui(locale, "show") : ui(locale, "hide")}</button>{(["all", "today", "week", "none"] as const).map((item) => <button key={item} aria-pressed={dateFilter === item} onClick={() => setDateFilter(item)}>{ui(locale, item === "all" ? "allDates" : item)}</button>)}</div>
     <div className="timeline-note"><Lightbulb size={20}/><span>{tr(t, "onboarding:recommendationHint")}</span>{recommendedTask && recommendedTask.stage !== selectedStage && <button onClick={() => go("onboarding", { stage: recommendedTask.stage, taskId: recommendedTask.id, highlight: true })}>{tr(t, "onboarding:viewNext")}<ArrowRight size={15}/></button>}</div>
     <div className="task-list">{visibleTasks.map((task, index) => {
       const isDone = done.includes(task.id); const isRecommended = !isDone && task.id === recommendedTask?.id; const isHighlighted = task.id === highlightTaskId; const title = tr(t, task.titleKey);
@@ -525,11 +539,12 @@ function Onboarding({ locale, t, activeTasks, stageStats, progress, done, recomm
   </section>;
 }
 
-function Marketplace({ locale, t, profile, appMode, products: marketplaceProducts, search, setSearch, category, setCategory, mode, setMode, addProduct, selectProduct }: { locale: Locale; t: TFunction; profile: UserProfile; appMode: AppMode; products: MarketProduct[]; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; mode: MarketMode; setMode: (value: MarketMode) => void; addProduct: (product: MarketProduct) => Promise<void>; selectProduct: (product: MarketProduct) => void }) {
+function Marketplace({ locale, t, profile, appMode, products: marketplaceProducts, search, setSearch, category, setCategory, mode, setMode, addProduct, selectProduct, preferences, setPreferences, toggleFavorite }: { locale: Locale; t: TFunction; profile: UserProfile; appMode: AppMode; products: MarketProduct[]; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; mode: MarketMode; setMode: (value: MarketMode) => void; addProduct: (product: MarketProduct) => Promise<void>; selectProduct: (product: MarketProduct) => void; preferences: LocalPreferences; setPreferences: Dispatch<SetStateAction<LocalPreferences>>; toggleFavorite: (product: MarketProduct) => void }) {
   const [success, setSuccess] = useState(false);
+  const [sort, setSort] = useState<"latest" | "price">("latest");
   const categories = ["All", ...productCategories];
   const categoryLabel = (value: string) => value === "All" ? tr(t, "marketplace:all") : tr(t, `marketplace:categories.${value}`);
-  const filtered = useMemo(() => marketplaceProducts.filter((product) => (category === "All" || product.category === category) && productName(product, t).toLocaleLowerCase(locale).includes(search.toLocaleLowerCase(locale))), [marketplaceProducts, category, search, locale, t]);
+  const filtered = useMemo(() => [...marketplaceProducts.filter((product) => (category === "All" || product.category === category) && productName(product, t).toLocaleLowerCase(locale).includes(search.toLocaleLowerCase(locale)))].sort((a, b) => sort === "price" ? a.priceKrw - b.priceKrw : Number(b.id) - Number(a.id)), [marketplaceProducts, category, search, locale, t, sort]);
 const changeMode = (nextMode: MarketMode) => { setMode(nextMode); setSuccess(false); };
   const completeListing = async (product: MarketProduct) => { await addProduct(product); setSearch(""); setCategory("All"); setMode("incoming"); setSuccess(true); };
 
@@ -538,10 +553,12 @@ const changeMode = (nextMode: MarketMode) => { setMode(nextMode); setSuccess(fal
     <div className="market-flow">{(["verification", "listing", "pickup", "transaction"] as const).map((step, index) => <div key={step}><span>{index === 0 ? <BadgeCheck/> : index === 1 ? <ShoppingBag/> : index === 2 ? <MapPin/> : <Banknote/>}</span><strong>{tr(t, `marketplace:flow.${step}`)}</strong>{index < 3 && <ChevronRight/>}</div>)}</div>
 {mode === "leaving" ? !(["authenticated", "demo", "guest"] as AppMode[]).includes(appMode) ? <article className="listing-form auth-gate"><ShieldCheck/><h2>{tr(t, "marketplace:authRequiredTitle")}</h2><p>{tr(t, "marketplace:authRequiredBody")}</p></article> : <><ListingForm locale={locale} t={t} submit={completeListing}/><UserListingManager locale={locale} products={marketplaceProducts} selectProduct={selectProduct}/></> : <>
       {success && <div className="success-banner" role="status"><CheckCircle2 size={18}/>{tr(t, "marketplace:form.success")}</div>}
-      <div className="filters"><label className="search-box"><Search size={19}/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr(t, "marketplace:search")}/>{search && <button onClick={() => setSearch("")} aria-label={tr(t, "marketplace:clearSearch")}><X size={16}/></button>}</label><div className="chips">{categories.map((item) => <button key={item} aria-pressed={category === item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{categoryLabel(item)}</button>)}</div></div>
+      <div className="filters"><label className="search-box"><Search size={19}/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr(t, "marketplace:search")}/>{search && <button onClick={() => setSearch("")} aria-label={tr(t, "marketplace:clearSearch")}><X size={16}/></button>}</label><label className="sort-control"><span>{locale === "ko" ? "정렬" : "Sort"}</span><select value={sort} onChange={(event) => setSort(event.target.value as "latest" | "price")}><option value="latest">{locale === "ko" ? "최신순" : "Latest"}</option><option value="price">{locale === "ko" ? "가격순" : "Price"}</option></select></label><div className="chips">{categories.map((item) => <button key={item} aria-pressed={category === item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{categoryLabel(item)}</button>)}</div></div>
+      {preferences.reservedProductIds.length > 0 && <section className="reservation-summary"><strong>{locale === "ko" ? "내 예약 상품" : "My reservations"}</strong><span>{preferences.reservedProductIds.length}</span><button className="secondary" onClick={() => setPreferences((current) => ({ ...current, reservedProductIds: [] }))}>{locale === "ko" ? "예약 전체 취소" : "Cancel all"}</button></section>}
       {filtered.length ? <div className="product-grid">{filtered.map((product) => {
         const Icon = productIcons[product.icon]; const SellerIcon = product.userCreated ? Tag : BadgeCheck; const name = productName(product, t);
-        return <button className="product-card" key={product.id} aria-label={tr(t, "accessibility:productDetails", { product: name })} onClick={() => selectProduct(product)}><div className={`product-visual ${product.userCreated ? "tone-user" : `tone-${product.id}`}`}><Icon/><span className={`availability ${product.status === "Reserved" ? "reserved" : ""}`}>{tr(t, product.status === "Available" ? "common:available" : "common:reserved")}</span><span className="source-pill">{tr(t, product.source === "live" ? "common:liveData" : product.source === "demo" ? "common:demoData" : "common:sampleData")}</span></div><div className="product-info"><div><h2>{name}</h2><strong className="price">{formatCurrency(locale, product.priceKrw)}</strong></div><dl><div><dt>{tr(t, "marketplace:condition")}</dt><dd>{tr(t, `marketplace:conditions.${product.condition}`)}</dd></div><div><dt>{tr(t, "marketplace:pickup")}</dt><dd><MapPin size={14}/>{productPickup(product, t)}</dd></div></dl><span className="seller"><SellerIcon size={16}/>{productSeller(product, t, profile)}</span><span className="details-link">{tr(t, "marketplace:details")}<ArrowRight size={16}/></span></div></button>;
+        const favorite = preferences.favoriteProductIds.includes(String(product.id));
+        return <div className="product-card-wrap" key={product.id}><button className="product-card" aria-label={tr(t, "accessibility:productDetails", { product: name })} onClick={() => selectProduct(product)}><div className={`product-visual ${product.userCreated ? "tone-user" : `tone-${product.id}`}`}>{product.imageDataUrl ? <img className="product-image" src={product.imageDataUrl} alt=""/> : <Icon/>}<span className={`availability ${product.status === "Reserved" ? "reserved" : ""}`}>{tr(t, product.status === "Available" ? "common:available" : "common:reserved")}</span><span className="source-pill">{tr(t, product.source === "live" ? "common:liveData" : product.source === "demo" ? "common:demoData" : "common:sampleData")}</span></div><div className="product-info"><div><h2>{name}</h2><strong className="price">{formatCurrency(locale, product.priceKrw)}</strong></div><dl><div><dt>{tr(t, "marketplace:condition")}</dt><dd>{tr(t, `marketplace:conditions.${product.condition}`)}</dd></div><div><dt>{tr(t, "marketplace:pickup")}</dt><dd><MapPin size={14}/>{productPickup(product, t)}</dd></div></dl><span className="seller"><SellerIcon size={16}/>{productSeller(product, t, profile)}</span><span className="details-link">{tr(t, "marketplace:details")}<ArrowRight size={16}/></span></div></button><button className="favorite-button" aria-pressed={favorite} aria-label={favorite ? "Unfavorite" : "Favorite"} onClick={() => toggleFavorite(product)}>{favorite ? "★" : "☆"}</button></div>;
       })}</div> : <EmptyState icon={Search} text={tr(t, "marketplace:empty")}/>}
     </>}
   </section>;

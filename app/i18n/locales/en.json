@@ -133,7 +133,7 @@
     "userSeller": "KU student · {{name}}",
     "authRequiredTitle": "Sign in to list a real item",
     "authRequiredBody": "Guest plans stay on this device. Verify your KU email to publish a listing to the student marketplace.",
-    "markSold": "Mark as sold", "markActive": "Mark as available", "hideListing": "Hide listing", "deleteListing": "Delete listing",
+    "markSold": "Mark as sold", "markActive": "Mark as available", "hideListing": "Hide listing", "deleteListing": "Delete listing", "soldUnavailable": "This item is already marked as sold.",
     "products": {
       "riceCooker": { "name": "Rice Cooker", "pickup": "Anam Station, Exit 3", "seller": "Exchange student · Mia" },
       "deskLamp": { "name": "Desk Lamp", "pickup": "KU Main Gate", "seller": "KU student · Joon" },

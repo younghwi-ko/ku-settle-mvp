@@ -126,7 +126,7 @@
     "empty": "検索条件に合う商品はありません。",
     "form": { "title": "次の学生のために商品を登録", "body": "既存のアイコンカードを使って簡単に登録できます。このデモでは画像のアップロードは不要です。", "itemName": "商品名", "price": "価格", "category": "カテゴリー", "condition": "状態", "pickup": "受け取り場所", "availability": "販売状況", "submit": "商品を登録", "success": "商品を登録しました。これからKUへ来る学生の画面に表示されます。", "itemPlaceholder": "例：勉強用の椅子", "pricePlaceholder": "例：20000", "pickupPlaceholder": "例：高麗大学 正門" },
     "actions": { "browse": "マーケットを見る", "list": "商品を登録する" },
-    "userSeller": "KU学生 · {{name}}", "authRequiredTitle": "実際に出品するにはログインしてください", "authRequiredBody": "ゲストのプランはこの端末だけに保存されます。高麗大学メールを認証すると学生マーケットに出品できます。", "markSold": "売却済みにする", "markActive": "出品中に戻す", "hideListing": "出品を非表示", "deleteListing": "出品を削除",
+    "userSeller": "KU学生 · {{name}}", "authRequiredTitle": "実際に出品するにはログインしてください", "authRequiredBody": "ゲストのプランはこの端末だけに保存されます。高麗大学メールを認証すると学生マーケットに出品できます。", "markSold": "売却済みにする", "markActive": "出品中に戻す", "hideListing": "出品を非表示", "deleteListing": "出品を削除", "soldUnavailable": "この商品は売却済みです。",
     "products": {
       "riceCooker": { "name": "炊飯器", "pickup": "安岩駅3番出口", "seller": "交換留学生 · Mia" },
       "deskLamp": { "name": "デスクライト", "pickup": "高麗大学 正門", "seller": "KU学生 · Joon" },

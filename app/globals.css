@@ -277,6 +277,15 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .my-listing-row img { width: 38px; height: 34px; object-fit: cover; border-radius: 7px; }
 .my-listing-row small { color: var(--muted); }
 .empty-copy { color: var(--muted); font-size: 12px; }
+.product-card-wrap { position: relative; }
+.product-card-wrap .product-card { width: 100%; }
+.favorite-button { position: absolute; top: 12px; right: 12px; z-index: 2; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: #d18b00; width: 32px; height: 32px; cursor: pointer; font-size: 18px; }
+.product-image { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.sort-control { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; }
+.sort-control select { border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; background: #fff; color: var(--navy); }
+.reservation-summary { display: flex; align-items: center; gap: 10px; margin: 14px 0; padding: 12px 14px; border: 1px solid #dce7fb; border-radius: 12px; background: #f6f9ff; }
+.reservation-summary span { color: var(--blue); font-weight: 800; }
+.reservation-summary button { margin-left: auto; }
 .market-list-cta { white-space: nowrap; }
 .modal-listing-image { display: block; width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; margin: 12px 0; }
 .listing-description, .listing-hours { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 8px 0; }

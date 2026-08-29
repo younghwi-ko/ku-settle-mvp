@@ -16,7 +16,7 @@ describe("Guest and Demo storage boundaries", () => {
 
   it("keeps Reset demo local and unavailable to authenticated accounts", () => {
     expect(page).toContain('[storageKeys.profile, storageKeys.checklist, storageKeys.verified, storageKeys.userProducts].forEach');
-    expect(page).toContain('appMode !== "authenticated" && <button className="reset-demo"');
+    expect(page).toContain('appMode !== "authenticated" && <><button className="reset-demo"');
   });
 
   it("preserves Guest or Demo UI when Supabase account loading fails", () => {
