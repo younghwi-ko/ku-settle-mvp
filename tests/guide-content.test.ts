@@ -27,4 +27,13 @@ describe("life guide localization and sources", () => {
     expect(expandedLifeGuideArticles.find((article) => article.id === "recycling-basics")?.officialUrl).toMatch(/^https:\/\//);
     expect(expandedLifeGuideArticles.find((article) => article.id === "sim-esim-options")?.officialUrl).toMatch(/^https:\/\//);
   });
+
+  it("classifies verified extended guides as official-source content", () => {
+    for (const id of ["sim-esim-options", "recycling-basics", "departure-shipping"]) {
+      const article = expandedLifeGuideArticles.find((item) => item.id === id);
+      expect(article?.contentOrigin).toBe("official-guide");
+      expect(article?.sourceStatus).toBe("verified");
+      expect(article?.officialUrl).toMatch(/^https:\/\//);
+    }
+  });
 });
