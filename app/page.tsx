@@ -412,7 +412,7 @@ export default function Home() {
       {selectedProduct && (
         <ProductModal locale={locale} t={t} profile={currentProfile} product={selectedProduct} close={() => setSelectedProduct(null)} contact={() => { setSelectedProduct(null); setContactOpen(true); }} reserve={() => reserveMarketplaceProduct(selectedProduct)} edit={() => { setEditingProduct(selectedProduct); setSelectedProduct(null); }} changeStatus={(status) => void changeMarketplaceStatus(selectedProduct, status)}/>
       )}
-      {editingProduct && <ProductEditModal locale={locale} t={t} product={editingProduct} close={() => setEditingProduct(null)} save={updateLocalProduct}/>} 
+      {editingProduct && <ProductEditModal locale={locale} t={t} product={editingProduct} close={() => setEditingProduct(null)} save={updateLocalProduct}/>}
       {contactOpen && <ContactModal t={t} close={() => setContactOpen(false)}/>}
     </div>
   );
