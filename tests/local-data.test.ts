@@ -16,4 +16,13 @@ describe("local data migration", () => {
     expect(result.preferences.reservations).toHaveLength(1);
     expect(result.preferences.reservations[0].status).toBe("completed");
   });
+  it("migrates service requests and drops malformed entries", () => {
+    const result = migrateLocalData({ preferences: { serviceRequests: [{ id: "s1", productId: "p1", mode: "storage", status: "quote-viewed", storageDuration: "30", storageLocation: "campus", updatedAt: "2026-08-29T00:00:00Z" }, { id: "bad", mode: "unknown", status: "in-progress", updatedAt: "bad" }] } });
+    expect(result.preferences.serviceRequests).toHaveLength(1);
+    expect(result.preferences.serviceRequests[0].status).toBe("quote-viewed");
+  });
+  it("accepts the expanded service lifecycle statuses", () => {
+    const result = migrateLocalData({ preferences: { serviceRequests: [{ id: "s1", mode: "delivery", status: "application-ready", updatedAt: "2026-08-29T00:00:00Z" }, { id: "s2", mode: "pickup", status: "completed", updatedAt: "2026-08-29T00:00:00Z" }] } });
+    expect(result.preferences.serviceRequests.map((item) => item.status)).toEqual(["application-ready", "completed"]);
+  });
 });

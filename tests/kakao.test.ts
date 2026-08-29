@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { dedupePlaces, isKakaoPlaceAllowed, isValidCoordinates, kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER } from "../app/lib/kakao";
+import { dedupePlaces, isKakaoPlaceAllowed, isValidCoordinates, kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, KU_SCIENCE_CENTER, KAKAO_DEFAULT_RADIUS_METERS } from "../app/lib/kakao";
 
 describe("Kakao place integration helpers", () => {
   it("uses KU as the default center and maps supported categories", () => {
     expect(KU_CENTER.lat).toBeGreaterThan(37);
+    expect(KU_SCIENCE_CENTER.lat).toBeGreaterThan(37);
+    expect(KAKAO_DEFAULT_RADIUS_METERS).toBe(4000);
     expect(kakaoCategoryCode("Hospital")).toBe("HP8");
     expect(kakaoCategoryCode("Hair Salon")).toBeNull();
     expect(kakaoKeyword("Hair Salon")).toBe("미용실");
