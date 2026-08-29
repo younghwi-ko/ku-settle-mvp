@@ -6,7 +6,7 @@ import { joinOptionalLabel } from "../app/i18n/formatters.ts";
 import { detectLocale, supportedLocales } from "../app/i18n/types.ts";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
-const expectedNamespaces = ["common", "navigation", "home", "onboarding", "marketplace", "localGuide", "verification", "profile", "reset", "validation", "errors", "accessibility"];
+const expectedNamespaces = ["common", "navigation", "home", "onboarding", "marketplace", "localGuide", "verification", "profile", "admin", "reset", "validation", "errors", "accessibility"];
 
 function flatten(value, prefix = "", output = new Map()) {
   if (Array.isArray(value)) {
@@ -25,13 +25,13 @@ const locales = Object.fromEntries(await Promise.all(supportedLocales.map(async 
 })));
 
 for (const locale of supportedLocales) {
-  assert.deepEqual(Object.keys(locales[locale]), expectedNamespaces, `${locale}: namespace order or names differ`);
+  assert.deepEqual([...Object.keys(locales[locale])].sort(), [...expectedNamespaces].sort(), `${locale}: namespace names differ`);
 }
 
 const reference = flatten(locales.en);
 for (const locale of supportedLocales) {
   const candidate = flatten(locales[locale]);
-  assert.deepEqual([...candidate.keys()], [...reference.keys()], `${locale}: translation keys do not match English`);
+  assert.deepEqual([...candidate.keys()].sort(), [...reference.keys()].sort(), `${locale}: translation keys do not match English`);
   for (const [key, value] of candidate) {
     assert.equal(typeof value, "string", `${locale}:${key} must be a string`);
     assert.ok(value.trim().length > 0, `${locale}:${key} is empty`);

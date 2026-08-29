@@ -54,6 +54,14 @@ export function normalizeLocale(value: unknown): Locale { return typeof value ==
 export function googleMapsSearchUrl(place: string) { return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.trim())}`; }
 export function googleMapsDirectionsUrl(place: string) { return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.trim())}`; }
 export function isValidImageDataUrl(value: unknown, maxLength = 3_000_000) { return typeof value === "string" && (!value || value.length <= maxLength && /^data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(value)); }
+export function isValidPickupSchedule(value: { pickupDate?: unknown; pickupStartTime?: unknown; pickupEndTime?: unknown }) {
+  return typeof value.pickupDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value.pickupDate) && typeof value.pickupStartTime === "string" && /^\d{2}:\d{2}$/.test(value.pickupStartTime) && typeof value.pickupEndTime === "string" && /^\d{2}:\d{2}$/.test(value.pickupEndTime) && value.pickupEndTime > value.pickupStartTime;
+}
+export function isPickupPast(reservation: Pick<{ pickupDate: string; pickupEndTime: string }, "pickupDate" | "pickupEndTime">, now = new Date()) {
+  if (!isValidPickupSchedule(reservation)) return false;
+  const end = new Date(`${reservation.pickupDate}T${reservation.pickupEndTime}:00`);
+  return !Number.isNaN(end.getTime()) && end.getTime() < now.getTime();
+}
 export function isOwnedMarketplaceProduct(product: Pick<MarketProduct, "userCreated" | "source" | "ownedByCurrentUser">, appMode: AppMode) {
   return appMode === "authenticated"
     ? product.source === "live" && product.ownedByCurrentUser === true

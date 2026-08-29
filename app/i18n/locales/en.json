@@ -26,7 +26,7 @@
     "onboarding": "Lifecycle",
     "marketplace": "Marketplace",
     "localGuide": "Local Guide",
-    "lifeGuide": "Life Guide",
+    "lifeGuide": "Life Guide", "admin": "Demo admin",
     "brandTagline": "From arrival to departure",
     "primaryLabel": "Primary navigation",
     "mobileLabel": "Mobile navigation",
@@ -126,7 +126,7 @@
     "contactTitle": "Contact the seller",
     "contactBody": "This is a presentation demo. In a live service, your message would be sent through a secure KU-only chat.",
     "message": "Hi! Is this still available? I can pick it up near campus.",
-    "messageReady": "Demo message ready",
+    "messageReady": "Demo message ready", "changePickup": "Change pickup time", "savePickup": "Save schedule", "pickupPast": "Pickup time passed", "reservationCompleted": "Completed", "reservationCancelled": "Cancelled",
     "empty": "No items match your search.",
     "form": { "title": "List an item for the next student", "body": "Add a simple listing using the same icon-based cards. No image upload is needed for this demo.", "itemName": "Item name", "price": "Price", "category": "Category", "condition": "Condition", "pickup": "Pickup location", "availability": "Availability", "submit": "Add listing", "success": "Your item was added. It is now visible to incoming students.", "itemPlaceholder": "e.g. Study chair", "pricePlaceholder": "e.g. 20000", "pickupPlaceholder": "e.g. KU Main Gate" },
     "actions": { "browse": "Browse Marketplace", "list": "List an item" },
@@ -193,6 +193,7 @@
     "skip": "Skip for demo",
     "languageNote": "You can change the language after setup."
   },
+  "admin": { "eyebrow": "Demo management", "title": "Demo admin panel", "demoNotice": "A device-only demo management screen, not a secure administrator tool.", "products": "Products", "reservations": "Reservations", "reports": "Reports", "tasks": "Tasks", "export": "Export all", "import": "Import", "reset": "Reset demo", "confirmReset": "Reset all demo data?", "confirmDelete": "Delete this item and its reservations and reports?", "productSection": "Product management", "reservationSection": "Reservation management", "reportSection": "Report management", "lifecycleSection": "Lifecycle summary", "reportNew": "Received", "reportReviewed": "Reviewing", "reportResolved": "Resolved", "completedTasks": "{{count}} completed", "trackedTasks": "{{count}} total tasks", "progress": "{{progress}}% progress", "noData": "No data to display." },
   "reset": {
     "button": "Reset demo",
     "title": "Reset this demo?",

@@ -20,7 +20,7 @@
   "navigation": {
     "home": "홈",
     "onboarding": "라이프사이클",
-    "marketplace": "캠퍼스 마켓",
+    "marketplace": "캠퍼스 마켓", "admin": "데모 관리자",
     "localGuide": "로컬 가이드",
     "lifeGuide": "생활 가이드",
     "brandTagline": "입국부터 귀국까지",
@@ -127,7 +127,7 @@
     "form": { "title": "다음 학생을 위해 물품을 등록하세요", "body": "기존 아이콘 카드 디자인으로 간단히 등록합니다. 이 데모에서는 이미지가 필요하지 않습니다.", "itemName": "상품명", "price": "가격", "category": "카테고리", "condition": "상태", "pickup": "픽업 장소", "availability": "판매 상태", "submit": "상품 등록", "success": "상품이 등록되었습니다. 입국 학생 화면에서 확인할 수 있습니다.", "itemPlaceholder": "예: 공부 의자", "pricePlaceholder": "예: 20000", "pickupPlaceholder": "예: 고려대 정문" },
     "actions": { "browse": "캠퍼스 마켓 둘러보기", "list": "물품 등록하기" },
     "userSeller": "고려대 학생 · {{name}}", "authRequiredTitle": "실제 상품을 등록하려면 로그인하세요", "authRequiredBody": "게스트 계획은 이 기기에만 저장됩니다. 고려대 이메일 인증 후 학생 마켓에 상품을 등록할 수 있습니다.", "markSold": "판매 완료로 표시", "markActive": "판매 중으로 표시", "cancelSold": "판매 완료 취소", "hideListing": "상품 숨기기", "showListing": "상품 다시 공개", "favorite": "즐겨찾기", "unfavorite": "즐겨찾기 해제", "reservationHolder": "예약자", "cancelReservation": "예약 취소", "deleteListing": "상품 삭제", "soldUnavailable": "이미 판매 완료된 상품입니다.", "myReservations": "내 예약", "reservationSummary": "예약 상품", "reservationActive": "예약 진행 중", "pickupNotSet": "픽업 일정 없음", "pickupScheduleTitle": "픽업 일정 선택", "pickupDate": "픽업 날짜", "pickupStart": "시작 시간", "pickupEnd": "종료 시간", "confirmReservation": "예약 확정", "reportTitle": "상품 신고", "reportReason": "신고 사유", "chooseReportReason": "사유를 선택하세요", "reportDetail": "상세 내용", "submitReport": "신고 제출", "duplicateReport": "이미 신고한 상품입니다.", "reportSubmitted": "데모 신고가 저장되었습니다.", "reportReasons": { "false_info": "허위 상품 정보", "price_mismatch": "가격 또는 설명 불일치", "scam": "사기 의심", "inappropriate": "부적절한 내용", "schedule_issue": "거래 장소 또는 일정 문제", "other": "기타" }, "mapsView": "Google Maps에서 보기", "mapsDirections": "길찾기",
-    "reportHistory": "신고 내역", "reportReceived": "접수됨", "imageHint": "PNG, JPG, WebP · 최대 8MB, 저장 전 자동 압축", "removeImage": "이미지 삭제",
+    "reportHistory": "신고 내역", "reportReceived": "접수됨", "imageHint": "PNG, JPG, WebP · 최대 8MB, 저장 전 자동 압축", "removeImage": "이미지 삭제", "changePickup": "픽업 일정 변경", "savePickup": "일정 저장", "pickupPast": "일정 지남", "reservationCompleted": "거래 완료", "reservationCancelled": "예약 취소됨",
     "products": {
       "riceCooker": { "name": "전기밥솥", "pickup": "안암역 3번 출구", "seller": "교환학생 · Mia" },
       "deskLamp": { "name": "책상 스탠드", "pickup": "고려대 정문", "seller": "고려대 학생 · Joon" },
@@ -185,6 +185,7 @@
     "skip": "데모로 건너뛰기",
     "languageNote": "설정 후에도 언어를 변경할 수 있습니다."
   },
+  "admin": { "eyebrow": "데모 관리", "title": "데모 관리자 패널", "demoNotice": "보안 관리자 기능이 아닌 현재 기기 전용 데모 관리 화면입니다.", "products": "상품", "reservations": "예약", "reports": "신고", "tasks": "작업", "export": "전체 내보내기", "import": "가져오기", "reset": "데모 초기화", "confirmReset": "모든 데모 데이터를 초기화할까요?", "confirmDelete": "이 상품과 연결된 예약·신고를 삭제할까요?", "productSection": "상품 관리", "reservationSection": "예약 관리", "reportSection": "신고 관리", "lifecycleSection": "라이프사이클 요약", "reportNew": "접수됨", "reportReviewed": "확인 중", "reportResolved": "처리 완료", "completedTasks": "완료 작업 {{count}}개", "trackedTasks": "전체 작업 {{count}}개", "progress": "진행률 {{progress}}%", "noData": "표시할 데이터가 없습니다." },
   "reset": {
     "button": "데모 초기화",
     "title": "데모를 초기화할까요?",

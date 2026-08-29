@@ -22,7 +22,7 @@
     "onboarding": "留学周期",
     "marketplace": "校园集市",
     "localGuide": "生活指南",
-    "lifeGuide": "生活指南",
+    "lifeGuide": "生活指南", "admin": "演示管理",
     "brandTagline": "从入境准备到回国",
     "primaryLabel": "主导航",
     "mobileLabel": "移动端导航",
@@ -122,7 +122,7 @@
     "contactTitle": "联系卖家",
     "contactBody": "这是展示用演示。正式服务会通过仅限 KU 学生使用的安全聊天功能发送消息。",
     "message": "你好！这个商品还在吗？我可以在校园附近取货。",
-    "messageReady": "演示消息已准备好",
+    "messageReady": "演示消息已准备好", "changePickup": "修改取货时间", "savePickup": "保存日程", "pickupPast": "取货时间已过", "reservationCompleted": "交易完成", "reservationCancelled": "已取消预约",
     "empty": "没有符合搜索条件的商品。",
     "form": { "title": "为下一位同学发布商品", "body": "沿用现有图标卡片即可完成简单发布。本演示不需要上传图片。", "itemName": "商品名称", "price": "价格", "category": "分类", "condition": "成色", "pickup": "取货地点", "availability": "商品状态", "submit": "发布商品", "success": "商品已发布，新到校学生现在可以看到。", "itemPlaceholder": "例如：学习椅", "pricePlaceholder": "例如：20000", "pickupPlaceholder": "例如：高丽大学正门" },
     "actions": { "browse": "浏览校园集市", "list": "发布商品" },
@@ -185,6 +185,7 @@
     "skip": "使用演示资料跳过",
     "languageNote": "完成设置后仍可更改语言。"
   },
+  "admin": { "eyebrow": "演示管理", "title": "演示管理面板", "demoNotice": "仅限当前设备的演示管理页面，不是安全的管理员工具。", "products": "商品", "reservations": "预约", "reports": "举报", "tasks": "任务", "export": "导出全部", "import": "导入", "reset": "重置演示", "confirmReset": "要重置所有演示数据吗？", "confirmDelete": "要删除此商品及相关预约和举报吗？", "productSection": "商品管理", "reservationSection": "预约管理", "reportSection": "举报管理", "lifecycleSection": "留学周期摘要", "reportNew": "已受理", "reportReviewed": "确认中", "reportResolved": "已处理", "completedTasks": "已完成 {{count}} 项", "trackedTasks": "共 {{count}} 项任务", "progress": "进度 {{progress}}%", "noData": "没有可显示的数据。" },
   "reset": {
     "button": "重置演示",
     "title": "要重置演示吗？",

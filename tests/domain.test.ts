@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { googleMapsDirectionsUrl, googleMapsSearchUrl, isKuEmail, isOwnedMarketplaceProduct, isValidImageDataUrl, mapServiceError, mergeCompletedTaskIds, normalizeKuEmail, normalizeLocale, productToMarketplaceInsert, validateMarketplaceInput, validateProfileInput } from "../app/lib/domain";
+import { googleMapsDirectionsUrl, googleMapsSearchUrl, isKuEmail, isOwnedMarketplaceProduct, isPickupPast, isValidImageDataUrl, isValidPickupSchedule, mapServiceError, mergeCompletedTaskIds, normalizeKuEmail, normalizeLocale, productToMarketplaceInsert, validateMarketplaceInput, validateProfileInput } from "../app/lib/domain";
+import { expandedLifeGuideArticles } from "../app/guide-content";
 import { renderOtpEmail } from "../supabase/functions/_shared/email-templates";
 
 describe("KU email validation", () => {
@@ -22,6 +23,17 @@ describe("domain validation and migration", () => {
     expect(googleMapsDirectionsUrl("KU Main Gate")).toContain("destination=KU%20Main%20Gate");
     expect(isValidImageDataUrl("data:image/png;base64,AAAA")).toBe(true);
     expect(isValidImageDataUrl("data:text/plain;base64,AAAA")).toBe(false);
+  });
+  it("validates pickup schedules and detects expired appointments", () => {
+    const schedule = { pickupDate: "2026-08-29", pickupStartTime: "10:00", pickupEndTime: "11:00" };
+    expect(isValidPickupSchedule(schedule)).toBe(true);
+    expect(isValidPickupSchedule({ ...schedule, pickupEndTime: "09:00" })).toBe(false);
+    expect(isPickupPast(schedule, new Date("2026-08-29T12:00:00"))).toBe(true);
+  });
+  it("contains expandable guide content for each lifecycle category", () => {
+    expect(expandedLifeGuideArticles.length).toBeGreaterThanOrEqual(8);
+    expect(new Set(expandedLifeGuideArticles.map((item) => item.category)).size).toBe(8);
+    expect(expandedLifeGuideArticles.every((item) => item.id && item.checklist.length && item.locales.ko && item.locales.ja && item.locales["zh-CN"])).toBe(true);
   });
   it("validates profiles and listings", () => {
     expect(validateProfileInput({ name: " Mina ", arrivalDate: "2026-09-01", housing: "dorm" }).valid).toBe(true);

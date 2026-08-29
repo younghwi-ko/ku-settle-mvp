@@ -22,7 +22,7 @@
     "onboarding": "ライフサイクル",
     "marketplace": "マーケット",
     "localGuide": "ローカルガイド",
-    "lifeGuide": "生活ガイド",
+    "lifeGuide": "生活ガイド", "admin": "デモ管理",
     "brandTagline": "入国準備から帰国まで",
     "primaryLabel": "メインナビゲーション",
     "mobileLabel": "モバイルナビゲーション",
@@ -122,7 +122,7 @@
     "contactTitle": "出品者に連絡する",
     "contactBody": "発表用のデモです。実際のサービスでは、KU学生専用の安全なチャットを通じてメッセージを送信します。",
     "message": "こんにちは。まだ購入できますか？キャンパスの近くで受け取れます。",
-    "messageReady": "デモメッセージを準備しました",
+    "messageReady": "デモメッセージを準備しました", "changePickup": "受け取り日時を変更", "savePickup": "予定を保存", "pickupPast": "受け取り日時を過ぎました", "reservationCompleted": "取引完了", "reservationCancelled": "予約キャンセル済み",
     "empty": "検索条件に合う商品はありません。",
     "form": { "title": "次の学生のために商品を登録", "body": "既存のアイコンカードを使って簡単に登録できます。このデモでは画像のアップロードは不要です。", "itemName": "商品名", "price": "価格", "category": "カテゴリー", "condition": "状態", "pickup": "受け取り場所", "availability": "販売状況", "submit": "商品を登録", "success": "商品を登録しました。これからKUへ来る学生の画面に表示されます。", "itemPlaceholder": "例：勉強用の椅子", "pricePlaceholder": "例：20000", "pickupPlaceholder": "例：高麗大学 正門" },
     "actions": { "browse": "マーケットを見る", "list": "商品を登録する" },
@@ -185,6 +185,7 @@
     "skip": "デモでスキップ",
     "languageNote": "設定後も言語を変更できます。"
   },
+  "admin": { "eyebrow": "デモ管理", "title": "デモ管理パネル", "demoNotice": "安全な管理者ツールではなく、この端末だけのデモ画面です。", "products": "商品", "reservations": "予約", "reports": "報告", "tasks": "タスク", "export": "すべてエクスポート", "import": "インポート", "reset": "デモをリセット", "confirmReset": "すべてのデモデータをリセットしますか？", "confirmDelete": "商品と関連する予約・報告を削除しますか？", "productSection": "商品管理", "reservationSection": "予約管理", "reportSection": "報告管理", "lifecycleSection": "ライフサイクル概要", "reportNew": "受付済み", "reportReviewed": "確認中", "reportResolved": "処理済み", "completedTasks": "完了 {{count}}件", "trackedTasks": "全タスク {{count}}件", "progress": "進捗 {{progress}}%", "noData": "表示するデータがありません。" },
   "reset": {
     "button": "デモをリセット",
     "title": "デモをリセットしますか？",

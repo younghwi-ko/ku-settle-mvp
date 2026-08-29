@@ -6,7 +6,7 @@ import ja from "./locales/ja.json";
 import zhCN from "./locales/zh-CN.json";
 import { detectLocale, type Locale } from "./types";
 
-export const namespaces = ["common", "navigation", "home", "onboarding", "marketplace", "localGuide", "verification", "profile", "reset", "validation", "errors", "accessibility"] as const;
+export const namespaces = ["common", "navigation", "home", "onboarding", "marketplace", "localGuide", "verification", "profile", "admin", "reset", "validation", "errors", "accessibility"] as const;
 export const resources = {
   en: Object.fromEntries(namespaces.map((namespace) => [namespace, en[namespace]])),
   ko: Object.fromEntries(namespaces.map((namespace) => [namespace, ko[namespace]])),

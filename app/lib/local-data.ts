@@ -1,9 +1,9 @@
 import type { LifecycleStage, MarketProduct } from "../data";
 import type { StoredProfile } from "./domain";
 
-export const LOCAL_DATA_VERSION = 5;
+export const LOCAL_DATA_VERSION = 6;
 export type PersonalTask = { id: string; title: string; stage: LifecycleStage; dueDate: string; note: string; completed: boolean };
-export type LocalReservation = { id: string; productId: string; buyerName: string; status: "active" | "cancelled"; createdAt: string; pickupDate: string; pickupStartTime: string; pickupEndTime: string; cancelledAt?: string };
+export type LocalReservation = { id: string; productId: string; buyerName: string; status: "active" | "cancelled" | "completed"; createdAt: string; pickupDate: string; pickupStartTime: string; pickupEndTime: string; cancelledAt?: string; completedAt?: string; updatedAt?: string };
 export type MarketplaceReview = { productId: string; rating: number; text: string; createdAt: string };
 export type ReportDraft = { productId: string; reason: string; detail?: string; status: "new" | "reviewed" | "resolved"; createdAt: string };
 export type LocalPreferences = { dueDates: Record<string, string>; notes: Record<string, string>; important: string[]; hiddenCompleted: boolean; customTasks: PersonalTask[]; guideFavorites: string[]; placeFavorites: number[]; reports: Record<string, string>; reservedProductIds: string[]; reservations: LocalReservation[]; favoriteProductIds: string[]; reviews: MarketplaceReview[]; inquiryDrafts: Record<string, string>; reportDrafts: ReportDraft[]; progressHistory: { date: string; progress: number }[] };
@@ -22,7 +22,7 @@ export function migrateLocalData(raw: unknown): LocalData {
   const customTasks = Array.isArray(preferences.customTasks) ? preferences.customTasks.filter((item): item is PersonalTask => {
     const x = asRecord(item); return typeof x.id === "string" && typeof x.title === "string" && typeof x.stage === "string" && typeof x.dueDate === "string" && typeof x.note === "string" && typeof x.completed === "boolean";
   }) : [];
-  const reservations = Array.isArray(preferences.reservations) ? preferences.reservations.filter((item): item is LocalReservation => { const x = asRecord(item); return typeof x.id === "string" && typeof x.productId === "string" && typeof x.buyerName === "string" && (x.status === "active" || x.status === "cancelled") && typeof x.createdAt === "string"; }).map((item) => ({ ...item, pickupDate: item.pickupDate ?? "", pickupStartTime: item.pickupStartTime ?? "", pickupEndTime: item.pickupEndTime ?? "" })) : [];
+  const reservations = Array.isArray(preferences.reservations) ? preferences.reservations.filter((item): item is LocalReservation => { const x = asRecord(item); return typeof x.id === "string" && typeof x.productId === "string" && typeof x.buyerName === "string" && (x.status === "active" || x.status === "cancelled" || x.status === "completed") && typeof x.createdAt === "string"; }).map((item) => ({ ...item, pickupDate: item.pickupDate ?? "", pickupStartTime: item.pickupStartTime ?? "", pickupEndTime: item.pickupEndTime ?? "" })) : [];
   const reservedProductIds = [...new Set([...strings(preferences.reservedProductIds), ...reservations.filter((item) => item.status === "active").map((item) => item.productId)])];
   return { version: LOCAL_DATA_VERSION, profile: source.profile as StoredProfile | null ?? null, done: strings(source.done), products: validProducts(source.products), verified: source.verified === true, preferences: {
     dueDates: stringRecord(preferences.dueDates),
