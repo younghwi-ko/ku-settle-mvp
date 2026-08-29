@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isKuEmail, mapServiceError, mergeCompletedTaskIds, normalizeKuEmail, normalizeLocale, productToMarketplaceInsert, validateMarketplaceInput, validateProfileInput } from "../app/lib/domain";
+import { isKuEmail, isOwnedMarketplaceProduct, mapServiceError, mergeCompletedTaskIds, normalizeKuEmail, normalizeLocale, productToMarketplaceInsert, validateMarketplaceInput, validateProfileInput } from "../app/lib/domain";
 import { renderOtpEmail } from "../supabase/functions/_shared/email-templates";
 
 describe("KU email validation", () => {
@@ -11,6 +11,12 @@ describe("KU email validation", () => {
 });
 
 describe("domain validation and migration", () => {
+  it("separates owned demo listings from sample listings", () => {
+    expect(isOwnedMarketplaceProduct({ userCreated: true, source: "demo" }, "demo")).toBe(true);
+    expect(isOwnedMarketplaceProduct({ userCreated: true, source: "sample" }, "demo")).toBe(false);
+    expect(isOwnedMarketplaceProduct({ userCreated: true, source: "live", ownedByCurrentUser: true }, "authenticated")).toBe(true);
+    expect(isOwnedMarketplaceProduct({ userCreated: true, source: "live", ownedByCurrentUser: false }, "authenticated")).toBe(false);
+  });
   it("validates profiles and listings", () => {
     expect(validateProfileInput({ name: " Mina ", arrivalDate: "2026-09-01", housing: "dorm" }).valid).toBe(true);
     expect(validateProfileInput({ name: "", arrivalDate: "bad", housing: "dorm" }).valid).toBe(false);

@@ -51,6 +51,11 @@ const conditionFromDb: Record<MarketplaceRow["condition"], ProductCondition> = {
 export function normalizeKuEmail(value: string) { return value.trim().toLowerCase(); }
 export function isKuEmail(value: string) { return /^[^@\s]+@korea\.ac\.kr$/.test(normalizeKuEmail(value)); }
 export function normalizeLocale(value: unknown): Locale { return typeof value === "string" && localeSet.has(value) ? value as Locale : "en"; }
+export function isOwnedMarketplaceProduct(product: Pick<MarketProduct, "userCreated" | "source" | "ownedByCurrentUser">, appMode: AppMode) {
+  return appMode === "authenticated"
+    ? product.source === "live" && product.ownedByCurrentUser === true
+    : product.userCreated === true && product.source !== "sample";
+}
 export function toDbHousing(value: Housing): DbHousing { return value === "dorm" ? "dormitory" : "off_campus"; }
 export function fromDbHousing(value: DbHousing | null): Housing { return value === "off_campus" ? "off-campus" : "dorm"; }
 
