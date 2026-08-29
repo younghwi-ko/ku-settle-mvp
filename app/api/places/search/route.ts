@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, dedupePlaces } from "@/app/lib/kakao";
+import { canUseKakaoCall, kakaoMonthlyLimit, recordKakaoCall } from "@/app/lib/kakao-quota";
 
 const cache = new Map<string, { expiresAt: number; body: object }>();
 const TTL_MS = 60_000;
@@ -19,6 +20,9 @@ export async function GET(request: Request) {
   const cacheKey = JSON.stringify({ category, query, radius, page });
   const cached = cache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) return NextResponse.json(cached.body);
+  const monthlyLimit = kakaoMonthlyLimit();
+  if (!canUseKakaoCall(monthlyLimit)) return NextResponse.json({ error: "free_quota_limit", limit: monthlyLimit }, { status: 429 });
+  recordKakaoCall();
   const endpoint = code ? "https://dapi.kakao.com/v2/local/search/category.json" : "https://dapi.kakao.com/v2/local/search/keyword.json";
   const params = new URLSearchParams({ x: String(KU_CENTER.lng), y: String(KU_CENTER.lat), radius: String(radius), page: String(page), size: "15", sort: "distance" });
   if (code) params.set("category_group_code", code);
