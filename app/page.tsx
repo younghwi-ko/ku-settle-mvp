@@ -309,7 +309,7 @@ export default function Home() {
     { key: "life-guide", icon: BookOpen, labelKey: "navigation:lifeGuide" },
     { key: "marketplace", icon: ShoppingBag, labelKey: "navigation:marketplace" },
     { key: "guide", icon: MapPin, labelKey: "navigation:localGuide" },
-    ...(appMode === "demo" ? [{ key: "operation-model" as const, icon: Banknote, labelKey: "__operationModel" }, { key: "admin" as const, icon: ShieldCheck, labelKey: "navigation:admin" }] : [])
+    ...(appMode === "demo" ? [{ key: "admin" as const, icon: ShieldCheck, labelKey: "navigation:admin" }] : [])
   ];
 
   const go = (target: Page, intent: NavigationIntent = {}) => {
@@ -478,7 +478,7 @@ export default function Home() {
         {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go} preferences={localPreferences}/>}
         {page === "guide" && <LocalGuide locale={locale} t={t} category={guideCategory} setCategory={setGuideCategory} search={guideSearch} setSearch={setGuideSearch} places={localPlaces} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
         {page === "operation-model" && <OperationModel locale={locale} />}
-        {page === "admin" && appMode === "demo" && <AdminPanel locale={locale} t={t} products={userProducts} places={localPlaces} preferences={localPreferences} tasks={activeTasks} done={done} setProducts={setUserProducts} setPreferences={setLocalPreferences} reset={resetDemo} exportData={exportDemoData} importData={importDemoData}/>}
+        {page === "admin" && appMode === "demo" && <AdminPanel locale={locale} t={t} products={userProducts} places={localPlaces} preferences={localPreferences} tasks={activeTasks} done={done} setProducts={setUserProducts} setPreferences={setLocalPreferences} reset={resetDemo} exportData={exportDemoData} importData={importDemoData}/>}{page === "admin" && appMode === "demo" && <OperationModel locale={locale} />}
       </main>
       {page === "marketplace" && <MyReservations locale={locale} t={t} products={marketplaceProducts} preferences={localPreferences} cancelReservation={cancelMarketplaceReservation} selectReservation={(product) => openProduct(product)} editReservation={editMarketplaceReservation}/>}
       {page === "marketplace" && marketMode === "leaving" && <ListingReports locale={locale} t={t} products={userProducts} reports={localPreferences.reportDrafts}/>}
