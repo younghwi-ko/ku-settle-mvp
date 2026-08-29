@@ -787,6 +787,44 @@ body { background: linear-gradient(180deg, #f7f9fd 0%, #f3f6fb 42%, #f8fafc 100%
 .admin-card > label { flex: 0 1 150px; min-width: 130px; }
 .admin-card > input, .admin-card > select { flex: 1 1 135px; min-width: 0; max-width: 100%; }
 
+/* Guide cards keep the first scan concise; native disclosure preserves the existing content and links. */
+.guide-recommendation {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 22px;
+  padding: 20px 22px;
+  border: 1px solid #cfe0fb;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #eef5ff 0%, #ffffff 100%);
+  box-shadow: 0 8px 22px rgba(35, 83, 160, .08);
+}
+.guide-recommendation h2 { margin: 0; color: var(--navy); font-size: clamp(20px, 2.2vw, 28px); letter-spacing: -.035em; }
+.guide-recommendation p { margin: 0; color: #52627a; line-height: 1.55; }
+.guide-recommendation-status { display: inline-flex; align-items: center; gap: 6px; color: #245fd1; font-size: 12px; font-weight: 800; }
+.guide-card-top { display: flex; align-items: center; gap: 8px; min-height: 30px; }
+.guide-category-icon { display: inline-grid; width: 34px; height: 34px; place-items: center; color: #245fd1; border-radius: 11px; background: #eaf2ff; }
+.guide-status { margin-left: auto; padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+.guide-status.is-verified { color: #176b4b; background: #e8f7ef; }
+.guide-status.is-demo { color: #76551c; background: #fff5d9; }
+.guide-summary { display: -webkit-box; overflow: hidden; margin-bottom: 10px; color: #53637b; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.guide-duration { display: inline-flex; width: fit-content; padding: 5px 9px; border-radius: 8px; color: #4b6382; background: #f3f6fb; font-size: 11px; font-weight: 750; }
+.guide-primary-cta { margin-top: 14px; }
+.guide-details { margin-top: 14px; border-top: 1px solid #e7edf5; }
+.guide-details summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; padding-top: 10px; color: #245fd1; cursor: pointer; font-size: 12px; font-weight: 800; list-style: none; }
+.guide-details summary::-webkit-details-marker { display: none; }
+.guide-details summary svg { transition: transform .18s ease; }
+.guide-details[open] summary svg { transform: rotate(180deg); }
+.guide-details-content { display: grid; gap: 12px; padding: 4px 0 2px; }
+.guide-details-content > p { margin: 0; line-height: 1.65; }
+
+/* Source/place management remains in the existing admin grid, but long lists are independently scrollable. */
+.admin-grid > section:nth-child(5),
+.admin-grid > section:nth-child(6) { max-height: 560px; overflow: auto; overscroll-behavior: contain; }
+.admin-grid > section:nth-child(5) > h2,
+.admin-grid > section:nth-child(6) > h2 { position: sticky; top: 0; z-index: 2; }
+.admin-grid > section:nth-child(5) .admin-card,
+.admin-grid > section:nth-child(6) .admin-card { background: rgba(255,255,255,.96); }
+
 @media (max-width: 940px) {
   .guide-page .kakao-guide-toolbar { grid-template-columns: 1fr 1fr; }
   .guide-page .kakao-guide-toolbar > span { grid-column: 1 / -1; }
@@ -807,4 +845,7 @@ body { background: linear-gradient(180deg, #f7f9fd 0%, #f3f6fb 42%, #f8fafc 100%
   .admin-card-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
   .admin-card-actions .danger-link { grid-column: 1 / -1; }
   .admin-card > strong, .admin-card > label, .admin-card > input, .admin-card > select { width: 100%; min-width: 0; flex: 0 1 auto; }
+  .guide-recommendation { padding: 17px; border-radius: 15px; }
+  .guide-status { white-space: nowrap; }
+  .admin-grid > section:nth-child(5), .admin-grid > section:nth-child(6) { max-height: 620px; }
 }
