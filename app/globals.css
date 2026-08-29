@@ -705,3 +705,106 @@ button:disabled { opacity: .58; cursor: not-allowed; }
   .modal-actions { display: grid; grid-template-columns: 1fr; }
   .modal-actions > * { width: 100%; }
 }
+
+/* Card-first product polish: visual-only overrides for the existing flows. */
+body { background: linear-gradient(180deg, #f7f9fd 0%, #f3f6fb 42%, #f8fafc 100%); }
+.app-shell { isolation: isolate; }
+.topbar { border-bottom-color: #e6ebf3; }
+.desktop-nav button, .language-trigger, .profile-button, .mobile-menu { transition: background .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.desktop-nav button:focus-visible, .mobile-nav button:focus-visible { box-shadow: 0 0 0 3px rgba(36,95,209,.16); }
+
+.hero-copy, .setup-card { position: relative; z-index: 1; }
+.hero-copy { max-width: 700px; }
+.hero-lead { max-width: 620px; }
+.hero-actions .primary { min-width: 190px; }
+.hero-actions .secondary { min-width: 160px; }
+.trust-row { opacity: .92; }
+.dashboard-grid { align-items: stretch; }
+.next-card, .checklist-preview { min-height: 176px; }
+.next-card-button { border: 1px solid transparent; }
+
+.section-title { max-width: 780px; }
+.section-title h2 { letter-spacing: -.045em; }
+.feature-card { display: flex; flex-direction: column; justify-content: flex-start; }
+.feature-card .learn { margin-top: auto; padding-top: 18px; }
+.feature-card:focus-visible, .product-card-wrap:focus-within, .place-card:focus-within { outline: 3px solid rgba(36,95,209,.22); outline-offset: 3px; }
+
+.lifecycle-summary { margin-top: 18px; margin-bottom: 18px; padding-top: 22px; padding-bottom: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.76); box-shadow: var(--shadow-sm); }
+.lifecycle-summary .section-title { margin-top: 0; }
+.summary-metrics { gap: 8px; }
+.summary-metrics span { border: 1px solid #dce6f4; background: #f7faff; border-radius: 10px; padding: 8px 11px; color: #425875; font-weight: 750; }
+.summary-items { gap: 9px; }
+.summary-items button { min-height: 64px; padding: 12px 14px; border: 1px solid #e1e8f2; border-radius: 13px; background: #fff; box-shadow: 0 2px 7px rgba(16,36,74,.025); transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.summary-items button:hover { transform: translateY(-1px); border-color: #b9cceb; box-shadow: var(--shadow-sm); }
+.task-card { background: rgba(255,255,255,.92); }
+.task-card.is-done { opacity: .82; }
+
+.market-page .filters { padding: 13px; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.72); }
+.market-page .product-grid { align-items: stretch; }
+.product-card-wrap, .product-card { height: 100%; }
+.product-card { display: flex; flex-direction: column; overflow: hidden; }
+.product-info { display: flex; flex: 1; flex-direction: column; }
+.product-actions { margin-top: auto; padding-top: 12px; }
+.listing-manager, .listing-form { background: rgba(255,255,255,.88); }
+.reservation-list, .listing-reports { padding-top: 24px; padding-bottom: 24px; }
+.reservation-card { background: #fff; border: 1px solid #e0e8f3; }
+.reservation-card.is-past { border-color: #efd4c0; background: #fffaf6; }
+
+.guide-page .kakao-guide-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(180px, 230px); align-items: center; gap: 12px; }
+.guide-page .kakao-guide-toolbar > span { color: var(--navy); font-weight: 800; }
+.guide-page .kakao-guide-toolbar label { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 10px; border: 1px solid #e0e7f1; border-radius: 10px; color: #4c5d76; font-size: 11px; font-weight: 700; background: #fff; }
+.guide-page .kakao-guide-toolbar select { width: 100%; }
+.guide-page > .search-field { margin: 12px 0; padding: 0 13px; border: 1px solid var(--line); border-radius: 13px; background: #fff; box-shadow: 0 2px 7px rgba(16,36,74,.025); }
+.guide-page > .chips { padding: 4px; border-radius: 12px; background: #eaf0f8; }
+.guide-page > .chips button { background: transparent; }
+.guide-page > .chips button.active { box-shadow: 0 3px 10px rgba(16,36,74,.08); }
+.guide-article { position: relative; align-content: start; background: rgba(255,255,255,.94); }
+.guide-article .task-action { justify-self: start; }
+.guide-article .article-note { overflow-wrap: anywhere; }
+.map-result-summary { border: 1px solid #d9e6fa; }
+.map-status { border: 1px solid #dbe5f1; background: #fff; padding: 11px 13px; }
+.map-status.map-error { border-color: #f1d5d5; background: #fff9f9; color: #943e4a; }
+.empty-state { border: 1px dashed #cbd8ea; background: rgba(255,255,255,.74); }
+
+.admin-page { background: linear-gradient(180deg, #f9fbff 0%, #f1f5fb 100%); border: 1px solid #d5e0ef; }
+.admin-page .page-hero { padding: 17px 20px 0; }
+.admin-page .page-hero h1 { letter-spacing: -.045em; }
+.admin-page .admin-metrics { margin: 0 20px 18px; }
+.admin-metrics span { min-height: 88px; display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 15px; border: 1px solid #dbe5f1; background: #fff; color: #53637b; font-weight: 700; }
+.admin-metrics span strong { color: var(--navy); font-size: 30px; line-height: 1; }
+.admin-toolbar { margin: 0 20px 18px; padding: 12px; border: 1px solid #dbe5f1; border-radius: 15px; background: #fff; }
+.admin-grid > section { background: rgba(255,255,255,.96); border: 1px solid #dbe5f1; overflow: hidden; }
+.admin-grid > section > h2 { margin: 0; padding: 17px 18px; border-bottom: 1px solid #e5ebf4; background: #f8faff; font-size: 15px; letter-spacing: -.02em; }
+.admin-grid > section > .admin-card, .admin-grid > section > .empty-copy { margin-left: 18px; margin-right: 18px; }
+.admin-card { gap: 12px; border-bottom-color: #e6ecf4; }
+.admin-card:last-child { border-bottom: 0; }
+.admin-card > div:first-child { min-width: 0; display: grid; gap: 4px; }
+.admin-card > div:first-child span, .admin-card > div:first-child small { color: #64748b; overflow-wrap: anywhere; }
+.admin-card-actions { align-items: center; }
+.admin-card-actions input, .admin-card-actions select { min-width: 0; max-width: 100%; }
+.admin-card-actions button { border-radius: 9px; }
+.admin-card > strong { flex: 0 1 190px; min-width: 150px; overflow-wrap: anywhere; }
+.admin-card > label { flex: 0 1 150px; min-width: 130px; }
+.admin-card > input, .admin-card > select { flex: 1 1 135px; min-width: 0; max-width: 100%; }
+
+@media (max-width: 940px) {
+  .guide-page .kakao-guide-toolbar { grid-template-columns: 1fr 1fr; }
+  .guide-page .kakao-guide-toolbar > span { grid-column: 1 / -1; }
+  .admin-page .page-hero { padding-left: 0; padding-right: 0; }
+}
+
+@media (max-width: 700px) {
+  .hero-copy { max-width: none; }
+  .hero-actions .primary, .hero-actions .secondary { min-width: 0; }
+  .lifecycle-summary, .reservation-list, .listing-reports { border-radius: 0; border-left: 0; border-right: 0; }
+  .guide-page .kakao-guide-toolbar { grid-template-columns: 1fr; }
+  .guide-page .kakao-guide-toolbar > span { grid-column: auto; }
+  .guide-page .kakao-guide-toolbar label { justify-content: flex-start; }
+  .admin-page .admin-metrics, .admin-page .admin-toolbar { margin-left: 0; margin-right: 0; }
+  .admin-page .admin-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-grid > section > h2 { padding: 15px; }
+  .admin-grid > section > .admin-card, .admin-grid > section > .empty-copy { margin-left: 15px; margin-right: 15px; }
+  .admin-card-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .admin-card-actions .danger-link { grid-column: 1 / -1; }
+  .admin-card > strong, .admin-card > label, .admin-card > input, .admin-card > select { width: 100%; min-width: 0; flex: 0 1 auto; }
+}
