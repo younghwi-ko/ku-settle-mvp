@@ -18,6 +18,15 @@
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--surface); color: var(--ink); font-family: Inter, Pretendard, "Noto Sans KR", "Noto Sans JP", "Noto Sans SC", "Yu Gothic UI", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 html[data-locale="ko"] body, html[data-locale="ja"] body, html[data-locale="zh-CN"] body { line-break: strict; overflow-wrap: anywhere; }
+.guide-article-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.guide-article { display: grid; gap: 10px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: white; }
+.guide-article h2 { margin: 0; font-size: 20px; }
+.guide-article p { margin: 0; line-height: 1.6; }
+.article-meta { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 12px; }
+.personal-task-tools { display: grid; grid-template-columns: 150px 1fr auto; gap: 8px; align-items: end; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.personal-task-tools label { display: grid; gap: 4px; color: var(--muted); font-size: 11px; }
+.personal-task-tools input { min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 8px; }
+.personal-task-tools button { border: 0; background: transparent; color: var(--blue); font-weight: 700; cursor: pointer; }
 html[data-locale="ko"] .hero h1, html[data-locale="ja"] .hero h1, html[data-locale="zh-CN"] .hero h1,
 html[data-locale="ko"] .page-hero h1, html[data-locale="ja"] .page-hero h1, html[data-locale="zh-CN"] .page-hero h1 { line-height: 1.2; letter-spacing: -.035em; }
 button, input, select { font: inherit; }
@@ -432,3 +441,5 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+.guide-article-grid { max-width: 100%; }
+@media (max-width: 760px) { .guide-article-grid { grid-template-columns: 1fr; } .personal-task-tools { grid-template-columns: 1fr; } }
