@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, dedupePlaces, isKakaoPlaceAllowed, KAKAO_SUPPORTED_GROUP_CODES } from "@/app/lib/kakao";
+import { kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, dedupePlaces, isKakaoPlaceAllowed, KAKAO_SUPPORTED_GROUP_CODES, KAKAO_DEFAULT_RADIUS_METERS } from "@/app/lib/kakao";
 import { canUseKakaoCall, kakaoMonthlyLimit, recordKakaoCall } from "@/app/lib/kakao-quota";
 
 const cache = new Map<string, { expiresAt: number; body: object }>();
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const category = url.searchParams.get("category") ?? "All";
   const query = (url.searchParams.get("query") ?? "").trim();
-  const radius = Math.min(20_000, Math.max(100, Number(url.searchParams.get("radius") ?? 2_000)));
+  const radius = Math.min(20_000, Math.max(100, Number(url.searchParams.get("radius") ?? KAKAO_DEFAULT_RADIUS_METERS)));
   const page = Math.min(45, Math.max(1, Number(url.searchParams.get("page") ?? 1)));
   if (!Number.isInteger(radius) || !Number.isInteger(page) || query.length > 80 || !/^[\p{L}\p{N}\s.,&'()\-]*$/u.test(query)) return NextResponse.json({ error: "invalid_request" }, { status: 400 });
   const code = kakaoCategoryCode(category);

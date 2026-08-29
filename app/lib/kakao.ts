@@ -1,6 +1,7 @@
 import type { Place, PlaceCategory } from "../data";
 
 export const KU_CENTER = { lat: 37.5896, lng: 127.0325 } as const;
+export const KAKAO_DEFAULT_RADIUS_METERS = 4_000;
 export const KAKAO_CATEGORY_CODES: Partial<Record<PlaceCategory, string>> = { Hospital: "HP8", Pharmacy: "PM9", Food: "FD6", Cafe: "CE7", Grocery: "MT1" };
 export const KAKAO_KEYWORD_CATEGORIES: Partial<Record<PlaceCategory, string>> = { "Hair Salon": "미용실", Halal: "할랄 음식점", Vegan: "비건 음식점" };
 export const KAKAO_SUPPORTED_GROUP_CODES = new Set(["FD6", "CE7", "HP8", "PM9", "MT1"]);
