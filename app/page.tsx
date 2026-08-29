@@ -761,7 +761,8 @@ function kakaoTip(locale: Locale, place: import("./data").Place) {
 function dietaryStatusLabel(locale: Locale, place: import("./data").Place) {
   const status = place.category === "Halal" ? place.halalStatus : place.category === "Vegan" ? place.veganStatus : undefined;
   if (!status) return null;
-  const labels = locale === "ko" ? { certified: "할랄 인증", "menu-available": "할랄 메뉴 제공", specialist: "비건 전문점", "needs-menu-check": "메뉴별 확인 필요", "visit-check": "방문 전 확인 필요" } : locale === "ja" ? { certified: "ハラール認証", "menu-available": "ハラールメニューあり", specialist: "ビーガン専門店", "needs-menu-check": "メニューごとに要確認", "visit-check": "訪問前に要確認" } : locale === "zh-CN" ? { certified: "清真认证", "menu-available": "提供清真菜单", specialist: "纯素专门店", "needs-menu-check": "需按菜单确认", "visit-check": "到店前请确认" } : { certified: "Halal certified", "menu-available": "Halal menu available", specialist: "Vegan specialist", "needs-menu-check": "Check each menu", "visit-check": "Confirm before visiting" };
+  const isVegan = place.category === "Vegan";
+  const labels = locale === "ko" ? { certified: "할랄 인증", "menu-available": isVegan ? "비건 메뉴 제공" : "할랄 메뉴 제공", specialist: "비건 전문점", "needs-menu-check": "메뉴별 확인 필요", "visit-check": "방문 전 확인 필요" } : locale === "ja" ? { certified: "ハラール認証", "menu-available": isVegan ? "ビーガンメニューあり" : "ハラールメニューあり", specialist: "ビーガン専門店", "needs-menu-check": "メニューごとに要確認", "visit-check": "訪問前に要確認" } : locale === "zh-CN" ? { certified: "清真认证", "menu-available": isVegan ? "提供纯素菜单" : "提供清真菜单", specialist: "纯素专门店", "needs-menu-check": "需按菜单确认", "visit-check": "到店前请确认" } : { certified: "Halal certified", "menu-available": isVegan ? "Vegan menu available" : "Halal menu available", specialist: "Vegan specialist", "needs-menu-check": "Check each menu", "visit-check": "Confirm before visiting" };
   return labels[status];
 }
 
