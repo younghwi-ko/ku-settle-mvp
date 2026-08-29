@@ -309,8 +309,7 @@ export default function Home() {
     { key: "life-guide", icon: BookOpen, labelKey: "navigation:lifeGuide" },
     { key: "marketplace", icon: ShoppingBag, labelKey: "navigation:marketplace" },
     { key: "guide", icon: MapPin, labelKey: "navigation:localGuide" },
-    { key: "operation-model", icon: Banknote, labelKey: "__operationModel" },
-    ...(appMode === "demo" ? [{ key: "admin" as const, icon: ShieldCheck, labelKey: "navigation:admin" }] : [])
+    ...(appMode === "demo" ? [{ key: "operation-model" as const, icon: Banknote, labelKey: "__operationModel" }, { key: "admin" as const, icon: ShieldCheck, labelKey: "navigation:admin" }] : [])
   ];
 
   const go = (target: Page, intent: NavigationIntent = {}) => {
