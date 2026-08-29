@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import type { Place } from "../data";
 import { KU_CENTER, isValidCoordinates } from "../lib/kakao";
 
-type Props = { places: Place[]; selectedId: number | null; onSelect: (place: Place) => void; labels: { loading: string; ready?: string; failed: string; attribution: string; noCoordinates: string } };
+type Props = { places: Place[]; selectedId: number | null; onSelect: (place: Place) => void; center?: { lat: number; lng: number }; labels: { loading: string; ready?: string; failed: string; attribution: string; noCoordinates: string } };
 
-export default function KakaoMap({ places, selectedId, onSelect, labels }: Props) {
+export default function KakaoMap({ places, selectedId, onSelect, center = KU_CENTER, labels }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const markersRef = useRef<Map<number, kakao.maps.Marker>>(new Map());
@@ -24,9 +24,9 @@ export default function KakaoMap({ places, selectedId, onSelect, labels }: Props
       if (window.kakao?.maps) { loadMaps(); return; }
       const script = document.createElement("script"); script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(key)}&autoload=false`; script.async = true; script.onload = loadMaps; script.onerror = () => finish(new Error("sdk")); document.head.appendChild(script);
     });
-    void load().then(() => { if (cancelled || !rootRef.current || !window.kakao?.maps) return; mapRef.current = new window.kakao.maps.Map(rootRef.current, { center: new window.kakao.maps.LatLng(KU_CENTER.lat, KU_CENTER.lng), level: 5 }); setStatus("ready"); }).catch(() => { if (!cancelled) setStatus("failed"); });
+    void load().then(() => { if (cancelled || !rootRef.current || !window.kakao?.maps) return; mapRef.current = new window.kakao.maps.Map(rootRef.current, { center: new window.kakao.maps.LatLng(center.lat, center.lng), level: 5 }); setStatus("ready"); }).catch(() => { if (!cancelled) setStatus("failed"); });
     return () => { cancelled = true; markersRef.current.forEach((marker) => marker.setMap(null)); markersRef.current.clear(); mapRef.current = null; };
-  }, []);
+  }, [center.lat, center.lng]);
   useEffect(() => {
     if (status !== "ready" || !mapRef.current || !window.kakao?.maps) return;
     markersRef.current.forEach((marker) => marker.setMap(null)); markersRef.current.clear(); infoWindowRef.current?.close();
