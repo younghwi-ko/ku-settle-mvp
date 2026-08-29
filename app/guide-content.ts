@@ -5,6 +5,7 @@ const article = (value: Omit<LifeGuideArticle, "universityId" | "contentCheckedA
   ...value,
   universityId: "korea-university",
   contentCheckedAt: value.lastVerifiedAt ?? "2026-08-29",
+  contentOrigin: value.contentOrigin ?? (value.officialUrl ? "official-guide" : "demo"),
   sourceStatus: value.officialUrl ? "verified" : "unavailable"
 });
 
@@ -22,6 +23,7 @@ const expandedLifeGuideArticlesBase: LifeGuideArticle[] = [
 export const expandedLifeGuideArticles: LifeGuideArticle[] = expandedLifeGuideArticlesBase.map((item) => {
   const overrides: Partial<LifeGuideArticle> = {
     contentCheckedAt: "2026-08-29",
+    contentOrigin: item.contentOrigin ?? (item.officialUrl ? "official-guide" : "demo"),
     sourceStatus: item.officialUrl ? "verified" : "unavailable"
   };
   if (item.id === "sim-esim-options") Object.assign(overrides, { officialUrl: "https://english.seoul.go.kr/service/living/convenience/3-communication/", sourceName: "Seoul Metropolitan Government", sourceStatus: "verified" as const, verificationStatus: "official" as const });
