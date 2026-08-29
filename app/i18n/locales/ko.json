@@ -126,7 +126,7 @@
     "empty": "검색 조건에 맞는 상품이 없습니다.",
     "form": { "title": "다음 학생을 위해 물품을 등록하세요", "body": "기존 아이콘 카드 디자인으로 간단히 등록합니다. 이 데모에서는 이미지가 필요하지 않습니다.", "itemName": "상품명", "price": "가격", "category": "카테고리", "condition": "상태", "pickup": "픽업 장소", "availability": "판매 상태", "submit": "상품 등록", "success": "상품이 등록되었습니다. 입국 학생 화면에서 확인할 수 있습니다.", "itemPlaceholder": "예: 공부 의자", "pricePlaceholder": "예: 20000", "pickupPlaceholder": "예: 고려대 정문" },
     "actions": { "browse": "캠퍼스 마켓 둘러보기", "list": "물품 등록하기" },
-    "userSeller": "고려대 학생 · {{name}}", "authRequiredTitle": "실제 상품을 등록하려면 로그인하세요", "authRequiredBody": "게스트 계획은 이 기기에만 저장됩니다. 고려대 이메일 인증 후 학생 마켓에 상품을 등록할 수 있습니다.", "markSold": "판매 완료로 표시", "markActive": "판매 중으로 표시", "hideListing": "상품 숨기기", "showListing": "상품 다시 공개", "deleteListing": "상품 삭제", "soldUnavailable": "이미 판매 완료된 상품입니다.",
+    "userSeller": "고려대 학생 · {{name}}", "authRequiredTitle": "실제 상품을 등록하려면 로그인하세요", "authRequiredBody": "게스트 계획은 이 기기에만 저장됩니다. 고려대 이메일 인증 후 학생 마켓에 상품을 등록할 수 있습니다.", "markSold": "판매 완료로 표시", "markActive": "판매 중으로 표시", "cancelSold": "판매 완료 취소", "hideListing": "상품 숨기기", "showListing": "상품 다시 공개", "favorite": "즐겨찾기", "unfavorite": "즐겨찾기 해제", "reservationHolder": "예약자", "cancelReservation": "예약 취소", "deleteListing": "상품 삭제", "soldUnavailable": "이미 판매 완료된 상품입니다.",
     "products": {
       "riceCooker": { "name": "전기밥솥", "pickup": "안암역 3번 출구", "seller": "교환학생 · Mia" },
       "deskLamp": { "name": "책상 스탠드", "pickup": "고려대 정문", "seller": "고려대 학생 · Joon" },
