@@ -3,10 +3,10 @@ import type { StoredProfile } from "./domain";
 
 export const LOCAL_DATA_VERSION = 3;
 export type PersonalTask = { id: string; title: string; stage: LifecycleStage; dueDate: string; note: string; completed: boolean };
-export type LocalPreferences = { dueDates: Record<string, string>; notes: Record<string, string>; important: string[]; hiddenCompleted: boolean; customTasks: PersonalTask[]; guideFavorites: string[]; placeFavorites: number[]; reports: Record<string, string> };
+export type LocalPreferences = { dueDates: Record<string, string>; notes: Record<string, string>; important: string[]; hiddenCompleted: boolean; customTasks: PersonalTask[]; guideFavorites: string[]; placeFavorites: number[]; reports: Record<string, string>; reservedProductIds: string[] };
 export type LocalData = { version: number; profile: StoredProfile | null; done: string[]; products: MarketProduct[]; verified: boolean; preferences: LocalPreferences };
 
-export const emptyPreferences = (): LocalPreferences => ({ dueDates: {}, notes: {}, important: [], hiddenCompleted: false, customTasks: [], guideFavorites: [], placeFavorites: [], reports: {} });
+export const emptyPreferences = (): LocalPreferences => ({ dueDates: {}, notes: {}, important: [], hiddenCompleted: false, customTasks: [], guideFavorites: [], placeFavorites: [], reports: {}, reservedProductIds: [] });
 const asRecord = (value: unknown): Record<string, unknown> => value && typeof value === "object" ? value as Record<string, unknown> : {};
 const strings = (value: unknown) => Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
 const stringRecord = (value: unknown): Record<string, string> => { const result: Record<string, string> = {}; for (const [key, item] of Object.entries(asRecord(value))) if (typeof item === "string") result[key] = item; return result; };
@@ -22,7 +22,7 @@ export function migrateLocalData(raw: unknown): LocalData {
     notes: stringRecord(preferences.notes),
     important: strings(preferences.important), hiddenCompleted: preferences.hiddenCompleted === true, customTasks,
     guideFavorites: strings(preferences.guideFavorites), placeFavorites: Array.isArray(preferences.placeFavorites) ? preferences.placeFavorites.filter((x): x is number => typeof x === "number") : [],
-    reports: stringRecord(preferences.reports)
+    reports: stringRecord(preferences.reports), reservedProductIds: strings(preferences.reservedProductIds)
   } };
 }
 
