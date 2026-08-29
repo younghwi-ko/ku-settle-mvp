@@ -109,7 +109,7 @@
   "marketplace": {
     "eyebrow": "CAMPUS MARKETPLACE",
     "title": "One student’s farewell is another’s fresh start",
-    "body": "Explore a demo of student-to-student reuse near campus. Live verification and transactions are not implemented.",
+    "body": "Try listing and reserving items in Demo mode without an account. No payment or external messages are sent.",
     "incoming": "I’m new to KU",
     "leaving": "I’m leaving KU",
     "search": "Search items",
