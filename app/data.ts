@@ -39,7 +39,7 @@ export type MarketProduct = {
   serviceStatus?: "active" | "sold" | "hidden" | "deleted";
 };
 export type PlaceCategory = "Food" | "Halal" | "Vegan" | "Hospital" | "Pharmacy" | "Hair Salon" | "Cafe" | "Grocery";
-export type Place = { id: number; category: PlaceCategory; nameKey: TranslationKey; descriptionKey: TranslationKey; locationKey: TranslationKey; distanceMeters: number; english: boolean; languageSupportNoteKey?: TranslationKey | null; tipKey: TranslationKey };
+export type Place = { id: number; category: PlaceCategory; nameKey: TranslationKey; descriptionKey: TranslationKey; locationKey: TranslationKey; distanceMeters: number; english: boolean; languageSupportNoteKey?: TranslationKey | null; tipKey: TranslationKey; officialUrl?: string; mapUrl?: string; sourceName?: string; lastVerifiedAt?: string; verificationStatus?: VerificationStatus; languageSupport?: "confirmed" | "ask_provider" | "unknown" };
 export type LifeGuideCategory = "housing" | "arrival" | "immigration" | "mobile-banking" | "academic" | "healthcare" | "daily" | "departure";
 export type VerificationStatus = "official" | "verified" | "needs_confirmation" | "demo";
 export type LifeGuideArticle = { id: string; category: LifeGuideCategory; title: string; summary: string; content: string; checklist: string[]; officialUrl?: string; sourceName?: string; lastVerifiedAt?: string; verificationStatus: VerificationStatus; relatedTaskIds: string[]; locales: Partial<Record<"en" | "ko" | "ja" | "zh-CN", { title: string; summary: string; content: string }>> };

@@ -21,7 +21,7 @@ import {
 import { getSupabaseClient, isSupabaseConfigured } from "./lib/supabase";
 import { createMarketplaceItem, deleteAccount, importGuestData, loadAccount, saveProfile, saveProgress, sendEmailOtp, signOut, updateMarketplaceItemStatus } from "./lib/repository";
 import { isKuEmail, mapServiceError, profileRowToStored, type AppMode, type ProfileRow, type StoredProfile } from "./lib/domain";
-import { canCreateMarketplaceListing, shouldShowVerifiedBadge } from "./lib/verification";
+import { shouldShowVerifiedBadge } from "./lib/verification";
 import { emptyPreferences, readLocalData, writeLocalData, type LocalPreferences } from "./lib/local-data";
 
 type Page = "home" | "onboarding" | "marketplace" | "guide" | "life-guide";
@@ -304,6 +304,13 @@ export default function Home() {
   };
 
   const changeMarketplaceStatus = async (product: MarketProduct, status: "active" | "sold" | "hidden" | "deleted") => {
+    if (appMode !== "authenticated" && product.userCreated && product.ownedByCurrentUser) {
+      setUserProducts((current) => status === "deleted" || status === "hidden"
+        ? current.filter((item) => item.id !== product.id)
+        : current.map((item) => item.id === product.id ? { ...item, serviceStatus: status, status: status === "sold" ? "Reserved" : "Available" } : item));
+      setSelectedProduct(null); setServiceMessage("common:saved");
+      return;
+    }
     if (!authUser || product.source !== "live" || !product.ownedByCurrentUser) return;
     setServerBusy(true);
     try {
@@ -322,7 +329,7 @@ export default function Home() {
       finally { setServerBusy(false); }
       return;
     }
-    if (appMode === "demo") { setUserProducts((current) => [{ ...product, source: "demo" }, ...current]); return; }
+    if (appMode === "demo" || appMode === "guest") { setUserProducts((current) => [{ ...product, source: "demo", ownedByCurrentUser: true, serviceStatus: "active" }, ...current]); setServiceMessage("common:saved"); return; }
     setAuthOpen(true); throw new Error("Authentication required");
   };
 
@@ -515,7 +522,7 @@ function Marketplace({ locale, t, profile, appMode, products: marketplaceProduct
   return <section className="page section-pad market-page">
     <div className="page-hero market-hero"><div><span className="eyebrow"><ShoppingBag size={14}/>{tr(t, "marketplace:eyebrow")}</span><h1>{tr(t, "marketplace:title")}</h1><p>{tr(t, "marketplace:body")}</p></div><div className="mode-switch" aria-label={tr(t, "accessibility:marketMode")}><button aria-pressed={mode === "incoming"} className={mode === "incoming" ? "active" : ""} onClick={() => changeMode("incoming")}><ShoppingBag size={18}/>{tr(t, "marketplace:incoming")}</button><button aria-pressed={mode === "leaving"} className={mode === "leaving" ? "active" : ""} onClick={() => changeMode("leaving")}><Tag size={18}/>{tr(t, "marketplace:leaving")}</button></div></div>
     <div className="market-flow">{(["verification", "listing", "pickup", "transaction"] as const).map((step, index) => <div key={step}><span>{index === 0 ? <BadgeCheck/> : index === 1 ? <ShoppingBag/> : index === 2 ? <MapPin/> : <Banknote/>}</span><strong>{tr(t, `marketplace:flow.${step}`)}</strong>{index < 3 && <ChevronRight/>}</div>)}</div>
-    {mode === "leaving" ? !canCreateMarketplaceListing(appMode) ? <article className="listing-form auth-gate"><ShieldCheck/><h2>{tr(t, "marketplace:authRequiredTitle")}</h2><p>{tr(t, "marketplace:authRequiredBody")}</p></article> : <ListingForm t={t} submit={completeListing}/> : <>
+    {mode === "leaving" ? !(["authenticated", "demo", "guest"] as AppMode[]).includes(appMode) ? <article className="listing-form auth-gate"><ShieldCheck/><h2>{tr(t, "marketplace:authRequiredTitle")}</h2><p>{tr(t, "marketplace:authRequiredBody")}</p></article> : <ListingForm t={t} submit={completeListing}/> : <>
       {success && <div className="success-banner" role="status"><CheckCircle2 size={18}/>{tr(t, "marketplace:form.success")}</div>}
       <div className="filters"><label className="search-box"><Search size={19}/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr(t, "marketplace:search")}/>{search && <button onClick={() => setSearch("")} aria-label={tr(t, "marketplace:clearSearch")}><X size={16}/></button>}</label><div className="chips">{categories.map((item) => <button key={item} aria-pressed={category === item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{categoryLabel(item)}</button>)}</div></div>
       {filtered.length ? <div className="product-grid">{filtered.map((product) => {

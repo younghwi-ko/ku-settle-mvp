@@ -9,9 +9,9 @@ describe("Guest and Demo storage boundaries", () => {
     expect(page).toContain('if (appMode === "authenticated") return;');
   });
 
-  it("keeps Demo listings local and gates Guest listing creation", () => {
-    expect(page).toContain('if (appMode === "demo") { setUserProducts');
-    expect(page).toContain('!canCreateMarketplaceListing(appMode)');
+  it("keeps Demo and Guest listings local without auth", () => {
+    expect(page).toContain('appMode === "demo" || appMode === "guest"');
+    expect(page).toContain('source: "demo", ownedByCurrentUser: true');
   });
 
   it("keeps Reset demo local and unavailable to authenticated accounts", () => {
