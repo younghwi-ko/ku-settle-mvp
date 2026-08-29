@@ -1,9 +1,25 @@
 import { NextResponse } from "next/server";
-import { kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, dedupePlaces, isKakaoPlaceAllowed } from "@/app/lib/kakao";
+import { kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, dedupePlaces, isKakaoPlaceAllowed, KAKAO_SUPPORTED_GROUP_CODES } from "@/app/lib/kakao";
 import { canUseKakaoCall, kakaoMonthlyLimit, recordKakaoCall } from "@/app/lib/kakao-quota";
 
 const cache = new Map<string, { expiresAt: number; body: object }>();
 const TTL_MS = 60_000;
+const ALL_CATEGORY_CODES = ["FD6", "CE7", "HP8", "PM9", "MT1"] as const;
+type KakaoPayload = { documents?: unknown[]; meta?: { total_count?: number } };
+
+async function fetchKakao(endpoint: string, params: URLSearchParams, restKey: string) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5_000);
+  try {
+    const response = await fetch(`${endpoint}?${params}`, { headers: { Authorization: `KakaoAK ${restKey}` }, signal: controller.signal, cache: "no-store" });
+    if (!response.ok) return { ok: false as const, status: response.status, payload: null };
+    return { ok: true as const, status: response.status, payload: await response.json() as KakaoPayload };
+  } catch {
+    return { ok: false as const, status: 0, payload: null };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -21,26 +37,37 @@ export async function GET(request: Request) {
   const cached = cache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) return NextResponse.json(cached.body);
   const monthlyLimit = kakaoMonthlyLimit();
-  if (!canUseKakaoCall(monthlyLimit)) return NextResponse.json({ error: "free_quota_limit", limit: monthlyLimit }, { status: 429 });
-  recordKakaoCall();
-  const endpoint = code ? "https://dapi.kakao.com/v2/local/search/category.json" : "https://dapi.kakao.com/v2/local/search/keyword.json";
-  const params = new URLSearchParams({ x: String(KU_CENTER.lng), y: String(KU_CENTER.lat), radius: String(radius), page: String(page), size: "15", sort: "distance" });
-  if (code) params.set("category_group_code", code);
-  if (query || keyword || !code) params.set("query", query || keyword || "고려대학교");
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 5_000);
-  try {
-    const response = await fetch(`${endpoint}?${params}`, { headers: { Authorization: `KakaoAK ${restKey}` }, signal: controller.signal, cache: "no-store" });
-    if (!response.ok) return NextResponse.json({ error: response.status === 429 ? "rate_limited" : "upstream_error" }, { status: 502 });
-    const payload = await response.json() as { documents?: unknown[]; meta?: { total_count?: number } };
-    const fetchedAt = new Date().toISOString();
-    const places = dedupePlaces((payload.documents ?? []).filter((item) => isKakaoPlaceAllowed(item, category)).map((item) => kakaoPlaceToPlace(item, fetchedAt, category)).filter((item): item is NonNullable<typeof item> => Boolean(item)));
-    const body = { places, fetchedAt, source: "kakao" as const, totalCount: Number(payload.meta?.total_count) || places.length };
-    cache.set(cacheKey, { expiresAt: Date.now() + TTL_MS, body });
-    return NextResponse.json(body, { headers: { "Cache-Control": "private, max-age=30" } });
-  } catch {
-    return NextResponse.json({ error: "upstream_unavailable" }, { status: 502 });
-  } finally {
-    clearTimeout(timeout);
+  const endpoint = code || category === "All" ? "https://dapi.kakao.com/v2/local/search/category.json" : "https://dapi.kakao.com/v2/local/search/keyword.json";
+  const categoryCodes = category === "All" ? ALL_CATEGORY_CODES : code ? [code] : [];
+  const documents: unknown[] = [];
+  let totalCount = 0;
+  let successfulCalls = 0;
+  let rateLimited = false;
+  for (const categoryCode of categoryCodes) {
+    if (!canUseKakaoCall(monthlyLimit)) { rateLimited = true; break; }
+    recordKakaoCall();
+    const params = new URLSearchParams({ x: String(KU_CENTER.lng), y: String(KU_CENTER.lat), radius: String(radius), page: String(page), size: "15", sort: "distance", category_group_code: categoryCode });
+    if (query) params.set("query", query);
+    const result = await fetchKakao(endpoint, params, restKey);
+    if (!result.ok) { if (result.status === 429) rateLimited = true; continue; }
+    successfulCalls += 1;
+    documents.push(...(result.payload.documents ?? []));
+    totalCount += Number(result.payload.meta?.total_count) || 0;
   }
+  if (!categoryCodes.length) {
+    if (!canUseKakaoCall(monthlyLimit)) return NextResponse.json({ error: "free_quota_limit", limit: monthlyLimit }, { status: 429 });
+    recordKakaoCall();
+    const params = new URLSearchParams({ x: String(KU_CENTER.lng), y: String(KU_CENTER.lat), radius: String(radius), page: String(page), size: "15", sort: "distance", query: query || keyword || "고려대학교" });
+    const result = await fetchKakao(endpoint, params, restKey);
+    if (!result.ok) return NextResponse.json({ error: result.status === 429 ? "rate_limited" : "upstream_unavailable" }, { status: 502 });
+    successfulCalls = 1;
+    documents.push(...(result.payload.documents ?? []));
+    totalCount = Number(result.payload.meta?.total_count) || 0;
+  }
+  if (!successfulCalls && (rateLimited || category === "All")) return NextResponse.json({ error: rateLimited ? "rate_limited" : "upstream_unavailable" }, { status: 502 });
+  const fetchedAt = new Date().toISOString();
+  const places = dedupePlaces(documents.filter((item) => isKakaoPlaceAllowed(item, category)).map((item) => kakaoPlaceToPlace(item, fetchedAt, category)).filter((item): item is NonNullable<typeof item> => Boolean(item)));
+  const body = { places, fetchedAt, source: "kakao" as const, totalCount: totalCount || places.length, partial: rateLimited || successfulCalls < categoryCodes.length, supportedCategoryCount: KAKAO_SUPPORTED_GROUP_CODES.size };
+  cache.set(cacheKey, { expiresAt: Date.now() + TTL_MS, body });
+  return NextResponse.json(body, { headers: { "Cache-Control": "private, max-age=30" } });
 }

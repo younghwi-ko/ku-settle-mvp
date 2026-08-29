@@ -308,6 +308,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .map-overlay { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: 18px; color: var(--muted); background: #f5f7fbd9; font-size: 13px; text-align: center; }
 .map-overlay.map-error { color: #8b1e31; background: #fff6f7e8; }
 .map-attribution { position: absolute; right: 8px; bottom: 7px; z-index: 3; padding: 3px 6px; border-radius: 4px; background: #ffffffd9; color: #53627a; font-size: 10px; }
+.map-ready-status { position: absolute; left: 8px; bottom: 7px; z-index: 3; padding: 3px 6px; border-radius: 4px; background: #ffffffd9; color: #236b45; font-size: 10px; }
 .map-no-coordinates { padding: 9px 12px; color: var(--muted); background: white; font-size: 12px; }
 .place-card.is-selected { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-light); }
 .admin-page { background: #f7f9fc; }
