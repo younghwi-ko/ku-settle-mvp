@@ -268,6 +268,15 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .success-banner { display: flex; align-items: center; gap: 9px; background: #e7f7f2; color: var(--green); border: 1px solid #c5eadf; border-radius: 12px; padding: 12px 14px; margin-bottom: 18px; font-size: 11px; font-weight: 750; }
 .listing-form { background: white; border: 1px solid var(--line); border-radius: 19px; padding: 25px; box-shadow: 0 12px 34px rgba(29,54,96,.06); }
 .listing-image-preview { display: block; width: 120px; height: 90px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); margin-top: 8px; }
+.listing-manager { background: #fff; border: 1px solid var(--line); border-radius: 19px; padding: 22px; margin-top: 18px; }
+.listing-manager-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.listing-manager-heading h2 { margin: 0; font-size: 19px; }
+.listing-manager-heading span { color: var(--blue); font-weight: 800; }
+.my-listing-list { display: grid; gap: 8px; }
+.my-listing-row { display: grid; grid-template-columns: 42px 1fr auto 18px; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--line); border-radius: 12px; padding: 9px; background: #fff; }
+.my-listing-row img { width: 38px; height: 34px; object-fit: cover; border-radius: 7px; }
+.my-listing-row small { color: var(--muted); }
+.empty-copy { color: var(--muted); font-size: 12px; }
 .market-list-cta { white-space: nowrap; }
 .modal-listing-image { display: block; width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; margin: 12px 0; }
 .listing-description, .listing-hours { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 8px 0; }
