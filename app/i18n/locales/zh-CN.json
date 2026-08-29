@@ -126,7 +126,7 @@
     "empty": "没有符合搜索条件的商品。",
     "form": { "title": "为下一位同学发布商品", "body": "沿用现有图标卡片即可完成简单发布。本演示不需要上传图片。", "itemName": "商品名称", "price": "价格", "category": "分类", "condition": "成色", "pickup": "取货地点", "availability": "商品状态", "submit": "发布商品", "success": "商品已发布，新到校学生现在可以看到。", "itemPlaceholder": "例如：学习椅", "pricePlaceholder": "例如：20000", "pickupPlaceholder": "例如：高丽大学正门" },
     "actions": { "browse": "浏览校园集市", "list": "发布商品" },
-    "userSeller": "KU 学生 · {{name}}", "authRequiredTitle": "登录后发布真实商品", "authRequiredBody": "访客计划只保存在当前设备。验证高丽大学邮箱后即可在学生校园集市发布商品。", "markSold": "标记为已售", "markActive": "恢复在售", "hideListing": "隐藏商品", "deleteListing": "删除商品", "soldUnavailable": "该商品已标记为已售。",
+    "userSeller": "KU 学生 · {{name}}", "authRequiredTitle": "登录后发布真实商品", "authRequiredBody": "访客计划只保存在当前设备。验证高丽大学邮箱后即可在学生校园集市发布商品。", "markSold": "标记为已售", "markActive": "恢复在售", "hideListing": "隐藏商品", "showListing": "重新公开商品", "deleteListing": "删除商品", "soldUnavailable": "该商品已标记为已售。",
     "products": {
       "riceCooker": { "name": "电饭煲", "pickup": "安岩站3号出口", "seller": "交换生 · Mia" },
       "deskLamp": { "name": "书桌台灯", "pickup": "高丽大学正门", "seller": "KU 学生 · Joon" },
@@ -198,7 +198,7 @@
   "errors": {
     "generic": "出现问题，请重试。",
     "storage": "无法读取已保存的数据，已恢复为安全的默认值。",
-    "missingTranslation": "该内容暂时以英语显示。", "supabaseNotConfigured": "账号服务尚未连接。需要配置Supabase公开URL和publishable key后才能登录。", "rateLimit": "尝试次数过多，请稍后再试。", "sessionExpired": "登录会话已过期，请重新登录。", "permissionDenied": "您无权执行此操作。", "offline": "网络似乎已断开，修改未保存。", "supabaseUnavailable": "账号服务暂时不可用。", "invalidOtp": "验证码错误或已过期，请获取新验证码。", "saveFailed": "商品未保存，请重试。"
+    "missingTranslation": "该内容暂时以英语显示。", "supabaseNotConfigured": "账号服务尚未连接。需要配置Supabase公开URL和publishable key后才能登录。", "rateLimit": "尝试次数过多，请稍后再试。", "sessionExpired": "登录会话已过期，请重新登录。", "permissionDenied": "您无权执行此操作。", "offline": "网络似乎已断开，修改未保存。", "supabaseUnavailable": "账号服务暂时不可用。", "invalidOtp": "验证码错误或已过期，请获取新验证码。", "saveFailed": "商品未保存，请重试。", "imageTooLarge": "请选择小于2MB的图片。"
   },
   "accessibility": {
     "brandHome": "KU Settle 首页",

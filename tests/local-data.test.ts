@@ -7,4 +7,8 @@ describe("local data migration", () => {
     expect(result.version).toBe(4); expect(result.profile?.name).toBe("A"); expect(result.done).toEqual(["dorm"]); expect(result.verified).toBe(true); expect(result.preferences.favoriteProductIds).toEqual([]);
   });
   it("returns safe defaults for malformed data", () => expect(migrateLocalData({ preferences: { dueDates: { task: 3 }, customTasks: [{ bad: true }] } }).preferences).toEqual(emptyPreferences()));
+  it("keeps only valid products and derives active reservation ids", () => {
+    const result = migrateLocalData({ products: [{ id: "ok", priceKrw: 1000, category: "Home", condition: "good", status: "Available", icon: "box" }, { id: "bad", priceKrw: "1" }], preferences: { reservations: [{ id: "r1", productId: "ok", buyerName: "Alex", status: "active", createdAt: "2026-08-29T00:00:00Z" }] } });
+    expect(result.products).toHaveLength(1); expect(result.preferences.reservedProductIds).toEqual(["ok"]);
+  });
 });
