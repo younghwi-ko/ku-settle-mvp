@@ -45,7 +45,7 @@
     "primaryAction": "Open my lifecycle plan",
     "secondaryAction": "Browse Marketplace",
     "trust": { "account": "No account needed", "languages": "Four languages supported", "journey": "From arrival to departure" },
-    "progressTitle": "Your lifecycle progress",
+    "progressTitle": "Your lifecycle progress", "todaySummary": "Today and upcoming", "urgentItems": "What needs attention", "noUpcoming": "Nothing is scheduled for today.", "incompleteCount": "{{count}} incomplete tasks", "progressSummaryShort": "{{progress}}% complete", "overdue": "Overdue", "dueToday": "Due today", "dueSoon": "Due soon",
     "progressSummary": "{{completed}} of {{total}} tasks completed",
     "lifecycleLabel": "Arrival-to-departure journey",
     "stageSummary": "{{stage}}: {{completed}} of {{total}}, {{progress}}",
@@ -133,7 +133,7 @@
     "userSeller": "KU student · {{name}}",
     "authRequiredTitle": "Sign in to list a real item",
     "authRequiredBody": "Guest plans stay on this device. Verify your KU email to publish a listing to the student marketplace.",
-    "markSold": "Mark as sold", "markActive": "Mark as available", "cancelSold": "Cancel sold status", "hideListing": "Hide listing", "showListing": "Show listing", "favorite": "Favorite", "unfavorite": "Remove from favorites", "reservationHolder": "Reserved by", "cancelReservation": "Cancel reservation", "deleteListing": "Delete listing", "soldUnavailable": "This item is already marked as sold.",
+    "markSold": "Mark as sold", "markActive": "Mark as available", "cancelSold": "Cancel sold status", "hideListing": "Hide listing", "showListing": "Show listing", "favorite": "Favorite", "unfavorite": "Remove from favorites", "reservationHolder": "Reserved by", "cancelReservation": "Cancel reservation", "deleteListing": "Delete listing", "soldUnavailable": "This item is already marked as sold.", "myReservations": "My reservations", "reservationSummary": "Reserved items", "reservationActive": "Active reservation", "pickupNotSet": "Pickup time not set", "pickupScheduleTitle": "Choose a pickup time", "pickupDate": "Pickup date", "pickupStart": "Start time", "pickupEnd": "End time", "confirmReservation": "Confirm reservation", "reportTitle": "Report listing", "reportReason": "Reason", "chooseReportReason": "Choose a reason", "reportDetail": "Details", "submitReport": "Submit report", "duplicateReport": "You already reported this item.", "reportSubmitted": "Report saved for this demo.", "reportReasons": { "false_info": "False item information", "price_mismatch": "Price or description mismatch", "scam": "Suspected scam", "inappropriate": "Inappropriate content", "schedule_issue": "Pickup place or schedule issue", "other": "Other" }, "mapsView": "View on Google Maps", "mapsDirections": "Get directions", "reportHistory": "Report history", "reportReceived": "Received", "imageHint": "PNG, JPG, or WebP · up to 8 MB; compressed before saving", "removeImage": "Remove image",
     "products": {
       "riceCooker": { "name": "Rice Cooker", "pickup": "Anam Station, Exit 3", "seller": "Exchange student · Mia" },
       "deskLamp": { "name": "Desk Lamp", "pickup": "KU Main Gate", "seller": "KU student · Joon" },
@@ -200,12 +200,12 @@
     "confirm": "Reset demo"
   },
   "validation": {
-    "requiredFields": "Please complete every field.",
+    "requiredFields": "Please complete every field.", "pickupScheduleRequired": "Choose a valid pickup date and time range.",
     "validEmail": "Enter a valid @korea.ac.kr email.",
     "positivePrice": "Enter a price greater than zero.", "nameRequired": "Enter a name up to 80 characters.", "invalidDate": "Enter a valid date.", "itemRequired": "Enter an item name.", "validPrice": "Enter a valid positive KRW price.", "pickupRequired": "Enter a pickup location.", "otpLength": "Enter the six-digit code."
   },
   "errors": {
-    "generic": "Something went wrong. Please try again.",
+    "generic": "Something went wrong. Please try again.", "imageInvalid": "Choose a valid image file.", "storageQuota": "There is not enough browser storage. Remove a large image and try again.",
     "storage": "Saved data could not be read. Safe defaults were restored.",
     "missingTranslation": "This content is temporarily shown in English.", "supabaseNotConfigured": "Account services are not connected yet. Configure the public Supabase URL and publishable key to enable sign-in.", "rateLimit": "Too many attempts. Wait before trying again.", "sessionExpired": "Your session expired. Sign in again.", "permissionDenied": "You do not have permission to perform this action.", "offline": "You appear to be offline. Your change was not saved.", "supabaseUnavailable": "The account service is temporarily unavailable.", "invalidOtp": "The code is incorrect or expired. Request a new code.", "saveFailed": "The item was not saved. Please try again.", "imageTooLarge": "Choose an image smaller than 2 MB."
   },

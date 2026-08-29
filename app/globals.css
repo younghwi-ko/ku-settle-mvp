@@ -286,6 +286,20 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .reservation-summary { display: flex; align-items: center; gap: 10px; margin: 14px 0; padding: 12px 14px; border: 1px solid #dce7fb; border-radius: 12px; background: #f6f9ff; }
 .reservation-summary span { color: var(--blue); font-weight: 800; }
 .reservation-summary button { margin-left: auto; }
+.reservation-list, .listing-reports, .lifecycle-summary { background: #f7f9fc; border-top: 1px solid var(--line); }
+.reservation-cards, .summary-items { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.reservation-card, .listing-reports article { display: grid; gap: 7px; background: #fff; border: 1px solid var(--line); border-radius: 13px; padding: 14px; font-size: 11px; }
+.reservation-card span, .listing-reports span, .listing-reports small { color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.reservation-card button { margin-top: 4px; }
+.time-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.map-action-bar { position: fixed; z-index: 110; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 9px; flex-wrap: wrap; width: min(calc(100% - 36px), 440px); padding: 10px 12px; background: white; border: 1px solid var(--line); border-radius: 13px; box-shadow: 0 15px 40px rgba(5,18,42,.18); font-size: 10px; }
+.map-action-bar span { display: flex; align-items: center; gap: 5px; color: var(--muted); flex: 1 1 100%; }
+.map-action-bar a { color: var(--blue); font-weight: 750; text-decoration: none; }
+.summary-metrics { display: flex; gap: 10px; margin-bottom: 12px; color: var(--blue); font-size: 11px; font-weight: 750; }
+.summary-items button { display: grid; gap: 5px; text-align: left; border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: white; cursor: pointer; }
+.summary-items strong { color: var(--blue); font-size: 10px; }
+.summary-items span { color: var(--navy); font-size: 12px; }
+.listing-reports article { margin-top: 10px; grid-template-columns: 1fr auto auto; align-items: center; }
 .market-list-cta { white-space: nowrap; }
 .modal-listing-image { display: block; width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; margin: 12px 0; }
 .listing-description, .listing-hours { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 8px 0; }
@@ -465,3 +479,4 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 .guide-article-grid { max-width: 100%; }
 @media (max-width: 760px) { .guide-article-grid { grid-template-columns: 1fr; } .personal-task-tools { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .reservation-cards, .summary-items { grid-template-columns: 1fr; } .listing-reports article { grid-template-columns: 1fr; } .time-fields { grid-template-columns: 1fr; gap: 0; } .map-action-bar { bottom: 10px; } }

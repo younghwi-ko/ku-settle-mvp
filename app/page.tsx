@@ -4,10 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type 
 import type { User } from "@supabase/supabase-js";
 import type { TFunction } from "i18next";
 import {
-  ArrowRight, BadgeCheck, Banknote, BedDouble, Box, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronRight,
+  AlertTriangle, ArrowRight, BadgeCheck, Banknote, BedDouble, Box, CalendarClock, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronRight,
   CircleUserRound, Clock3, CookingPot, FileCheck2, GraduationCap, HeartPulse, Hospital, House, Languages, LampDesk,
   Lightbulb, MapPin, Menu, MessageCircle, PackageCheck, RotateCcw, Search, ShieldCheck, ShoppingBag, Sparkles, Store, BookOpen,
-  Tag, Utensils, Vegan, X, Zap
+  Tag, Trash2, Utensils, Vegan, X, Zap
 } from "lucide-react";
 import {
   lifecycleStages, places, products, tasks, lifeGuideArticles, type LifecycleStage, type MarketProduct, type PlaceCategory,
@@ -20,15 +20,17 @@ import {
 } from "./i18n";
 import { getSupabaseClient, isSupabaseConfigured } from "./lib/supabase";
 import { createMarketplaceItem, deleteAccount, importGuestData, loadAccount, saveProfile, saveProgress, sendEmailOtp, signOut, updateMarketplaceItemStatus } from "./lib/repository";
-import { isKuEmail, isOwnedMarketplaceProduct, mapServiceError, profileRowToStored, validateMarketplaceInput, type AppMode, type ProfileRow, type StoredProfile } from "./lib/domain";
+import { googleMapsDirectionsUrl, googleMapsSearchUrl, isKuEmail, isOwnedMarketplaceProduct, isValidImageDataUrl, mapServiceError, profileRowToStored, validateMarketplaceInput, type AppMode, type ProfileRow, type StoredProfile } from "./lib/domain";
 import { shouldShowVerifiedBadge } from "./lib/verification";
-import { emptyPreferences, migrateLocalData, readLocalData, writeLocalData, type LocalPreferences } from "./lib/local-data";
+import { emptyPreferences, migrateLocalData, readLocalData, writeLocalData, type LocalPreferences, type LocalReservation, type ReportDraft } from "./lib/local-data";
 
 type Page = "home" | "onboarding" | "marketplace" | "guide" | "life-guide";
 type Housing = "dorm" | "off-campus";
 type UserProfile = StoredProfile;
 type MarketMode = "incoming" | "leaving";
 type ProductModalMode = "buyer" | "seller";
+type PickupSchedule = Pick<LocalReservation, "pickupDate" | "pickupStartTime" | "pickupEndTime">;
+type ReportReason = "false_info" | "price_mismatch" | "scam" | "inappropriate" | "schedule_issue" | "other";
 type StageStat = { stage: (typeof lifecycleStages)[number]; completed: number; total: number; progress: number };
 type NavigationIntent = { stage?: LifecycleStage; taskId?: string; highlight?: boolean; marketMode?: MarketMode; guideCategory?: string };
 
@@ -49,7 +51,7 @@ const categoryIcons: Partial<Record<PlaceCategory, typeof Hospital>> = { Hospita
 const categoryProductIcons: Record<ProductCategory, ProductIcon> = { Home: "box", Kitchen: "cooking", Electronics: "fan", Bedding: "bed" };
 
 function tr(t: TFunction, key: string, options?: Record<string, unknown>) {
-  return String(t(key, options));
+  return String(t(key.replace(/^marketplace\./, "marketplace:"), options));
 }
 function ui(locale: Locale, key: string) { const copy: Record<string, Record<Locale, string>> = { due: { en: "Due date", ko: "예정일", ja: "予定日", "zh-CN": "预定日期" }, note: { en: "Note", ko: "메모", ja: "メモ", "zh-CN": "备注" }, important: { en: "Important", ko: "중요", ja: "重要", "zh-CN": "重要" }, personal: { en: "Personal task", ko: "개인 작업", ja: "個人タスク", "zh-CN": "个人任务" }, add: { en: "Add personal task", ko: "개인 작업 추가", ja: "個人タスクを追加", "zh-CN": "添加个人任务" }, delete: { en: "Delete", ko: "삭제", ja: "削除", "zh-CN": "删除" }, hide: { en: "Hide completed", ko: "완료 작업 숨기기", ja: "完了済みを隠す", "zh-CN": "隐藏已完成" }, show: { en: "Show completed", ko: "완료 작업 보기", ja: "完了済みを表示", "zh-CN": "显示已完成" }, allDates: { en: "All dates", ko: "전체 날짜", ja: "すべての日付", "zh-CN": "所有日期" }, today: { en: "Today", ko: "오늘", ja: "今日", "zh-CN": "今天" }, week: { en: "This week", ko: "이번 주", ja: "今週", "zh-CN": "本周" }, none: { en: "No date", ko: "예정 없음", ja: "予定なし", "zh-CN": "无日期" } }; return copy[key]?.[locale] ?? key; }
 
@@ -131,6 +133,21 @@ function productSeller(product: MarketProduct, t: TFunction, profile: UserProfil
   return product.seller ?? (product.userCreated ? tr(t, "marketplace:userSeller", { name: profile.name }) : tr(t, product.sellerKey as TranslationKey));
 }
 
+function localIsoDate(date = new Date()) { return date.toLocaleDateString("en-CA"); }
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith("image/") || file.size > 8_000_000) { reject(new Error("errors:imageInvalid")); return; }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("errors:imageInvalid"));
+    reader.onload = () => {
+      const image = new Image(); image.onerror = () => reject(new Error("errors:imageInvalid"));
+      image.onload = () => { const scale = Math.min(1, 1200 / Math.max(image.width, image.height)); const canvas = document.createElement("canvas"); canvas.width = Math.max(1, Math.round(image.width * scale)); canvas.height = Math.max(1, Math.round(image.height * scale)); const context = canvas.getContext("2d"); if (!context) { reject(new Error("errors:imageInvalid")); return; } context.drawImage(image, 0, 0, canvas.width, canvas.height); const data = canvas.toDataURL("image/jpeg", 0.82); if (!isValidImageDataUrl(data)) reject(new Error("errors:imageInvalid")); else resolve(data); };
+      image.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function Home() {
   const { t, locale, localeReady, changeLocale } = useAppI18n();
   const [page, setPage] = useState<Page>("home");
@@ -150,6 +167,8 @@ export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<MarketProduct | null>(null);
   const [selectedProductMode, setSelectedProductMode] = useState<ProductModalMode>("buyer");
   const [editingProduct, setEditingProduct] = useState<MarketProduct | null>(null);
+  const [reportProduct, setReportProduct] = useState<MarketProduct | null>(null);
+  const [pendingReservationProduct, setPendingReservationProduct] = useState<MarketProduct | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [marketMode, setMarketMode] = useState<MarketMode>("incoming");
   const [marketSearch, setMarketSearch] = useState("");
@@ -238,13 +257,19 @@ export default function Home() {
   }, [profile, hydrated, appMode]);
   useEffect(() => {
     if (!hydrated || appMode === "authenticated") return;
-    writeLocalData(localStorage, storageKeys.data, { version: 4, profile, done, products: userProducts, verified, preferences: localPreferences });
+    try { writeLocalData(localStorage, storageKeys.data, { version: 5, profile, done, products: userProducts, verified, preferences: localPreferences }); } catch { window.setTimeout(() => setServiceMessage("errors:storageQuota"), 0); }
   }, [done, hydrated, localPreferences, profile, userProducts, verified, appMode]);
   useEffect(() => {
     if (!highlightTaskId) return;
     const timer = window.setTimeout(() => setHighlightTaskId(null), 1800);
     return () => window.clearTimeout(timer);
   }, [highlightTaskId]);
+  useEffect(() => {
+    if (!selectedProduct) return;
+    const key = `ku-settle-market-report-${selectedProduct.id}`;
+    const timer = window.setInterval(() => { if (localStorage.getItem(key) === "draft") { localStorage.removeItem(key); setReportProduct(selectedProduct); } }, 100);
+    return () => window.clearInterval(timer);
+  }, [selectedProduct]);
   useEffect(() => {
     if (localeReady && hydrated) document.title = `KU Settle — ${tr(t, "navigation:brandTagline")}`;
   }, [hydrated, locale, localeReady, t]);
@@ -345,15 +370,26 @@ export default function Home() {
   };
   const reserveMarketplaceProduct = (product: MarketProduct) => {
     if (product.serviceStatus === "sold" || product.status === "Reserved") { setServiceMessage("marketplace:soldUnavailable"); return; }
+    setPendingReservationProduct(product);
+  };
+  const completeMarketplaceReservation = (product: MarketProduct, pickup: PickupSchedule) => {
     const productId = String(product.id);
-    setLocalPreferences((current) => ({ ...current, reservedProductIds: [...new Set([...current.reservedProductIds, productId])], reservations: [...current.reservations.filter((item) => !(item.productId === productId && item.status === "active")), { id: `reservation-${Date.now()}`, productId, buyerName: currentProfile.name, status: "active", createdAt: new Date().toISOString() }] }));
-    setSelectedProduct((current) => current?.id === product.id ? { ...current, status: "Available" } : current);
+    if (!pickup.pickupDate || !pickup.pickupStartTime || !pickup.pickupEndTime || pickup.pickupEndTime <= pickup.pickupStartTime) { setServiceMessage("validation:pickupScheduleRequired"); return; }
+    setLocalPreferences((current) => ({ ...current, reservedProductIds: [...new Set([...current.reservedProductIds, productId])], reservations: [...current.reservations.filter((item) => !(item.productId === productId && item.status === "active")), { id: `reservation-${Date.now()}`, productId, buyerName: currentProfile.name, status: "active", createdAt: new Date().toISOString(), ...pickup }] }));
+    setPendingReservationProduct(null);
+    setSelectedProduct((current) => current?.id === product.id ? { ...current, status: "Reserved" } : current);
     setServiceMessage("common:saved");
   };
   const cancelMarketplaceReservation = (product: MarketProduct) => {
     const productId = String(product.id);
     setLocalPreferences((current) => ({ ...current, reservedProductIds: current.reservedProductIds.filter((id) => id !== productId), reservations: current.reservations.map((item) => item.productId === productId && item.status === "active" ? { ...item, status: "cancelled", cancelledAt: new Date().toISOString() } : item) }));
-    setSelectedProduct(null); setServiceMessage("common:saved");
+    setSelectedProduct((current) => current?.id === product.id ? { ...current, status: "Available" } : current); setServiceMessage("common:saved");
+  };
+  const submitReport = (product: MarketProduct, report: Omit<ReportDraft, "productId" | "createdAt" | "status">) => {
+    const productId = String(product.id);
+    if (localPreferences.reportDrafts.some((item) => item.productId === productId)) { setServiceMessage("marketplace:duplicateReport"); return; }
+    setLocalPreferences((current) => ({ ...current, reportDrafts: [...current.reportDrafts, { productId, ...report, status: "new", createdAt: new Date().toISOString() }] }));
+    setReportProduct(null); setServiceMessage("marketplace:reportSubmitted");
   };
   const updateLocalProduct = (product: MarketProduct) => {
     const validation = validateMarketplaceInput(product);
@@ -382,7 +418,7 @@ export default function Home() {
     finally { setServerBusy(false); }
   };
   const exportDemoData = () => {
-    const blob = new Blob([JSON.stringify({ version: 4, profile, done, products: userProducts, verified, preferences: localPreferences }, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ version: 5, profile, done, products: userProducts, verified, preferences: localPreferences }, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = "ku-settle-demo-data.json"; anchor.click(); URL.revokeObjectURL(url);
   };
   const importDemoData = (file: File) => {
@@ -417,6 +453,9 @@ export default function Home() {
         {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go}/>}
         {page === "guide" && <LocalGuide locale={locale} t={t} category={guideCategory} setCategory={setGuideCategory} search={guideSearch} setSearch={setGuideSearch} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
       </main>
+      {page === "marketplace" && <MyReservations locale={locale} t={t} products={marketplaceProducts} preferences={localPreferences} cancelReservation={cancelMarketplaceReservation}/>}
+      {page === "marketplace" && marketMode === "leaving" && <ListingReports locale={locale} t={t} products={userProducts} reports={localPreferences.reportDrafts}/>}
+      {page === "home" && <LifecycleSummary t={t} activeTasks={activeTasks} done={done} preferences={localPreferences} products={marketplaceProducts} go={go}/>}
 
       <footer><div className="footer-brand"><span className="brand-mark small">KU</span><span><strong>KU Settle</strong><small>{tr(t, "common:copyright", { year: formatNumber(locale, new Date().getFullYear(), { useGrouping: false }) })}</small></span></div><div className="footer-actions"><span className="footer-notice">{tr(t, "navigation:footerNotice")}</span>{(["about", "terms", "privacy", "safety", "sources", "disclaimer"] as const).map((item) => <button key={item} onClick={() => setInfoPage(item)}>{item}</button>)}{appMode !== "authenticated" && <><button className="reset-demo" onClick={exportDemoData}>{locale === "ko" ? "내보내기" : locale === "ja" ? "エクスポート" : locale === "zh-CN" ? "导出" : "Export"}</button><label className="reset-demo">{locale === "ko" ? "가져오기" : locale === "ja" ? "インポート" : locale === "zh-CN" ? "导入" : "Import"}<input type="file" accept="application/json" hidden onChange={(e) => { const file = e.target.files?.[0]; if (file) importDemoData(file); }}/></label><button className="reset-demo" onClick={() => setResetOpen(true)}><RotateCcw size={13}/>{tr(t, "reset:button")}</button></>}</div></footer>
 
@@ -443,6 +482,9 @@ export default function Home() {
       {selectedProduct && (
         <ProductModal locale={locale} t={t} profile={currentProfile} mode={selectedProductMode} product={selectedProduct} reservation={localPreferences.reservations.find((item) => item.productId === String(selectedProduct.id) && item.status === "active")} close={() => setSelectedProduct(null)} contact={() => { setSelectedProduct(null); setContactOpen(true); }} reserve={() => reserveMarketplaceProduct(selectedProduct)} cancelReservation={() => cancelMarketplaceReservation(selectedProduct)} edit={() => { setEditingProduct(selectedProduct); setSelectedProduct(null); }} changeStatus={(status) => void changeMarketplaceStatus(selectedProduct, status)}/>
       )}
+      {pendingReservationProduct && <PickupScheduleModal t={t} product={pendingReservationProduct} close={() => setPendingReservationProduct(null)} reserve={(pickup) => completeMarketplaceReservation(pendingReservationProduct, pickup)}/>}
+      {reportProduct && <ReportModal t={t} product={reportProduct} reports={localPreferences.reportDrafts} close={() => setReportProduct(null)} submit={(report) => submitReport(reportProduct, report)}/>}
+      {selectedProduct && productPickup(selectedProduct, t) && <MapActionBar t={t} place={productPickup(selectedProduct, t)}/>}
       {editingProduct && <ProductEditModal locale={locale} t={t} product={editingProduct} close={() => setEditingProduct(null)} save={updateLocalProduct}/>}
       {contactOpen && <ContactModal t={t} close={() => setContactOpen(false)}/>}
     </div>
@@ -553,10 +595,47 @@ function Onboarding({ locale, t, activeTasks, stageStats, progress, done, recomm
   </section>;
 }
 
-function Marketplace({ locale, t, profile, appMode, products: marketplaceProducts, search, setSearch, category, setCategory, mode, setMode, addProduct, selectProduct, selectSellerProduct, preferences, setPreferences, toggleFavorite }: { locale: Locale; t: TFunction; profile: UserProfile; appMode: AppMode; products: MarketProduct[]; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; mode: MarketMode; setMode: (value: MarketMode) => void; addProduct: (product: MarketProduct) => Promise<void>; selectProduct: (product: MarketProduct) => void; selectSellerProduct: (product: MarketProduct) => void; preferences: LocalPreferences; setPreferences: Dispatch<SetStateAction<LocalPreferences>>; toggleFavorite: (product: MarketProduct) => void }) {
+function MyReservations({ locale, t, products, preferences, cancelReservation }: { locale: Locale; t: TFunction; products: MarketProduct[]; preferences: LocalPreferences; cancelReservation: (product: MarketProduct) => void }) {
+  const active = preferences.reservations.filter((item) => item.status === "active");
+  if (!active.length) return null;
+  return <section className="reservation-list section-pad" aria-label={tr(t, "marketplace:myReservations")}><div className="section-title"><span className="eyebrow"><CalendarClock size={14}/>{tr(t, "marketplace:myReservations")}</span><h2>{tr(t, "marketplace:reservationSummary")}</h2></div><div className="reservation-cards">{active.map((reservation) => { const product = products.find((item) => String(item.id) === reservation.productId); if (!product) return null; return <article className="reservation-card" key={reservation.id}><strong>{productName(product, t)}</strong><span>{formatCurrency(locale, product.priceKrw)} · {tr(t, "marketplace:reservationActive")}</span><span><CalendarDays size={14}/>{reservation.pickupDate ? `${reservation.pickupDate} ${reservation.pickupStartTime}–${reservation.pickupEndTime}` : tr(t, "marketplace:pickupNotSet")}</span><button className="secondary" onClick={() => cancelReservation(product)}>{tr(t, "marketplace:cancelReservation")}</button></article>; })}</div></section>;
+}
+
+function PickupScheduleModal({ t, product, close, reserve }: { t: TFunction; product: MarketProduct; close: () => void; reserve: (pickup: PickupSchedule) => void }) {
+  const [error, setError] = useState(false);
+  const submit = (event: React.FormEvent<HTMLFormElement>) => { event.preventDefault(); const values = new FormData(event.currentTarget); const pickup = { pickupDate: String(values.get("pickupDate") || ""), pickupStartTime: String(values.get("pickupStartTime") || ""), pickupEndTime: String(values.get("pickupEndTime") || "") }; if (!pickup.pickupDate || !pickup.pickupStartTime || !pickup.pickupEndTime || pickup.pickupEndTime <= pickup.pickupStartTime) { setError(true); return; } reserve(pickup); };
+  return <Modal close={close} label={tr(t, "marketplace:pickupScheduleTitle")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><form onSubmit={submit}><h2>{tr(t, "marketplace:pickupScheduleTitle")}</h2><p>{product.name ? product.name : tr(t, product.nameKey as TranslationKey)}</p><label className="field"><span>{tr(t, "marketplace:pickupDate")}</span><input name="pickupDate" type="date" min={localIsoDate()} required/></label><div className="time-fields"><label className="field"><span>{tr(t, "marketplace:pickupStart")}</span><input name="pickupStartTime" type="time" required/></label><label className="field"><span>{tr(t, "marketplace:pickupEnd")}</span><input name="pickupEndTime" type="time" required/></label></div>{error && <p className="error-text" role="alert">{tr(t, "validation:pickupScheduleRequired")}</p>}<button className="primary full" type="submit">{tr(t, "marketplace:confirmReservation")}</button></form></Modal>;
+}
+
+function ReportModal({ t, product, reports, close, submit }: { t: TFunction; product: MarketProduct; reports: ReportDraft[]; close: () => void; submit: (report: Omit<ReportDraft, "productId" | "createdAt" | "status">) => void }) {
+  const [reason, setReason] = useState<ReportReason | "">(""); const [detail, setDetail] = useState(""); const duplicate = reports.some((item) => item.productId === String(product.id));
+  const reasons: ReportReason[] = ["false_info", "price_mismatch", "scam", "inappropriate", "schedule_issue", "other"];
+  return <Modal close={close} label={tr(t, "marketplace:reportTitle")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className="modal-icon reset"><AlertTriangle/></div><h2>{tr(t, "marketplace:reportTitle")}</h2><p>{productName(product, t)}</p>{duplicate ? <p className="error-text" role="alert">{tr(t, "marketplace:duplicateReport")}</p> : <><label className="field"><span>{tr(t, "marketplace:reportReason")}</span><select value={reason} onChange={(event) => setReason(event.target.value as ReportReason)}><option value="">{tr(t, "marketplace:chooseReportReason")}</option>{reasons.map((item) => <option key={item} value={item}>{tr(t, `marketplace.reportReasons.${item}`)}</option>)}</select></label>{reason === "other" && <label className="field"><span>{tr(t, "marketplace:reportDetail")}</span><textarea value={detail} onChange={(event) => setDetail(event.target.value)}/></label>}<button className="primary full" disabled={!reason} onClick={() => submit({ reason, detail })}>{tr(t, "marketplace:submitReport")}</button></>}</Modal>;
+}
+
+function MapActionBar({ t, place }: { t: TFunction; place: string }) {
+  return <div className="map-action-bar"><span><MapPin size={15}/>{place}</span><a href={googleMapsSearchUrl(place)} target="_blank" rel="noopener noreferrer">{tr(t, "marketplace:mapsView")}</a><a href={googleMapsDirectionsUrl(place)} target="_blank" rel="noopener noreferrer">{tr(t, "marketplace:mapsDirections")}</a></div>;
+}
+
+function ListingReports({ locale, t, products, reports }: { locale: Locale; t: TFunction; products: MarketProduct[]; reports: ReportDraft[] }) {
+  const mine = reports.filter((report) => products.some((product) => String(product.id) === report.productId));
+  if (!mine.length) return null;
+  return <section className="listing-reports section-pad"><div className="section-title"><span className="eyebrow"><AlertTriangle size={14}/>{tr(t, "marketplace:reportHistory")}</span><h2>{tr(t, "marketplace:reportHistory")}</h2></div>{mine.map((report) => <article key={`${report.productId}-${report.createdAt}`}><strong>{products.find((product) => String(product.id) === report.productId)?.name ?? report.productId}</strong><span>{tr(t, `marketplace.reportReasons.${report.reason}`)} · {tr(t, "marketplace:reportReceived")}</span><small>{new Date(report.createdAt).toLocaleString(locale)}</small></article>)}</section>;
+}
+
+function LifecycleSummary({ t, activeTasks, done, preferences, products, go }: { t: TFunction; activeTasks: Task[]; done: string[]; preferences: LocalPreferences; products: MarketProduct[]; go: (page: Page, intent?: NavigationIntent) => void }) {
+  const [now] = useState(() => new Date()); const today = localIsoDate(now); const limit = new Date(now); limit.setDate(limit.getDate() + 3); const limitDate = localIsoDate(limit);
+  const due = activeTasks.map((task) => ({ task, due: preferences.dueDates[task.id] ?? "" })).filter(({ task, due }) => !done.includes(task.id) && due && due <= limitDate).sort((a, b) => a.due.localeCompare(b.due));
+  const reservations = preferences.reservations.filter((item) => item.status === "active");
+  const hasItems = due.length || reservations.length;
+  return <section className="lifecycle-summary section-pad" aria-label={tr(t, "home:todaySummary")}><div className="section-title"><span className="eyebrow"><CalendarClock size={14}/>{tr(t, "home:todaySummary")}</span><h2>{hasItems ? tr(t, "home:urgentItems") : tr(t, "home:noUpcoming")}</h2></div><div className="summary-metrics"><span>{tr(t, "home:incompleteCount", { count: activeTasks.filter((task) => !done.includes(task.id)).length })}</span><span>{tr(t, "home:progressSummaryShort", { progress: Math.round((done.length / Math.max(1, activeTasks.length)) * 100) })}</span></div>{hasItems ? <div className="summary-items">{due.slice(0, 4).map(({ task, due }) => <button key={task.id} onClick={() => go("onboarding", { stage: task.stage, taskId: task.id, highlight: true })}><strong>{due < today ? tr(t, "home:overdue") : due === today ? tr(t, "home:dueToday") : tr(t, "home:dueSoon")}</strong><span>{tr(t, task.titleKey)}</span></button>)}{reservations.slice(0, 3).map((reservation) => { const product = products.find((item) => String(item.id) === reservation.productId); return product ? <button key={reservation.id} onClick={() => go("marketplace")}><strong>{tr(t, "marketplace:myReservations")}</strong><span>{productName(product, t)}</span></button> : null; })}</div> : <p className="empty-copy">{tr(t, "home:noUpcoming")}</p>}</section>;
+}
+
+function Marketplace({ locale, t, profile, appMode, products: marketplaceProducts, search, setSearch, category, setCategory, mode, setMode, addProduct, selectProduct: buyerSelectProduct, selectSellerProduct, preferences, setPreferences, toggleFavorite }: { locale: Locale; t: TFunction; profile: UserProfile; appMode: AppMode; products: MarketProduct[]; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; mode: MarketMode; setMode: (value: MarketMode) => void; addProduct: (product: MarketProduct) => Promise<void>; selectProduct: (product: MarketProduct) => void; selectSellerProduct: (product: MarketProduct) => void; preferences: LocalPreferences; setPreferences: Dispatch<SetStateAction<LocalPreferences>>; toggleFavorite: (product: MarketProduct) => void }) {
   const [success, setSuccess] = useState(false);
   const [sort, setSort] = useState<"latest" | "price">("latest");
   const categories = ["All", ...productCategories];
+  const selectProduct = mode === "leaving" ? selectSellerProduct : buyerSelectProduct;
   const categoryLabel = (value: string) => value === "All" ? tr(t, "marketplace:all") : tr(t, `marketplace:categories.${value}`);
   const filtered = useMemo(() => [...marketplaceProducts.filter((product) => product.serviceStatus !== "hidden" && product.serviceStatus !== "deleted" && (category === "All" || product.category === category) && productName(product, t).toLocaleLowerCase(locale).includes(search.toLocaleLowerCase(locale)))].sort((a, b) => sort === "price" ? a.priceKrw - b.priceKrw : Number(b.id) - Number(a.id)), [marketplaceProducts, category, search, locale, t, sort]);
 const changeMode = (nextMode: MarketMode) => { setMode(nextMode); setSuccess(false); };
@@ -604,7 +683,7 @@ function ListingForm({ locale, t, submit }: { locale: Locale; t: TFunction; subm
     <label className="field"><span>{tr(t, "marketplace:form.condition")}</span><select value={condition} onChange={(event) => setCondition(event.target.value as ProductCondition)}>{productConditions.map((value) => <option key={value} value={value}>{tr(t, `marketplace:conditions.${value}`)}</option>)}</select></label>
     <label className="field field-wide"><span>{tr(t, "marketplace:form.pickup")}</span><input value={pickup} onChange={(event) => setPickup(event.target.value)} placeholder={tr(t, "marketplace:form.pickupPlaceholder")}/></label>
     <label className="field"><span>{locale === "ko" ? "거래 가능 시간" : locale === "ja" ? "取引可能時間" : locale === "zh-CN" ? "可交易时间" : "Available hours"}</span><input value={hours} onChange={(event) => setHours(event.target.value)} placeholder="10:00–18:00"/></label>
-    <label className="field field-wide"><span>{locale === "ko" ? "상품 이미지" : locale === "ja" ? "商品画像" : locale === "zh-CN" ? "商品图片" : "Product image"}</span><input type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; if (file.size > 2_000_000) { setErrorKey("errors:saveFailed"); return; } const reader = new FileReader(); reader.onload = () => setImageDataUrl(String(reader.result)); reader.readAsDataURL(file); }}/>{imageDataUrl && <img className="listing-image-preview" src={imageDataUrl} alt={locale === "ko" ? "선택한 상품 이미지" : "Selected product"}/>}</label>
+     <label className="field field-wide"><span>{locale === "ko" ? "상품 이미지" : locale === "ja" ? "商品画像" : locale === "zh-CN" ? "商品图片" : "Product image"}</span><small>{tr(t, "marketplace:imageHint")}</small><input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; void compressImage(file).then(setImageDataUrl).catch((error) => setErrorKey(error instanceof Error ? error.message : "errors:imageInvalid")); event.currentTarget.value = ""; }}/>{imageDataUrl && <><img className="listing-image-preview" src={imageDataUrl} alt={locale === "ko" ? "선택한 상품 이미지" : "Selected product"}/><button type="button" className="skip-button" onClick={() => setImageDataUrl("")}><Trash2 size={14}/>{tr(t, "marketplace:removeImage")}</button></>}</label>
     <label className="field"><span>{tr(t, "marketplace:form.availability")}</span><select value={availability} onChange={(event) => setAvailability(event.target.value as ProductStatus)}><option value="Available">{tr(t, "common:available")}</option><option value="Reserved">{tr(t, "common:reserved")}</option></select></label>
     {errorKey && <p className="error-text form-error" role="alert">{tr(t, errorKey)}</p>}<button className="primary listing-submit" type="submit" disabled={saving}><ShoppingBag size={18}/>{tr(t, saving ? "common:saving" : "marketplace:form.submit")}</button>
   </form></article>;
@@ -705,7 +784,7 @@ function PublicInfoModal({ page, close }: { page: "about" | "terms" | "privacy" 
 function ProductEditModal({ locale, t, product, close, save }: { locale: Locale; t: TFunction; product: MarketProduct; close: () => void; save: (product: MarketProduct) => void }) {
   const [name, setName] = useState(product.name ?? ""); const [description, setDescription] = useState(product.description ?? ""); const [price, setPrice] = useState(String(product.priceKrw)); const [pickup, setPickup] = useState(product.pickup ?? ""); const [hours, setHours] = useState(product.availableHours ?? ""); const [imageDataUrl, setImageDataUrl] = useState(product.imageDataUrl ?? ""); const [error, setError] = useState<string | null>(null);
   const submit = () => { const next = { ...product, name: name.trim(), description: description.trim(), priceKrw: Number(price.trim()), pickup: pickup.trim(), availableHours: hours.trim(), imageDataUrl }; const validation = validateMarketplaceInput(next); if (!validation.valid) { setError(validation.error); return; } save(next); };
-  return <Modal close={close} label={locale === "ko" ? "상품 수정" : "Edit listing"}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><h2>{locale === "ko" ? "상품 수정" : locale === "ja" ? "商品を編集" : locale === "zh-CN" ? "编辑商品" : "Edit listing"}</h2><label className="field"><span>{locale === "ko" ? "상품명" : "Item name"}</span><input value={name} onChange={(e) => setName(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "설명" : "Description"}</span><textarea value={description} onChange={(e) => setDescription(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "가격" : "Price"}</span><input inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "픽업 장소" : "Pickup"}</span><input value={pickup} onChange={(e) => setPickup(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "거래 가능 시간" : "Available hours"}</span><input value={hours} onChange={(e) => setHours(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "상품 이미지" : "Product image"}</span><input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (!file) return; if (file.size > 2_000_000) { setError("errors:imageTooLarge"); return; } const reader = new FileReader(); reader.onload = () => setImageDataUrl(String(reader.result)); reader.readAsDataURL(file); }}/>{imageDataUrl && <img className="listing-image-preview" src={imageDataUrl} alt=""/>}</label>{error && <p className="error-text" role="alert">{tr(t, error)}</p>}<button className="primary full" onClick={submit}>{locale === "ko" ? "저장" : locale === "ja" ? "保存" : locale === "zh-CN" ? "保存" : "Save"}</button></Modal>;
+  return <Modal close={close} label={locale === "ko" ? "상품 수정" : "Edit listing"}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><h2>{locale === "ko" ? "상품 수정" : locale === "ja" ? "商品を編集" : locale === "zh-CN" ? "编辑商品" : "Edit listing"}</h2><label className="field"><span>{locale === "ko" ? "상품명" : "Item name"}</span><input value={name} onChange={(e) => setName(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "설명" : "Description"}</span><textarea value={description} onChange={(e) => setDescription(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "가격" : "Price"}</span><input inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "픽업 장소" : "Pickup"}</span><input value={pickup} onChange={(e) => setPickup(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "거래 가능 시간" : "Available hours"}</span><input value={hours} onChange={(e) => setHours(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "상품 이미지" : "Product image"}</span><input type="file" accept="image/png,image/jpeg,image/webp" onChange={(e) => { const file = e.target.files?.[0]; if (!file) return; void compressImage(file).then(setImageDataUrl).catch((error) => setError(error instanceof Error ? error.message : "errors:imageInvalid")); e.currentTarget.value = ""; }}/>{imageDataUrl && <><img className="listing-image-preview" src={imageDataUrl} alt=""/><button type="button" className="skip-button" onClick={() => setImageDataUrl("")}><Trash2 size={14}/>{tr(t, "marketplace:removeImage")}</button></>}</label>{error && <p className="error-text" role="alert">{tr(t, error)}</p>}<button className="primary full" onClick={submit}>{locale === "ko" ? "저장" : locale === "ja" ? "保存" : locale === "zh-CN" ? "保存" : "Save"}</button></Modal>;
 }
 
 function ProductModal({ locale, t, profile, mode, product: rawProduct, reservation, close, contact, changeStatus, reserve, cancelReservation, edit }: { locale: Locale; t: TFunction; profile: UserProfile; mode: ProductModalMode; product: MarketProduct; reservation?: import("./lib/local-data").LocalReservation; close: () => void; contact: () => void; reserve: () => void; cancelReservation: () => void; edit: () => void; changeStatus: (status: "active" | "sold" | "hidden" | "deleted") => void }) {

@@ -41,7 +41,7 @@
     "primaryAction": "打开我的留学周期计划",
     "secondaryAction": "浏览校园集市",
     "trust": { "account": "无需注册账号", "languages": "支持四种语言", "journey": "从入境准备到回国" },
-    "progressTitle": "我的整体进度",
+    "progressTitle": "我的整体进度", "todaySummary": "今天和近期安排", "urgentItems": "需要关注的事项", "noUpcoming": "今天没有安排。", "incompleteCount": "未完成任务 {{count}} 项", "progressSummaryShort": "已完成 {{progress}}%", "overdue": "已逾期", "dueToday": "今天截止", "dueSoon": "即将截止",
     "progressSummary": "已完成 {{completed}} / {{total}} 项",
     "lifecycleLabel": "从入境到回国的完整旅程",
     "stageSummary": "{{stage}}：已完成 {{completed}} / {{total}}，{{progress}}",
@@ -126,7 +126,8 @@
     "empty": "没有符合搜索条件的商品。",
     "form": { "title": "为下一位同学发布商品", "body": "沿用现有图标卡片即可完成简单发布。本演示不需要上传图片。", "itemName": "商品名称", "price": "价格", "category": "分类", "condition": "成色", "pickup": "取货地点", "availability": "商品状态", "submit": "发布商品", "success": "商品已发布，新到校学生现在可以看到。", "itemPlaceholder": "例如：学习椅", "pricePlaceholder": "例如：20000", "pickupPlaceholder": "例如：高丽大学正门" },
     "actions": { "browse": "浏览校园集市", "list": "发布商品" },
-    "userSeller": "KU 学生 · {{name}}", "authRequiredTitle": "登录后发布真实商品", "authRequiredBody": "访客计划只保存在当前设备。验证高丽大学邮箱后即可在学生校园集市发布商品。", "markSold": "标记为已售", "markActive": "恢复在售", "cancelSold": "取消已售状态", "hideListing": "隐藏商品", "showListing": "重新公开商品", "favorite": "收藏", "unfavorite": "取消收藏", "reservationHolder": "预约人", "cancelReservation": "取消预约", "deleteListing": "删除商品", "soldUnavailable": "该商品已标记为已售。",
+    "userSeller": "KU 学生 · {{name}}", "authRequiredTitle": "登录后发布真实商品", "authRequiredBody": "访客计划只保存在当前设备。验证高丽大学邮箱后即可在学生校园集市发布商品。", "markSold": "标记为已售", "markActive": "恢复在售", "cancelSold": "取消已售状态", "hideListing": "隐藏商品", "showListing": "重新公开商品", "favorite": "收藏", "unfavorite": "取消收藏", "reservationHolder": "预约人", "cancelReservation": "取消预约", "deleteListing": "删除商品", "soldUnavailable": "该商品已标记为已售。", "myReservations": "我的预约", "reservationSummary": "预约商品", "reservationActive": "预约进行中", "pickupNotSet": "未设置取货时间", "pickupScheduleTitle": "选择取货时间", "pickupDate": "取货日期", "pickupStart": "开始时间", "pickupEnd": "结束时间", "confirmReservation": "确认预约", "reportTitle": "举报商品", "reportReason": "举报原因", "chooseReportReason": "选择原因", "reportDetail": "详细内容", "submitReport": "提交举报", "duplicateReport": "您已举报此商品。", "reportSubmitted": "演示举报已保存。", "reportReasons": { "false_info": "虚假商品信息", "price_mismatch": "价格或描述不一致", "scam": "疑似诈骗", "inappropriate": "不当内容", "schedule_issue": "交易地点或时间问题", "other": "其他" }, "mapsView": "在 Google Maps 中查看", "mapsDirections": "路线",
+    "reportHistory": "举报记录", "reportReceived": "已受理", "imageHint": "PNG、JPG 或 WebP · 最大8MB，保存前自动压缩", "removeImage": "删除图片",
     "products": {
       "riceCooker": { "name": "电饭煲", "pickup": "安岩站3号出口", "seller": "交换生 · Mia" },
       "deskLamp": { "name": "书桌台灯", "pickup": "高丽大学正门", "seller": "KU 学生 · Joon" },
@@ -191,12 +192,12 @@
     "confirm": "重置演示"
   },
   "validation": {
-    "requiredFields": "请填写所有项目。",
+    "requiredFields": "请填写所有项目。", "pickupScheduleRequired": "请选择有效的取货日期和时间范围。",
     "validEmail": "请输入有效的 @korea.ac.kr 邮箱地址。",
     "positivePrice": "请输入大于零的价格。", "nameRequired": "请输入不超过80个字符的姓名。", "invalidDate": "请输入有效日期。", "itemRequired": "请输入商品名称。", "validPrice": "请输入有效的韩元价格。", "pickupRequired": "请输入取货地点。", "otpLength": "请输入6位验证码。"
   },
   "errors": {
-    "generic": "出现问题，请重试。",
+    "generic": "出现问题，请重试。", "imageInvalid": "请选择有效的图片文件。", "storageQuota": "浏览器存储空间不足。请删除较大的图片后重试。",
     "storage": "无法读取已保存的数据，已恢复为安全的默认值。",
     "missingTranslation": "该内容暂时以英语显示。", "supabaseNotConfigured": "账号服务尚未连接。需要配置Supabase公开URL和publishable key后才能登录。", "rateLimit": "尝试次数过多，请稍后再试。", "sessionExpired": "登录会话已过期，请重新登录。", "permissionDenied": "您无权执行此操作。", "offline": "网络似乎已断开，修改未保存。", "supabaseUnavailable": "账号服务暂时不可用。", "invalidOtp": "验证码错误或已过期，请获取新验证码。", "saveFailed": "商品未保存，请重试。", "imageTooLarge": "请选择小于2MB的图片。"
   },

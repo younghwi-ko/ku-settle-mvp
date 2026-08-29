@@ -41,7 +41,7 @@
     "primaryAction": "나의 라이프사이클 계획 열기",
     "secondaryAction": "캠퍼스 마켓 둘러보기",
     "trust": { "account": "가입 없이 체험", "languages": "4개 언어 지원", "journey": "입국 준비부터 귀국까지" },
-    "progressTitle": "나의 전체 여정",
+    "progressTitle": "나의 전체 여정", "todaySummary": "오늘과 예정된 일", "urgentItems": "확인이 필요한 항목", "noUpcoming": "오늘 예정된 일이 없습니다.", "incompleteCount": "미완료 작업 {{count}}개", "progressSummaryShort": "{{progress}}% 완료", "overdue": "기한 지남", "dueToday": "오늘 마감", "dueSoon": "기한 임박",
     "progressSummary": "전체 {{total}}개 중 {{completed}}개 완료",
     "lifecycleLabel": "입국부터 귀국까지",
     "stageSummary": "{{stage}}: {{total}}개 중 {{completed}}개, {{progress}}",
@@ -126,7 +126,8 @@
     "empty": "검색 조건에 맞는 상품이 없습니다.",
     "form": { "title": "다음 학생을 위해 물품을 등록하세요", "body": "기존 아이콘 카드 디자인으로 간단히 등록합니다. 이 데모에서는 이미지가 필요하지 않습니다.", "itemName": "상품명", "price": "가격", "category": "카테고리", "condition": "상태", "pickup": "픽업 장소", "availability": "판매 상태", "submit": "상품 등록", "success": "상품이 등록되었습니다. 입국 학생 화면에서 확인할 수 있습니다.", "itemPlaceholder": "예: 공부 의자", "pricePlaceholder": "예: 20000", "pickupPlaceholder": "예: 고려대 정문" },
     "actions": { "browse": "캠퍼스 마켓 둘러보기", "list": "물품 등록하기" },
-    "userSeller": "고려대 학생 · {{name}}", "authRequiredTitle": "실제 상품을 등록하려면 로그인하세요", "authRequiredBody": "게스트 계획은 이 기기에만 저장됩니다. 고려대 이메일 인증 후 학생 마켓에 상품을 등록할 수 있습니다.", "markSold": "판매 완료로 표시", "markActive": "판매 중으로 표시", "cancelSold": "판매 완료 취소", "hideListing": "상품 숨기기", "showListing": "상품 다시 공개", "favorite": "즐겨찾기", "unfavorite": "즐겨찾기 해제", "reservationHolder": "예약자", "cancelReservation": "예약 취소", "deleteListing": "상품 삭제", "soldUnavailable": "이미 판매 완료된 상품입니다.",
+    "userSeller": "고려대 학생 · {{name}}", "authRequiredTitle": "실제 상품을 등록하려면 로그인하세요", "authRequiredBody": "게스트 계획은 이 기기에만 저장됩니다. 고려대 이메일 인증 후 학생 마켓에 상품을 등록할 수 있습니다.", "markSold": "판매 완료로 표시", "markActive": "판매 중으로 표시", "cancelSold": "판매 완료 취소", "hideListing": "상품 숨기기", "showListing": "상품 다시 공개", "favorite": "즐겨찾기", "unfavorite": "즐겨찾기 해제", "reservationHolder": "예약자", "cancelReservation": "예약 취소", "deleteListing": "상품 삭제", "soldUnavailable": "이미 판매 완료된 상품입니다.", "myReservations": "내 예약", "reservationSummary": "예약 상품", "reservationActive": "예약 진행 중", "pickupNotSet": "픽업 일정 없음", "pickupScheduleTitle": "픽업 일정 선택", "pickupDate": "픽업 날짜", "pickupStart": "시작 시간", "pickupEnd": "종료 시간", "confirmReservation": "예약 확정", "reportTitle": "상품 신고", "reportReason": "신고 사유", "chooseReportReason": "사유를 선택하세요", "reportDetail": "상세 내용", "submitReport": "신고 제출", "duplicateReport": "이미 신고한 상품입니다.", "reportSubmitted": "데모 신고가 저장되었습니다.", "reportReasons": { "false_info": "허위 상품 정보", "price_mismatch": "가격 또는 설명 불일치", "scam": "사기 의심", "inappropriate": "부적절한 내용", "schedule_issue": "거래 장소 또는 일정 문제", "other": "기타" }, "mapsView": "Google Maps에서 보기", "mapsDirections": "길찾기",
+    "reportHistory": "신고 내역", "reportReceived": "접수됨", "imageHint": "PNG, JPG, WebP · 최대 8MB, 저장 전 자동 압축", "removeImage": "이미지 삭제",
     "products": {
       "riceCooker": { "name": "전기밥솥", "pickup": "안암역 3번 출구", "seller": "교환학생 · Mia" },
       "deskLamp": { "name": "책상 스탠드", "pickup": "고려대 정문", "seller": "고려대 학생 · Joon" },
@@ -191,12 +192,12 @@
     "confirm": "데모 초기화"
   },
   "validation": {
-    "requiredFields": "모든 항목을 입력해 주세요.",
+    "requiredFields": "모든 항목을 입력해 주세요.", "pickupScheduleRequired": "올바른 픽업 날짜와 시간 범위를 선택하세요.",
     "validEmail": "올바른 @korea.ac.kr 이메일을 입력하세요.",
     "positivePrice": "0보다 큰 가격을 입력하세요.", "nameRequired": "80자 이하의 이름을 입력하세요.", "invalidDate": "올바른 날짜를 입력하세요.", "itemRequired": "상품명을 입력하세요.", "validPrice": "올바른 원화 가격을 입력하세요.", "pickupRequired": "픽업 장소를 입력하세요.", "otpLength": "6자리 인증 코드를 입력하세요."
   },
   "errors": {
-    "generic": "문제가 발생했습니다. 다시 시도해 주세요.",
+    "generic": "문제가 발생했습니다. 다시 시도해 주세요.", "imageInvalid": "올바른 이미지 파일을 선택하세요.", "storageQuota": "브라우저 저장 공간이 부족합니다. 큰 이미지를 삭제한 후 다시 시도하세요.",
     "storage": "저장된 데이터를 읽을 수 없어 안전한 기본값으로 복구했습니다.",
     "missingTranslation": "이 콘텐츠는 임시로 영어로 표시됩니다.", "supabaseNotConfigured": "계정 서비스가 아직 연결되지 않았습니다. Supabase 공개 URL과 publishable key를 설정해야 로그인할 수 있습니다.", "rateLimit": "요청이 너무 많습니다. 잠시 후 다시 시도하세요.", "sessionExpired": "세션이 만료되었습니다. 다시 로그인하세요.", "permissionDenied": "이 작업을 수행할 권한이 없습니다.", "offline": "인터넷 연결이 끊겼습니다. 변경사항이 저장되지 않았습니다.", "supabaseUnavailable": "계정 서비스를 일시적으로 사용할 수 없습니다.", "invalidOtp": "코드가 잘못되었거나 만료되었습니다. 새 코드를 요청하세요.", "saveFailed": "상품이 저장되지 않았습니다. 다시 시도하세요.", "imageTooLarge": "2MB보다 작은 이미지를 선택해 주세요."
   },

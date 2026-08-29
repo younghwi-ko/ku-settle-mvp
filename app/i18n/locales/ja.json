@@ -41,7 +41,7 @@
     "primaryAction": "ライフサイクルプランを開く",
     "secondaryAction": "マーケットを見る",
     "trust": { "account": "アカウント登録不要", "languages": "4言語に対応", "journey": "入国準備から帰国まで" },
-    "progressTitle": "留学生活全体の進捗",
+    "progressTitle": "留学生活全体の進捗", "todaySummary": "今日と今後の予定", "urgentItems": "確認が必要な項目", "noUpcoming": "今日の予定はありません。", "incompleteCount": "未完了タスク {{count}}件", "progressSummaryShort": "{{progress}}%完了", "overdue": "期限超過", "dueToday": "今日が期限", "dueSoon": "期限間近",
     "progressSummary": "{{total}}件中{{completed}}件完了",
     "lifecycleLabel": "入国準備から帰国までの流れ",
     "stageSummary": "{{stage}}：{{total}}件中{{completed}}件、{{progress}}",
@@ -126,7 +126,8 @@
     "empty": "検索条件に合う商品はありません。",
     "form": { "title": "次の学生のために商品を登録", "body": "既存のアイコンカードを使って簡単に登録できます。このデモでは画像のアップロードは不要です。", "itemName": "商品名", "price": "価格", "category": "カテゴリー", "condition": "状態", "pickup": "受け取り場所", "availability": "販売状況", "submit": "商品を登録", "success": "商品を登録しました。これからKUへ来る学生の画面に表示されます。", "itemPlaceholder": "例：勉強用の椅子", "pricePlaceholder": "例：20000", "pickupPlaceholder": "例：高麗大学 正門" },
     "actions": { "browse": "マーケットを見る", "list": "商品を登録する" },
-    "userSeller": "KU学生 · {{name}}", "authRequiredTitle": "実際に出品するにはログインしてください", "authRequiredBody": "ゲストのプランはこの端末だけに保存されます。高麗大学メールを認証すると学生マーケットに出品できます。", "markSold": "売却済みにする", "markActive": "出品中に戻す", "cancelSold": "売却済みを取り消す", "hideListing": "出品を非表示", "showListing": "出品を再公開", "favorite": "お気に入り", "unfavorite": "お気に入りから削除", "reservationHolder": "予約者", "cancelReservation": "予約をキャンセル", "deleteListing": "出品を削除", "soldUnavailable": "この商品は売却済みです。",
+    "userSeller": "KU学生 · {{name}}", "authRequiredTitle": "実際に出品するにはログインしてください", "authRequiredBody": "ゲストのプランはこの端末だけに保存されます。高麗大学メールを認証すると学生マーケットに出品できます。", "markSold": "売却済みにする", "markActive": "出品中に戻す", "cancelSold": "売却済みを取り消す", "hideListing": "出品を非表示", "showListing": "出品を再公開", "favorite": "お気に入り", "unfavorite": "お気に入りから削除", "reservationHolder": "予約者", "cancelReservation": "予約をキャンセル", "deleteListing": "出品を削除", "soldUnavailable": "この商品は売却済みです。", "myReservations": "自分の予約", "reservationSummary": "予約した商品", "reservationActive": "予約中", "pickupNotSet": "受け取り日時未設定", "pickupScheduleTitle": "受け取り日時を選択", "pickupDate": "受け取り日", "pickupStart": "開始時刻", "pickupEnd": "終了時刻", "confirmReservation": "予約を確定", "reportTitle": "商品を報告", "reportReason": "報告理由", "chooseReportReason": "理由を選択", "reportDetail": "詳細", "submitReport": "報告を送信", "duplicateReport": "この商品はすでに報告済みです。", "reportSubmitted": "デモ用の報告を保存しました。", "reportReasons": { "false_info": "虚偽の商品情報", "price_mismatch": "価格または説明の不一致", "scam": "詐欺の疑い", "inappropriate": "不適切な内容", "schedule_issue": "取引場所または日時の問題", "other": "その他" }, "mapsView": "Google Mapsで見る", "mapsDirections": "道順",
+    "reportHistory": "報告履歴", "reportReceived": "受付済み", "imageHint": "PNG、JPG、WebP · 最大8MB、保存前に自動圧縮", "removeImage": "画像を削除",
     "products": {
       "riceCooker": { "name": "炊飯器", "pickup": "安岩駅3番出口", "seller": "交換留学生 · Mia" },
       "deskLamp": { "name": "デスクライト", "pickup": "高麗大学 正門", "seller": "KU学生 · Joon" },
@@ -191,12 +192,12 @@
     "confirm": "デモをリセット"
   },
   "validation": {
-    "requiredFields": "すべての項目を入力してください。",
+    "requiredFields": "すべての項目を入力してください。", "pickupScheduleRequired": "有効な受け取り日と時間帯を選択してください。",
     "validEmail": "有効な@korea.ac.krのメールアドレスを入力してください。",
     "positivePrice": "0より大きい価格を入力してください。", "nameRequired": "80文字以内で名前を入力してください。", "invalidDate": "正しい日付を入力してください。", "itemRequired": "商品名を入力してください。", "validPrice": "正しいウォン価格を入力してください。", "pickupRequired": "受け取り場所を入力してください。", "otpLength": "6桁の認証コードを入力してください。"
   },
   "errors": {
-    "generic": "問題が発生しました。もう一度お試しください。",
+    "generic": "問題が発生しました。もう一度お試しください。", "imageInvalid": "有効な画像ファイルを選択してください。", "storageQuota": "ブラウザの保存容量が不足しています。大きな画像を削除して再試行してください。",
     "storage": "保存データを読み込めなかったため、安全な初期値に戻しました。",
     "missingTranslation": "この内容は一時的に英語で表示されています。", "supabaseNotConfigured": "アカウントサービスはまだ接続されていません。ログインにはSupabaseの公開URLとpublishable keyが必要です。", "rateLimit": "試行回数が多すぎます。しばらく待ってから再度お試しください。", "sessionExpired": "セッションの有効期限が切れました。再度ログインしてください。", "permissionDenied": "この操作を行う権限がありません。", "offline": "オフラインのようです。変更は保存されませんでした。", "supabaseUnavailable": "アカウントサービスを一時的に利用できません。", "invalidOtp": "コードが正しくないか期限切れです。新しいコードを取得してください。", "saveFailed": "商品を保存できませんでした。もう一度お試しください。", "imageTooLarge": "2MB未満の画像を選択してください。"
   },

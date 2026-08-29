@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isKuEmail, isOwnedMarketplaceProduct, mapServiceError, mergeCompletedTaskIds, normalizeKuEmail, normalizeLocale, productToMarketplaceInsert, validateMarketplaceInput, validateProfileInput } from "../app/lib/domain";
+import { googleMapsDirectionsUrl, googleMapsSearchUrl, isKuEmail, isOwnedMarketplaceProduct, isValidImageDataUrl, mapServiceError, mergeCompletedTaskIds, normalizeKuEmail, normalizeLocale, productToMarketplaceInsert, validateMarketplaceInput, validateProfileInput } from "../app/lib/domain";
 import { renderOtpEmail } from "../supabase/functions/_shared/email-templates";
 
 describe("KU email validation", () => {
@@ -16,6 +16,12 @@ describe("domain validation and migration", () => {
     expect(isOwnedMarketplaceProduct({ userCreated: true, source: "sample" }, "demo")).toBe(false);
     expect(isOwnedMarketplaceProduct({ userCreated: true, source: "live", ownedByCurrentUser: true }, "authenticated")).toBe(true);
     expect(isOwnedMarketplaceProduct({ userCreated: true, source: "live", ownedByCurrentUser: false }, "authenticated")).toBe(false);
+  });
+  it("creates encoded Google Maps links and validates image data", () => {
+    expect(googleMapsSearchUrl("고려대 정문 & Gate")).toContain(encodeURIComponent("고려대 정문 & Gate"));
+    expect(googleMapsDirectionsUrl("KU Main Gate")).toContain("destination=KU%20Main%20Gate");
+    expect(isValidImageDataUrl("data:image/png;base64,AAAA")).toBe(true);
+    expect(isValidImageDataUrl("data:text/plain;base64,AAAA")).toBe(false);
   });
   it("validates profiles and listings", () => {
     expect(validateProfileInput({ name: " Mina ", arrivalDate: "2026-09-01", housing: "dorm" }).valid).toBe(true);
