@@ -24,9 +24,9 @@ export const expandedLifeGuideArticles: LifeGuideArticle[] = expandedLifeGuideAr
     contentCheckedAt: "2026-08-29",
     sourceStatus: item.officialUrl ? "verified" : "unavailable"
   };
-  if (item.id === "sim-esim-options") Object.assign(overrides, { officialUrl: "https://english.seoul.go.kr/service/living/convenience/3-communication/", sourceName: "Seoul Metropolitan Government", verificationStatus: "official" as const });
-  if (item.id === "recycling-basics") Object.assign(overrides, { officialUrl: "https://news.seoul.go.kr/env/archives/507225", sourceName: "Seoul Metropolitan Government", verificationStatus: "verified" as const });
-  if (item.id === "departure-shipping") Object.assign(overrides, { officialUrl: "https://www.koreapost.go.kr/eng/subIndex/4418.do", sourceName: "Korea Post", verificationStatus: "verified" as const });
+  if (item.id === "sim-esim-options") Object.assign(overrides, { officialUrl: "https://english.seoul.go.kr/service/living/convenience/3-communication/", sourceName: "Seoul Metropolitan Government", sourceStatus: "verified" as const, verificationStatus: "official" as const });
+  if (item.id === "recycling-basics") Object.assign(overrides, { officialUrl: "https://news.seoul.go.kr/env/archives/507225", sourceName: "Seoul Metropolitan Government", sourceStatus: "verified" as const, verificationStatus: "verified" as const });
+  if (item.id === "departure-shipping") Object.assign(overrides, { officialUrl: "https://www.koreapost.go.kr/eng/subIndex/4418.do", sourceName: "Korea Post", sourceStatus: "verified" as const, verificationStatus: "verified" as const });
   if (item.id === "emergency-119") Object.assign(overrides, { sourceStatus: "verified" as const, verificationStatus: "verified" as const });
   return { ...item, ...overrides };
 });
