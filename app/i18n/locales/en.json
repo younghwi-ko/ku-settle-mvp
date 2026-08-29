@@ -146,7 +146,7 @@
   "localGuide": {
     "eyebrow": "LOCAL GUIDE",
     "title": "Feel at home around Anam",
-    "body": "A small, practical guide to student-friendly places near KU. Listings are sample data for this demo.",
+    "body": "A practical guide to places near KU. Kakao search results and demo places are shown together.",
     "all": "All",
     "englishAvailable": "English available",
     "distanceFromKu": "{{distance}} from KU",

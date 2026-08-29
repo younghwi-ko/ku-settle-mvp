@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, dedupePlaces } from "@/app/lib/kakao";
+import { kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, dedupePlaces, isKakaoPlaceAllowed } from "@/app/lib/kakao";
 import { canUseKakaoCall, kakaoMonthlyLimit, recordKakaoCall } from "@/app/lib/kakao-quota";
 
 const cache = new Map<string, { expiresAt: number; body: object }>();
@@ -34,7 +34,7 @@ export async function GET(request: Request) {
     if (!response.ok) return NextResponse.json({ error: response.status === 429 ? "rate_limited" : "upstream_error" }, { status: 502 });
     const payload = await response.json() as { documents?: unknown[]; meta?: { total_count?: number } };
     const fetchedAt = new Date().toISOString();
-    const places = dedupePlaces((payload.documents ?? []).map((item) => kakaoPlaceToPlace(item, fetchedAt, category)).filter((item): item is NonNullable<typeof item> => Boolean(item)));
+    const places = dedupePlaces((payload.documents ?? []).filter((item) => isKakaoPlaceAllowed(item, category)).map((item) => kakaoPlaceToPlace(item, fetchedAt, category)).filter((item): item is NonNullable<typeof item> => Boolean(item)));
     const body = { places, fetchedAt, source: "kakao" as const, totalCount: Number(payload.meta?.total_count) || places.length };
     cache.set(cacheKey, { expiresAt: Date.now() + TTL_MS, body });
     return NextResponse.json(body, { headers: { "Cache-Control": "private, max-age=30" } });

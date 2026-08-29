@@ -140,7 +140,7 @@
   "localGuide": {
     "eyebrow": "生活指南",
     "title": "在安岩轻松开启日常生活",
-    "body": "一份高丽大学周边学生友好地点的实用指南。所有地点信息均为展示用示例。",
+    "body": "高丽大学周边的实用地点指南。Kakao 搜索结果和演示地点会同时显示。",
     "all": "全部",
     "englishAvailable": "可能提供英语服务",
     "distanceFromKu": "距高丽大学 {{distance}}",
