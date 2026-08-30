@@ -12,8 +12,8 @@ export async function GET() {
   const [profile, listings, reservations, services, progress, preferences] = await Promise.all([
     client.from("guest_profiles").select("*").eq("session_id", session.id).maybeSingle(),
     client.from("guest_listings").select("*").in("status", ["active", "reserved", "sold"]).or(`session_id.eq.${session.id},status.in.(active,reserved,sold)`).order("created_at", { ascending: false }),
-    client.from("guest_reservations").select("*").eq("buyer_session_id", session.id).order("updated_at", { ascending: false }),
-    client.from("guest_service_requests").select("*").eq("session_id", session.id).order("updated_at", { ascending: false }),
+    client.from("guest_reservations").select("*").eq("buyer_session_id", session.id).neq("status", "soft_deleted").order("updated_at", { ascending: false }),
+    client.from("guest_service_requests").select("*").eq("session_id", session.id).neq("status", "soft_deleted").order("updated_at", { ascending: false }),
     client.from("guest_lifecycle_progress").select("*").eq("session_id", session.id),
     client.from("guest_preferences").select("*").eq("session_id", session.id).maybeSingle(),
   ]);
@@ -22,7 +22,7 @@ export async function GET() {
   const allListings = listings.data ?? [];
   const myListings = allListings.filter((row) => row.session_id === session.id);
   const ownListingIds = myListings.map((row) => row.id);
-  const sellerReservations = ownListingIds.length ? await client.from("guest_reservations").select("*").in("listing_id", ownListingIds).order("updated_at", { ascending: false }) : { data: [], error: null };
+  const sellerReservations = ownListingIds.length ? await client.from("guest_reservations").select("*").in("listing_id", ownListingIds).neq("status", "soft_deleted").order("updated_at", { ascending: false }) : { data: [], error: null };
   if (sellerReservations.error) return apiError("state_load_failed", 502);
   const reservationById = new Map<string, Record<string, unknown>>();
   for (const item of [...(reservations.data ?? []), ...(sellerReservations.data ?? [])]) reservationById.set(String(item.id), item);
