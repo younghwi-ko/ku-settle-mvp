@@ -35,7 +35,10 @@ export async function getOrCreateServerSession() {
   const token = randomBytes(32).toString("base64url");
   const tokenHash = hashToken(token);
   const { data, error } = await client.from("anonymous_sessions").insert({ token_hash: tokenHash }).select("id").single();
-  if (error || !data) throw new Error("session_bootstrap_failed");
+  if (error || !data) {
+    console.error("anonymous_session_bootstrap_failed", { code: error?.code ?? "no_data", status: error?.status ?? null });
+    throw new Error("session_bootstrap_failed");
+  }
   jar.set(SESSION_COOKIE, token, cookieOptions(SESSION_TTL_SECONDS));
   return { id: data.id as string, tokenHash } satisfies ServerSession;
 }
