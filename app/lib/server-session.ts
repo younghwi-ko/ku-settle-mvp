@@ -36,7 +36,7 @@ export async function getOrCreateServerSession() {
   const tokenHash = hashToken(token);
   const { data, error } = await client.from("anonymous_sessions").insert({ token_hash: tokenHash }).select("id").single();
   if (error || !data) {
-    console.error("anonymous_session_bootstrap_failed", { code: error?.code ?? "no_data", status: error?.status ?? null });
+    console.error("anonymous_session_bootstrap_failed", { code: error?.code ?? "no_data" });
     throw new Error("session_bootstrap_failed");
   }
   jar.set(SESSION_COOKIE, token, cookieOptions(SESSION_TTL_SECONDS));
