@@ -15,4 +15,9 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   for (const [input, column, max] of [["deliveryMethod", "delivery_method", 20], ["origin", "origin", 200], ["destination", "destination", 200], ["storageDuration", "storage_duration", 10], ["storageLocation", "storage_location", 20], ["estimatedCostLabel", "estimated_cost_label", 120], ["termsNote", "terms_note", 500]] as const) if (body[input] !== undefined) updates[column] = optionalText(body[input], max);
   const { data, error } = await client.from("guest_service_requests").update(updates).eq("id", id).eq("session_id", session.id).eq("version", current.version).select("*").single(); return error ? apiError("service_request_conflict", 409) : NextResponse.json({ serviceRequest: data });
 }
-export async function POST(request: Request, context: { params: Promise<{ id: string }> }) { const body = { ...(await request.clone().json().catch(() => ({}))), status: "cancelled" }; return PATCH(new Request(request, { body: JSON.stringify(body), headers: { "content-type": "application/json", origin: request.headers.get("origin") ?? "" } }), context); }
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+  const headers = new Headers(request.headers);
+  headers.set("content-type", "application/json");
+  const cancellationRequest = new Request(request.url, { method: "PATCH", headers, body: JSON.stringify({ status: "cancelled" }) });
+  return PATCH(cancellationRequest, context);
+}
