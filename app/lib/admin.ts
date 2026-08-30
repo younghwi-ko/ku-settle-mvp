@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { apiError, jsonBody, record, text } from "./server-api";
-import { isAdminRequest, requireSameOrigin, serverClient } from "./server-session";
+import { checkAdminRateLimit, isAdminRequest, requireSameOrigin, serverClient } from "./server-session";
 
 export async function requireAdmin(request: Request, mutation = false) {
+  const limit = checkAdminRateLimit(request, "api");
+  if (!limit.allowed) return { client: null, response: NextResponse.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": String(limit.retryAfter), "Cache-Control": "no-store" } }) } as const;
   if (mutation && !await requireSameOrigin(request)) return { client: null, response: apiError("invalid_origin", 403) } as const;
   if (!await isAdminRequest()) return { client: null, response: apiError("admin_required", 401) } as const;
   const client = serverClient();

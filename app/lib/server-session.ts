@@ -6,10 +6,24 @@ const SESSION_COOKIE = "ku_settle_session";
 const ADMIN_COOKIE = "ku_settle_admin";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 365;
 const ADMIN_TTL_SECONDS = 60 * 60 * 8;
+const ADMIN_AUTH_WINDOW_MS = 10 * 60 * 1000;
+const ADMIN_API_WINDOW_MS = 60 * 1000;
+const ADMIN_AUTH_LIMIT = 10;
+const ADMIN_API_LIMIT = 60;
+const rateBuckets = new Map<string, { startedAt: number; count: number }>();
 
 export type ServerSession = { id: string; tokenHash: string };
 
 function hashToken(token: string) { return createHash("sha256").update(token).digest("hex"); }
+function fingerprint(value: string) {
+  const secret = process.env.ADMIN_API_TOKEN || process.env.SUPABASE_SERVICE_ROLE_KEY || "ku-settle-rate-limit";
+  return createHash("sha256").update(`${secret}:${value}`).digest("hex");
+}
+function clientFingerprint(request: Request) {
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const userAgent = request.headers.get("user-agent") || "unknown";
+  return fingerprint(`${forwarded}:${userAgent}`);
+}
 function serverClient(): SupabaseClient | null {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -56,6 +70,22 @@ export async function isAdminRequest() {
   const supplied = jar.get(ADMIN_COOKIE)?.value;
   if (!supplied || supplied.length !== expected.length) return false;
   return timingSafeEqual(Buffer.from(supplied), Buffer.from(expected));
+}
+
+export function checkAdminRateLimit(request: Request, kind: "auth" | "api") {
+  const now = Date.now();
+  const windowMs = kind === "auth" ? ADMIN_AUTH_WINDOW_MS : ADMIN_API_WINDOW_MS;
+  const limit = kind === "auth" ? ADMIN_AUTH_LIMIT : ADMIN_API_LIMIT;
+  const supplied = kind === "auth" ? clientFingerprint(request) : fingerprint((request.headers.get("cookie") || "admin-session"));
+  const key = `${kind}:${supplied}`;
+  const previous = rateBuckets.get(key);
+  if (!previous || now - previous.startedAt >= windowMs) {
+    rateBuckets.set(key, { startedAt: now, count: 1 });
+    return { allowed: true, retryAfter: 0 };
+  }
+  if (previous.count >= limit) return { allowed: false, retryAfter: Math.max(1, Math.ceil((windowMs - (now - previous.startedAt)) / 1000)) };
+  previous.count += 1;
+  return { allowed: true, retryAfter: 0 };
 }
 
 export async function establishAdminSession(token: string) {

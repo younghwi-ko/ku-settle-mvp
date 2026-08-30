@@ -24,6 +24,7 @@ import { googleMapsDirectionsUrl, googleMapsSearchUrl, isKuEmail, isOwnedMarketp
 import { shouldShowVerifiedBadge } from "./lib/verification";
 import { emptyPreferences, migrateLocalData, readLocalData, writeLocalData, type LocalPreferences, type LocalReservation, type ReportDraft, type LocalServiceRequest, type ServiceRequestMode } from "./lib/local-data";
 import KakaoMap from "./components/kakao-map";
+import AdminServerPanel from "./components/admin-server-panel";
 import { dedupePlaces, isValidCoordinates, KU_CENTER, KU_SCIENCE_CENTER, matchesPlaceCategory, type KakaoSearchResponse, type CampusFilter } from "./lib/kakao";
 import { bootstrapRemote, createRemoteListing, createRemoteReservation, deleteRemoteListing, fetchRemoteState, importRemoteState, serverListingToProduct, serverReservationToLocal, serverServiceToLocal, updateRemoteLifecycle, updateRemoteListing, updateRemoteReservation, upsertRemoteService } from "./lib/remote-state";
 
@@ -526,7 +527,7 @@ export default function Home() {
         {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go} preferences={localPreferences} done={done}/>}
         {page === "guide" && <LocalGuide locale={locale} t={t} category={guideCategory} setCategory={setGuideCategory} search={guideSearch} setSearch={setGuideSearch} places={localPlaces} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
         {page === "operation-model" && <OperationModel locale={locale} />}
-        {page === "admin" && appMode === "demo" && <><AdminServerPanel locale={locale}/><AdminPanel locale={locale} t={t} products={userProducts} places={localPlaces} preferences={localPreferences} tasks={activeTasks} done={done} setProducts={setUserProducts} setPreferences={setLocalPreferences} reset={resetDemo} exportData={exportDemoData} importData={importDemoData}/></>}{page === "admin" && appMode === "demo" && <OperationModel locale={locale} />}
+        {page === "admin" && appMode === "demo" && <><AdminServerPanel locale={locale}/><OperationModel locale={locale} /></>}
       </main>
       {page === "marketplace" && <MyReservations locale={locale} t={t} products={marketplaceProducts} preferences={localPreferences} cancelReservation={cancelMarketplaceReservation} selectReservation={(product) => openProduct(product)} editReservation={editMarketplaceReservation}/>}
       {page === "marketplace" && marketMode === "leaving" && <ListingReports locale={locale} t={t} products={userProducts} reports={localPreferences.reportDrafts}/>}
@@ -721,7 +722,7 @@ function LifecycleSummary({ locale, t, activeTasks, done, preferences, products,
 
 type AdminOverviewData = { listings: Array<{ id: string; item_name: string; status: string; price_krw: number }>; reservations: Array<{ id: string; status: string; listing_id: string }>; serviceRequests: Array<{ id: string; service_type: string; status: string }>; reports: Array<{ id: string; status: string }>; placeOverrides: Array<{ place_key: string; status: string }>; guideOverrides: Array<{ guide_key: string; status: string }>; counts: Record<string, number> };
 
-function AdminServerPanel({ locale }: { locale: Locale }) {
+function LegacyAdminServerPanel({ locale }: { locale: Locale }) {
   const [token, setToken] = useState(""); const [authenticated, setAuthenticated] = useState(false); const [loading, setLoading] = useState(false); const [error, setError] = useState(""); const [notice, setNotice] = useState(""); const [data, setData] = useState<AdminOverviewData | null>(null);
   const labels = locale === "ko" ? { auth: "관리자 API 인증", token: "ADMIN_API_TOKEN 입력", signIn: "관리자 세션 시작", signOut: "관리자 로그아웃", refresh: "서버 데이터 새로고침", forbidden: "관리자 권한이 필요합니다.", network: "서버 연결에 실패했습니다.", saved: "서버에 저장되었습니다." } : locale === "ja" ? { auth: "管理者API認証", token: "ADMIN_API_TOKENを入力", signIn: "管理者セッションを開始", signOut: "管理者ログアウト", refresh: "サーバーデータを更新", forbidden: "管理者権限が必要です。", network: "サーバーに接続できません。", saved: "サーバーに保存しました。" } : locale === "zh-CN" ? { auth: "管理员API认证", token: "输入ADMIN_API_TOKEN", signIn: "开始管理员会话", signOut: "管理员退出", refresh: "刷新服务器数据", forbidden: "需要管理员权限。", network: "无法连接服务器。", saved: "已保存到服务器。" } : { auth: "Admin API access", token: "Enter ADMIN_API_TOKEN", signIn: "Start admin session", signOut: "Log out admin", refresh: "Refresh server data", forbidden: "Admin permission is required.", network: "Could not connect to the server.", saved: "Saved to the server." };
   const load = async () => { setLoading(true); setError(""); try { const response = await fetch("/api/admin/overview", { credentials: "include" }); if (!response.ok) throw new Error(response.status === 401 || response.status === 403 ? "forbidden" : "network"); setData(await response.json() as AdminOverviewData); setAuthenticated(true); } catch (cause) { setError(cause instanceof Error && cause.message === "forbidden" ? labels.forbidden : labels.network); setAuthenticated(false); } finally { setLoading(false); } };
