@@ -228,6 +228,7 @@ export default function Home() {
   const [serverBusy, setServerBusy] = useState(false);
   const [remoteReady, setRemoteReady] = useState(false);
   const [remotePublicProducts, setRemotePublicProducts] = useState<MarketProduct[]>([]);
+  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
 
   const applyAuthenticatedAccount = useCallback(async (user: User, candidate?: { profile: UserProfile; done: string[]; products: MarketProduct[] } | null) => {
     setServerBusy(true);
@@ -345,6 +346,7 @@ export default function Home() {
   ];
 
   const go = (target: Page, intent: NavigationIntent = {}) => {
+    if (target !== "admin") setAdminAuthenticated(false);
     if (target === "onboarding") {
       const targetStage = intent.stage ?? recommendedTask?.stage ?? selectedStage;
       setSelectedStage(targetStage);
@@ -527,7 +529,7 @@ export default function Home() {
         {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go} preferences={localPreferences} done={done}/>}
         {page === "guide" && <LocalGuide locale={locale} t={t} category={guideCategory} setCategory={setGuideCategory} search={guideSearch} setSearch={setGuideSearch} places={localPlaces} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
         {page === "operation-model" && <OperationModel locale={locale} />}
-        {page === "admin" && appMode === "demo" && <><AdminServerPanel locale={locale}/><OperationModel locale={locale} /></>}
+        {page === "admin" && appMode === "demo" && <><AdminServerPanel locale={locale} onAuthChange={setAdminAuthenticated}/>{adminAuthenticated && <OperationModel locale={locale} />}</>}
       </main>
       {page === "marketplace" && <MyReservations locale={locale} t={t} products={marketplaceProducts} preferences={localPreferences} cancelReservation={cancelMarketplaceReservation} selectReservation={(product) => openProduct(product)} editReservation={editMarketplaceReservation}/>}
       {page === "marketplace" && marketMode === "leaving" && <ListingReports locale={locale} t={t} products={userProducts} reports={localPreferences.reportDrafts}/>}

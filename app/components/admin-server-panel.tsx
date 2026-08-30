@@ -23,7 +23,7 @@ const copy = {
 function label(locale: Locale) { return copy[locale]; }
 function money(value: number | undefined) { return typeof value === "number" ? `${value.toLocaleString()} KRW` : "—"; }
 
-export default function AdminServerPanel({ locale }: { locale: Locale }) {
+export default function AdminServerPanel({ locale, onAuthChange }: { locale: Locale; onAuthChange?: (authenticated: boolean) => void }) {
   const l = useMemo(() => label(locale), [locale]);
   const [token, setToken] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
@@ -45,10 +45,10 @@ export default function AdminServerPanel({ locale }: { locale: Locale }) {
 
   const load = useCallback(async () => {
     setLoading(true); setError("");
-    try { const body = await request("/api/admin/overview"); setData(body as unknown as AdminData); setAuthenticated(true); }
-    catch (cause) { const code = cause instanceof Error ? cause.message : "network"; setAuthenticated(false); setData(null); setError(code === "admin_required" ? l.required : code === "rate_limited" ? l.rate : l.network); }
+    try { const body = await request("/api/admin/overview"); setData(body as unknown as AdminData); setAuthenticated(true); onAuthChange?.(true); }
+    catch (cause) { const code = cause instanceof Error ? cause.message : "network"; setAuthenticated(false); setData(null); onAuthChange?.(false); setError(code === "admin_required" ? l.required : code === "rate_limited" ? l.rate : l.network); }
     finally { setLoading(false); }
-  }, [l.network, l.rate, l.required, request]);
+  }, [l.network, l.rate, l.required, onAuthChange, request]);
 
   useEffect(() => { const timer = window.setTimeout(() => void load(), 0); return () => window.clearTimeout(timer); }, [load]);
 
@@ -58,7 +58,7 @@ export default function AdminServerPanel({ locale }: { locale: Locale }) {
     try { await request("/api/admin/session", { method: "POST", body: JSON.stringify({ token: token.trim() }) }); setToken(""); await load(); }
     catch (cause) { const code = cause instanceof Error ? cause.message : "network"; setError(code === "rate_limited" ? l.rate : code === "invalid_admin_token" ? l.required : l.network); setLoading(false); }
   };
-  const signOut = async () => { try { await request("/api/admin/logout", { method: "POST" }); } finally { setAuthenticated(false); setData(null); setNotice(""); } };
+  const signOut = async () => { try { await request("/api/admin/logout", { method: "POST" }); } finally { setAuthenticated(false); onAuthChange?.(false); setData(null); setNotice(""); } };
   const mutate = async (path: string, body: Record<string, unknown>, method = "PATCH") => { setLoading(true); setError(""); setNotice(""); try { await request(path, { method, body: JSON.stringify(body) }); setNotice(l.saved); await load(); } catch (cause) { const code = cause instanceof Error ? cause.message : "network"; setError(code === "rate_limited" ? l.rate : code === "version_conflict" ? "Conflict: refresh and retry." : l.network); setLoading(false); } };
 
   const create = async () => {
