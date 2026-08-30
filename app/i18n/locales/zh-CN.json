@@ -204,7 +204,7 @@
   },
   "accessibility": {
     "brandHome": "KU Settle 首页",
-    "profile": "打开学生演示认证资料",
+    "profile": "打开匿名资料",
     "lifecycleTabs": "留学周期阶段",
     "stageProgress": "{{stage}}：已完成 {{completed}} / {{total}}，{{progress}}",
     "productDetails": "查看 {{product}} 的详情",

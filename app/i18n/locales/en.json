@@ -213,7 +213,7 @@
   },
   "accessibility": {
     "brandHome": "KU Settle home",
-    "profile": "Open demo student profile",
+    "profile": "Open anonymous profile",
     "lifecycleTabs": "Lifecycle stages",
     "stageProgress": "{{stage}}: {{completed}} of {{total}}, {{progress}}",
     "productDetails": "View details for {{product}}",

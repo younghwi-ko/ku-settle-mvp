@@ -204,7 +204,7 @@
   },
   "accessibility": {
     "brandHome": "KU Settle ホーム",
-    "profile": "学生認証デモのプロフィールを開く",
+    "profile": "匿名プロフィールを開く",
     "lifecycleTabs": "ライフサイクルの段階",
     "stageProgress": "{{stage}}：{{total}}件中{{completed}}件、{{progress}}",
     "productDetails": "{{product}}の詳細を見る",

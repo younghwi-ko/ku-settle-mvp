@@ -204,7 +204,7 @@
   },
   "accessibility": {
     "brandHome": "KU Settle 홈",
-    "profile": "데모 학생 프로필 열기",
+    "profile": "익명 프로필 열기",
     "lifecycleTabs": "라이프사이클 단계",
     "stageProgress": "{{stage}}: {{total}}개 중 {{completed}}개, {{progress}}",
     "productDetails": "{{product}} 상세 보기",
