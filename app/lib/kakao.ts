@@ -22,6 +22,14 @@ export function isValidCoordinates(value: unknown): value is { lat: number; lng:
 export function kakaoCategoryCode(category: string) { return KAKAO_CATEGORY_CODES[category as PlaceCategory] ?? null; }
 export function kakaoKeyword(category: string) { return KAKAO_KEYWORD_CATEGORIES[category as PlaceCategory] ?? null; }
 
+/** Dietary filters only match explicit tags; a keyword result is not proof. */
+export function matchesPlaceCategory(place: Pick<Place, "category" | "kind" | "halalStatus" | "veganStatus">, requestedCategory: string) {
+  if (place.kind === "campus") return requestedCategory === "All";
+  if (requestedCategory === "Halal") return Boolean(place.halalStatus);
+  if (requestedCategory === "Vegan") return Boolean(place.veganStatus);
+  return requestedCategory === "All" || place.category === requestedCategory;
+}
+
 export function isKakaoPlaceAllowed(item: unknown, requestedCategory = "All") {
   if (!item || typeof item !== "object") return false;
   const code = typeof (item as Record<string, unknown>).category_group_code === "string" ? (item as Record<string, string>).category_group_code : "";
@@ -47,7 +55,7 @@ export function kakaoPlaceToPlace(item: unknown, fetchedAt: string, requestedCat
   const address = typeof value.road_address_name === "string" && value.road_address_name.trim() ? value.road_address_name.trim() : typeof value.address_name === "string" ? value.address_name.trim() : "";
   const phone = typeof value.phone === "string" && value.phone.trim() ? value.phone.trim() : undefined;
   const placeUrl = typeof value.place_url === "string" && value.place_url.trim() ? value.place_url.trim() : undefined;
-  return { id: Number(`9${id}`), category, nameKey: "localGuide:places.anamClinic.name", descriptionKey: "localGuide:places.anamClinic.description", locationKey: "localGuide:places.anamClinic.location", distanceMeters: Math.max(0, Number(value.distance) || 0), english: false, tipKey: "localGuide:places.anamClinic.tip", displayName: name, displayDescription: typeof value.category_name === "string" ? value.category_name : "", displayLocation: address, address, phone, officialUrl: placeUrl, sourceName: "카카오 장소 검색 결과", lastVerifiedAt: fetchedAt.slice(0, 10), verificationStatus: keywordCategory ? "needs_confirmation" : "verified", source: "kakao", kakaoPlaceId: id, kakaoCategoryCode: groupCode || undefined, kakaoCategoryName: typeof value.category_name === "string" ? value.category_name : undefined, kakaoCategoryGroupName: typeof value.category_group_name === "string" ? value.category_group_name : undefined, kakaoPlaceUrl: placeUrl, dataFetchedAt: fetchedAt, coordinates: { lat: y, lng: x }, campusScope: campusScopeForCoordinates({ lat: y, lng: x }), halalStatus: requestedCategory === "Halal" ? "needs-menu-check" : undefined, veganStatus: requestedCategory === "Vegan" ? "needs-menu-check" : undefined };
+  return { id: Number(`9${id}`), category, nameKey: "localGuide:places.anamClinic.name", descriptionKey: "localGuide:places.anamClinic.description", locationKey: "localGuide:places.anamClinic.location", distanceMeters: Math.max(0, Number(value.distance) || 0), english: false, tipKey: "localGuide:places.anamClinic.tip", displayName: name, displayDescription: typeof value.category_name === "string" ? value.category_name : "", displayLocation: address, address, phone, officialUrl: placeUrl, sourceName: "카카오 장소 검색 결과", lastVerifiedAt: fetchedAt.slice(0, 10), verificationStatus: keywordCategory ? "needs_confirmation" : "verified", source: "kakao", kakaoPlaceId: id, kakaoCategoryCode: groupCode || undefined, kakaoCategoryName: typeof value.category_name === "string" ? value.category_name : undefined, kakaoCategoryGroupName: typeof value.category_group_name === "string" ? value.category_group_name : undefined, kakaoPlaceUrl: placeUrl, dataFetchedAt: fetchedAt, coordinates: { lat: y, lng: x }, campusScope: campusScopeForCoordinates({ lat: y, lng: x }) };
 }
 
 export function dedupePlaces(items: Place[]) { const seen = new Map<string, Place>(); for (const item of items) { const key = item.kakaoPlaceId ?? `local:${item.displayName ?? item.localizedName?.ko ?? item.id}|${item.address ?? item.displayLocation ?? ""}`.toLocaleLowerCase(); if (!seen.has(key)) seen.set(key, item); } return [...seen.values()]; }

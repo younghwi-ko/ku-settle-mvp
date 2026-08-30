@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dedupePlaces, isKakaoPlaceAllowed, isValidCoordinates, kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, KU_SCIENCE_CENTER, KAKAO_DEFAULT_RADIUS_METERS } from "../app/lib/kakao";
+import { dedupePlaces, isKakaoPlaceAllowed, isValidCoordinates, kakaoCategoryCode, kakaoKeyword, kakaoPlaceToPlace, KU_CENTER, KU_SCIENCE_CENTER, KAKAO_DEFAULT_RADIUS_METERS, matchesPlaceCategory } from "../app/lib/kakao";
 
 describe("Kakao place integration helpers", () => {
   it("uses KU as the default center and maps supported categories", () => {
@@ -34,17 +34,20 @@ describe("Kakao place integration helpers", () => {
     expect(kakaoPlaceToPlace({ id: "42", place_name: "KU Main Building", category_group_code: "SC4", x: "127.032", y: "37.590" }, fetchedAtForTest())).toBeNull();
   });
 
-  it("requires confirmation for keyword-only categories", () => {
+  it("does not auto-classify keyword-only dietary search results", () => {
     const place = kakaoPlaceToPlace({ id: "44", place_name: "Example Vegan Cafe", category_group_code: "CE7", category_group_name: "카페", x: "127.032", y: "37.590" }, fetchedAtForTest(), "Vegan");
     expect(place?.category).toBe("Vegan");
     expect(place?.verificationStatus).toBe("needs_confirmation");
-    expect(place?.veganStatus).toBe("needs-menu-check");
+    expect(place?.veganStatus).toBeUndefined();
+    expect(matchesPlaceCategory(place!, "Vegan")).toBe(false);
   });
 
-  it("marks keyword halal results as menu-level confirmation only", () => {
+  it("includes only explicitly tagged halal places in the halal filter", () => {
     const place = kakaoPlaceToPlace({ id: "45", place_name: "Example Halal Restaurant", category_group_code: "FD6", x: "127.032", y: "37.590" }, fetchedAtForTest(), "Halal");
-    expect(place?.halalStatus).toBe("needs-menu-check");
+    expect(place?.halalStatus).toBeUndefined();
     expect(place?.verificationStatus).toBe("needs_confirmation");
+    expect(matchesPlaceCategory(place!, "Halal")).toBe(false);
+    expect(matchesPlaceCategory({ ...place!, halalStatus: "menu-available" }, "Halal")).toBe(true);
   });
 });
 
