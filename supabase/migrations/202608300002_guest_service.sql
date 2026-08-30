@@ -112,3 +112,5 @@ alter table public.guest_service_requests enable row level security;
 alter table public.guest_lifecycle_progress enable row level security;
 alter table public.guest_preferences enable row level security;
 revoke all on public.anonymous_sessions, public.guest_profiles, public.guest_listings, public.guest_reservations, public.guest_service_requests, public.guest_lifecycle_progress, public.guest_preferences from anon, authenticated;
+grant usage on schema public to service_role;
+grant all on public.anonymous_sessions, public.guest_profiles, public.guest_listings, public.guest_reservations, public.guest_service_requests, public.guest_lifecycle_progress, public.guest_preferences to service_role;
