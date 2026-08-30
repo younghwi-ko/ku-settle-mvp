@@ -442,6 +442,7 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
 .footer-brand strong { font-size: 11px; color: var(--navy); }
 .footer-brand small { font-size: 8px; margin-top: 2px; }
 .footer-notice { max-width: 680px; line-height: 1.55; text-align: right; overflow-wrap: anywhere; }
+.sample-notice { margin: 16px 0 0; padding: 12px 14px; border: 1px solid #f2d49a; border-radius: 12px; background: #fff8e8; color: #805b14; font-size: 13px; line-height: 1.5; }
 .footer-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px 15px; }
 .reset-demo { display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; color: #8995a6; padding: 5px; border-radius: 7px; font-size: 8px; font-weight: 650; cursor: pointer; }
 .reset-demo:hover { color: var(--navy); background: #edf1f6; }

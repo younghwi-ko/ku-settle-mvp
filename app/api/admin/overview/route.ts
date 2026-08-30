@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/app/lib/admin";
 import { apiError } from "@/app/lib/server-api";
+import { lifeGuideArticles, places as staticPlaces } from "@/app/data";
 
 export async function GET() {
   const { client, response } = await requireAdmin(new Request("https://localhost/api/admin/overview"));
@@ -19,5 +20,5 @@ export async function GET() {
   const visibleListings = (listings.data ?? []).filter((row) => row.status !== "deleted" && row.status !== "soft_deleted");
   const visibleReservations = (reservations.data ?? []).filter((row) => row.status !== "soft_deleted");
   const visibleServices = (services.data ?? []).filter((row) => row.status !== "soft_deleted");
-  return NextResponse.json({ listings: listings.data ?? [], reservations: reservations.data ?? [], serviceRequests: services.data ?? [], placeOverrides: places.data ?? [], guideOverrides: guides.data ?? [], reports: reports.data ?? [], auditLog: auditLog.data ?? [], counts: { listings: visibleListings.length, reservations: visibleReservations.length, serviceRequests: visibleServices.length, reports: reports.data?.length ?? 0 } });
+  return NextResponse.json({ listings: listings.data ?? [], reservations: reservations.data ?? [], serviceRequests: services.data ?? [], placeOverrides: places.data ?? [], guideOverrides: guides.data ?? [], reports: reports.data ?? [], auditLog: auditLog.data ?? [], catalogCounts: { places: staticPlaces.length, guides: lifeGuideArticles.length }, counts: { listings: visibleListings.length, reservations: visibleReservations.length, serviceRequests: visibleServices.length, reports: reports.data?.length ?? 0, placeOverrides: places.data?.length ?? 0, guideOverrides: guides.data?.length ?? 0 } });
 }

@@ -10,7 +10,8 @@
     "close": "Close",
     "cancel": "Cancel",
     "demoData": "Demo data",
-    "sampleData": "Sample",
+    "sampleData": "Sample data",
+    "sampleOnly": "Sample items are not available for real transactions.",
     "liveData": "Live listing",
     "saving": "Saving…",
     "saved": "Saved",
@@ -35,7 +36,7 @@
     "currentLanguage": "Current language: {{language}}",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "footerNotice": "Student-built prototype · Not affiliated with Korea University · Demo data"
+    "footerNotice": "Use without sign-in · Not an official Korea University service · Sample items are not available for real transactions"
   },
   "home": {
     "eyebrow": "YOUR LIFECYCLE COMPANION",
@@ -109,7 +110,7 @@
   "marketplace": {
     "eyebrow": "CAMPUS MARKETPLACE",
     "title": "One student’s farewell is another’s fresh start",
-    "body": "Try listing and reserving items in Demo mode without an account. No payment or external messages are sent.",
+    "body": "List and reserve items without signing in. Sample items and live listings are clearly labeled.",
     "incoming": "I’m new to KU",
     "leaving": "I’m leaving KU",
     "search": "Search items",
@@ -121,7 +122,7 @@
     "pickup": "Pickup",
     "seller": "Seller",
     "details": "View details",
-    "flow": { "verification": "Demo verification", "listing": "Product listing", "pickup": "Campus pickup", "transaction": "Direct transaction" },
+      "flow": { "verification": "Anonymous session", "listing": "Product listing", "pickup": "Campus pickup", "transaction": "Direct transaction" },
     "contact": "Contact seller",
     "contactTitle": "Contact the seller",
     "contactBody": "This is a presentation demo. In a live service, your message would be sent through a secure KU-only chat.",
@@ -146,7 +147,7 @@
   "localGuide": {
     "eyebrow": "LOCAL GUIDE",
     "title": "Feel at home around Anam",
-    "body": "A practical guide to places near KU. Kakao search results and demo places are shown together.",
+    "body": "A practical guide to places near KU. Kakao search candidates and internally verified places are shown together.",
     "all": "All",
     "englishAvailable": "English available",
     "distanceFromKu": "{{distance}} from KU",

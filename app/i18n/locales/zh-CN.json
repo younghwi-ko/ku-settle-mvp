@@ -9,7 +9,7 @@
     "verified": "已验证高丽大学学生身份",
     "close": "关闭",
     "cancel": "取消",
-    "demoData": "演示数据", "sampleData": "示例", "liveData": "真实发布商品", "saving": "正在保存…", "saved": "已保存",
+    "demoData": "演示数据", "sampleData": "示例数据", "sampleOnly": "示例商品不能用于实际交易。", "liveData": "真实发布商品", "saving": "正在保存…", "saved": "已保存",
     "sample": "示例",
     "yes": "是",
     "no": "否",
@@ -31,7 +31,7 @@
     "currentLanguage": "当前语言：{{language}}",
     "openMenu": "打开菜单",
     "closeMenu": "关闭菜单",
-    "footerNotice": "学生制作的原型 · 非高丽大学官方服务 · 演示数据"
+    "footerNotice": "无需登录即可使用 · 非高丽大学官方服务 · 示例商品不能用于实际交易"
   },
   "home": {
     "eyebrow": "留学生全周期助手",
@@ -140,7 +140,7 @@
   "localGuide": {
     "eyebrow": "生活指南",
     "title": "在安岩轻松开启日常生活",
-    "body": "高丽大学周边的实用地点指南。Kakao 搜索结果和演示地点会同时显示。",
+    "body": "高丽大学周边的实用地点指南。将同时显示 Kakao 搜索候选和内部验证地点。",
     "all": "全部",
     "englishAvailable": "可能提供英语服务",
     "distanceFromKu": "距高丽大学 {{distance}}",

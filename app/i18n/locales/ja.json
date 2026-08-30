@@ -9,7 +9,7 @@
     "verified": "高麗大学の学生として認証済み",
     "close": "閉じる",
     "cancel": "キャンセル",
-    "demoData": "デモデータ", "sampleData": "サンプル", "liveData": "実際の出品", "saving": "保存中…", "saved": "保存しました",
+    "demoData": "デモデータ", "sampleData": "サンプルデータ", "sampleOnly": "サンプル商品は実際の取引には利用できません。", "liveData": "実際の出品", "saving": "保存中…", "saved": "保存しました",
     "sample": "サンプル",
     "yes": "はい",
     "no": "いいえ",
@@ -31,7 +31,7 @@
     "currentLanguage": "現在の言語：{{language}}",
     "openMenu": "メニューを開く",
     "closeMenu": "メニューを閉じる",
-    "footerNotice": "学生制作のプロトタイプ · 高麗大学の公式サービスではありません · デモデータ"
+    "footerNotice": "ログインなしで利用 · 高麗大学の公式サービスではありません · サンプル商品は実際の取引には利用できません"
   },
   "home": {
     "eyebrow": "留学生ライフサイクルサポート",
@@ -140,7 +140,7 @@
   "localGuide": {
     "eyebrow": "ローカルガイド",
     "title": "安岩で心地よい毎日を始めましょう",
-    "body": "高麗大学周辺の実用的なガイドです。Kakaoの検索結果とデモ地点を一緒に表示します。",
+    "body": "高麗大学周辺の実用的なガイドです。Kakaoの検索候補と内部確認済みの地点を表示します。",
     "all": "すべて",
     "englishAvailable": "英語対応の可能性あり",
     "distanceFromKu": "高麗大学から{{distance}}",
