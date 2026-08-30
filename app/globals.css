@@ -513,6 +513,94 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
   .footer-actions { justify-content: flex-start; align-items: flex-start; }
 }
 
+/* Final presentation polish: keeps existing data and interaction flows intact. */
+:root {
+  --focus-ring: 0 0 0 4px rgba(36, 95, 209, .18);
+  --card-border: #dfe7f2;
+}
+
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #8eb6ff; outline-offset: 3px; box-shadow: var(--focus-ring); }
+button:not(:disabled), a { touch-action: manipulation; }
+
+.page { width: 100%; }
+.page-hero { align-items: flex-start; }
+.page-hero h1, .hero h1, .guide-article h2, .place-card h2, .admin-card strong { overflow-wrap: anywhere; word-break: keep-all; }
+.hero h1 { text-wrap: balance; }
+.hero-lead, .hero-body, .page-hero p { max-width: 65ch; }
+
+.guide-recommendation { position: relative; overflow: hidden; border-width: 2px; }
+.guide-recommendation::after { content: ""; position: absolute; width: 120px; height: 120px; right: -36px; top: -44px; border-radius: 50%; background: rgba(36,95,209,.07); pointer-events: none; }
+.guide-recommendation .task-action { position: relative; z-index: 1; width: fit-content; min-height: 42px; padding: 0 14px; }
+.guide-card-top { padding-bottom: 3px; }
+.guide-category-icon { flex: 0 0 34px; border: 1px solid #d5e3fa; box-shadow: 0 3px 9px rgba(36,95,209,.08); }
+.guide-status { border: 1px solid transparent; }
+.guide-status.is-verified { border-color: #c8e8d6; }
+.guide-status.is-demo { border-color: #f1dfac; }
+.guide-summary-badges { align-items: center; min-height: 30px; }
+.guide-badge { white-space: normal; }
+.guide-badge-progress { font-weight: 800; }
+.guide-badge-progress.is-done { color: #176b4b; background: #edf9f2; border-color: #cdebd9; }
+.guide-badge-progress.is-active { color: #245fd1; background: #eef5ff; border-color: #d5e5ff; }
+.guide-badge-progress.is-pending { color: #697a92; background: #f7f9fc; }
+.guide-primary-cta { box-shadow: 0 5px 12px rgba(36,95,209,.13); }
+.guide-details { border-top-color: #dfe7f2; }
+.guide-details-toggle { border: 1px solid transparent; padding: 10px 12px; margin: 8px -12px 0; }
+.guide-details-toggle:hover, .guide-details[open] .guide-details-toggle { color: #174fae; background: #eef5ff; border-color: #d5e5ff; }
+.guide-details-hint { padding: 4px 7px; border-radius: 7px; background: #f4f7fc; }
+
+.guide-page > .search-field { min-height: 48px; }
+.guide-page > .chips { box-shadow: inset 0 0 0 1px #e0e8f3; }
+.map-result-summary { display: block; overflow-wrap: anywhere; }
+.kakao-map-shell { overflow: hidden; }
+.place-card { border-color: var(--card-border); }
+.place-card.is-selected { border-color: #8eb6ff; }
+.location-pending { display: inline-flex; width: fit-content; max-width: 100%; align-items: center; gap: 5px; padding: 5px 8px; border: 1px solid #f0d7a0; border-radius: 8px; color: #805d1c; background: #fff8e8; font-size: 11px; font-weight: 800; overflow-wrap: anywhere; }
+.place-source { min-width: 0; }
+.place-source a, .guide-map-links a { overflow-wrap: anywhere; }
+.place-card .favorite-button { flex: 0 0 auto; }
+
+.admin-section-tabs { scrollbar-width: thin; }
+.admin-section-tabs button { min-width: 110px; }
+.admin-subtoolbar input, .admin-subtoolbar select, .admin-card-actions input, .admin-card-actions select, .admin-card-actions textarea { min-width: 0; max-width: 100%; }
+.admin-card-actions { overflow-wrap: anywhere; }
+.admin-card-actions a { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-page .empty-copy, .admin-page .empty-state { margin-top: 10px; margin-bottom: 10px; }
+
+@media (min-width: 1200px) {
+  .guide-article-grid { gap: 18px; }
+  .place-grid { gap: 16px; }
+  .guide-page .kakao-map-shell { max-height: 332px; }
+}
+
+@media (max-width: 940px) {
+  .desktop-nav { max-width: 100%; overflow-x: auto; scrollbar-width: thin; }
+  .desktop-nav button { flex: 0 0 auto; }
+}
+
+@media (max-width: 700px) {
+  .page-hero h1 { text-wrap: balance; }
+  .guide-summary-badges { align-items: stretch; }
+  .guide-badge { flex: 1 1 auto; }
+  .guide-recommendation .task-action { width: 100%; justify-content: center; }
+  .kakao-guide-toolbar, .guide-page > .search-field, .guide-page > .chips { width: 100%; max-width: 100%; }
+  .place-grid, .guide-article-grid { min-width: 0; }
+  .place-card, .guide-article, .admin-card { min-width: 0; }
+  .guide-map-links a { min-width: 120px; }
+  .admin-section-tabs button { min-width: 0; flex: 1 1 auto; }
+  .admin-card-actions { grid-template-columns: 1fr; }
+  .admin-card-actions .danger-link { grid-column: auto; }
+  .modal { overflow-x: hidden; }
+}
+
+@media (max-width: 420px) {
+  .section-pad { padding-left: 14px; padding-right: 14px; }
+  .topbar { padding-left: 12px; padding-right: 12px; }
+  .guide-article, .place-card { padding: 14px; }
+  .guide-badge { font-size: 10px; }
+  .guide-details-toggle { margin-left: -8px; margin-right: -8px; }
+}
+
 @media (max-width: 360px) {
   .topbar { padding-left: 10px; padding-right: 10px; gap: 8px; }
   .brand > span:last-child { display: none; }

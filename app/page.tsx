@@ -51,6 +51,7 @@ const productCategories: ProductCategory[] = ["Home", "Kitchen", "Electronics", 
 const productConditions: ProductCondition[] = ["likeNew", "good", "used", "clean"];
 const productIcons: Record<ProductIcon, typeof Box> = { cooking: CookingPot, lamp: LampDesk, bed: BedDouble, kettle: Zap, fan: Sparkles, box: Box };
 const categoryIcons: Partial<Record<PlaceCategory, typeof Hospital>> = { Hospital, Halal: Utensils, Vegan, Pharmacy: HeartPulse, Cafe: Store, Grocery: ShoppingBag, Food: Utensils };
+const guideCategoryIcons: Record<string, typeof BookOpen> = { housing: House, arrival: MapPin, immigration: ShieldCheck, "mobile-banking": Languages, academic: GraduationCap, healthcare: HeartPulse, daily: ShoppingBag, departure: PackageCheck };
 const categoryProductIcons: Record<ProductCategory, ProductIcon> = { Home: "box", Kitchen: "cooking", Electronics: "fan", Bedding: "bed" };
 
 function tr(t: TFunction, key: string, options?: Record<string, unknown>) {
@@ -68,6 +69,12 @@ function guideViewUi(locale: Locale, key: "details" | "recommendation" | "status
     status: { ko: "확인 상태", en: "Information status", ja: "確認状態", "zh-CN": "信息状态" },
   } as const;
   return copy[key][locale];
+}
+
+function guideProgressUi(locale: Locale, done: boolean, hasTask: boolean) {
+  if (done) return locale === "ko" ? "완료" : locale === "ja" ? "完了" : locale === "zh-CN" ? "已完成" : "Completed";
+  if (hasTask) return locale === "ko" ? "진행 중" : locale === "ja" ? "進行中" : locale === "zh-CN" ? "进行中" : "In progress";
+  return locale === "ko" ? "미완료" : locale === "ja" ? "未完了" : locale === "zh-CN" ? "未完成" : "Not started";
 }
 
 function guideDuration(locale: Locale, min: number, max: number) {
@@ -488,7 +495,7 @@ export default function Home() {
         {page === "home" && <Dashboard locale={locale} t={t} profile={currentProfile} activeTasks={activeTasks} stageStats={stageStats} progress={progress} completedCount={completedCount} recommendedTask={recommendedTask} go={go}/>}
         {page === "onboarding" && <Onboarding locale={locale} t={t} activeTasks={activeTasks} stageStats={stageStats} progress={progress} done={done} recommendedTask={recommendedTask} selectedStage={selectedStage} setSelectedStage={setSelectedStage} focusTaskId={focusTaskId} highlightTaskId={highlightTaskId} go={go} openTaskAction={openTaskAction} toggleTask={toggleTask} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
         {page === "marketplace" && <Marketplace locale={locale} t={t} profile={currentProfile} appMode={appMode} products={marketplaceProducts} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} addProduct={addMarketplaceProduct} selectProduct={openProduct} selectSellerProduct={openSellerProduct} preferences={localPreferences} setPreferences={setLocalPreferences} toggleFavorite={toggleProductFavorite}/>}
-        {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go} preferences={localPreferences}/>}
+        {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go} preferences={localPreferences} done={done}/>}
         {page === "guide" && <LocalGuide locale={locale} t={t} category={guideCategory} setCategory={setGuideCategory} search={guideSearch} setSearch={setGuideSearch} places={localPlaces} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
         {page === "operation-model" && <OperationModel locale={locale} />}
         {page === "admin" && appMode === "demo" && <AdminPanel locale={locale} t={t} products={userProducts} places={localPlaces} preferences={localPreferences} tasks={activeTasks} done={done} setProducts={setUserProducts} setPreferences={setLocalPreferences} reset={resetDemo} exportData={exportDemoData} importData={importDemoData}/>}{page === "admin" && appMode === "demo" && <OperationModel locale={locale} />}
@@ -805,7 +812,7 @@ function LocalGuide({ locale, t, category, setCategory, search, setSearch, place
   </section>;
 }
 
-function GuideCard({ article, locale, labels, preferences, go }: { article: (typeof lifeGuideArticles)[number]; locale: Locale; labels: Record<string, string>; preferences: LocalPreferences; go: (page: Page, intent?: NavigationIntent) => void }) {
+function GuideCard({ article, locale, labels, preferences, done, go }: { article: (typeof lifeGuideArticles)[number]; locale: Locale; labels: Record<string, string>; preferences: LocalPreferences; done: string[]; go: (page: Page, intent?: NavigationIntent) => void }) {
   const copy = getGuideLocaleCopy(article, locale);
   const metadata = preferences.guideMetadata[article.id];
   const checked = metadata?.contentCheckedAt ?? article.contentCheckedAt ?? article.lastVerifiedAt;
@@ -814,13 +821,15 @@ function GuideCard({ article, locale, labels, preferences, go }: { article: (typ
   const sourceUrl = sourceStatus === "verified" ? (metadata?.officialUrls?.[locale] ?? article.officialUrls?.[locale] ?? metadata?.officialUrl ?? article.officialUrl) : undefined;
   const sourceName = sourceStatus === "verified" ? (metadata?.sourceName ?? article.sourceName) : undefined;
   const contentOrigin = metadata?.contentOrigin ?? article.contentOrigin ?? (article.officialUrl ? "official-guide" : "demo");
-  const Icon = (categoryIcons[article.category as PlaceCategory] ?? BookOpen) as typeof BookOpen;
+  const relatedTaskId = article.relatedTaskIds[0];
+  const taskDone = Boolean(relatedTaskId && done.includes(relatedTaskId));
+  const Icon = guideCategoryIcons[article.category] ?? BookOpen;
   return <article className="guide-article" id={`guide-${article.id}`}>
     <div className="guide-card-top"><span className="guide-category-icon" aria-hidden="true"><Icon size={18} /></span><span className="place-category">{labels[article.category]}</span><span className={`guide-status ${contentOrigin === "demo" ? "is-demo" : "is-verified"}`}>{contentOrigin === "demo" ? guideUi(locale, "demoOrigin") : guideUi(locale, "officialOrigin")}</span></div>
     <h2>{copy.title}</h2><p className="guide-summary">{copy.summary}</p>
-    <div className="guide-summary-badges"><span className="guide-badge guide-badge-time"><Clock3 size={13}/>{article.estimatedMinutes ? `${guideUi(locale, "duration")}: ${guideDuration(locale, article.estimatedMinutes[0], article.estimatedMinutes[1])}` : guideUi(locale, "status")}</span><span className="guide-badge guide-badge-check"><CheckCircle2 size={13}/>{checkedDate ? `${guideUi(locale, "checked")}: ${checkedDate}` : guideUi(locale, "sourceNeedsConfirmation")}</span></div>
-    {article.relatedTaskIds[0] && <button className="task-action guide-primary-cta" onClick={() => go("onboarding", { taskId: article.relatedTaskIds[0], highlight: true })}>{locale === "ko" ? "관련 라이프사이클 작업 보기" : locale === "ja" ? "関連するライフサイクルを見る" : locale === "zh-CN" ? "查看相关留学周期任务" : "View related lifecycle task"}<ArrowRight size={15} /></button>}
-    <details className="guide-details"><summary className="guide-details-toggle"><span>{guideViewUi(locale, "details")}</span><span className="guide-details-hint"><span>{guideViewUi(locale, "status")}</span><ChevronDown size={16} /></span></summary><div className="guide-details-content">
+    <div className="guide-summary-badges"><span className="guide-badge guide-badge-time"><Clock3 size={13}/>{article.estimatedMinutes ? `${guideUi(locale, "duration")}: ${guideDuration(locale, article.estimatedMinutes[0], article.estimatedMinutes[1])}` : guideUi(locale, "status")}</span><span className="guide-badge guide-badge-check"><CheckCircle2 size={13}/>{checkedDate ? `${guideUi(locale, "checked")}: ${checkedDate}` : guideUi(locale, "sourceNeedsConfirmation")}</span><span className={`guide-badge guide-badge-progress ${taskDone ? "is-done" : relatedTaskId ? "is-active" : "is-pending"}`}><span aria-hidden="true">{taskDone ? "✓" : relatedTaskId ? "•" : "○"}</span>{guideProgressUi(locale, taskDone, Boolean(relatedTaskId))}</span></div>
+    {relatedTaskId && <button className="task-action guide-primary-cta" onClick={() => go("onboarding", { taskId: relatedTaskId, highlight: true })}>{locale === "ko" ? "관련 라이프사이클 작업 보기" : locale === "ja" ? "関連するライフサイクルを見る" : locale === "zh-CN" ? "查看相关留学周期任务" : "View related lifecycle task"}<ArrowRight size={15} /></button>}
+    <details className="guide-details"><summary className="guide-details-toggle" role="button" aria-label={guideViewUi(locale, "details")}><span>{guideViewUi(locale, "details")}</span><span className="guide-details-hint"><span>{guideViewUi(locale, "status")}</span><ChevronDown size={16} /></span></summary><div className="guide-details-content">
       <div className="article-meta"><span>{sourceName ?? guideUi(locale, sourceStatus === "unavailable" ? "sourceUnavailable" : "sourceNeedsConfirmation")}</span><span>{checkedDate ? `${guideUi(locale, "checked")}: ${checkedDate}` : ""}</span></div>
       {checkedDate && <small className="article-note">{guideUi(locale, "checkedNote")}</small>}<p>{copy.content}</p>
       {(article.category === "immigration" || article.category === "healthcare" || article.category === "mobile-banking") && <p className="student-tip"><AlertTriangle size={15} />{guideUi(locale, "changing")}</p>}
@@ -832,7 +841,7 @@ function GuideCard({ article, locale, labels, preferences, go }: { article: (typ
   </article>;
 }
 
-function LifeGuide({ locale, search, setSearch, category, setCategory, go, preferences }: { locale: Locale; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; go: (page: Page, intent?: NavigationIntent) => void; preferences: LocalPreferences }) {
+function LifeGuide({ locale, search, setSearch, category, setCategory, go, preferences, done }: { locale: Locale; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; go: (page: Page, intent?: NavigationIntent) => void; preferences: LocalPreferences; done: string[] }) {
   const labels: Record<string, string> = locale === "ko" ? { All: "전체", housing: "주거", arrival: "입국·교통", immigration: "체류·행정", "mobile-banking": "통신·은행", academic: "학사생활", healthcare: "의료·응급", daily: "일상생활", departure: "귀국 준비" } : locale === "ja" ? { All: "すべて", housing: "住居", arrival: "入国・交通", immigration: "在留・行政", "mobile-banking": "通信・銀行", academic: "学業生活", healthcare: "医療・緊急", daily: "日常生活", departure: "帰国準備" } : locale === "zh-CN" ? { All: "全部", housing: "住房", arrival: "入境·交通", immigration: "居留·行政", "mobile-banking": "通信·银行", academic: "学业生活", healthcare: "医疗·紧急", daily: "日常生活", departure: "回国准备" } : { All: "All", housing: "Housing", arrival: "Arrival & Transportation", immigration: "Immigration", "mobile-banking": "Mobile & Banking", academic: "Academic Life", healthcare: "Healthcare & Emergency", daily: "Daily Life", departure: "Departure" };
   const articles = [...lifeGuideArticles, ...expandedLifeGuideArticles];
   const filtered = articles.filter((article) => { const copy = getGuideLocaleCopy(article, locale); const searchable = [copy.title, copy.summary, copy.content, ...(copy.checklist ?? []), ...(copy.steps ?? []), ...(copy.cautions ?? [])].join(" "); return (category === "All" || article.category === category) && searchable.toLocaleLowerCase(locale).includes(search.toLocaleLowerCase(locale)); });
@@ -841,7 +850,7 @@ function LifeGuide({ locale, search, setSearch, category, setCategory, go, prefe
     {recommended && <aside className="guide-recommendation"><span className="eyebrow"><Zap size={14} /> {guideViewUi(locale, "recommendation")}</span><h2>{getGuideLocaleCopy(recommended, locale).title}</h2><p>{getGuideLocaleCopy(recommended, locale).summary}</p><span className="guide-recommendation-status"><CheckCircle2 size={15} /> {guideViewUi(locale, "status")}</span></aside>}
     <label className="search-field"><Search size={17} /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={locale === "ko" ? "제목 또는 본문 검색" : locale === "ja" ? "タイトルまたは本文を検索" : locale === "zh-CN" ? "搜索标题或正文" : "Search title or content"} /></label>
     <div className="chips">{["All", ...Object.keys(labels).filter((key) => key !== "All")].map((key) => <button key={key} aria-pressed={category === key} className={category === key ? "active" : ""} onClick={() => setCategory(key)}>{labels[key]}</button>)}</div>
-    {filtered.length ? <div className="guide-article-grid">{filtered.map((article) => <GuideCard key={article.id} article={article} locale={locale} labels={labels} preferences={preferences} go={go} />)}</div> : <EmptyState icon={BookOpen} text={locale === "ko" ? "검색 결과가 없습니다." : locale === "ja" ? "検索結果がありません." : locale === "zh-CN" ? "没有找到指南。" : "No guides found."} />}
+    {filtered.length ? <div className="guide-article-grid">{filtered.map((article) => <GuideCard key={article.id} article={article} locale={locale} labels={labels} preferences={preferences} done={done} go={go} />)}</div> : <EmptyState icon={BookOpen} text={locale === "ko" ? "검색 결과가 없습니다." : locale === "ja" ? "検索結果がありません." : locale === "zh-CN" ? "没有找到指南。" : "No guides found."} />}
   </section>;
 }
 
