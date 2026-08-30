@@ -3,7 +3,7 @@ import { jsonBody, record, text } from "@/app/lib/server-api";
 import { checkAdminRateLimit, establishAdminSession } from "@/app/lib/server-session";
 
 export async function POST(request: Request) {
-  const limit = checkAdminRateLimit(request, "auth");
+  const limit = await checkAdminRateLimit(request, "auth");
   if (!limit.allowed) return NextResponse.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": String(limit.retryAfter), "Cache-Control": "no-store" } });
   const body = await jsonBody(request);
   const token = record(body) ? text(body.token, 512) : null;

@@ -72,18 +72,23 @@ export async function isAdminRequest() {
   return timingSafeEqual(Buffer.from(supplied), Buffer.from(expected));
 }
 
-export function checkAdminRateLimit(request: Request, kind: "auth" | "api") {
-  const now = Date.now();
-  const windowMs = kind === "auth" ? ADMIN_AUTH_WINDOW_MS : ADMIN_API_WINDOW_MS;
+export async function checkAdminRateLimit(request: Request, kind: "auth" | "api") {
+  const windowSeconds = kind === "auth" ? ADMIN_AUTH_WINDOW_MS / 1000 : ADMIN_API_WINDOW_MS / 1000;
   const limit = kind === "auth" ? ADMIN_AUTH_LIMIT : ADMIN_API_LIMIT;
   const supplied = kind === "auth" ? clientFingerprint(request) : fingerprint((request.headers.get("cookie") || "admin-session"));
+  const client = serverClient();
+  if (client) {
+    const { data, error } = await client.rpc("consume_admin_rate_limit", { p_key_hash: supplied, p_window_seconds: windowSeconds, p_limit: limit });
+    if (!error && Array.isArray(data) && data[0]) return { allowed: data[0].allowed === true, retryAfter: Number(data[0].retry_after) || 0 };
+  }
+  const now = Date.now();
   const key = `${kind}:${supplied}`;
   const previous = rateBuckets.get(key);
-  if (!previous || now - previous.startedAt >= windowMs) {
+  if (!previous || now - previous.startedAt >= windowSeconds * 1000) {
     rateBuckets.set(key, { startedAt: now, count: 1 });
     return { allowed: true, retryAfter: 0 };
   }
-  if (previous.count >= limit) return { allowed: false, retryAfter: Math.max(1, Math.ceil((windowMs - (now - previous.startedAt)) / 1000)) };
+  if (previous.count >= limit) return { allowed: false, retryAfter: Math.max(1, Math.ceil((windowSeconds * 1000 - (now - previous.startedAt)) / 1000)) };
   previous.count += 1;
   return { allowed: true, retryAfter: 0 };
 }

@@ -540,6 +540,10 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
 .admin-inline-actions button { min-height: 38px; }
 .admin-server-error { margin: 0; color: #b91c1c; font-size: 14px; }
 .admin-server-notice { display: flex; align-items: center; gap: 6px; margin: 0; color: #047857; font-size: 14px; }
+.admin-audit-log { display: grid; gap: 8px; padding: 16px; border: 1px solid var(--line, #dbe3ef); border-radius: 16px; background: var(--surface, #fff); }
+.admin-audit-log h3 { margin: 0 0 4px; font-size: 15px; }
+.admin-audit-row { display: grid; grid-template-columns: minmax(110px, .5fr) minmax(0, 1fr) auto; gap: 10px; align-items: center; padding-top: 8px; border-top: 1px solid #eef2f7; font-size: 13px; }
+.admin-audit-row span, .admin-audit-row time { color: var(--muted, #64748b); overflow-wrap: anywhere; }
 .spin { animation: admin-spin 1s linear infinite; }
 @keyframes admin-spin { to { transform: rotate(360deg); } }
 @media (max-width: 640px) {
@@ -550,6 +554,7 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
   .admin-create-form { display: grid; grid-template-columns: 1fr; }
   .admin-create-form input, .admin-create-form button { width: 100%; }
   .admin-inline-actions select { max-width: 100%; }
+  .admin-audit-row { grid-template-columns: 1fr; gap: 3px; }
 }
 
 /* Final presentation polish: keeps existing data and interaction flows intact. */
