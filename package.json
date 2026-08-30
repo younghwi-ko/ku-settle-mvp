@@ -13,6 +13,8 @@
     "test": "pnpm run test:i18n && vitest run",
     "test:i18n": "node --experimental-strip-types scripts/validate-i18n.mjs",
     "test:unit": "vitest run",
+    "test:api": "vitest run tests/server-api.test.ts",
+    "test:migration": "vitest run tests/migration.test.ts",
     "audit:anon": "node scripts/audit-anon-supabase.mjs",
     "audit:edge-negative": "node scripts/audit-edge-negative.mjs",
     "audit:remote": "node scripts/audit-remote-schema.mjs",

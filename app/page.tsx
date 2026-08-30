@@ -25,6 +25,7 @@ import { shouldShowVerifiedBadge } from "./lib/verification";
 import { emptyPreferences, migrateLocalData, readLocalData, writeLocalData, type LocalPreferences, type LocalReservation, type ReportDraft, type LocalServiceRequest, type ServiceRequestMode } from "./lib/local-data";
 import KakaoMap from "./components/kakao-map";
 import { dedupePlaces, isValidCoordinates, KU_CENTER, KU_SCIENCE_CENTER, matchesPlaceCategory, type KakaoSearchResponse, type CampusFilter } from "./lib/kakao";
+import { bootstrapRemote, createRemoteListing, createRemoteReservation, deleteRemoteListing, fetchRemoteState, importRemoteState, serverListingToProduct, serverReservationToLocal, serverServiceToLocal, updateRemoteLifecycle, updateRemoteListing, updateRemoteReservation, upsertRemoteService } from "./lib/remote-state";
 
 type Page = "home" | "onboarding" | "marketplace" | "guide" | "life-guide" | "admin" | "operation-model";
 type Housing = "dorm" | "off-campus";
@@ -224,6 +225,8 @@ export default function Home() {
   const guestCandidateRef = useRef<{ profile: UserProfile; done: string[]; products: MarketProduct[] } | null>(null);
   const [serviceMessage, setServiceMessage] = useState<string | null>(null);
   const [serverBusy, setServerBusy] = useState(false);
+  const [remoteReady, setRemoteReady] = useState(false);
+  const [remotePublicProducts, setRemotePublicProducts] = useState<MarketProduct[]>([]);
 
   const applyAuthenticatedAccount = useCallback(async (user: User, candidate?: { profile: UserProfile; done: string[]; products: MarketProduct[] } | null) => {
     setServerBusy(true);
@@ -266,6 +269,19 @@ export default function Home() {
       }
       setVerified(migrated.verified); setLocalPreferences(migrated.preferences); writeLocalData(localStorage, storageKeys.data, migrated);
       setHydrated(true);
+      void (async () => {
+        if (!await bootstrapRemote()) return;
+        try {
+          const remote = await fetchRemoteState();
+          if (remote.myListings?.length) setUserProducts(remote.myListings.map(serverListingToProduct));
+          else if (loadedProducts.length || loadedProfile) await importRemoteState({ profile: loadedProfile, done: loadedDone, products: loadedProducts, preferences: migrated.preferences, locale });
+          setRemotePublicProducts(remote.listings.filter((item) => !remote.myListings?.some((mine) => mine.id === item.id)).map((item) => ({ ...serverListingToProduct(item), ownedByCurrentUser: false })));
+          const reservations = remote.reservations.map(serverReservationToLocal).filter((item): item is LocalReservation => Boolean(item));
+          const services = remote.serviceRequests.map(serverServiceToLocal).filter((item): item is LocalServiceRequest => Boolean(item));
+          if (reservations.length || services.length || remote.preferences) setLocalPreferences((current) => ({ ...current, reservations: reservations.length ? reservations : current.reservations, reservedProductIds: reservations.filter((item) => item.status === "active").map((item) => item.productId), serviceRequests: services.length ? services : current.serviceRequests }));
+          setRemoteReady(true);
+        } catch { setRemoteReady(false); }
+      })();
       if (supabase) void supabase.auth.getSession().then(async ({ data }) => {
         if (!data.session) return;
         const { data: verifiedSession, error } = await supabase.auth.getUser();
@@ -317,7 +333,7 @@ export default function Home() {
   const progress = activeTasks.length ? Math.round((completedCount / activeTasks.length) * 100) : 0;
   const recommendedTask = activeTasks.find((task) => !done.includes(task.id)) ?? null;
   const stageStats = useMemo(() => getStageStats(activeTasks, done), [activeTasks, done]);
-  const marketplaceProducts = useMemo(() => [...userProducts.filter((product) => product.serviceStatus !== "deleted"), ...products].map((product) => localPreferences.reservedProductIds.includes(String(product.id)) && product.serviceStatus !== "sold" ? { ...product, status: "Reserved" as const } : product), [userProducts, products, localPreferences.reservedProductIds]);
+  const marketplaceProducts = useMemo(() => [...userProducts.filter((product) => product.serviceStatus !== "deleted"), ...remotePublicProducts, ...products].map((product) => localPreferences.reservedProductIds.includes(String(product.id)) && product.serviceStatus !== "sold" ? { ...product, status: "Reserved" as const } : product), [userProducts, remotePublicProducts, products, localPreferences.reservedProductIds]);
   const localPlaces = useMemo(() => [...places.filter((place) => !localPreferences.deletedPlaceIds.includes(place.id)), ...localPreferences.customPlaces].map((place) => ({ ...place, ...(localPreferences.placeOverrides[String(place.id)] ?? {}) })).filter((place) => place.operatingStatus !== "inactive"), [localPreferences.customPlaces, localPreferences.deletedPlaceIds, localPreferences.placeOverrides]);
   const navItems: { key: Page; icon: typeof GraduationCap; labelKey: string }[] = [
     { key: "home", icon: GraduationCap, labelKey: "navigation:home" },
@@ -353,6 +369,7 @@ export default function Home() {
     const wasDone = done.includes(id); const next = wasDone ? done.filter((item) => item !== id) : [...done, id]; setDone(next);
     setLocalPreferences((current) => ({ ...current, progressHistory: [...current.progressHistory, { date: new Date().toLocaleDateString("en-CA"), progress: activeTasks.length ? Math.round((activeTasks.filter((task) => next.includes(task.id)).length / activeTasks.length) * 100) : 0 }].slice(-100) }));
     if (appMode === "authenticated" && authUser) void saveProgress(authUser.id, id, !wasDone).catch((error) => { setDone(done); setServiceMessage(mapServiceError(error)); });
+    if (remoteReady && appMode !== "authenticated") void updateRemoteLifecycle(id, !wasDone).catch(() => { setDone(done); setServiceMessage("errors:generic"); });
   };
   const startPersonalizedPlan = (nextProfile: UserProfile) => {
     if (appMode === "authenticated" && authUser) {
@@ -377,6 +394,10 @@ export default function Home() {
       if (status === "deleted") setLocalPreferences((current) => ({ ...current, reservedProductIds: current.reservedProductIds.filter((id) => id !== String(product.id)), reservations: current.reservations.filter((item) => item.productId !== String(product.id)), reportDrafts: current.reportDrafts.filter((item) => item.productId !== String(product.id)), serviceRequests: current.serviceRequests.filter((item) => item.productId !== String(product.id)) }));
       if (status === "deleted") setSelectedProduct(null);
       else setSelectedProduct((current) => current?.id === product.id ? { ...current, serviceStatus: status, status: status === "sold" ? "Reserved" : "Available" } : current);
+      if (remoteReady && typeof product.id === "string" && product.id.includes("-")) {
+        const sync = status === "deleted" ? deleteRemoteListing(product.id) : updateRemoteListing({ ...product, serviceStatus: status }, status);
+        void sync.catch(() => setServiceMessage("errors:generic"));
+      }
       setServiceMessage("common:saved");
       return;
     }
@@ -400,7 +421,7 @@ export default function Home() {
       finally { setServerBusy(false); }
       return;
     }
-    if (appMode === "demo" || appMode === "guest") { setUserProducts((current) => [{ ...product, source: "demo", ownedByCurrentUser: true, serviceStatus: "active" }, ...current]); setServiceMessage("common:saved"); return; }
+    if (appMode === "demo" || appMode === "guest") { if (remoteReady) { try { const created = await createRemoteListing(product, currentProfile.name); setUserProducts((current) => [created, ...current]); setServiceMessage("common:saved"); return; } catch { setServiceMessage("errors:generic"); throw new Error("Remote listing save failed"); } } setUserProducts((current) => [{ ...product, source: "demo", ownedByCurrentUser: true, serviceStatus: "active" }, ...current]); setServiceMessage("common:saved"); return; }
     setAuthOpen(true); throw new Error("Authentication required");
   };
   const reserveMarketplaceProduct = (product: MarketProduct) => {
@@ -411,14 +432,18 @@ export default function Home() {
     const productId = String(product.id);
     if (!isValidPickupSchedule(pickup)) { setServiceMessage("validation:pickupScheduleRequired"); return; }
     const now = new Date().toISOString();
-    setLocalPreferences((current) => ({ ...current, reservedProductIds: [...new Set([...current.reservedProductIds, productId])], reservations: [...current.reservations.filter((item) => !(item.productId === productId && item.status === "active")), { id: existingId ?? `reservation-${Date.now()}`, productId, buyerName: currentProfile.name, status: "active", createdAt: existingId ? (current.reservations.find((item) => item.id === existingId)?.createdAt ?? now) : now, updatedAt: now, ...pickup }] }));
+    const nextReservation = { id: existingId ?? `reservation-${Date.now()}`, productId, buyerName: currentProfile.name, status: "active" as const, createdAt: existingId ? (localPreferences.reservations.find((item) => item.id === existingId)?.createdAt ?? now) : now, updatedAt: now, ...pickup };
+    setLocalPreferences((current) => ({ ...current, reservedProductIds: [...new Set([...current.reservedProductIds, productId])], reservations: [...current.reservations.filter((item) => !(item.productId === productId && item.status === "active")), nextReservation] }));
+    if (remoteReady && product.userCreated) void createRemoteReservation(product, currentProfile.name, pickup).catch(() => setServiceMessage("errors:generic"));
     setPendingReservation(null);
     setSelectedProduct((current) => current?.id === product.id ? { ...current, status: "Reserved" } : current);
     setServiceMessage("common:saved");
   };
   const cancelMarketplaceReservation = (product: MarketProduct) => {
     const productId = String(product.id);
+    const reservation = localPreferences.reservations.find((item) => item.productId === productId && item.status === "active");
     setLocalPreferences((current) => ({ ...current, reservedProductIds: current.reservedProductIds.filter((id) => id !== productId), reservations: current.reservations.map((item) => item.productId === productId && item.status === "active" ? { ...item, status: "cancelled", cancelledAt: new Date().toISOString() } : item) }));
+    if (remoteReady && reservation && !reservation.id.startsWith("reservation-")) void updateRemoteReservation(reservation.id, { status: "cancelled" }).catch(() => setServiceMessage("errors:generic"));
     setSelectedProduct((current) => current?.id === product.id ? { ...current, status: "Available" } : current); setServiceMessage("common:saved");
   };
   const editMarketplaceReservation = (product: MarketProduct, reservation: LocalReservation) => setPendingReservation({ product, reservation });
@@ -432,6 +457,7 @@ export default function Home() {
     const validation = validateMarketplaceInput(product);
     if (!validation.valid) { setServiceMessage(validation.error); return; }
     setUserProducts((current) => current.map((item) => item.id === product.id ? { ...item, ...product, source: "demo", ownedByCurrentUser: true } : item));
+    if (remoteReady && typeof product.id === "string" && product.id.includes("-")) void updateRemoteListing(product).catch(() => setServiceMessage("errors:generic"));
     setEditingProduct(null); setSelectedProduct(null); setServiceMessage("common:saved");
   };
   const toggleProductFavorite = (product: MarketProduct) => {
@@ -439,7 +465,9 @@ export default function Home() {
     setLocalPreferences((current) => ({ ...current, favoriteProductIds: current.favoriteProductIds.includes(id) ? current.favoriteProductIds.filter((item) => item !== id) : [...current.favoriteProductIds, id] }));
   };
   const updateServiceRequest = (target: { productId?: string; taskId?: string }, mode: ServiceRequestMode, updates: Partial<LocalServiceRequest> = {}) => {
-    setLocalPreferences((current) => { const index = current.serviceRequests.findIndex((item) => item.productId === target.productId && item.taskId === target.taskId); const existing = index >= 0 ? current.serviceRequests[index] : undefined; const now = new Date().toISOString(); const next: LocalServiceRequest = { ...(existing ?? { id: `service-${Date.now()}`, createdAt: now }), ...target, mode, status: updates.status ?? existing?.status ?? "method-selected", updatedAt: now, ...updates }; return { ...current, serviceRequests: index >= 0 ? current.serviceRequests.map((item, i) => i === index ? next : item) : [next, ...current.serviceRequests] }; });
+    const existing = localPreferences.serviceRequests.find((item) => item.productId === target.productId && item.taskId === target.taskId); const now = new Date().toISOString(); const next: LocalServiceRequest = { ...(existing ?? { id: `service-${Date.now()}`, createdAt: now }), ...target, mode, status: updates.status ?? existing?.status ?? "method-selected", updatedAt: now, ...updates };
+    setLocalPreferences((current) => { const index = current.serviceRequests.findIndex((item) => item.id === next.id); return { ...current, serviceRequests: index >= 0 ? current.serviceRequests.map((item, i) => i === index ? next : item) : [next, ...current.serviceRequests] }; });
+    if (remoteReady) void upsertRemoteService(next).catch(() => setServiceMessage("errors:generic"));
   };
 
   const completeGuestImport = async () => {
