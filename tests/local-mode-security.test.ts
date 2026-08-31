@@ -11,7 +11,7 @@ describe("Guest and Demo storage boundaries", () => {
 
   it("keeps Demo and Guest listings local without auth", () => {
     expect(page).toContain('appMode === "demo" || appMode === "guest"');
-    expect(page).toContain('source: "demo", ownedByCurrentUser: true');
+    expect(page).toContain('source: "sample", ownedByCurrentUser: true');
   });
 
   it("keeps Reset demo local and unavailable to authenticated accounts", () => {

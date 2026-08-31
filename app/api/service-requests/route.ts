@@ -18,10 +18,13 @@ export async function POST(request: Request) {
   const existing = existingResult.data;
   const now = new Date().toISOString(); const payload = { session_id: session.id, listing_id: listingId, task_id: taskId, service_type: body.serviceType, status, delivery_method: optionalText(body.deliveryMethod, 20), origin: optionalText(body.origin, 200), destination: optionalText(body.destination, 200), storage_duration: optionalText(body.storageDuration, 10), storage_location: optionalText(body.storageLocation, 20), estimated_cost_label: optionalText(body.estimatedCostLabel, 120), terms_note: optionalText(body.termsNote, 500), idempotency_key: idempotencyKey, updated_at: now };
   if (existing) {
-    const current = String(existing.status); if (status !== current && !transitions[current]?.includes(status)) return apiError("invalid_service_transition", 409);
+    const current = String(existing.status);
+    const userCancellation = status === "cancelled" && ["not-selected", "method-selected", "consultation-ready", "quote-viewed", "application-ready"].includes(current);
+    if (status !== current && !userCancellation) return apiError("invalid_service_transition", 409);
     const { data, error } = await client.from("guest_service_requests").update({ ...payload, version: existing.version + 1 }).eq("id", existing.id).eq("version", existing.version).select("*").single();
     return error ? apiError("service_request_update_failed", 409) : NextResponse.json({ serviceRequest: data });
   }
+  if (status !== "method-selected") return apiError("invalid_service_transition", 409);
   const { data, error } = await client.from("guest_service_requests").insert({ ...payload, created_at: now, version: 1 }).select("*").single();
   return error || !data ? apiError(error?.code === "23505" ? "duplicate_service_request" : "service_request_create_failed", error?.code === "23505" ? 409 : 502) : NextResponse.json({ serviceRequest: data }, { status: 201 });
 }

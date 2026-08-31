@@ -537,6 +537,12 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
 .admin-data-card > div { min-width: 0; display: grid; gap: 5px; }
 .admin-data-card strong, .admin-data-card span { overflow-wrap: anywhere; }
 .admin-data-card span { color: var(--muted, #64748b); font-size: 13px; }
+.admin-service-card { display: grid; align-items: stretch; justify-content: stretch; }
+.admin-service-details { margin: 0; color: var(--muted, #64748b); font-size: 13px; overflow-wrap: anywhere; }
+.admin-service-field { display: grid; gap: 6px; font-size: 12px; font-weight: 750; }
+.admin-service-field select, .admin-service-field input, .admin-service-field textarea { width: 100%; min-height: 42px; padding: 9px 12px; border: 1px solid var(--line, #dbe3ef); border-radius: 10px; background: var(--surface, #fff); color: inherit; }
+.admin-service-field textarea { min-height: 82px; resize: vertical; }
+.admin-processed { margin-right: auto; color: var(--muted, #64748b); font-size: 12px; overflow-wrap: anywhere; }
 .admin-inline-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
 .admin-inline-actions button { min-height: 38px; }
 .admin-server-error { margin: 0; color: #b91c1c; font-size: 14px; }
