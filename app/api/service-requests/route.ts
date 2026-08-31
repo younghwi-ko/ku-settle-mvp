@@ -12,7 +12,6 @@ export async function POST(request: Request) {
   const status = body.status === undefined ? "method-selected" : String(body.status); if (!statuses.has(status)) return apiError("invalid_service_status", 422);
   const client = serverClient(); if (!client) return apiError("server_storage_not_configured", 503);
   const idempotencyKey = optionalText(body.idempotencyKey, 120);
-  if (idempotencyKey) { const { data: existing } = await client.from("guest_service_requests").select("*").eq("session_id", session.id).eq("idempotency_key", idempotencyKey).maybeSingle(); if (existing) return NextResponse.json({ serviceRequest: existing }); }
   const listingId = body.listingId ?? null; const taskId = optionalText(body.taskId, 120); const query = client.from("guest_service_requests").select("*").eq("session_id", session.id).eq("service_type", body.serviceType);
   const existingResult = listingId ? await query.eq("listing_id", listingId).maybeSingle() : taskId ? await query.is("listing_id", null).eq("task_id", taskId).maybeSingle() : { data: null };
   const existing = existingResult.data;
@@ -21,9 +20,12 @@ export async function POST(request: Request) {
     const current = String(existing.status);
     const userCancellation = status === "cancelled" && ["not-selected", "method-selected", "consultation-ready", "quote-viewed", "application-ready"].includes(current);
     if (status !== current && !userCancellation) return apiError("invalid_service_transition", 409);
+    const unchanged = existing.status === payload.status && existing.delivery_method === payload.delivery_method && existing.origin === payload.origin && existing.destination === payload.destination && existing.storage_duration === payload.storage_duration && existing.storage_location === payload.storage_location && existing.estimated_cost_label === payload.estimated_cost_label && existing.terms_note === payload.terms_note;
+    if (idempotencyKey && existing.idempotency_key === idempotencyKey && unchanged) return NextResponse.json({ serviceRequest: existing });
     const { data, error } = await client.from("guest_service_requests").update({ ...payload, version: existing.version + 1 }).eq("id", existing.id).eq("version", existing.version).select("*").single();
     return error ? apiError("service_request_update_failed", 409) : NextResponse.json({ serviceRequest: data });
   }
+  if (idempotencyKey) { const { data: duplicate } = await client.from("guest_service_requests").select("*").eq("session_id", session.id).eq("idempotency_key", idempotencyKey).maybeSingle(); if (duplicate) return NextResponse.json({ serviceRequest: duplicate }); }
   if (status !== "method-selected") return apiError("invalid_service_transition", 409);
   const { data, error } = await client.from("guest_service_requests").insert({ ...payload, created_at: now, version: 1 }).select("*").single();
   return error || !data ? apiError(error?.code === "23505" ? "duplicate_service_request" : "service_request_create_failed", error?.code === "23505" ? 409 : 502) : NextResponse.json({ serviceRequest: data }, { status: 201 });
