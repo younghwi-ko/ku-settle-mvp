@@ -57,12 +57,20 @@ const guideCategoryIcons: Record<string, typeof BookOpen> = { housing: House, ar
 const categoryProductIcons: Record<ProductCategory, ProductIcon> = { Home: "box", Kitchen: "cooking", Electronics: "fan", Bedding: "bed" };
 
 function tr(t: TFunction, key: string, options?: Record<string, unknown>) {
-  return String(t(key.replace(/^marketplace\./, "marketplace:"), options));
+  const value = String(t(key.replace(/^marketplace\./, "marketplace:"), options));
+  return value
+    .replace(/Demo data|デモデータ|演示数据|데모 데이터/g, (match) => match === "デモデータ" ? "サンプルデータ" : match === "演示数据" ? "示例数据" : match === "Demo data" ? "Sample data" : "샘플 데이터")
+    .replace(/Demo verification|デモ認証|演示认证|데모 인증/g, (match) => match === "デモ認証" ? "匿名セッション" : match === "演示认证" ? "匿名会话" : match === "Demo verification" ? "Anonymous session" : "익명 세션")
+    .replace(/Demo mode|Demoモード|演示模式|데모 모드/g, (match) => match === "Demoモード" ? "ログインなしで利用" : match === "演示模式" ? "无需登录即可使用" : match === "Demo mode" ? "Use without sign-in" : "로그인 없이 이용")
+    .replace(/Demo message|デモメッセージ|演示消息|데모 메시지/g, (match) => match === "デモメッセージ" ? "メッセージ下書き" : match === "演示消息" ? "消息草稿" : match === "Demo message" ? "Message draft" : "메시지 초안")
+    .replace(/demo listings|デモの掲載|演示商品|데모 상품|데모 식당|데모 의료기관|데모 마켓/g, (match) => match === "デモの掲載" ? "サンプル掲載" : match === "演示商品" ? "示例商品" : match === "demo listings" ? "sample listings" : match === "데모 상품" ? "샘플 상품" : match === "데모 식당" ? "샘플 식당" : match === "데모 의료기관" ? "샘플 의료기관" : match === "데모 마켓" ? "샘플 마켓" : match)
+    .replace(/presentation demo|プレゼンテーション用デモ|발표용 데모/g, (match) => match === "プレゼンテーション用デモ" ? "試験運用" : match === "발표용 데모" ? "시험 운영" : "pilot experience")
+    .replace(/Demo/g, "Sample").replace(/데모/g, "샘플").replace(/デモ/g, "サンプル").replace(/演示/g, "示例");
 }
 function ui(locale: Locale, key: string) { const copy: Record<string, Record<Locale, string>> = { due: { en: "Due date", ko: "예정일", ja: "予定日", "zh-CN": "预定日期" }, note: { en: "Note", ko: "메모", ja: "メモ", "zh-CN": "备注" }, important: { en: "Important", ko: "중요", ja: "重要", "zh-CN": "重要" }, personal: { en: "Personal task", ko: "개인 작업", ja: "個人タスク", "zh-CN": "个人任务" }, add: { en: "Add personal task", ko: "개인 작업 추가", ja: "個人タスクを追加", "zh-CN": "添加个人任务" }, delete: { en: "Delete", ko: "삭제", ja: "削除", "zh-CN": "删除" }, hide: { en: "Hide completed", ko: "완료 작업 숨기기", ja: "完了済みを隠す", "zh-CN": "隐藏已完成" }, show: { en: "Show completed", ko: "완료 작업 보기", ja: "完了済みを表示", "zh-CN": "显示已完成" }, allDates: { en: "All dates", ko: "전체 날짜", ja: "すべての日付", "zh-CN": "所有日期" }, today: { en: "Today", ko: "오늘", ja: "今日", "zh-CN": "今天" }, week: { en: "This week", ko: "이번 주", ja: "今週", "zh-CN": "本周" }, none: { en: "No date", ko: "예정 없음", ja: "予定なし", "zh-CN": "无日期" } }; return copy[key]?.[locale] ?? key; }
 function guideUi(locale: Locale, key: string) { const copy: Record<string, Record<Locale, string>> = {
   checklist: { en: "Preparation", ko: "준비물", ja: "準備するもの", "zh-CN": "准备事项" }, steps: { en: "Steps", ko: "진행 순서", ja: "進め方", "zh-CN": "步骤" }, cautions: { en: "Cautions", ko: "주의사항", ja: "注意事項", "zh-CN": "注意事项" }, duration: { en: "Estimated time", ko: "예상 소요시간", ja: "所要時間", "zh-CN": "预计用时" }, officialOrigin: { en: "Official-source guide", ko: "공식 출처 기반 안내", ja: "公式出典に基づく案内", "zh-CN": "基于官方来源的指南" }, demoOrigin: { en: "Demo content", ko: "데모 콘텐츠", ja: "デモコンテンツ", "zh-CN": "演示内容" }, sourceVerified: { en: "Verified source", ko: "확인된 공식 출처", ja: "確認済みの公式出典", "zh-CN": "已确认的官方来源" }, sourceUnavailable: { en: "No official source available", ko: "공식 출처 없음", ja: "公式出典なし", "zh-CN": "暂无官方来源" }, sourceNeedsConfirmation: { en: "Official source needs confirmation", ko: "공식 출처 확인 필요", ja: "公式出典の確認が必要", "zh-CN": "需要确认官方来源" }, officialSource: { en: "Open official source", ko: "공식 출처 열기", ja: "公式出典を開く", "zh-CN": "打开官方来源" }, sourceName: { en: "Source name", ko: "출처명", ja: "出典名", "zh-CN": "来源名称" }, sourceUrl: { en: "Official URL", ko: "공식 URL", ja: "公式URL", "zh-CN": "官方URL" }, checked: { en: "Content checked", ko: "콘텐츠 확인일", ja: "コンテンツ確認日", "zh-CN": "内容确认日期" }, checkedNote: { en: "This is the content review date, not an official update date.", ko: "콘텐츠를 점검한 날짜이며 공식 정보 갱신일과 다를 수 있습니다.", ja: "コンテンツの確認日であり、公式情報の更新日とは異なる場合があります。", "zh-CN": "这是内容检查日期，可能不同于官方信息更新日期。" }, changing: { en: "Administrative, healthcare, finance, and telecom conditions may change. Check the latest official notice.", ko: "행정·의료·금융·통신 조건은 바뀔 수 있으므로 최신 공식 안내를 확인하세요.", ja: "行政・医療・金融・通信の条件は変わることがあるため、最新の公式案内を確認してください。", "zh-CN": "行政、医疗、金融和通信条件可能变化，请确认最新官方通知。" }
-}; return copy[key]?.[locale] ?? key; }
+}; if (key === "demoOrigin") return ({ en: "Sample content", ko: "샘플 콘텐츠", ja: "サンプルコンテンツ", "zh-CN": "示例内容" } as Record<Locale, string>)[locale]; return copy[key]?.[locale] ?? key; }
 
 function guideViewUi(locale: Locale, key: "details" | "recommendation" | "status") {
   const copy = {
@@ -965,7 +973,7 @@ function PublicInfoModal({ page, close }: { page: "about" | "terms" | "privacy" 
   const content = {
     about: ["About KU Settle", "A student-built prototype for organizing arrival-to-departure information. It is not an official Korea University service."],
     terms: ["Terms of use — draft", "Use this information as a starting point and confirm important decisions with official sources. This draft has not received legal review."],
-    privacy: ["Privacy notice — draft", "Guest and Demo data is stored in this browser. Authentication-related data is not used in this release. Future account features require a separate policy update."],
+    privacy: ["Privacy notice — draft", "Anonymous session data is stored for this browser. Authentication-related data is not used in this release. Future account features require a separate policy update."],
     safety: ["Marketplace safety", "Meet in a safe public place, inspect items before payment, and do not share financial or identity details through this prototype."],
     sources: ["Information sources and correction policy", "Official sources are identified on Life Guide articles. Sample Local Guide cards are not verified recommendations. Corrections are saved locally until reporting is available."],
     disclaimer: ["Disclaimer", "KU Settle does not provide legal, immigration, medical, financial, or university-authoritative advice. Confirm current information with the responsible official organization."]
