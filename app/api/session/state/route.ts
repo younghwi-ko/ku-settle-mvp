@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { apiError, jsonBody, record, sessionOrError, text, validImage } from "@/app/lib/server-api";
 import { requireSameOrigin, serverClient } from "@/app/lib/server-session";
+import { expireReservations } from "@/app/lib/reservation-expiry";
 
 const categories: Record<string, string> = { Home: "home", Kitchen: "kitchen", Electronics: "electronics", Bedding: "bedding" };
 const conditions: Record<string, string> = { likeNew: "like_new", good: "good", used: "used", clean: "clean" };
@@ -9,6 +10,7 @@ export async function GET() {
   if (response || !session) return response ?? apiError("session_unavailable", 503);
   const client = serverClient();
   if (!client) return apiError("server_storage_not_configured", 503);
+  await expireReservations(client);
   const [profile, listings, reservations, services, progress, preferences] = await Promise.all([
     client.from("guest_profiles").select("*").eq("session_id", session.id).maybeSingle(),
     client.from("guest_listings").select("*").in("status", ["active", "reserved", "sold"]).or(`session_id.eq.${session.id},status.in.(active,reserved,sold)`).order("created_at", { ascending: false }),

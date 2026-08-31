@@ -1,0 +1,10 @@
+import { NextResponse } from "next/server";
+import { apiError, jsonBody, record, uuid } from "@/app/lib/server-api";
+import { authenticatedPrincipal, getOrCreateServerSession, requireSameOrigin, serverClient } from "@/app/lib/server-session";
+
+async function principalSessions(request: Request) {
+  const account = await authenticatedPrincipal(request); const current = await getOrCreateServerSession(); const client = serverClient(); if (!client || !current) return { client: null, ids: [] as string[] };
+  if (!account) return { client, ids: [current.id] }; const { data } = await client.from("anonymous_sessions").select("id").eq("account_user_id", account.userId); return { client, ids: [...new Set([current.id, ...(data ?? []).map((row) => row.id as string)])] };
+}
+export async function GET(request: Request) { const { client, ids } = await principalSessions(request); if (!client || !ids.length) return apiError("session_unavailable", 503); const { data, error } = await client.from("user_notifications").select("id,type,title,body,resource_type,resource_key,read_at,created_at").in("session_id", ids).order("created_at", { ascending: false }).limit(100); return error ? apiError("notifications_load_failed", 502) : NextResponse.json({ notifications: data ?? [], unreadCount: (data ?? []).filter((item) => !item.read_at).length }, { headers: { "Cache-Control": "no-store" } }); }
+export async function PATCH(request: Request) { if (!await requireSameOrigin(request)) return apiError("invalid_origin", 403); const body = await jsonBody(request); if (!record(body) || !uuid(body.id)) return apiError("invalid_notification", 422); const { client, ids } = await principalSessions(request); if (!client || !ids.length) return apiError("session_unavailable", 503); const { data, error } = await client.from("user_notifications").update({ read_at: new Date().toISOString() }).eq("id", body.id).in("session_id", ids).select("id").maybeSingle(); return error || !data ? apiError("notification_not_found", 404) : NextResponse.json({ ok: true }, { headers: { "Cache-Control": "no-store" } }); }

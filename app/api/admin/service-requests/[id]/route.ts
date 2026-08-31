@@ -4,6 +4,7 @@ import { adminBody, audit, requireAdmin, versionOf } from "@/app/lib/admin";
 import { adminActor } from "@/app/lib/server-session";
 import { uuid } from "@/app/lib/server-api";
 import { manualFulfillmentProvider } from "@/app/lib/fulfillment-provider";
+import { notifySession } from "@/app/lib/notifications";
 
 const transitions: Record<string, string[]> = { "not-selected": ["method-selected", "cancelled"], "method-selected": ["consultation-ready", "cancelled"], "consultation-ready": ["quote-viewed", "application-ready", "cancelled"], "quote-viewed": ["application-ready", "cancelled"], "application-ready": ["in-progress", "cancelled"], "in-progress": ["completed", "cancelled"], completed: [], cancelled: [] };
 const statuses = new Set([...Object.keys(transitions), "soft_deleted"]);
@@ -25,6 +26,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   const updates = { status, estimated_cost_label: estimatedCostLabel, admin_note: adminNote, admin_cancel_reason: status === "cancelled" ? cancelReason : current.admin_cancel_reason, admin_updated_at: now, admin_updated_by: actor, version: current.version + 1, updated_at: now, deleted_at: status === "soft_deleted" ? now : null, deleted_by: status === "soft_deleted" ? actor : null, deletion_reason: status === "soft_deleted" ? (typeof body.deletionReason === "string" ? body.deletionReason.slice(0, 500) : "admin cleanup") : null };
   const { data, error } = await client.from("guest_service_requests").update(updates).eq("id", id).eq("version", current.version).select("*").single(); if (error || !data) return apiError("version_conflict", 409);
   await audit(client, "service_request", id, status === "soft_deleted" ? "soft_delete" : status === "cancelled" ? "cancel" : current.status === "soft_deleted" ? "restore" : "status_change", status === "cancelled" ? cancelReason : null);
+  if (status !== "soft_deleted") await notifySession(client, data.session_id, `service_${status}`, `${data.service_type === "storage" ? "보관" : "배송"} 상태가 변경되었습니다`, estimatedCostLabel ?? "앱에서 최신 처리 상태와 다음 안내를 확인하세요.", "service_request", id);
   if (data.service_type === "delivery" || data.service_type === "storage") await manualFulfillmentProvider.notifyStatusChange({ requestId: id, serviceType: data.service_type, status, processedAt: now });
   return NextResponse.json({ serviceRequest: data });
 }

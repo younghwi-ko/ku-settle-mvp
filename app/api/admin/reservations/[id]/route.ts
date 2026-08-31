@@ -3,7 +3,7 @@ import { apiError } from "@/app/lib/server-api";
 import { adminBody, audit, requireAdmin, versionOf } from "@/app/lib/admin";
 import { uuid } from "@/app/lib/server-api";
 
-const statuses = new Set(["active", "cancelled", "completed", "soft_deleted"]);
+const statuses = new Set(["active", "cancelled", "completed", "expired", "soft_deleted"]);
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   const { client, response } = await requireAdmin(request, true); if (response || !client) return response ?? apiError("server_storage_not_configured", 503); const { id } = await context.params; if (!uuid(id)) return apiError("invalid_reservation_id", 422); const body = await adminBody(request); if (!body || !statuses.has(String(body.status))) return apiError("invalid_reservation_status", 422);
   const { data: current } = await client.from("guest_reservations").select("*").eq("id", id).maybeSingle(); if (!current) return apiError("reservation_not_found", 404); const version = versionOf(body.version); if (version !== null && version !== current.version) return apiError("version_conflict", 409);

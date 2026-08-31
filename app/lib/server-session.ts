@@ -14,6 +14,7 @@ const ADMIN_API_LIMIT = 60;
 const rateBuckets = new Map<string, { startedAt: number; count: number }>();
 
 export type ServerSession = { id: string; tokenHash: string };
+export type AccountPrincipal = { userId: string; email: string | null };
 
 function hashToken(token: string) { return createHash("sha256").update(token).digest("hex"); }
 function fingerprint(value: string) {
@@ -33,6 +34,7 @@ function serverClient(): SupabaseClient | null {
 function cookieOptions(maxAge: number) { return { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/", maxAge }; }
 
 export function configurationReady() { return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY); }
+export function accountSignupEnabled() { return process.env.ACCOUNT_SIGNUP_ENABLED === "true"; }
 
 export async function getOrCreateServerSession() {
   const client = serverClient();
@@ -119,5 +121,17 @@ export async function establishAdminSession(token: string, actor: string) {
 }
 
 export async function clearAdminSession() { const jar = await cookies(); for (const name of [ADMIN_COOKIE, ADMIN_ACTOR_COOKIE]) jar.set(name, "", { ...cookieOptions(0), maxAge: 0 }); }
+
+// The browser sends a short-lived Supabase access token only in Authorization.
+// User ids in request bodies are never trusted.
+export async function authenticatedPrincipal(request: Request): Promise<AccountPrincipal | null> {
+  const client = serverClient();
+  const header = request.headers.get("authorization") ?? "";
+  const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+  if (!client || !token || token.length > 4096) return null;
+  const { data, error } = await client.auth.getUser(token);
+  if (error || !data.user || !data.user.email?.toLowerCase().endsWith("@korea.ac.kr")) return null;
+  return { userId: data.user.id, email: data.user.email };
+}
 
 export { serverClient };

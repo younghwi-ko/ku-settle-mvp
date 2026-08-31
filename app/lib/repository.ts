@@ -13,6 +13,20 @@ export async function sendEmailOtp(email: string, locale: Locale) {
   return normalized;
 }
 
+export function validAccountPassword(password: string) {
+  return password.length >= 12 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password);
+}
+
+export async function signInWithPassword(email: string, password: string) {
+  const normalized = normalizeKuEmail(email);
+  if (!isKuEmailValue(normalized) || !password) throw new Error("invalid_credentials");
+  const { data, error } = await requiredClient().auth.signInWithPassword({ email: normalized, password });
+  if (error || !data.user) throw error ?? new Error("invalid_credentials");
+  return data.user;
+}
+
+function isKuEmailValue(email: string) { return /^[^@\s]+@korea\.ac\.kr$/.test(email); }
+
 export async function verifyEmailOtp(email: string, token: string) {
   const { data, error } = await requiredClient().auth.verifyOtp({ email: normalizeKuEmail(email), token, type: "email" });
   if (error) throw error;
