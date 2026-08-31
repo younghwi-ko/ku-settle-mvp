@@ -513,7 +513,7 @@ export default function Home() {
           <LanguageSelector locale={locale} changeLocale={changeLocale} t={t}/>
           <button className="profile-button" onClick={() => appMode === "authenticated" ? setAccountOpen(true) : setProfileMenuOpen((value) => !value)} aria-label={tr(t, "accessibility:profile")} aria-expanded={appMode !== "authenticated" ? profileMenuOpen : undefined}>
             {showVerifiedBadge ? <BadgeCheck size={20} className="verified-icon"/> : <CircleUserRound size={20}/>}<span>{currentProfile.name}</span>
-          </button>}
+           </button>
           {appMode !== "authenticated" && profileMenuOpen && <div className="profile-menu" role="menu">
             <div className="profile-menu-heading"><strong>{currentProfile.name}</strong><span>{locale === "ko" ? "익명 프로필" : locale === "ja" ? "匿名プロフィール" : locale === "zh-CN" ? "匿名资料" : "Anonymous profile"}</span></div>
             <button role="menuitem" onClick={() => { setProfileMenuOpen(false); setProfileOpen(true); }}><CircleUserRound size={16}/>{locale === "ko" ? "프로필 확인" : locale === "ja" ? "プロフィール確認" : locale === "zh-CN" ? "查看资料" : "View profile"}</button>
