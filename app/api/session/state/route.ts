@@ -26,7 +26,9 @@ export async function GET() {
   if (sellerReservations.error) return apiError("state_load_failed", 502);
   const reservationById = new Map<string, Record<string, unknown>>();
   for (const item of [...(reservations.data ?? []), ...(sellerReservations.data ?? [])]) reservationById.set(String(item.id), item);
-  return NextResponse.json({ profile: profile.data, listings: allListings, myListings, reservations: [...reservationById.values()], serviceRequests: services.data ?? [], lifecycle: progress.data ?? [], preferences: preferences.data, serverVersion: Math.max(1, ...[profile.data?.version, preferences.data?.version, ...(allListings).map((row) => row.version)].filter((value): value is number => typeof value === "number")) });
+  const stateResponse = NextResponse.json({ profile: profile.data, listings: allListings, myListings, reservations: [...reservationById.values()], serviceRequests: services.data ?? [], lifecycle: progress.data ?? [], preferences: preferences.data, serverVersion: Math.max(1, ...[profile.data?.version, preferences.data?.version, ...(allListings).map((row) => row.version)].filter((value): value is number => typeof value === "number")) });
+  stateResponse.headers.set("Cache-Control", "no-store");
+  return stateResponse;
 }
 export async function PUT(request: Request) {
   if (!await requireSameOrigin(request)) return apiError("invalid_origin", 403);
