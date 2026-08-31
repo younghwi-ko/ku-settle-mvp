@@ -6,7 +6,7 @@ import {
   AlertTriangle, ArrowRight, BadgeCheck, Banknote, BedDouble, Box, CalendarClock, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronRight,
   CircleUserRound, Clock3, CookingPot, FileCheck2, GraduationCap, HeartPulse, Hospital, House, Languages, LampDesk,
   Lightbulb, MapPin, Menu, MessageCircle, PackageCheck, RotateCcw, Search, ShieldCheck, ShoppingBag, Sparkles, Store, BookOpen,
-  Tag, Trash2, Utensils, Vegan, X, Zap
+  Tag, Trash2, Utensils, Vegan, X, Zap, Bell, HelpCircle
 } from "lucide-react";
 import {
   lifecycleStages, places, products, tasks, lifeGuideArticles, type LifecycleStage, type MarketProduct, type PlaceCategory,
@@ -202,6 +202,8 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<MarketProduct | null>(null);
   const [selectedProductMode, setSelectedProductMode] = useState<ProductModalMode>("buyer");
   const [editingProduct, setEditingProduct] = useState<MarketProduct | null>(null);
@@ -531,6 +533,8 @@ export default function Home() {
         </nav>
         <div className="header-actions">
           <LanguageSelector locale={locale} changeLocale={changeLocale} t={t}/>
+          <button className="profile-button" onClick={() => setNotificationsOpen(true)} aria-label={locale === "ko" ? "알림함" : "Notifications"}><Bell size={20}/></button>
+          <button className="profile-button" onClick={() => setSupportOpen(true)} aria-label={locale === "ko" ? "운영 문의" : "Support"}><HelpCircle size={20}/></button>
           <button className="profile-button" onClick={() => appMode === "authenticated" ? setAccountOpen(true) : setProfileMenuOpen((value) => !value)} aria-label={tr(t, "accessibility:profile")} aria-expanded={appMode !== "authenticated" ? profileMenuOpen : undefined}>
             {showVerifiedBadge ? <BadgeCheck size={20} className="verified-icon"/> : <CircleUserRound size={20}/>}<span>{currentProfile.name}</span>
            </button>
@@ -570,6 +574,8 @@ export default function Home() {
         <VerificationModal locale={locale} t={t} profile={currentProfile} email={email} setEmail={setEmail} verified={verified} verifyError={verifyError} close={() => setProfileOpen(false)} verify={() => { const ok = /^[^@\s]+@korea\.ac\.kr$/i.test(email); setVerifyError(!ok); if (ok) setVerified(true); }}/>
       )}
       {authOpen && <AuthModal locale={locale} t={t} close={() => setAuthOpen(false)} configured={isSupabaseConfigured()} />}
+      {notificationsOpen && <NotificationsModal locale={locale} close={() => setNotificationsOpen(false)}/>} 
+      {supportOpen && <SupportTicketsModal locale={locale} close={() => setSupportOpen(false)}/>} 
       {accountOpen && authUser && (
         <AccountModal t={t} user={authUser} profile={currentProfile} taskCount={completedCount} listingCount={userProducts.filter((product) => product.ownedByCurrentUser).length} close={() => setAccountOpen(false)} save={(next) => startPersonalizedPlan(next)} signout={() => { setServerBusy(true); void signOut().catch((error) => setServiceMessage(mapServiceError(error))).finally(() => { setServerBusy(false); setAccountOpen(false); }); }} openDelete={() => { setAccountOpen(false); setDeleteOpen(true); }}/>
       )}
@@ -962,6 +968,24 @@ function AuthModal({ locale, t, close, configured }: { locale: Locale; t: TFunct
   useEffect(() => { void fetch("/api/account/config", { cache: "no-store" }).then((response) => response.ok ? response.json() : null).then((value) => setSignupEnabled(value?.signupEnabled === true)).catch(() => setSignupEnabled(false)); }, []);
   const signIn = async () => { if (!isKuEmail(email) || !password) { setError(locale === "ko" ? "@korea.ac.kr 이메일과 비밀번호를 확인하세요." : "Enter your KU email and password."); return; } setBusy(true); setError(""); try { await signInWithPassword(email, password); close(); } catch { setError(locale === "ko" ? "로그인에 실패했습니다. 이메일, 비밀번호, 이메일 인증 상태를 확인하세요." : "Sign-in failed. Check your email, password, and verification status."); } finally { setBusy(false); } };
   return <Modal close={close} label={tr(t, "verification:authTitle")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className="modal-icon verify"><ShieldCheck/></div><h2>{locale === "ko" ? "KU 계정 로그인" : "KU account sign in"}</h2><p>{locale === "ko" ? "기존 @korea.ac.kr 계정으로 로그인합니다. 익명 세션 데이터는 로그인 후 연결할 수 있습니다." : "Sign in with an existing @korea.ac.kr account. You can connect this browser's anonymous data after signing in."}</p>{!configured ? <div className="configuration-warning" role="alert">{tr(t, "errors:supabaseNotConfigured")}</div> : <><label className="field"><span>{tr(t, "verification:email")}</span><input autoFocus value={email} onChange={(event) => setEmail(event.target.value)} type="email" autoComplete="email" placeholder="name@korea.ac.kr"/></label><label className="field"><span>{locale === "ko" ? "비밀번호" : "Password"}</span><input value={password} onChange={(event) => setPassword(event.target.value)} type="password" autoComplete="current-password"/></label><button className="primary full" disabled={busy} onClick={() => void signIn()}>{busy ? (locale === "ko" ? "로그인 중…" : "Signing in…") : (locale === "ko" ? "로그인" : "Sign in")}</button><div className="configuration-warning" role="status"><strong>{locale === "ko" ? "가입·이메일 인증 준비 중" : "Sign-up and email verification are being prepared"}</strong><p>{signupEnabled ? (locale === "ko" ? "가입 기능은 이메일 발송 설정 후 활성화됩니다." : "Sign-up is available after email delivery is configured.") : (locale === "ko" ? "현재 무료 운영 설정에서는 신규 가입·인증 메일 재발송·비밀번호 재설정을 요청하지 않습니다. 기존 계정 로그인만 가능합니다." : "For the current free-operation setup, sign-up, resend verification, and password reset do not send email. Existing accounts can sign in.")}</p>{password && !validAccountPassword(password) && <small>{locale === "ko" ? "새 계정 비밀번호 정책: 12자 이상, 대문자·소문자·숫자 포함" : "New-account password policy: 12+ characters with upper, lower, and number."}</small>}</div></>}{error && <p className="error-text" role="alert">{error}</p>}<p className="auth-security-note">{locale === "ko" ? "관리자 토큰과 계정 비밀번호는 이 화면 외에 저장하거나 표시하지 않습니다." : "Administrator tokens and account passwords are not stored or displayed outside this screen."}</p></Modal>;
+}
+
+type AppNotification = { id: string; title: string; body: string; type: string; read_at: string | null; created_at: string };
+function NotificationsModal({ locale, close }: { locale: Locale; close: () => void }) {
+  const [items, setItems] = useState<AppNotification[]>([]); const [loading, setLoading] = useState(true); const [error, setError] = useState("");
+  const load = useCallback(async () => { setLoading(true); setError(""); try { const response = await accountFetch("/api/notifications"); setItems((response.notifications ?? []) as AppNotification[]); } catch { setError(locale === "ko" ? "알림을 불러오지 못했습니다." : "Could not load notifications."); } finally { setLoading(false); } }, [locale]);
+  useEffect(() => { void load(); }, [load]);
+  const markRead = async (id: string) => { try { await accountFetch("/api/notifications", { method: "PATCH", body: JSON.stringify({ id }) }); setItems((current) => current.map((item) => item.id === id ? { ...item, read_at: new Date().toISOString() } : item)); } catch { setError(locale === "ko" ? "읽음 처리에 실패했습니다." : "Could not mark the notification as read."); } };
+  return <Modal close={close} label={locale === "ko" ? "알림함" : "Notifications"}><button className="modal-close" onClick={close} aria-label="Close"><X/></button><h2>{locale === "ko" ? "알림함" : "Notifications"}</h2><p>{locale === "ko" ? "예약, 배송·보관 신청, 운영 문의의 처리 상태를 이곳에서 확인합니다." : "Check reservation, fulfillment, and support-ticket updates here."}</p>{loading ? <p className="muted-copy">Loading…</p> : error ? <p className="error-text" role="alert">{error}</p> : items.length ? <div className="admin-data-list">{items.map((item) => <button className="admin-data-card" key={item.id} onClick={() => { if (!item.read_at) void markRead(item.id); }}><div><strong>{item.title}</strong><span>{new Date(item.created_at).toLocaleString(locale)}{item.read_at ? "" : " · new"}</span></div><p>{item.body}</p></button>)}</div> : <p className="empty-copy">{locale === "ko" ? "새 알림이 없습니다." : "No notifications yet."}</p>}</Modal>;
+}
+
+type SupportTicket = { id: string; subject: string; body: string; status: string; operator_response?: string | null; handled_at?: string | null; created_at: string };
+function SupportTicketsModal({ locale, close }: { locale: Locale; close: () => void }) {
+  const [tickets, setTickets] = useState<SupportTicket[]>([]); const [subject, setSubject] = useState(""); const [message, setMessage] = useState(""); const [loading, setLoading] = useState(true); const [saving, setSaving] = useState(false); const [error, setError] = useState("");
+  const load = useCallback(async () => { setLoading(true); try { const response = await fetch("/api/support-tickets", { credentials: "include", cache: "no-store" }); const body = await response.json(); if (!response.ok) throw new Error(String(body.error)); setTickets(body.tickets as SupportTicket[]); } catch { setError(locale === "ko" ? "문의 내역을 불러오지 못했습니다." : "Could not load support tickets."); } finally { setLoading(false); } }, [locale]);
+  useEffect(() => { void load(); }, [load]);
+  const submit = async () => { if (!subject.trim() || !message.trim()) { setError(locale === "ko" ? "제목과 내용을 입력하세요." : "Enter a subject and message."); return; } setSaving(true); setError(""); try { const response = await fetch("/api/support-tickets", { method: "POST", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify({ subject, body: message }) }); if (!response.ok) throw new Error("ticket_create_failed"); setSubject(""); setMessage(""); await load(); } catch { setError(locale === "ko" ? "문의 접수에 실패했습니다." : "Could not create the ticket."); } finally { setSaving(false); } };
+  return <Modal close={close} label={locale === "ko" ? "운영 문의" : "Support"}><button className="modal-close" onClick={close} aria-label="Close"><X/></button><h2>{locale === "ko" ? "운영 문의" : "Support"}</h2><p>{locale === "ko" ? "외부 메시지 대신 앱 안에서 처리 상태와 운영자 답변을 확인합니다." : "Use this in-app ticket instead of external messaging."}</p><label className="field"><span>{locale === "ko" ? "제목" : "Subject"}</span><input value={subject} maxLength={160} onChange={(event) => setSubject(event.target.value)}/></label><label className="field"><span>{locale === "ko" ? "내용" : "Message"}</span><textarea value={message} maxLength={3000} onChange={(event) => setMessage(event.target.value)}/></label><button className="primary full" disabled={saving} onClick={() => void submit()}>{saving ? "…" : locale === "ko" ? "문의 접수" : "Submit ticket"}</button>{error && <p className="error-text" role="alert">{error}</p>}<div className="admin-data-list">{loading ? <p className="muted-copy">Loading…</p> : tickets.map((ticket) => <article className="admin-data-card" key={ticket.id}><div><strong>{ticket.subject}</strong><span>{ticket.status} · {new Date(ticket.created_at).toLocaleString(locale)}</span></div><p>{ticket.body}</p>{ticket.operator_response && <p><strong>{locale === "ko" ? "운영자 답변" : "Operator response"}</strong><br/>{ticket.operator_response}</p>}</article>)}</div></Modal>;
 }
 
 function AccountModal({ t, user, profile, taskCount, listingCount, close, save, signout, openDelete }: { t: TFunction; user: User; profile: UserProfile; taskCount: number; listingCount: number; close: () => void; save: (profile: UserProfile) => void; signout: () => void; openDelete: () => void }) {

@@ -14,6 +14,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   if (body.pickupLocation !== undefined) { const value = text(body.pickupLocation, 200); if (!value) return apiError("invalid_listing", 422); updates.pickup_location = value; }
   if (body.priceKrw !== undefined) { if (!Number.isInteger(body.priceKrw) || Number(body.priceKrw) <= 0 || Number(body.priceKrw) > 100_000_000) return apiError("invalid_listing", 422); updates.price_krw = body.priceKrw; }
   if (body.imageDataUrl !== undefined) { if (!validImage(body.imageDataUrl)) return apiError("invalid_listing_image", 422); updates.image_data_url = body.imageDataUrl ?? null; }
+  if (body.imagePath !== undefined) { if (typeof body.imagePath !== "string" || !body.imagePath.startsWith(`${session.id}/`) || !/^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(body.imagePath)) return apiError("invalid_listing_image", 422); updates.image_path = body.imagePath; updates.image_data_url = null; }
   if (body.status !== undefined) { if (!statuses.has(String(body.status))) return apiError("invalid_listing_status", 422); updates.status = body.status; updates.availability = body.status === "active" ? "available" : body.status === "reserved" ? "reserved" : "available"; }
   const client = serverClient(); if (!client) return apiError("server_storage_not_configured", 503);
   const version = typeof body.version === "number" ? body.version : null;
