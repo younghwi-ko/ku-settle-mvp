@@ -5,6 +5,7 @@ import { validImage, uuid } from "../app/lib/server-api";
 const publicStateRoute = readFileSync(new URL("../app/api/session/state/route.ts", import.meta.url), "utf8");
 const servicePatchRoute = readFileSync(new URL("../app/api/service-requests/[id]/route.ts", import.meta.url), "utf8");
 const adminServiceRoute = readFileSync(new URL("../app/api/admin/service-requests/[id]/route.ts", import.meta.url), "utf8");
+const remoteStateClient = readFileSync(new URL("../app/lib/remote-state.ts", import.meta.url), "utf8");
 
 describe("anonymous server input validation", () => {
   it("accepts only bounded image data URLs", () => {
@@ -27,5 +28,9 @@ describe("anonymous server input validation", () => {
     expect(servicePatchRoute).toContain('"application-ready"].includes(current.status)');
     expect(adminServiceRoute).toContain('admin_note: adminNote');
     expect(adminServiceRoute).toContain('admin_updated_at: now');
+  });
+
+  it("normalizes an empty listing image to null before server validation", () => {
+    expect(remoteStateClient).toContain("imageDataUrl: product.imageDataUrl || null");
   });
 });
