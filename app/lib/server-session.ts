@@ -1,9 +1,10 @@
-import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { cookies, headers } from "next/headers";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 const SESSION_COOKIE = "ku_settle_session";
 const ADMIN_COOKIE = "ku_settle_admin";
+const ADMIN_ACTOR_COOKIE = "ku_settle_admin_actor";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 365;
 const ADMIN_TTL_SECONDS = 60 * 60 * 8;
 const ADMIN_AUTH_WINDOW_MS = 10 * 60 * 1000;
@@ -69,7 +70,20 @@ export async function isAdminRequest() {
   const jar = await cookies();
   const supplied = jar.get(ADMIN_COOKIE)?.value;
   if (!supplied || supplied.length !== expected.length) return false;
-  return timingSafeEqual(Buffer.from(supplied), Buffer.from(expected));
+  return timingSafeEqual(Buffer.from(supplied), Buffer.from(expected)) && Boolean(await adminActor());
+}
+
+function actorSignature(value: string) { return createHmac("sha256", process.env.ADMIN_API_TOKEN || "").update(value).digest("base64url"); }
+export async function adminActor() {
+  const raw = (await cookies()).get(ADMIN_ACTOR_COOKIE)?.value;
+  if (!raw) return null;
+  const [encoded, issuedAt, signature] = raw.split(".");
+  if (!encoded || !issuedAt || !signature || !/^\d{13}$/.test(issuedAt)) return null;
+  const expected = actorSignature(`${encoded}.${issuedAt}`);
+  if (expected.length !== signature.length || !timingSafeEqual(Buffer.from(expected), Buffer.from(signature))) return null;
+  if (Date.now() - Number(issuedAt) > ADMIN_TTL_SECONDS * 1000) return null;
+  const actor = Buffer.from(encoded, "base64url").toString("utf8").trim();
+  return actor.length >= 1 && actor.length <= 80 ? actor : null;
 }
 
 export async function checkAdminRateLimit(request: Request, kind: "auth" | "api") {
@@ -93,11 +107,17 @@ export async function checkAdminRateLimit(request: Request, kind: "auth" | "api"
   return { allowed: true, retryAfter: 0 };
 }
 
-export async function establishAdminSession(token: string) {
+export async function establishAdminSession(token: string, actor: string) {
   const expected = process.env.ADMIN_API_TOKEN;
-  if (!expected || token.length !== expected.length || !timingSafeEqual(Buffer.from(token), Buffer.from(expected))) return false;
-  (await cookies()).set(ADMIN_COOKIE, token, cookieOptions(ADMIN_TTL_SECONDS));
+  const normalizedActor = actor.trim();
+  if (!expected || !normalizedActor || normalizedActor.length > 80 || token.length !== expected.length || !timingSafeEqual(Buffer.from(token), Buffer.from(expected))) return false;
+  const jar = await cookies();
+  jar.set(ADMIN_COOKIE, token, cookieOptions(ADMIN_TTL_SECONDS));
+  const issuedAt = String(Date.now()); const encoded = Buffer.from(normalizedActor, "utf8").toString("base64url");
+  jar.set(ADMIN_ACTOR_COOKIE, `${encoded}.${issuedAt}.${actorSignature(`${encoded}.${issuedAt}`)}`, cookieOptions(ADMIN_TTL_SECONDS));
   return true;
 }
+
+export async function clearAdminSession() { const jar = await cookies(); for (const name of [ADMIN_COOKIE, ADMIN_ACTOR_COOKIE]) jar.set(name, "", { ...cookieOptions(0), maxAge: 0 }); }
 
 export { serverClient };

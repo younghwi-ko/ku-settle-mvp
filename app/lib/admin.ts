@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { apiError, jsonBody, record, text } from "./server-api";
-import { checkAdminRateLimit, isAdminRequest, requireSameOrigin, serverClient } from "./server-session";
+import { adminActor, checkAdminRateLimit, isAdminRequest, requireSameOrigin, serverClient } from "./server-session";
 
 export async function requireAdmin(request: Request, mutation = false) {
   const limit = await checkAdminRateLimit(request, "api");
@@ -22,7 +22,7 @@ export function adminText(value: unknown, max: number, required = false) {
 }
 
 export async function audit(client: NonNullable<ReturnType<typeof serverClient>>, resourceType: string, resourceKey: string, action: string, reason?: string | null) {
-  await client.from("admin_audit_log").insert({ actor: "admin", resource_type: resourceType, resource_key: resourceKey, action, reason: reason ? reason.slice(0, 500) : null });
+  await client.from("admin_audit_log").insert({ actor: await adminActor() ?? "operator", resource_type: resourceType, resource_key: resourceKey, action, reason: reason ? reason.slice(0, 500) : null });
 }
 
 export function versionOf(value: unknown) { return typeof value === "number" && Number.isInteger(value) && value > 0 ? value : null; }

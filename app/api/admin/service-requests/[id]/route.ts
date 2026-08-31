@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { apiError } from "@/app/lib/server-api";
 import { adminBody, audit, requireAdmin, versionOf } from "@/app/lib/admin";
+import { adminActor } from "@/app/lib/server-session";
 import { uuid } from "@/app/lib/server-api";
 import { manualFulfillmentProvider } from "@/app/lib/fulfillment-provider";
 
@@ -18,11 +19,12 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   if (["completed", "cancelled"].includes(current.status) && status !== "soft_deleted") return apiError("service_request_terminal", 409);
   const adminNote = body.adminNote === undefined ? current.admin_note : typeof body.adminNote === "string" && body.adminNote.trim().length <= 2000 ? body.adminNote.trim() || null : undefined;
   const estimatedCostLabel = body.estimatedCostLabel === undefined ? current.estimated_cost_label : typeof body.estimatedCostLabel === "string" && body.estimatedCostLabel.trim().length <= 120 ? body.estimatedCostLabel.trim() || null : undefined;
-  if (adminNote === undefined || estimatedCostLabel === undefined) return apiError("invalid_service_request", 422);
-  const now = new Date().toISOString();
-  const updates = { status, estimated_cost_label: estimatedCostLabel, admin_note: adminNote, admin_updated_at: now, admin_updated_by: "admin", version: current.version + 1, updated_at: now, deleted_at: status === "soft_deleted" ? now : null, deleted_by: status === "soft_deleted" ? "admin" : null, deletion_reason: status === "soft_deleted" ? (typeof body.deletionReason === "string" ? body.deletionReason.slice(0, 500) : "admin cleanup") : null };
+  const cancelReason = body.cancelReason === undefined ? current.admin_cancel_reason : typeof body.cancelReason === "string" && body.cancelReason.trim().length <= 500 ? body.cancelReason.trim() || null : undefined;
+  if (adminNote === undefined || estimatedCostLabel === undefined || cancelReason === undefined) return apiError("invalid_service_request", 422);
+  const now = new Date().toISOString(); const actor = await adminActor() ?? "operator";
+  const updates = { status, estimated_cost_label: estimatedCostLabel, admin_note: adminNote, admin_cancel_reason: status === "cancelled" ? cancelReason : current.admin_cancel_reason, admin_updated_at: now, admin_updated_by: actor, version: current.version + 1, updated_at: now, deleted_at: status === "soft_deleted" ? now : null, deleted_by: status === "soft_deleted" ? actor : null, deletion_reason: status === "soft_deleted" ? (typeof body.deletionReason === "string" ? body.deletionReason.slice(0, 500) : "admin cleanup") : null };
   const { data, error } = await client.from("guest_service_requests").update(updates).eq("id", id).eq("version", current.version).select("*").single(); if (error || !data) return apiError("version_conflict", 409);
-  await audit(client, "service_request", id, status === "soft_deleted" ? "soft_delete" : status === "cancelled" ? "cancel" : current.status === "soft_deleted" ? "restore" : "status_change");
+  await audit(client, "service_request", id, status === "soft_deleted" ? "soft_delete" : status === "cancelled" ? "cancel" : current.status === "soft_deleted" ? "restore" : "status_change", status === "cancelled" ? cancelReason : null);
   if (data.service_type === "delivery" || data.service_type === "storage") await manualFulfillmentProvider.notifyStatusChange({ requestId: id, serviceType: data.service_type, status, processedAt: now });
   return NextResponse.json({ serviceRequest: data });
 }

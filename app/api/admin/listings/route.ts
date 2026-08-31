@@ -2,13 +2,19 @@ import { createHash, randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { apiError, text, uuid, validImage } from "@/app/lib/server-api";
 import { adminBody, audit, requireAdmin } from "@/app/lib/admin";
+import { adminListParams, pagination } from "@/app/lib/admin-list";
 
 const categories: Record<string, string> = { Home: "home", Kitchen: "kitchen", Electronics: "electronics", Bedding: "bedding", home: "home", kitchen: "kitchen", electronics: "electronics", bedding: "bedding" };
 const conditions: Record<string, string> = { likeNew: "like_new", like_new: "like_new", good: "good", used: "used", clean: "clean" };
 export async function GET(request: Request) {
   const { client, response } = await requireAdmin(request); if (response || !client) return response ?? apiError("server_storage_not_configured", 503);
-  const { data, error } = await client.from("guest_listings").select("*").order("updated_at", { ascending: false });
-  return error ? apiError("admin_listings_load_failed", 502) : NextResponse.json({ listings: data ?? [] });
+  const params = adminListParams(request);
+  let query = client.from("guest_listings").select("*", { count: "exact" }).order("updated_at", { ascending: false });
+  if (!params.includeDeleted) query = query.neq("status", "deleted");
+  if (params.status) query = query.eq("status", params.status);
+  if (params.search) query = query.or(`item_name.ilike.%${params.search}%,seller_name.ilike.%${params.search}%`);
+  const { data, error, count } = await query.range((params.page - 1) * params.pageSize, params.page * params.pageSize - 1);
+  return error ? apiError("admin_listings_load_failed", 502) : NextResponse.json({ listings: data ?? [], pagination: pagination(params, count) });
 }
 
 export async function POST(request: Request) {

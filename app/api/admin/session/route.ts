@@ -7,7 +7,8 @@ export async function POST(request: Request) {
   if (!limit.allowed) return NextResponse.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": String(limit.retryAfter), "Cache-Control": "no-store" } });
   const body = await jsonBody(request);
   const token = record(body) ? text(body.token, 512) : null;
-  if (!token) return NextResponse.json({ error: "invalid_admin_token" }, { status: 401, headers: { "Cache-Control": "no-store" } });
-  if (!await establishAdminSession(token)) return NextResponse.json({ error: "invalid_admin_token" }, { status: 403, headers: { "Cache-Control": "no-store" } });
+  const actor = record(body) ? text(body.operatorName, 80) : null;
+  if (!token || !actor) return NextResponse.json({ error: "invalid_admin_session" }, { status: 401, headers: { "Cache-Control": "no-store" } });
+  if (!await establishAdminSession(token, actor)) return NextResponse.json({ error: "invalid_admin_session" }, { status: 403, headers: { "Cache-Control": "no-store" } });
   return NextResponse.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });
 }

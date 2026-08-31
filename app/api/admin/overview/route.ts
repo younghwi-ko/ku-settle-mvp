@@ -14,7 +14,7 @@ export async function GET() {
     client.from("admin_place_overrides").select("*").order("updated_at", { ascending: false }),
     client.from("admin_guide_overrides").select("*").order("updated_at", { ascending: false }),
     client.from("guest_reports").select("*").order("updated_at", { ascending: false }),
-    client.from("admin_audit_log").select("id,resource_type,resource_key,action,reason,created_at").order("created_at", { ascending: false }).limit(50),
+    client.from("admin_audit_log").select("id,actor,resource_type,resource_key,action,reason,created_at").order("created_at", { ascending: false }).limit(50),
   ]);
   if (listings.error || reservations.error || services.error || places.error || guides.error || reports.error || auditLog.error) return apiError("admin_load_failed", 502);
   const visibleListings = (listings.data ?? []).filter((row) => row.status !== "deleted" && row.status !== "soft_deleted");

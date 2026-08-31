@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "node:crypto";
 import { apiError, jsonBody, optionalText, record, sessionOrError, uuid } from "@/app/lib/server-api";
 import { requireSameOrigin, serverClient } from "@/app/lib/server-session";
 const modes = new Set(["pickup", "delivery", "storage", "sale", "donation", "disposal"]);
@@ -27,8 +28,15 @@ export async function POST(request: Request) {
   }
   if (idempotencyKey) { const { data: duplicate } = await client.from("guest_service_requests").select("*").eq("session_id", session.id).eq("idempotency_key", idempotencyKey).maybeSingle(); if (duplicate) return NextResponse.json({ serviceRequest: duplicate }); }
   if (status !== "method-selected") return apiError("invalid_service_transition", 409);
-  const { data, error } = await client.from("guest_service_requests").insert({ ...payload, created_at: now, version: 1 }).select("*").single();
-  return error || !data ? apiError(error?.code === "23505" ? "duplicate_service_request" : "service_request_create_failed", error?.code === "23505" ? 409 : 502) : NextResponse.json({ serviceRequest: data }, { status: 201 });
+  // The public reference must be unique independently of the request idempotency key.
+  // A collision is unlikely, but retrying keeps the user-visible guarantee deterministic.
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const referenceCode = `REQ-${randomBytes(5).toString("hex").toUpperCase()}`;
+    const { data, error } = await client.from("guest_service_requests").insert({ ...payload, reference_code: referenceCode, created_at: now, version: 1 }).select("*").single();
+    if (data && !error) return NextResponse.json({ serviceRequest: data }, { status: 201 });
+    if (error?.code !== "23505") return apiError("service_request_create_failed", 502);
+  }
+  return apiError("service_request_reference_unavailable", 503);
 }
 
 export { transitions };

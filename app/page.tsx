@@ -471,10 +471,27 @@ export default function Home() {
     const id = String(product.id);
     setLocalPreferences((current) => ({ ...current, favoriteProductIds: current.favoriteProductIds.includes(id) ? current.favoriteProductIds.filter((item) => item !== id) : [...current.favoriteProductIds, id] }));
   };
-  const updateServiceRequest = (target: { productId?: string; taskId?: string }, mode: ServiceRequestMode, updates: Partial<LocalServiceRequest> = {}) => {
+  const updateServiceRequest = async (target: { productId?: string; taskId?: string }, mode: ServiceRequestMode, updates: Partial<LocalServiceRequest> = {}) => {
     const existing = localPreferences.serviceRequests.find((item) => item.productId === target.productId && item.taskId === target.taskId && item.mode === mode); const now = new Date().toISOString(); const next: LocalServiceRequest = { ...(existing ?? { id: `service-${Date.now()}`, createdAt: now }), ...target, mode, status: updates.status ?? existing?.status ?? "method-selected", updatedAt: now, ...updates };
     setLocalPreferences((current) => { const index = current.serviceRequests.findIndex((item) => item.id === next.id); return { ...current, serviceRequests: index >= 0 ? current.serviceRequests.map((item, i) => i === index ? next : item) : [next, ...current.serviceRequests] }; });
-    if (remoteReady) void upsertRemoteService(next).catch(() => setServiceMessage("errors:generic"));
+    if (!remoteReady) return;
+    try {
+      const saved = serverServiceToLocal(await upsertRemoteService(next));
+      if (!saved) throw new Error("invalid_service_response");
+      setLocalPreferences((current) => ({ ...current, serviceRequests: current.serviceRequests.some((item) => item.id === next.id) ? current.serviceRequests.map((item) => item.id === next.id ? saved : item) : [saved, ...current.serviceRequests] }));
+      setServiceMessage("common:saved");
+    } catch {
+      // Do not leave an unsaved optimistic service request on screen. Re-read the
+      // server state when possible so a concurrent administrator update wins.
+      try {
+        const remote = await fetchRemoteState();
+        const requests = remote.serviceRequests.map(serverServiceToLocal).filter((item): item is LocalServiceRequest => Boolean(item));
+        setLocalPreferences((current) => ({ ...current, serviceRequests: requests }));
+      } catch {
+        setLocalPreferences((current) => ({ ...current, serviceRequests: existing ? current.serviceRequests.map((item) => item.id === next.id ? existing : item) : current.serviceRequests.filter((item) => item.id !== next.id) }));
+      }
+      setServiceMessage("errors:generic");
+    }
   };
 
   const completeGuestImport = async () => {
@@ -547,7 +564,7 @@ export default function Home() {
         <SetupModal t={t} submit={startPersonalizedPlan} skip={skipForDemo}/>
       )}
       {resetOpen && <ResetModal t={t} close={() => setResetOpen(false)} confirm={resetDemo}/>}
-      {infoPage && <PublicInfoModal page={infoPage} close={() => setInfoPage(null)}/>}
+      {infoPage && <PublicInfoModal locale={locale} page={infoPage} close={() => setInfoPage(null)}/>}
       {profileOpen && (
         <VerificationModal locale={locale} t={t} profile={currentProfile} email={email} setEmail={setEmail} verified={verified} verifyError={verifyError} close={() => setProfileOpen(false)} verify={() => { const ok = /^[^@\s]+@korea\.ac\.kr$/i.test(email); setVerifyError(!ok); if (ok) setVerified(true); }}/>
       )}
@@ -964,15 +981,42 @@ function ResetModal({ t, close, confirm }: { t: TFunction; close: () => void; co
   return <Modal close={close} label={tr(t, "reset:title")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className="modal-icon reset"><RotateCcw/></div><h2>{tr(t, "reset:title")}</h2><p>{tr(t, "reset:body")}</p><div className="modal-actions"><button className="secondary" onClick={close}>{tr(t, "common:cancel")}</button><button className="danger-button" onClick={confirm}>{tr(t, "reset:confirm")}</button></div></Modal>;
 }
 
-function PublicInfoModal({ page, close }: { page: "about" | "terms" | "privacy" | "safety" | "sources" | "disclaimer"; close: () => void }) {
-  const content = {
-    about: ["About KU Settle", "A student-built prototype for organizing arrival-to-departure information. It is not an official Korea University service."],
-    terms: ["Terms of use — draft", "Use this information as a starting point and confirm important decisions with official sources. This draft has not received legal review."],
-    privacy: ["Privacy notice — draft", "Anonymous session data is stored for this browser. Authentication-related data is not used in this release. Future account features require a separate policy update."],
-    safety: ["Marketplace safety", "Meet in a safe public place, inspect items before payment, and do not share financial or identity details through this prototype."],
-    sources: ["Information sources and correction policy", "Official sources are identified on Life Guide articles. Sample Local Guide cards are not verified recommendations. Corrections are saved locally until reporting is available."],
-    disclaimer: ["Disclaimer", "KU Settle does not provide legal, immigration, medical, financial, or university-authoritative advice. Confirm current information with the responsible official organization."]
-  }[page];
+function PublicInfoModal({ locale, page, close }: { locale: Locale; page: "about" | "terms" | "privacy" | "safety" | "sources" | "disclaimer"; close: () => void }) {
+  const contents: Record<Locale, Record<typeof page, [string, string]>> = {
+    ko: {
+      about: ["KU Settle 소개", "KU Settle은 익명 세션 기반의 정착 준비, 상품 등록·예약, 수동 배송·보관 신청 현황을 제공합니다. 고려대학교 공식 서비스가 아닙니다."],
+      terms: ["이용약관 초안", "배송·보관 신청은 운영자가 수동으로 검토합니다. 비용은 운영자 확인 후 안내하며, 서비스 내 결제는 지원하지 않습니다. 이 문서는 법률 자문이 아닌 정책 초안입니다."],
+      privacy: ["개인정보 처리 안내 초안", "익명 세션 데이터는 이 브라우저와 서비스 운영을 위해 저장됩니다. 금융·신원·민감정보를 입력하지 마세요. 이 문서는 정식 검토 전 정책 초안입니다."],
+      safety: ["마켓·배송·보관 안전 안내", "안전한 공개 장소에서 거래하고 물품 상태와 인계 기록을 확인하세요. 진행 중 이전에는 취소할 수 있고, 이후 취소는 운영자 검토가 필요합니다. 분실·파손 기준은 운영 정책 초안입니다."],
+      sources: ["정보 출처와 정정 기준", "생활 가이드에는 공식 출처를 표시합니다. 내부 검증 장소와 카카오 검색 후보는 구분해 표시합니다. 운영자 문의는 준비 중이며, 현재 신청 진행은 상태 업데이트에서 확인하세요."],
+      disclaimer: ["서비스 안내", "현재 익명 세션, 상품 등록·예약, 수동 배송·보관 신청을 제공합니다. 결제, 업체 연동, 외부 메시지는 향후 연동 예정입니다. 중요한 결정은 담당 기관의 최신 안내를 확인하세요."]
+    },
+    en: {
+      about: ["About KU Settle", "KU Settle provides anonymous planning, listing and reservation flows, and manual delivery or storage request tracking. It is not an official Korea University service."],
+      terms: ["Terms of use — policy draft", "Delivery and storage requests are reviewed manually. Costs are confirmed by an operator; payment is not processed in this service. This is a policy draft, not legal advice."],
+      privacy: ["Privacy notice — policy draft", "Anonymous session data is stored for this browser and service operations. Do not submit financial, identity, or sensitive information. This draft awaits formal review."],
+      safety: ["Marketplace and fulfillment safety", "Meet in a safe public place, inspect items, and keep handover records. Cancellation is available before work is in progress; later cancellation requires operator review. Loss and damage handling is an operational policy draft."],
+      sources: ["Information sources and correction policy", "Life Guide articles identify official sources. Internal verified places and Kakao search candidates are shown separately. Operator contact is being prepared; check request status updates for progress."],
+      disclaimer: ["Service notice", "Current features include anonymous sessions, listings, reservations, and manually processed delivery or storage requests. Payment, providers, and external messaging are planned integrations. Confirm important decisions with the responsible organization."]
+    },
+    ja: {
+      about: ["KU Settleについて", "KU Settleは、匿名セッションによる準備、出品・予約、手動配送・保管申請の状況確認を提供します。高麗大学の公式サービスではありません。"],
+      terms: ["利用規約（草案）", "配送・保管申請は運営者が手動で確認します。費用は確認後に案内され、サービス内決済には対応していません。これは法的助言ではない運用方針の草案です。"],
+      privacy: ["プライバシー案内（草案）", "匿名セッションのデータは、このブラウザとサービス運営のために保存されます。金融・本人確認・機微情報は入力しないでください。"],
+      safety: ["マーケット・配送・保管の安全案内", "安全な公共の場所で取引し、物品と引き渡し記録を確認してください。作業開始前はキャンセルでき、以降は運営者の確認が必要です。"],
+      sources: ["情報源と訂正方針", "生活ガイドでは公式情報源を表示します。内部確認済みの場所とKakao検索候補は分けて表示します。運営者への問い合わせは準備中です。"],
+      disclaimer: ["サービス案内", "現在、匿名セッション、出品・予約、手動の配送・保管申請を提供しています。決済、事業者連携、外部メッセージは今後の連携予定です。"]
+    },
+    "zh-CN": {
+      about: ["关于 KU Settle", "KU Settle 提供匿名会话准备、商品发布与预约，以及人工配送和寄存申请进度查询。它不是高丽大学官方服务。"],
+      terms: ["使用条款（草案）", "配送和寄存申请由运营人员人工审核。费用将在确认后说明，服务内暂不提供支付。本文件为政策草案，并非法律意见。"],
+      privacy: ["隐私说明（草案）", "匿名会话数据会为当前浏览器和服务运营而保存。请勿提交金融、身份或敏感信息。本草案有待正式审查。"],
+      safety: ["市场、配送和寄存安全说明", "请在安全的公共场所交易，检查商品并保留交接记录。开始处理前可取消；之后取消需运营人员审核。"],
+      sources: ["信息来源与更正政策", "生活指南会标明官方来源。内部验证地点与 Kakao 搜索候选会分别显示。运营咨询正在准备中，请通过申请状态查看进度。"],
+      disclaimer: ["服务说明", "当前提供匿名会话、商品发布与预约、人工配送和寄存申请。支付、服务商对接和外部消息为后续计划。"]
+    }
+  };
+  const content = contents[locale][page];
   return <Modal close={close} label={content[0]}><button className="modal-close" onClick={close} aria-label="Close"><X/></button><h2>{content[0]}</h2><p>{content[1]}</p></Modal>;
 }
 
@@ -991,7 +1035,7 @@ function ServiceOptions({ locale, requests, update }: { locale: Locale; requests
   const modes: ServiceRequestMode[] = ["pickup", "delivery", "storage"];
   const days = locale === "ko" ? "일" : locale === "ja" ? "日" : locale === "zh-CN" ? "天" : " days";
   const canCancel = (status: LocalServiceRequest["status"]) => ["not-selected", "method-selected", "consultation-ready", "quote-viewed", "application-ready"].includes(status);
-  return <div className="service-demo-box"><strong>{serviceUi(locale, "method")}</strong><div className="service-option-grid">{modes.map((mode) => { const request = requests.find((item) => item.mode === mode); return <button key={mode} className={request ? "active" : ""} disabled={Boolean(request)} onClick={() => update(mode, { status: "method-selected", ...(mode === "delivery" ? { deliveryMethod: "undecided", estimatedCostLabel: locale === "ko" ? "견적 확인 필요" : "Quote required" } : {}), ...(mode === "storage" ? { storageDuration: "30", storageLocation: "campus", estimatedCostLabel: locale === "ko" ? "견적 확인 필요" : "Quote required" } : {}) })}>{request ? `${serviceUi(locale, mode)} · ${serviceStatusUi(locale, request.status)}` : serviceUi(locale, mode)}</button>; })}</div><p className="muted-copy">{locale === "ko" ? "신청 후 운영자가 상태와 견적 안내를 갱신합니다. 결제는 이 서비스에서 진행하지 않습니다." : "After submission, the operations team updates the status and estimate guidance. Payments are not processed in this service."}</p>{requests.map((request) => <div className="service-demo-details" key={request.id}><strong>{serviceUi(locale, request.mode)} · {serviceStatusUi(locale, request.status)}</strong><span>{serviceNextGuide(locale, request.status)}</span>{request.estimatedCostLabel && <span>{locale === "ko" ? "비용 안내: " : "Cost guidance: "}{request.estimatedCostLabel}</span>}<time dateTime={request.updatedAt}>{locale === "ko" ? "최근 갱신: " : "Last updated: "}{new Date(request.updatedAt).toLocaleString(locale)}</time>{request.mode === "delivery" && <label>{locale === "ko" ? "배송 방식" : locale === "ja" ? "配送方法" : locale === "zh-CN" ? "配送方式" : "Delivery method"}<select disabled={!canCancel(request.status)} value={request.deliveryMethod ?? "undecided"} onChange={(event) => update("delivery", { deliveryMethod: event.target.value as "parcel" | "courier" | "undecided" })}><option value="undecided">{locale === "ko" ? "선택 전" : "Not selected"}</option><option value="parcel">{locale === "ko" ? "택배" : "Parcel"}</option><option value="courier">{locale === "ko" ? "퀵·당일 배송" : "Courier"}</option></select></label>}{request.mode === "storage" && <><label>{serviceUi(locale, "duration")}<select disabled={!canCancel(request.status)} value={request.storageDuration ?? "30"} onChange={(event) => update("storage", { storageDuration: event.target.value as "7" | "30" | "90" })}><option value="7">7{days}</option><option value="30">30{days}</option><option value="90">90{days}</option></select></label><label>{serviceUi(locale, "location")}<select disabled={!canCancel(request.status)} value={request.storageLocation ?? "campus"} onChange={(event) => update("storage", { storageLocation: event.target.value as "campus" | "partner" })}><option value="campus">{locale === "ko" ? "캠퍼스 보관소" : "Campus storage"}</option><option value="partner">{locale === "ko" ? "제휴 보관소" : "Partner storage"}</option></select></label></>}{canCancel(request.status) && <button className="danger-link" onClick={() => update(request.mode, { status: "cancelled" })}>{locale === "ko" ? "신청 취소" : "Cancel request"}</button>}</div>)}</div>;
+  return <div className="service-demo-box"><strong>{serviceUi(locale, "method")}</strong><div className="service-option-grid">{modes.map((mode) => { const request = requests.find((item) => item.mode === mode); return <button key={mode} className={request ? "active" : ""} disabled={Boolean(request)} onClick={() => update(mode, { status: "method-selected", ...(mode === "delivery" ? { deliveryMethod: "undecided", estimatedCostLabel: locale === "ko" ? "견적 확인 필요" : "Quote required" } : {}), ...(mode === "storage" ? { storageDuration: "30", storageLocation: "campus", estimatedCostLabel: locale === "ko" ? "견적 확인 필요" : "Quote required" } : {}) })}>{request ? `${serviceUi(locale, mode)} · ${serviceStatusUi(locale, request.status)}` : serviceUi(locale, mode)}</button>; })}</div><p className="muted-copy">{locale === "ko" ? "신청 후 운영자가 상태와 견적 안내를 갱신합니다. 결제는 이 서비스에서 진행하지 않습니다." : "After submission, the operations team updates the status and estimate guidance. Payments are not processed in this service."}</p>{requests.map((request) => <div className="service-demo-details" key={request.id}><strong>{serviceUi(locale, request.mode)} · {serviceStatusUi(locale, request.status)}</strong>{request.referenceCode && <span className="service-reference">{locale === "ko" ? "접수번호: " : "Reference: "}{request.referenceCode}</span>}<span>{serviceNextGuide(locale, request.status)}</span>{request.estimatedCostLabel && <span>{locale === "ko" ? "비용 안내: " : "Cost guidance: "}{request.estimatedCostLabel}</span>}<time dateTime={request.createdAt}>{locale === "ko" ? "신청 시각: " : "Submitted: "}{new Date(request.createdAt ?? request.updatedAt).toLocaleString(locale)}</time><time dateTime={request.updatedAt}>{locale === "ko" ? "최근 갱신: " : "Last updated: "}{new Date(request.updatedAt).toLocaleString(locale)}</time>{request.mode === "delivery" && <label>{locale === "ko" ? "배송 방식" : locale === "ja" ? "配送方法" : locale === "zh-CN" ? "配送方式" : "Delivery method"}<select disabled={!canCancel(request.status)} value={request.deliveryMethod ?? "undecided"} onChange={(event) => update("delivery", { deliveryMethod: event.target.value as "parcel" | "courier" | "undecided" })}><option value="undecided">{locale === "ko" ? "선택 전" : "Not selected"}</option><option value="parcel">{locale === "ko" ? "택배" : "Parcel"}</option><option value="courier">{locale === "ko" ? "퀵·당일 배송" : "Courier"}</option></select></label>}{request.mode === "storage" && <><label>{serviceUi(locale, "duration")}<select disabled={!canCancel(request.status)} value={request.storageDuration ?? "30"} onChange={(event) => update("storage", { storageDuration: event.target.value as "7" | "30" | "90" })}><option value="7">7{days}</option><option value="30">30{days}</option><option value="90">90{days}</option></select></label><label>{serviceUi(locale, "location")}<select disabled={!canCancel(request.status)} value={request.storageLocation ?? "campus"} onChange={(event) => update("storage", { storageLocation: event.target.value as "campus" | "partner" })}><option value="campus">{locale === "ko" ? "캠퍼스 보관소" : "Campus storage"}</option><option value="partner">{locale === "ko" ? "제휴 보관소" : "Partner storage"}</option></select></label></>}{canCancel(request.status) && <button className="danger-link" onClick={() => update(request.mode, { status: "cancelled" })}>{locale === "ko" ? "신청 취소" : "Cancel request"}</button>}</div>)}</div>;
 }
 
 function ProductModal({ locale, t, profile, mode, product: rawProduct, reservation, serviceRequests, updateService, close, contact, changeStatus, reserve, cancelReservation, edit }: { locale: Locale; t: TFunction; profile: UserProfile; mode: ProductModalMode; product: MarketProduct; reservation?: import("./lib/local-data").LocalReservation; serviceRequests: LocalServiceRequest[]; updateService: (mode: ServiceRequestMode, updates?: Partial<LocalServiceRequest>) => void; close: () => void; contact: () => void; reserve: () => void; cancelReservation: () => void; edit: () => void; changeStatus: (status: "active" | "sold" | "hidden" | "deleted") => void }) {
