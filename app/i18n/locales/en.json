@@ -129,7 +129,7 @@
     "message": "Hi! Is this still available? I can pick it up near campus.",
     "messageReady": "Demo message ready", "changePickup": "Change pickup time", "savePickup": "Save schedule", "pickupPast": "Pickup time passed", "reservationCompleted": "Completed", "reservationCancelled": "Cancelled",
     "empty": "No items match your search.",
-    "form": { "title": "List an item for the next student", "body": "Add a simple listing using the same icon-based cards. No image upload is needed for this demo.", "itemName": "Item name", "price": "Price", "category": "Category", "condition": "Condition", "pickup": "Pickup location", "availability": "Availability", "submit": "Add listing", "success": "Your item was added. It is now visible to incoming students.", "itemPlaceholder": "e.g. Study chair", "pricePlaceholder": "e.g. 20000", "pickupPlaceholder": "e.g. KU Main Gate" },
+    "form": { "title": "List an item for the next student", "body": "Add an image to help buyers understand the item's condition.", "itemName": "Item name", "price": "Price", "category": "Category", "condition": "Condition", "pickup": "Pickup location", "availability": "Availability", "submit": "Add listing", "success": "Your item was added. It is now visible to incoming students.", "itemPlaceholder": "e.g. Study chair", "pricePlaceholder": "e.g. 20000", "pickupPlaceholder": "e.g. KU Main Gate" },
     "actions": { "browse": "Browse Marketplace", "list": "List an item" },
     "userSeller": "KU student · {{name}}",
     "authRequiredTitle": "Sign in to list a real item",
