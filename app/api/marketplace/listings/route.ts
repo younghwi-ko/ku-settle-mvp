@@ -5,11 +5,26 @@ import { requireSameOrigin, serverClient } from "@/app/lib/server-session";
 const categories: Record<string, string> = { Home: "home", Kitchen: "kitchen", Electronics: "electronics", Bedding: "bedding", home: "home", kitchen: "kitchen", electronics: "electronics", bedding: "bedding" };
 const conditions: Record<string, string> = { likeNew: "like_new", like_new: "like_new", good: "good", used: "used", clean: "clean" };
 
-export async function GET() {
+export async function GET(request: Request) {
   const client = serverClient();
   if (!client) return apiError("server_storage_not_configured", 503);
-  const { data, error } = await client.from("guest_listings").select("*").in("status", ["active", "reserved", "sold"]).order("created_at", { ascending: false });
-  return error ? apiError("listings_load_failed", 502) : NextResponse.json({ listings: data ?? [] });
+  const url = new URL(request.url);
+  const page = Math.max(1, Math.min(100000, Number.parseInt(url.searchParams.get("page") ?? "1", 10) || 1));
+  const pageSize = Math.max(1, Math.min(100, Number.parseInt(url.searchParams.get("pageSize") ?? "20", 10) || 20));
+  const search = (url.searchParams.get("search") ?? "").trim().slice(0, 120).replace(/[%_(),]/g, "");
+  const category = categories[url.searchParams.get("category") ?? ""];
+  const requestedStatus = url.searchParams.get("status");
+  const statuses = requestedStatus && ["active", "reserved", "sold"].includes(requestedStatus) ? [requestedStatus] : ["active", "reserved", "sold"];
+  const sort = url.searchParams.get("sort");
+  let query = client.from("guest_listings").select("*", { count: "exact" }).in("status", statuses);
+  if (search) query = query.or(`item_name.ilike.%${search}%,description.ilike.%${search}%,pickup_location.ilike.%${search}%`);
+  if (category) query = query.eq("category", category);
+  if (sort === "price_asc") query = query.order("price_krw", { ascending: true }).order("created_at", { ascending: false });
+  else if (sort === "price_desc") query = query.order("price_krw", { ascending: false }).order("created_at", { ascending: false });
+  else query = query.order("created_at", { ascending: false });
+  const { data, error, count } = await query.range((page - 1) * pageSize, page * pageSize - 1);
+  const total = count ?? 0;
+  return error ? apiError("listings_load_failed", 502) : NextResponse.json({ listings: data ?? [], pagination: { page, pageSize, total, totalPages: Math.max(1, Math.ceil(total / pageSize)) } }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST(request: Request) {

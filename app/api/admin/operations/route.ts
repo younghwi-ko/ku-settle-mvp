@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { adminBody, adminText, audit, requireAdmin } from "@/app/lib/admin";
 import { apiError } from "@/app/lib/server-api";
+import { adminListParams, pagination } from "@/app/lib/admin-list";
 
 const statuses = new Set(["draft", "active", "inactive", "deleted"]);
 function durations(value: unknown) {
@@ -11,11 +12,16 @@ function durations(value: unknown) {
 function source(value: unknown) { if (value === undefined || value === null || value === "") return null; try { const url = new URL(String(value)); return ["https:", "http:"].includes(url.protocol) ? url.toString() : null; } catch { return null; } }
 function checked(value: unknown) { return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null; }
 
-export async function GET() {
-  const { client, response } = await requireAdmin(new Request("https://localhost/api/admin/operations"));
+export async function GET(request: Request) {
+  const { client, response } = await requireAdmin(request);
   if (response || !client) return response ?? apiError("server_storage_not_configured", 503);
-  const { data, error } = await client.from("admin_operation_rules").select("*").order("updated_at", { ascending: false });
-  return error ? apiError("operation_rules_load_failed", 502) : NextResponse.json({ operationRules: data ?? [] }, { headers: { "Cache-Control": "no-store" } });
+  const params = adminListParams(request);
+  let query = client.from("admin_operation_rules").select("*", { count: "exact" }).order("updated_at", { ascending: false });
+  if (!params.includeDeleted) query = query.neq("status", "deleted");
+  if (params.status) query = query.eq("status", params.status);
+  if (params.search) query = query.or(`title.ilike.%${params.search}%,address.ilike.%${params.search}%,rules.ilike.%${params.search}%`);
+  const { data, error, count } = await query.range((params.page - 1) * params.pageSize, params.page * params.pageSize - 1);
+  return error ? apiError("operation_rules_load_failed", 502) : NextResponse.json({ operationRules: data ?? [], pagination: pagination(params, count) }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST(request: Request) {

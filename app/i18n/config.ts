@@ -1,18 +1,32 @@
-import i18n from "i18next";
+import i18n, { type Resource } from "i18next";
 import { initReactI18next } from "react-i18next";
 import en from "./locales/en.json";
 import ko from "./locales/ko.json";
 import ja from "./locales/ja.json";
 import zhCN from "./locales/zh-CN.json";
-import { detectLocale, type Locale } from "./types";
+import uz from "./locales/uz.json";
+import vi from "./locales/vi.json";
+import mn from "./locales/mn.json";
+import ms from "./locales/ms.json";
+import { detectLocale, supportedLocales, type Locale } from "./types";
 
 export const namespaces = ["common", "navigation", "home", "onboarding", "marketplace", "localGuide", "verification", "profile", "admin", "reset", "validation", "errors", "accessibility"] as const;
-export const resources = {
-  en: Object.fromEntries(namespaces.map((namespace) => [namespace, en[namespace]])),
-  ko: Object.fromEntries(namespaces.map((namespace) => [namespace, ko[namespace]])),
-  ja: Object.fromEntries(namespaces.map((namespace) => [namespace, ja[namespace]])),
-  "zh-CN": Object.fromEntries(namespaces.map((namespace) => [namespace, zhCN[namespace]]))
-};
+type JsonObject = Record<string, unknown>;
+function deepMerge(base: JsonObject, override: JsonObject): JsonObject {
+  const output: JsonObject = { ...base };
+  for (const [key, value] of Object.entries(override)) {
+    output[key] = value && typeof value === "object" && !Array.isArray(value) && base[key] && typeof base[key] === "object" && !Array.isArray(base[key])
+      ? deepMerge(base[key] as JsonObject, value as JsonObject)
+      : value;
+  }
+  return output;
+}
+
+const localeSources: Record<string, JsonObject> = { en, ko, ja, "zh-CN": zhCN, uz, vi, mn, ms };
+export const resources = Object.fromEntries(supportedLocales.map((locale) => {
+  const source = locale === "en" ? en : deepMerge(en, localeSources[locale]);
+  return [locale, Object.fromEntries(namespaces.map((namespace) => [namespace, source[namespace]]))];
+})) as Resource;
 
 function resolveInitialLocale(): Locale {
   if (typeof window === "undefined") return "en";
@@ -32,7 +46,7 @@ if (!i18n.isInitialized) {
     resources,
     lng: initialLocale,
     fallbackLng: "en",
-    supportedLngs: ["en", "ko", "ja", "zh-CN"],
+    supportedLngs: [...supportedLocales],
     nonExplicitSupportedLngs: false,
     ns: [...namespaces],
     defaultNS: "common",
@@ -41,7 +55,7 @@ if (!i18n.isInitialized) {
     returnNull: false,
     returnEmptyString: false,
     saveMissing: process.env.NODE_ENV !== "production",
-    missingKeyHandler: (languages, namespace, key) => {
+    missingKeyHandler: (languages: readonly string[], namespace: string, key: string) => {
       if (process.env.NODE_ENV !== "production") console.warn(`[i18n] Missing translation: ${languages.join(",")} ${namespace}:${key}`);
     },
     parseMissingKeyHandler: () => en.errors.missingTranslation,

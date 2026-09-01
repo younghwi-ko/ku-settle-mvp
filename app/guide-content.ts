@@ -52,7 +52,8 @@ const localizedSections: Record<string, LocalizedSections> = {
 };
 
 export function getGuideLocaleCopy(article: LifeGuideArticle, locale: Locale): GuideLocaleCopy {
-  const base = article.locales[locale] ?? { title: article.title, summary: article.summary, content: article.content };
+  const base = (article.locales as Record<string, GuideLocaleCopy | undefined>)[locale]
+    ?? { title: article.title, summary: article.summary, content: article.content };
   const translated = localizedSections[article.id]?.[locale];
   return { ...base, checklist: translated?.checklist ?? article.checklist, steps: translated?.steps ?? article.steps, cautions: translated?.cautions ?? article.cautions };
 }

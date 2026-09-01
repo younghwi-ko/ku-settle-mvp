@@ -8,6 +8,16 @@ import { detectLocale, supportedLocales } from "../app/i18n/types.ts";
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const expectedNamespaces = ["common", "navigation", "home", "onboarding", "marketplace", "localGuide", "verification", "profile", "admin", "reset", "validation", "errors", "accessibility"];
 
+function deepMerge(base, override) {
+  const output = { ...base };
+  for (const [key, value] of Object.entries(override ?? {})) {
+    output[key] = value && typeof value === "object" && !Array.isArray(value) && base?.[key] && typeof base[key] === "object" && !Array.isArray(base[key])
+      ? deepMerge(base[key], value)
+      : value;
+  }
+  return output;
+}
+
 function flatten(value, prefix = "", output = new Map()) {
   if (Array.isArray(value)) {
     value.forEach((entry, index) => flatten(entry, `${prefix}.${index}`, output));
@@ -18,24 +28,25 @@ function flatten(value, prefix = "", output = new Map()) {
   }
   return output;
 }
+const interpolationVariables = (value) => [...String(value).matchAll(/{{\s*([\w.-]+)\s*}}/g)].map((match) => match[1]).sort();
 
 const locales = Object.fromEntries(await Promise.all(supportedLocales.map(async (locale) => {
   const source = await readFile(`${projectRoot}app/i18n/locales/${locale}.json`, "utf8");
   return [locale, JSON.parse(source)];
 })));
 
-for (const locale of supportedLocales) {
-  assert.deepEqual([...Object.keys(locales[locale])].sort(), [...expectedNamespaces].sort(), `${locale}: namespace names differ`);
-}
+for (const locale of supportedLocales) assert.ok(Object.keys(locales[locale]).every((key) => expectedNamespaces.includes(key)), `${locale}: unknown namespace`);
 
 const reference = flatten(locales.en);
 for (const locale of supportedLocales) {
-  const candidate = flatten(locales[locale]);
+  const candidate = flatten(deepMerge(locales.en, locales[locale]));
   assert.deepEqual([...candidate.keys()].sort(), [...reference.keys()].sort(), `${locale}: translation keys do not match English`);
   for (const [key, value] of candidate) {
     assert.equal(typeof value, "string", `${locale}:${key} must be a string`);
     assert.ok(value.trim().length > 0, `${locale}:${key} is empty`);
     assert.ok(!/^\w+(?:[:.]\w+){1,}$/.test(value), `${locale}:${key} looks like an exposed translation key`);
+    assert.deepEqual(interpolationVariables(value), interpolationVariables(reference.get(key)), `${locale}:${key} interpolation variables differ from English`);
+    if (["uz", "vi", "mn", "ms"].includes(locale)) assert.ok(!/[가-힣]/.test(value), `${locale}:${key} unexpectedly exposes Korean text`);
   }
 }
 
@@ -53,6 +64,10 @@ assert.equal(detectLocale(null, "ko", ["ja-JP"]), "ko", "existing KO storage val
 assert.equal(detectLocale(null, "en", ["ko-KR"]), "en", "existing EN storage value must migrate safely");
 assert.equal(detectLocale(null, null, ["ja-JP"]), "ja", "Japanese browser detection failed");
 assert.equal(detectLocale(null, null, ["zh-Hans-CN"]), "zh-CN", "Simplified Chinese browser detection failed");
+assert.equal(detectLocale(null, null, ["uz-Latn-UZ"]), "uz", "Uzbek browser detection failed");
+assert.equal(detectLocale(null, null, ["vi-VN"]), "vi", "Vietnamese browser detection failed");
+assert.equal(detectLocale(null, null, ["mn-MN"]), "mn", "Mongolian browser detection failed");
+assert.equal(detectLocale(null, null, ["ms-MY"]), "ms", "Malay browser detection failed");
 assert.equal(detectLocale(null, null, ["zh-TW"]), "en", "Traditional Chinese must currently fall back to English");
 assert.equal(detectLocale(null, null, ["fr-FR"]), "en", "unsupported language must fall back to English");
 assert.ok(!JSON.stringify(locales["zh-CN"]).includes("外国人登陆证"), "Simplified Chinese ARC terminology still contains 外国人登陆证");
@@ -63,7 +78,7 @@ assert.equal(joinOptionalLabel("English available", "   "), "English available",
 assert.equal(joinOptionalLabel("English available", null), "English available", "null optional guidance must not include a separator");
 assert.equal(joinOptionalLabel("English available", undefined), "English available", "undefined optional guidance must not include a separator");
 
-const fallbackResources = Object.fromEntries(supportedLocales.map((locale) => [locale, { common: structuredClone(locales[locale].common) }]));
+const fallbackResources = Object.fromEntries(supportedLocales.map((locale) => [locale, { common: structuredClone(deepMerge(locales.en.common, locales[locale].common ?? {})) }]));
 delete fallbackResources.ja.common.cancel;
 const fallbackInstance = i18next.createInstance();
 await fallbackInstance.init({ resources: fallbackResources, lng: "ja", fallbackLng: "en", ns: ["common"], defaultNS: "common", initAsync: false });

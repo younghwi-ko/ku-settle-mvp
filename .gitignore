@@ -1,6 +1,7 @@
 node_modules/
 .pnpm-store/
 .next/
+.vitest-cache/
 out/
 .vercel/
 supabase/.temp/

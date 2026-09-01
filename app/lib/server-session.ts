@@ -61,31 +61,39 @@ export async function getOrCreateServerSession() {
 }
 
 export async function requireSameOrigin(request: Request) {
-  const origin = (await headers()).get("origin");
-  if (!origin) return true;
-  try { return new URL(origin).host === new URL(request.url).host; } catch { return false; }
+  const requestHeaders = await headers();
+  const origin = requestHeaders.get("origin") ?? request.headers.get("origin");
+  if (!origin) return process.env.NODE_ENV !== "production";
+  try {
+    const expectedHost = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? new URL(request.url).host;
+    const expectedProtocol = requestHeaders.get("x-forwarded-proto") ?? new URL(request.url).protocol.replace(":", "");
+    const supplied = new URL(origin);
+    return supplied.host === expectedHost && supplied.protocol === `${expectedProtocol}:`;
+  } catch { return false; }
 }
 
 export async function isAdminRequest() {
   const expected = process.env.ADMIN_API_TOKEN;
   if (!expected) return false;
-  const jar = await cookies();
-  const supplied = jar.get(ADMIN_COOKIE)?.value;
-  if (!supplied || supplied.length !== expected.length) return false;
-  return timingSafeEqual(Buffer.from(supplied), Buffer.from(expected)) && Boolean(await adminActor());
+  return Boolean(parseAdminSession((await cookies()).get(ADMIN_COOKIE)?.value, expected));
 }
 
-function actorSignature(value: string) { return createHmac("sha256", process.env.ADMIN_API_TOKEN || "").update(value).digest("base64url"); }
-export async function adminActor() {
-  const raw = (await cookies()).get(ADMIN_ACTOR_COOKIE)?.value;
+function actorSignature(value: string, secret = process.env.ADMIN_API_TOKEN || "") { return createHmac("sha256", secret).update(value).digest("base64url"); }
+function parseAdminSession(raw: string | undefined, secret: string) {
   if (!raw) return null;
-  const [encoded, issuedAt, signature] = raw.split(".");
-  if (!encoded || !issuedAt || !signature || !/^\d{13}$/.test(issuedAt)) return null;
-  const expected = actorSignature(`${encoded}.${issuedAt}`);
+  const [issuedAt, nonce, encoded, signature] = raw.split(".");
+  if (!issuedAt || !/^\d{13}$/.test(issuedAt) || !/^[A-Za-z0-9_-]{20,80}$/.test(nonce ?? "") || !encoded || !signature) return null;
+  if (Date.now() - Number(issuedAt) > ADMIN_TTL_SECONDS * 1000 || Number(issuedAt) > Date.now() + 60_000) return null;
+  const payload = `${issuedAt}.${nonce}.${encoded}`;
+  const expected = actorSignature(payload, secret);
   if (expected.length !== signature.length || !timingSafeEqual(Buffer.from(expected), Buffer.from(signature))) return null;
-  if (Date.now() - Number(issuedAt) > ADMIN_TTL_SECONDS * 1000) return null;
   const actor = Buffer.from(encoded, "base64url").toString("utf8").trim();
-  return actor.length >= 1 && actor.length <= 80 ? actor : null;
+  return actor.length >= 1 && actor.length <= 80 ? { actor, issuedAt: Number(issuedAt) } : null;
+}
+export async function adminActor() {
+  const secret = process.env.ADMIN_API_TOKEN;
+  if (!secret) return null;
+  return parseAdminSession((await cookies()).get(ADMIN_COOKIE)?.value, secret)?.actor ?? null;
 }
 
 export async function checkAdminRateLimit(request: Request, kind: "auth" | "api") {
@@ -114,9 +122,13 @@ export async function establishAdminSession(token: string, actor: string) {
   const normalizedActor = actor.trim();
   if (!expected || !normalizedActor || normalizedActor.length > 80 || token.length !== expected.length || !timingSafeEqual(Buffer.from(token), Buffer.from(expected))) return false;
   const jar = await cookies();
-  jar.set(ADMIN_COOKIE, token, cookieOptions(ADMIN_TTL_SECONDS));
-  const issuedAt = String(Date.now()); const encoded = Buffer.from(normalizedActor, "utf8").toString("base64url");
-  jar.set(ADMIN_ACTOR_COOKIE, `${encoded}.${issuedAt}.${actorSignature(`${encoded}.${issuedAt}`)}`, cookieOptions(ADMIN_TTL_SECONDS));
+  const issuedAt = String(Date.now());
+  const nonce = randomBytes(24).toString("base64url");
+  const encoded = Buffer.from(normalizedActor, "utf8").toString("base64url");
+  const payload = `${issuedAt}.${nonce}.${encoded}`;
+  jar.set(ADMIN_COOKIE, `${payload}.${actorSignature(payload, expected)}`, cookieOptions(ADMIN_TTL_SECONDS));
+  // Clear the legacy actor cookie after upgrading an existing deployment.
+  jar.set(ADMIN_ACTOR_COOKIE, "", { ...cookieOptions(0), maxAge: 0 });
   return true;
 }
 

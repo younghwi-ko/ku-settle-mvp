@@ -7,6 +7,8 @@ const serviceCreateRoute = readFileSync(new URL("../app/api/service-requests/rou
 const servicePatchRoute = readFileSync(new URL("../app/api/service-requests/[id]/route.ts", import.meta.url), "utf8");
 const adminServiceRoute = readFileSync(new URL("../app/api/admin/service-requests/[id]/route.ts", import.meta.url), "utf8");
 const remoteStateClient = readFileSync(new URL("../app/lib/remote-state.ts", import.meta.url), "utf8");
+const adminSession = readFileSync(new URL("../app/lib/server-session.ts", import.meta.url), "utf8");
+const marketplaceListRoute = readFileSync(new URL("../app/api/marketplace/listings/route.ts", import.meta.url), "utf8");
 
 describe("anonymous server input validation", () => {
   it("accepts only bounded image data URLs", () => {
@@ -37,6 +39,22 @@ describe("anonymous server input validation", () => {
   });
 
   it("normalizes an empty listing image to null before server validation", () => {
-    expect(remoteStateClient).toContain("imageDataUrl: product.imageDataUrl || null");
+    expect(remoteStateClient).toContain("imageDataUrl: imagePath ? null : product.imageDataUrl || null");
+    expect(remoteStateClient).toContain('product.imageDataUrl?.startsWith("data:image/")');
+  });
+
+  it("stores a signed opaque administrator session instead of the administrator token", () => {
+    expect(adminSession).toContain("parseAdminSession");
+    expect(adminSession).toContain("randomBytes(24)");
+    expect(adminSession).not.toContain("jar.set(ADMIN_COOKIE, token");
+    expect(adminSession).toContain("httpOnly: true");
+    expect(adminSession).toContain('sameSite: "lax"');
+  });
+
+  it("paginates and filters the public marketplace on the server", () => {
+    expect(marketplaceListRoute).toContain('searchParams.get("search")');
+    expect(marketplaceListRoute).toContain('searchParams.get("category")');
+    expect(marketplaceListRoute).toContain('count: "exact"');
+    expect(marketplaceListRoute).toContain("pagination:");
   });
 });

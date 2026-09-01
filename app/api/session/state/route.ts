@@ -11,18 +11,19 @@ export async function GET() {
   const client = serverClient();
   if (!client) return apiError("server_storage_not_configured", 503);
   await expireReservations(client);
-  const [profile, listings, reservations, services, progress, preferences] = await Promise.all([
+  const [profile, listings, ownListings, reservations, services, progress, preferences] = await Promise.all([
     client.from("guest_profiles").select("*").eq("session_id", session.id).maybeSingle(),
-    client.from("guest_listings").select("*").in("status", ["active", "reserved", "sold"]).or(`session_id.eq.${session.id},status.in.(active,reserved,sold)`).order("created_at", { ascending: false }),
+    client.from("guest_listings").select("*").in("status", ["active", "reserved", "sold"]).order("created_at", { ascending: false }),
+    client.from("guest_listings").select("*").eq("session_id", session.id).order("updated_at", { ascending: false }),
     client.from("guest_reservations").select("*").eq("buyer_session_id", session.id).neq("status", "soft_deleted").order("updated_at", { ascending: false }),
     client.from("guest_service_requests").select("id,reference_code,listing_id,task_id,service_type,status,delivery_method,origin,destination,storage_duration,storage_location,estimated_cost_label,terms_note,version,created_at,updated_at").eq("session_id", session.id).neq("status", "soft_deleted").order("updated_at", { ascending: false }),
     client.from("guest_lifecycle_progress").select("*").eq("session_id", session.id),
     client.from("guest_preferences").select("*").eq("session_id", session.id).maybeSingle(),
   ]);
-  const error = [profile, listings, reservations, services, progress, preferences].find((item) => item.error)?.error;
+  const error = [profile, listings, ownListings, reservations, services, progress, preferences].find((item) => item.error)?.error;
   if (error) return apiError("state_load_failed", 502);
   const allListings = listings.data ?? [];
-  const myListings = allListings.filter((row) => row.session_id === session.id);
+  const myListings = ownListings.data ?? [];
   const ownListingIds = myListings.map((row) => row.id);
   const sellerReservations = ownListingIds.length ? await client.from("guest_reservations").select("*").in("listing_id", ownListingIds).neq("status", "soft_deleted").order("updated_at", { ascending: false }) : { data: [], error: null };
   if (sellerReservations.error) return apiError("state_load_failed", 502);
