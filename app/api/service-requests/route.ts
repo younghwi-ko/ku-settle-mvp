@@ -4,7 +4,6 @@ import { apiError, jsonBody, optionalText, record, sessionOrError, uuid } from "
 import { requireSameOrigin, serverClient } from "@/app/lib/server-session";
 const modes = new Set(["pickup", "delivery", "storage", "sale", "donation", "disposal"]);
 const statuses = new Set(["not-selected", "method-selected", "consultation-ready", "quote-viewed", "application-ready", "in-progress", "completed", "cancelled"]);
-const transitions: Record<string, string[]> = { "not-selected": ["method-selected", "cancelled"], "method-selected": ["consultation-ready", "cancelled"], "consultation-ready": ["quote-viewed", "application-ready", "cancelled"], "quote-viewed": ["application-ready", "cancelled"], "application-ready": ["in-progress", "cancelled"], "in-progress": ["completed", "cancelled"] };
 export async function POST(request: Request) {
   if (!await requireSameOrigin(request)) return apiError("invalid_origin", 403);
   const { session, response } = await sessionOrError(); if (response || !session) return response ?? apiError("session_unavailable", 503);

@@ -25,7 +25,8 @@ export default function KakaoMap({ places, selectedId, onSelect, center = KU_CEN
       const script = document.createElement("script"); script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(key)}&autoload=false`; script.async = true; script.onload = loadMaps; script.onerror = () => finish(new Error("sdk")); document.head.appendChild(script);
     });
     void load().then(() => { if (cancelled || !rootRef.current || !window.kakao?.maps) return; mapRef.current = new window.kakao.maps.Map(rootRef.current, { center: new window.kakao.maps.LatLng(center.lat, center.lng), level: 5 }); setStatus("ready"); }).catch(() => { if (!cancelled) setStatus("failed"); });
-    return () => { cancelled = true; markersRef.current.forEach((marker) => marker.setMap(null)); markersRef.current.clear(); mapRef.current = null; };
+    const markers = markersRef.current;
+    return () => { cancelled = true; markers.forEach((marker) => marker.setMap(null)); markers.clear(); mapRef.current = null; };
   }, [center.lat, center.lng]);
   useEffect(() => {
     if (status !== "ready" || !mapRef.current || !window.kakao?.maps) return;
