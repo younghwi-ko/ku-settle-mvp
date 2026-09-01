@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CheckCircle2, CircleAlert, Loader2, LogOut, RefreshCw, ShieldCheck, Trash2, RotateCcw } from "lucide-react";
-import type { Locale } from "../i18n";
+import { normalizeLocale, type Locale } from "../i18n";
 import { legacyCopy } from "../i18n/legacy-copy";
 
 type Listing = { id: string; item_name: string; seller_name?: string; price_krw?: number; status: string; version: number; category?: string; pickup_location?: string };
@@ -25,9 +25,10 @@ const copy = {
   "zh-CN": { auth: "管理员API认证", token: "输入管理员令牌", login: "开始管理员会话", logout: "退出", refresh: "刷新", required: "需要管理员权限。", network: "无法连接服务器。", saved: "已保存到服务器。", tabs: { overview: "概览", listings: "商品", reservations: "预约", delivery: "配送", storage: "保管", operations: "运营规则", places: "地点", guides: "指南", reports: "举报", tickets: "咨询", audit: "审计日志" }, empty: "暂无数据。", status: "状态", save: "保存运营内容", delete: "软删除", cancel: "取消", restore: "恢复", showDeleted: "包含已删除", hideDeleted: "仅显示有效", create: "创建商品", item: "商品名", seller: "卖家", price: "价格", category: "分类", pickup: "取货地点", invalid: "请检查输入。", rate: "请求过多，请稍后重试。", note: "内部处理备注", cost: "报价／费用说明", updated: "最近处理", details: "申请信息" },
 } as const;
 
-function label(locale: Locale): (typeof copy)["en"] { return (copy[locale as keyof typeof copy] ?? legacyCopy(locale, copy.en)) as (typeof copy)["en"]; }
-function adminText(locale: Locale, value: string) { return legacyCopy(locale, value); }
-function statusText(locale: Locale, value: string) { return legacyCopy(locale, value).replaceAll("_", " ").replaceAll("-", " "); }
+function activeLocale(locale: Locale): Locale { return normalizeLocale(locale) ?? "en"; }
+function label(locale: Locale): (typeof copy)["en"] { const resolved = activeLocale(locale); return (copy[resolved as keyof typeof copy] ?? legacyCopy(resolved, copy.en)) as (typeof copy)["en"]; }
+function adminText(locale: Locale, value: string) { return legacyCopy(activeLocale(locale), value); }
+function statusText(locale: Locale, value: string) { return legacyCopy(activeLocale(locale), value).replaceAll("_", " ").replaceAll("-", " "); }
 function money(value: number | undefined) { return typeof value === "number" ? `${value.toLocaleString()} KRW` : "—"; }
 
 function ServiceOperationCard({ item, locale, l, save, remove }: { item: Service; locale: Locale; l: ReturnType<typeof label>; save: (body: Record<string, unknown>) => void; remove: () => void }) {
