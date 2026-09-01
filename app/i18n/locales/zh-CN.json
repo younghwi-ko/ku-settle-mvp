@@ -40,7 +40,7 @@
     "body": "在高丽大学学习生活期间，你可以在这里查看该准备什么、下一步做什么，以及从哪里开始行动。",
     "primaryAction": "打开我的留学周期计划",
     "secondaryAction": "浏览校园集市",
-    "trust": { "account": "无需注册账号", "languages": "支持四种语言", "journey": "从入境准备到回国" },
+    "trust": { "account": "无需注册账号", "languages": "支持八种语言", "journey": "从入境准备到回国" },
     "progressTitle": "我的整体进度", "todaySummary": "今天和近期安排", "urgentItems": "需要关注的事项", "noUpcoming": "今天没有安排。", "incompleteCount": "未完成任务 {{count}} 项", "progressSummaryShort": "已完成 {{progress}}%", "overdue": "已逾期", "dueToday": "今天截止", "dueSoon": "即将截止",
     "progressSummary": "已完成 {{completed}} / {{total}} 项",
     "lifecycleLabel": "从入境到回国的完整旅程",

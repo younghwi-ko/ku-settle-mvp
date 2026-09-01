@@ -45,7 +45,7 @@
     "body": "Know what to prepare, what to do next, and where to take action throughout your Korea University journey.",
     "primaryAction": "Open my lifecycle plan",
     "secondaryAction": "Browse Marketplace",
-    "trust": { "account": "No account needed", "languages": "Four languages supported", "journey": "From arrival to departure" },
+    "trust": { "account": "No account needed", "languages": "Eight languages supported", "journey": "From arrival to departure" },
     "progressTitle": "Your lifecycle progress", "todaySummary": "Today and upcoming", "urgentItems": "What needs attention", "noUpcoming": "Nothing is scheduled for today.", "incompleteCount": "{{count}} incomplete tasks", "progressSummaryShort": "{{progress}}% complete", "overdue": "Overdue", "dueToday": "Due today", "dueSoon": "Due soon",
     "progressSummary": "{{completed}} of {{total}} tasks completed",
     "lifecycleLabel": "Arrival-to-departure journey",

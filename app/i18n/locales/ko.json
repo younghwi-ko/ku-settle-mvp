@@ -40,7 +40,7 @@
     "body": "고려대학교 생활 동안 무엇을 준비하고, 다음에 무엇을 해야 하며, 어디에서 실행할 수 있는지 한곳에서 확인하세요.",
     "primaryAction": "나의 라이프사이클 계획 열기",
     "secondaryAction": "캠퍼스 마켓 둘러보기",
-    "trust": { "account": "가입 없이 체험", "languages": "4개 언어 지원", "journey": "입국 준비부터 귀국까지" },
+    "trust": { "account": "가입 없이 체험", "languages": "8개 언어 지원", "journey": "입국 준비부터 귀국까지" },
     "progressTitle": "나의 전체 여정", "todaySummary": "오늘과 예정된 일", "urgentItems": "확인이 필요한 항목", "noUpcoming": "오늘 예정된 일이 없습니다.", "incompleteCount": "미완료 작업 {{count}}개", "progressSummaryShort": "{{progress}}% 완료", "overdue": "기한 지남", "dueToday": "오늘 마감", "dueSoon": "기한 임박",
     "progressSummary": "전체 {{total}}개 중 {{completed}}개 완료",
     "lifecycleLabel": "입국부터 귀국까지",

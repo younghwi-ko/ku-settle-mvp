@@ -40,7 +40,7 @@
     "body": "高麗大学での留学生活を通して、何を準備し、次に何を行い、どこから実行できるかを一か所で確認できます。",
     "primaryAction": "ライフサイクルプランを開く",
     "secondaryAction": "マーケットを見る",
-    "trust": { "account": "アカウント登録不要", "languages": "4言語に対応", "journey": "入国準備から帰国まで" },
+    "trust": { "account": "アカウント登録不要", "languages": "8言語に対応", "journey": "入国準備から帰国まで" },
     "progressTitle": "留学生活全体の進捗", "todaySummary": "今日と今後の予定", "urgentItems": "確認が必要な項目", "noUpcoming": "今日の予定はありません。", "incompleteCount": "未完了タスク {{count}}件", "progressSummaryShort": "{{progress}}%完了", "overdue": "期限超過", "dueToday": "今日が期限", "dueSoon": "期限間近",
     "progressSummary": "{{total}}件中{{completed}}件完了",
     "lifecycleLabel": "入国準備から帰国までの流れ",
