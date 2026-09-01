@@ -1,15 +1,663 @@
 {
-  "common": {"complete":"Hoàn tất","completed":"Đã hoàn tất","notStarted":"Chưa bắt đầu","inProgress":"Đang xử lý","available":"Có sẵn","reserved":"Đã đặt trước","close":"Đóng","cancel":"Hủy","sampleData":"Dữ liệu mẫu","sampleOnly":"Sản phẩm mẫu không dùng để giao dịch thật.","liveData":"Sản phẩm đăng thật","saving":"Đang lưu…","saved":"Đã lưu","yes":"Có","no":"Không"},
-  "navigation": {"home":"Trang chủ","onboarding":"Lộ trình","marketplace":"Chợ sinh viên","localGuide":"Hướng dẫn địa phương","lifeGuide":"Hướng dẫn cuộc sống","admin":"Quản trị","brandTagline":"Từ khi đến đến khi rời đi","language":"Ngôn ngữ","selectLanguage":"Chọn ngôn ngữ","currentLanguage":"Ngôn ngữ hiện tại: {{language}}","openMenu":"Mở menu","closeMenu":"Đóng menu","footerNotice":"Sử dụng không cần đăng nhập · Không phải dịch vụ chính thức của Korea University · Sản phẩm mẫu không dùng để giao dịch thật"},
-  "home": {"eyebrow":"TRỢ LÝ ĐỜI SỐNG DU HỌC SINH","greeting":"Chào mừng {{name}} đến Korea University","lead":"Lộ trình cá nhân từ khi đến đến khi rời đi.","body":"Xem tại một nơi những gì cần chuẩn bị, việc cần làm tiếp theo và nơi thực hiện trong thời gian học tại KU.","primaryAction":"Mở lộ trình của tôi","secondaryAction":"Xem chợ sinh viên","trust":{"account":"Không cần tài khoản","languages":"Hỗ trợ 8 ngôn ngữ","journey":"Từ khi đến đến khi rời đi"},"todaySummary":"Hôm nay và sắp tới","noUpcoming":"Hôm nay không có lịch.","explore":"Khám phá"},
-  "onboarding": {"title":"Lộ trình cuộc sống tại KU","body":"Làm theo danh sách từ trước khi nhập cảnh đến lúc rời đi.","overallProgress":"Tiến độ tổng thể","prepare":"Cần chuẩn bị","estimatedTime":"Thời gian dự kiến","practicalNote":"Lưu ý thực tế","officialGuidance":"Hướng dẫn chính thức","markComplete":"Đánh dấu hoàn tất: {{task}}","markIncomplete":"Đánh dấu chưa hoàn tất: {{task}}"},
-  "marketplace": {"eyebrow":"CHỢ SINH VIÊN","title":"Đồ không còn dùng của một sinh viên có thể hữu ích cho người khác","body":"Đăng và đặt trước sản phẩm mà không cần đăng nhập. Dữ liệu mẫu và sản phẩm thật được phân biệt rõ.","incoming":"Tôi mới đến KU","leaving":"Tôi sắp rời KU","search":"Tìm sản phẩm","clearSearch":"Xóa tìm kiếm","all":"Tất cả","condition":"Tình trạng","pickup":"Địa điểm nhận","seller":"Người bán","details":"Xem chi tiết","contact":"Liên hệ người bán","empty":"Không có sản phẩm phù hợp.","form":{"title":"Đăng sản phẩm cho sinh viên tiếp theo","body":"Thêm ảnh để người mua dễ kiểm tra tình trạng sản phẩm.","itemName":"Tên sản phẩm","price":"Giá","category":"Danh mục","condition":"Tình trạng","pickup":"Địa điểm nhận","availability":"Thời gian có thể giao","submit":"Đăng sản phẩm","success":"Sản phẩm đã được đăng."},"markSold":"Đánh dấu đã bán","hideListing":"Ẩn sản phẩm","showListing":"Hiện sản phẩm","cancelReservation":"Hủy đặt trước","deleteListing":"Xóa sản phẩm","myReservations":"Sản phẩm đã đặt","confirmReservation":"Xác nhận đặt trước","imageHint":"PNG, JPG hoặc WebP · tối đa 8 MB"},
-  "localGuide": {"eyebrow":"HƯỚNG DẪN ĐỊA PHƯƠNG","title":"Sống thuận tiện quanh Anam","body":"Hướng dẫn thực tế về các địa điểm gần KU. Kết quả tìm kiếm Kakao và địa điểm được kiểm tra nội bộ được hiển thị cùng nhau.","all":"Tất cả","englishAvailable":"Có thể hỗ trợ tiếng Anh","studentTip":"Mẹo cho sinh viên","empty":"Chưa có địa điểm trong danh mục này.","categories":{"Food":"Ẩm thực","Halal":"Halal","Vegan":"Thuần chay","Hospital":"Bệnh viện","Pharmacy":"Nhà thuốc","Hair Salon":"Tiệm tóc","Cafe":"Quán cà phê","Grocery":"Cửa hàng thực phẩm"}},
-  "verification": {"signIn":"Đăng nhập","continue":"Tiếp tục bằng email KU","title":"Xác minh sinh viên","email":"Email trường"},
-  "profile": {"guestName":"Khách","save":"Lưu hồ sơ","arrival":"Ngày dự kiến đến","housing":"Nơi ở","name":"Tên","create":"Tạo lộ trình","languageNote":"Bạn có thể đổi ngôn ngữ sau."},
-  "admin": {"eyebrow":"QUẢN TRỊ VẬN HÀNH","title":"Bảng quản trị","products":"Sản phẩm","reservations":"Đặt trước","reports":"Báo cáo","tasks":"Nhiệm vụ","export":"Xuất dữ liệu","import":"Nhập dữ liệu","productSection":"Quản lý sản phẩm","reservationSection":"Quản lý đặt trước","reportSection":"Quản lý báo cáo","noData":"Không có dữ liệu."},
-  "reset": {"button":"Đặt lại dữ liệu của tôi","title":"Đặt lại dữ liệu của bạn?","confirm":"Đặt lại"},
-  "validation": {"requiredFields":"Vui lòng điền tất cả trường bắt buộc.","positivePrice":"Nhập giá lớn hơn 0.","itemRequired":"Nhập tên sản phẩm.","pickupRequired":"Nhập địa điểm nhận."},
-  "errors": {"generic":"Đã xảy ra lỗi. Vui lòng thử lại.","imageInvalid":"Chọn tệp ảnh hợp lệ.","missingTranslation":"Nội dung này tạm thời được hiển thị bằng tiếng Anh.","rateLimit":"Quá nhiều yêu cầu. Vui lòng đợi.","sessionExpired":"Phiên đã hết hạn. Vui lòng đăng nhập lại.","permissionDenied":"Bạn không có quyền thực hiện thao tác này.","offline":"Bạn đang ngoại tuyến. Thay đổi chưa được lưu.","saveFailed":"Không thể lưu. Vui lòng thử lại."},
-  "accessibility": {"brandHome":"Trang chủ KU Settle","profile":"Mở hồ sơ ẩn danh","productDetails":"Xem chi tiết {{product}}","closeLanguage":"Đóng menu ngôn ngữ"}
+  "common": {
+    "complete": "Hoàn tất",
+    "completed": "Đã hoàn tất",
+    "notStarted": "Chưa bắt đầu",
+    "inProgress": "Đang xử lý",
+    "available": "Có sẵn",
+    "reserved": "Đã đặt trước",
+    "close": "Đóng",
+    "cancel": "Hủy",
+    "sampleData": "Dữ liệu mẫu",
+    "sampleOnly": "Sản phẩm mẫu không dùng để giao dịch thật.",
+    "liveData": "Sản phẩm đăng thật",
+    "saving": "Đang lưu…",
+    "saved": "Đã lưu",
+    "yes": "Có",
+    "no": "Không",
+    "verified": "Sinh viên KU đã được xác minh",
+    "demoData": "Dữ liệu demo",
+    "sample": "Mẫu",
+    "durationMinutes": "{{min}}–{{max}} phút",
+    "countOfTotal": "{{completed}} / {{total}}",
+    "copyright": "© {{year}} KU Định cư"
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "onboarding": "Lộ trình",
+    "marketplace": "Chợ sinh viên",
+    "localGuide": "Hướng dẫn địa phương",
+    "lifeGuide": "Hướng dẫn cuộc sống",
+    "admin": "Quản trị",
+    "brandTagline": "Từ khi đến đến khi rời đi",
+    "language": "Ngôn ngữ",
+    "selectLanguage": "Chọn ngôn ngữ",
+    "currentLanguage": "Ngôn ngữ hiện tại: {{language}}",
+    "openMenu": "Mở menu",
+    "closeMenu": "Đóng menu",
+    "footerNotice": "Sử dụng không cần đăng nhập · Không phải dịch vụ chính thức của Korea University · Sản phẩm mẫu không dùng để giao dịch thật",
+    "primaryLabel": "Điều hướng chính",
+    "mobileLabel": "Điều hướng trên thiết bị di động"
+  },
+  "home": {
+    "eyebrow": "TRỢ LÝ ĐỜI SỐNG DU HỌC SINH",
+    "greeting": "Chào mừng {{name}} đến Korea University",
+    "lead": "Lộ trình cá nhân từ khi đến đến khi rời đi.",
+    "body": "Xem tại một nơi những gì cần chuẩn bị, việc cần làm tiếp theo và nơi thực hiện trong thời gian học tại KU.",
+    "primaryAction": "Mở lộ trình của tôi",
+    "secondaryAction": "Xem chợ sinh viên",
+    "trust": {
+      "account": "Không cần tài khoản",
+      "languages": "Hỗ trợ 8 ngôn ngữ",
+      "journey": "Từ khi đến đến khi rời đi"
+    },
+    "todaySummary": "Hôm nay và sắp tới",
+    "noUpcoming": "Hôm nay không có lịch.",
+    "explore": "Khám phá",
+    "progressTitle": "Tiến trình vòng đời của bạn",
+    "urgentItems": "Điều cần chú ý",
+    "incompleteCount": "{{count}} nhiệm vụ chưa hoàn thành",
+    "progressSummaryShort": "{{progress}}% đã hoàn thành",
+    "overdue": "Quá hạn",
+    "dueToday": "Hạn chót hôm nay",
+    "dueSoon": "Sắp đến hạn",
+    "progressSummary": "Đã hoàn thành {{completed}} trong tổng số {{total}} nhiệm vụ",
+    "lifecycleLabel": "Hành trình từ điểm đến đến điểm đi",
+    "stageSummary": "{{stage}}: {{completed}} trong tổng số {{total}}, {{progress}}",
+    "openPlan": "Kế hoạch vòng đời mở",
+    "recommended": "Bước tiếp theo được đề xuất",
+    "viewRecommended": "Xem nhiệm vụ được đề xuất",
+    "allCompletedTitle": "Đã hoàn thành tất cả nhiệm vụ thiết lập",
+    "allCompletedBody": "Bạn đã hoàn thành kế hoạch vòng đời KU của mình. Xem lại bất kỳ giai đoạn nào bất cứ khi nào bạn cần.",
+    "reviewCompleted": "Xem lại các nhiệm vụ đã hoàn thành",
+    "informationToAction": "THÔNG TIN → HÀNH ĐỘNG",
+    "connectedJourney": "Một hành trình, bốn giai đoạn kết nối",
+    "features": {
+      "onboarding": "Biến thông tin cần thiết thành hành động",
+      "marketplace": "Tìm đồ giá cả phải chăng từ các sinh viên khác",
+      "localGuide": "Khám phá những địa điểm thân thiện với sinh viên gần KU"
+    }
+  },
+  "onboarding": {
+    "title": "Lộ trình cuộc sống tại KU",
+    "body": "Làm theo danh sách từ trước khi nhập cảnh đến lúc rời đi.",
+    "overallProgress": "Tiến độ tổng thể",
+    "prepare": "Cần chuẩn bị",
+    "estimatedTime": "Thời gian dự kiến",
+    "practicalNote": "Lưu ý thực tế",
+    "officialGuidance": "Hướng dẫn chính thức",
+    "markComplete": "Đánh dấu hoàn tất: {{task}}",
+    "markIncomplete": "Đánh dấu chưa hoàn tất: {{task}}",
+    "eyebrow": "THÔNG TIN → HÀNH ĐỘNG",
+    "selectedStage": "Giai đoạn đã chọn",
+    "taskCount_one": "{{count}} nhiệm vụ đã hoàn thành",
+    "taskCount_other": "{{count}} nhiệm vụ đã hoàn thành",
+    "recommendationHint": "Nhiệm vụ tiếp theo được đề xuất của bạn sẽ được đánh dấu khi nó ở giai đoạn đã chọn.",
+    "viewNext": "Xem nhiệm vụ được đề xuất tiếp theo",
+    "stages": {
+      "beforeArrival": "Trước khi đến",
+      "firstWeeks": "Những tuần đầu tiên",
+      "campusLife": "Cuộc sống sinh viên",
+      "departure": "Khởi hành"
+    },
+    "actions": {
+      "openOfficial": "Mở hướng dẫn chính thức",
+      "openPortal": "Mở Cổng thông tin KU"
+    },
+    "official": {
+      "arc": {
+        "message": "Các yêu cầu và thủ tục có thể thay đổi. Kiểm tra thông tin mới nhất trên HiKorea trước khi đăng ký.",
+        "link": "Ghé thăm HiKorea"
+      }
+    },
+    "tasks": {
+      "housing-reserve": {
+        "title": "Nhà ở dự trữ",
+        "description": "Xác nhận nơi bạn sẽ ở và giữ cho xác nhận nhà ở của bạn dễ tìm.",
+        "category": "Nhà ở",
+        "preparation": [
+          "Xác nhận nhà ở",
+          "Liên hệ chuyển đến"
+        ],
+        "practicalNote": "Xem lại thông tin mới nhất do người liên hệ ký túc xá hoặc nhà ở của bạn cung cấp."
+      },
+      "sim-compare": {
+        "title": "So sánh các tùy chọn SIM",
+        "description": "So sánh các tùy chọn trả trước và trả sau chung trước khi chọn gói sau khi đến.",
+        "category": "Kết nối",
+        "preparation": [
+          "Trạng thái điện thoại đã mở khóa",
+          "Dự kiến sử dụng dữ liệu"
+        ],
+        "practicalNote": "Kiểm tra tính đủ điều kiện hiện tại và các yêu cầu nhận dạng trước khi mua."
+      },
+      "airport-route": {
+        "title": "Lập kế hoạch lộ trình sân bay của bạn",
+        "description": "Chọn tuyến đường chung từ sân bay đến nhà của bạn và lưu tùy chọn dự phòng.",
+        "category": "Lộ trình đến",
+        "preparation": [
+          "Địa chỉ nhà ở",
+          "Ghi chú lộ trình ngoại tuyến"
+        ],
+        "practicalNote": "Kiểm tra thông tin vận chuyển hiện tại gần ngày đến của bạn."
+      },
+      "arrival-essentials": {
+        "title": "Chuẩn bị những vật dụng cần thiết khi đến nơi",
+        "description": "Thu thập tài liệu, thông tin liên hệ và những thông tin cần thiết cho ngày đầu tiên mà bạn muốn sử dụng.",
+        "category": "Chuẩn bị",
+        "preparation": [
+          "Giấy tờ du lịch",
+          "Những mối liên hệ quan trọng",
+          "Những điều cần thiết trong ngày đầu tiên"
+        ],
+        "practicalNote": "Giữ các bản sao kỹ thuật số tách biệt với tài liệu gốc của bạn."
+      },
+      "dorm": {
+        "title": "Nhận phòng ký túc xá",
+        "description": "Hoàn thành các bước đến ký túc xá của bạn và xem lại hướng dẫn nơi cư trú hiện tại.",
+        "category": "Nhà ở",
+        "preparation": [
+          "Xác nhận ký túc xá",
+          "Yêu cầu nhận dạng"
+        ],
+        "practicalNote": "Hãy sử dụng hướng dẫn do ký túc xá gửi làm nguồn sự thật."
+      },
+      "residence": {
+        "title": "Xác nhận nơi cư trú",
+        "description": "Xác nhận chi tiết nhà ở hiện tại của bạn và giữ mọi thông tin hỗ trợ về nơi cư trú.",
+        "category": "Nhà ở",
+        "preparation": [
+          "Chi tiết nhà ở hiện tại",
+          "Liên hệ nhà ở"
+        ],
+        "practicalNote": "Kiểm tra hướng dẫn chính thức trước khi chuẩn bị tài liệu cho đơn đăng ký hành chính."
+      },
+      "arc": {
+        "title": "đăng ký ARC",
+        "description": "Xem lại hướng dẫn chính thức hiện hành về việc đăng ký lưu trú tại Hàn Quốc.",
+        "category": "Đăng ký lưu trú",
+        "preparation": [
+          "Hướng dẫn chính thức hiện tại",
+          "Tài liệu được yêu cầu cho trạng thái của bạn"
+        ],
+        "practicalNote": "Sử dụng HiKorea làm nguồn thông tin chính xác vì yêu cầu có thể thay đổi."
+      },
+      "bank": {
+        "title": "Mở tài khoản ngân hàng",
+        "description": "Kiểm tra các yêu cầu mở tài khoản hiện tại trước khi đến ngân hàng.",
+        "category": "Ngân hàng",
+        "preparation": [
+          "Nhận dạng theo yêu cầu của ngân hàng",
+          "Thông tin đủ điều kiện hiện tại"
+        ],
+        "practicalNote": "Các yêu cầu và hỗ trợ ngôn ngữ có thể khác nhau, vì vậy hãy xác nhận chúng trước khi truy cập."
+      },
+      "sim": {
+        "title": "Nhận SIM Hàn Quốc",
+        "description": "Chọn tùy chọn di động hiện tại phù hợp với trạng thái nhận dạng và cách sử dụng của bạn.",
+        "category": "Kết nối",
+        "preparation": [
+          "Điện thoại đã mở khóa",
+          "Nhận dạng hiện tại"
+        ],
+        "practicalNote": "Xác nhận các điều khoản hiện tại của gói và yêu cầu nhận dạng trước khi đăng ký."
+      },
+      "account": {
+        "title": "Kích hoạt tài khoản KU của bạn",
+        "description": "Thiết lập quyền truy cập vào Cổng thông tin KU và các dịch vụ kỹ thuật số có sẵn cho bạn.",
+        "category": "hệ thống KU",
+        "preparation": [
+          "Thông tin nhận dạng sinh viên",
+          "hướng dẫn tài khoản KU"
+        ],
+        "practicalNote": "Làm theo hướng dẫn hiện tại của Dịch vụ thông tin kỹ thuật số KU."
+      },
+      "courses": {
+        "title": "Xác nhận lịch học của bạn",
+        "description": "Xem lại các khóa học, lớp học đã đăng ký của bạn và các thông báo hiện tại trong hệ thống KU.",
+        "category": "Các khóa học",
+        "preparation": [
+          "Truy cập Cổng thông tin KU",
+          "Kế hoạch khóa học hiện tại"
+        ],
+        "practicalNote": "Sử dụng thông báo KU hiện tại thay vì dựa vào ngày đã lưu."
+      },
+      "healthcare": {
+        "title": "Tìm dịch vụ chăm sóc sức khỏe thân thiện với ngoại ngữ",
+        "description": "Khám phá danh sách demo cho biết liệu có hỗ trợ ngôn ngữ hay không.",
+        "category": "Chăm sóc sức khỏe",
+        "preparation": [
+          "Hướng dẫn địa phương",
+          "Ghi chú sức khỏe cá nhân"
+        ],
+        "practicalNote": "Liên hệ trực tiếp với nhà cung cấp để xác nhận các dịch vụ hiện tại và hỗ trợ ngôn ngữ."
+      },
+      "campus-dining": {
+        "title": "Khám phá ẩm thực trong khuôn viên trường",
+        "description": "Sử dụng Hướng dẫn địa phương để khám phá danh sách thực phẩm demo xung quanh khuôn viên trường.",
+        "category": "Ăn uống",
+        "preparation": [
+          "Sở thích ăn kiêng",
+          "Hướng dẫn địa phương"
+        ],
+        "practicalNote": "Xác nhận trực tiếp thực đơn và nguyên liệu hiện tại trước khi ghé thăm."
+      },
+      "household-essentials": {
+        "title": "Tìm đồ dùng thiết yếu cho gia đình",
+        "description": "Duyệt qua danh sách thị trường demo để tìm các mặt hàng hữu ích trong nhà ở sinh viên.",
+        "category": "Cuộc sống hàng ngày",
+        "preparation": [
+          "Danh sách mua sắm",
+          "Gói nhận hàng"
+        ],
+        "practicalNote": "Danh sách và giao dịch trong nguyên mẫu này chỉ mang tính chất demo."
+      },
+      "student-marketplace": {
+        "title": "Sử dụng thị trường sinh viên",
+        "description": "Khám phá cách thị trường sinh viên KU có thể kết nối sinh viên mới đến và sinh viên rời đi.",
+        "category": "Chợ sinh viên",
+        "preparation": [
+          "Xác minh bản demo",
+          "Tùy chọn thị trường"
+        ],
+        "practicalNote": "Nguyên mẫu hiện tại sử dụng xác minh demo; một dịch vụ trực tiếp sẽ yêu cầu một email của trường đại học."
+      },
+      "sell-items": {
+        "title": "Danh sách bán đồ gia dụng",
+        "description": "Tạo danh sách demo để sinh viên sắp nhập học có thể khám phá những món đồ bạn không còn cần nữa.",
+        "category": "Thị trường",
+        "preparation": [
+          "Chi tiết mặt hàng",
+          "Tình trạng còn hàng để nhận hàng"
+        ],
+        "practicalNote": "Nguyên mẫu này không xử lý thanh toán hoặc tin nhắn."
+      },
+      "luggage": {
+        "title": "Sắp xếp chỗ để hành lý hoặc vận chuyển",
+        "description": "So sánh các tùy chọn lưu trữ hoặc vận chuyển chung và lưu giữ các chi tiết đặt chỗ của riêng bạn cùng nhau.",
+        "category": "Hành lý",
+        "preparation": [
+          "Danh sách hành lý",
+          "Chi tiết điểm đến"
+        ],
+        "practicalNote": "Xác nhận các điều khoản, giá cả và hạn chế hiện tại trực tiếp với nhà cung cấp mà bạn chọn."
+      },
+      "departure-checklist": {
+        "title": "Hoàn thành danh sách kiểm tra khởi hành",
+        "description": "Xem lại nhà ở, khuôn viên trường, đồ đạc và công việc đi lại của bạn trước khi khởi hành.",
+        "category": "Khởi hành",
+        "preparation": [
+          "Danh sách công việc cá nhân",
+          "Những liên hệ quan trọng",
+          "Giấy thông hành"
+        ],
+        "practicalNote": "Thêm ngày được xác nhận của riêng bạn thay vì dựa vào thời hạn chung."
+      },
+      "dorm-checkout": {
+        "title": "Trả phòng ký túc xá",
+        "description": "Thực hiện theo hướng dẫn thanh toán ký túc xá hiện tại và xác nhận các bước bàn giao phòng của bạn.",
+        "category": "Nhà ở",
+        "preparation": [
+          "Hướng dẫn trả phòng ký túc xá",
+          "Biên bản bàn giao phòng"
+        ],
+        "practicalNote": "Sử dụng các hướng dẫn mới nhất từ ký túc xá của bạn; bản demo này không đặt ra thời hạn."
+      },
+      "move-out": {
+        "title": "Chuyển ra ngoài khuôn viên trường",
+        "description": "Xem lại thỏa thuận chuyển đi đã được xác nhận của bạn và chuẩn bị bàn giao nhà ở.",
+        "category": "Nhà ở",
+        "preparation": [
+          "Hợp đồng nhà ở",
+          "Biên bản bàn giao"
+        ],
+        "practicalNote": "Xác nhận trách nhiệm và thời gian với người liên hệ về nhà ở của bạn."
+      }
+    }
+  },
+  "marketplace": {
+    "eyebrow": "CHỢ SINH VIÊN",
+    "title": "Đồ không còn dùng của một sinh viên có thể hữu ích cho người khác",
+    "body": "Đăng và đặt trước sản phẩm mà không cần đăng nhập. Dữ liệu mẫu và sản phẩm thật được phân biệt rõ.",
+    "incoming": "Tôi mới đến KU",
+    "leaving": "Tôi sắp rời KU",
+    "search": "Tìm sản phẩm",
+    "clearSearch": "Xóa tìm kiếm",
+    "all": "Tất cả",
+    "condition": "Tình trạng",
+    "pickup": "Địa điểm nhận",
+    "seller": "Người bán",
+    "details": "Xem chi tiết",
+    "contact": "Liên hệ người bán",
+    "empty": "Không có sản phẩm phù hợp.",
+    "form": {
+      "title": "Đăng sản phẩm cho sinh viên tiếp theo",
+      "body": "Thêm ảnh để người mua dễ kiểm tra tình trạng sản phẩm.",
+      "itemName": "Tên sản phẩm",
+      "price": "Giá",
+      "category": "Danh mục",
+      "condition": "Tình trạng",
+      "pickup": "Địa điểm nhận",
+      "availability": "Thời gian có thể giao",
+      "submit": "Đăng sản phẩm",
+      "success": "Sản phẩm đã được đăng.",
+      "itemPlaceholder": "ví dụ: Ghế học",
+      "pricePlaceholder": "ví dụ: 20000",
+      "pickupPlaceholder": "ví dụ: Cổng chính KU"
+    },
+    "markSold": "Đánh dấu đã bán",
+    "hideListing": "Ẩn sản phẩm",
+    "showListing": "Hiện sản phẩm",
+    "cancelReservation": "Hủy đặt trước",
+    "deleteListing": "Xóa sản phẩm",
+    "myReservations": "Sản phẩm đã đặt",
+    "confirmReservation": "Xác nhận đặt trước",
+    "imageHint": "PNG, JPG hoặc WebP · tối đa 8 MB",
+    "categories": {
+      "Home": "Trang chủ",
+      "Kitchen": "Nhà bếp",
+      "Electronics": "Điện tử",
+      "Bedding": "Bộ đồ giường"
+    },
+    "conditions": {
+      "likeNew": "Như mới",
+      "good": "Tốt",
+      "used": "Đã sử dụng",
+      "clean": "Sạch sẽ"
+    },
+    "flow": {
+      "verification": "Phiên ẩn danh",
+      "listing": "Danh sách sản phẩm",
+      "pickup": "Đón tại trường",
+      "transaction": "Giao dịch trực tiếp"
+    },
+    "contactTitle": "Liên hệ với người bán",
+    "contactBody": "Đây là bản trình bày demo. Trong dịch vụ trực tiếp, tin nhắn của bạn sẽ được gửi qua cuộc trò chuyện an toàn chỉ dành cho KU.",
+    "message": "Xin chào! Điều này vẫn còn có sẵn? Tôi có thể lấy nó gần trường.",
+    "messageReady": "Thông báo demo đã sẵn sàng",
+    "changePickup": "Thay đổi thời gian lấy hàng",
+    "savePickup": "Lưu lịch trình",
+    "pickupPast": "Đã hết thời gian nhận hàng",
+    "reservationCompleted": "Đã hoàn thành",
+    "reservationCancelled": "Đã hủy",
+    "loadMore": "Tải thêm",
+    "loadingMore": "Đang tải thêm…",
+    "actions": {
+      "browse": "Duyệt qua thị trường",
+      "list": "Liệt kê một mục"
+    },
+    "userSeller": "Sinh viên KU · {{name}}",
+    "authRequiredTitle": "Đăng nhập để liệt kê một mặt hàng thực sự",
+    "authRequiredBody": "Các gói của khách vẫn ở trên thiết bị này. Xác minh email KU của bạn để xuất bản danh sách trên thị trường sinh viên.",
+    "markActive": "Đánh dấu là có sẵn",
+    "cancelSold": "Hủy trạng thái đã bán",
+    "favorite": "Yêu thích",
+    "unfavorite": "Xóa khỏi mục yêu thích",
+    "reservationHolder": "Được bảo lưu bởi",
+    "restoreListing": "Khôi phục danh sách",
+    "showDeleted": "Hiển thị đã xóa",
+    "hideDeleted": "Ẩn đã xóa",
+    "deleted": "Đã xóa",
+    "hidden": "Ẩn",
+    "sold": "Đã bán",
+    "myListings": "Danh sách của tôi",
+    "noOwnListings": "Bạn chưa có danh sách nào.",
+    "reservedBy": "Người bảo lưu: {{name}}",
+    "soldUnavailable": "Mặt hàng này đã được đánh dấu là đã bán.",
+    "reservationSummary": "Các mặt hàng đã đặt trước",
+    "reservationActive": "Đặt chỗ hiện hoạt",
+    "pickupNotSet": "Chưa đặt thời gian lấy hàng",
+    "pickupScheduleTitle": "Chọn thời gian đón",
+    "pickupDate": "Ngày nhận hàng",
+    "pickupStart": "Thời gian bắt đầu",
+    "pickupEnd": "Thời gian kết thúc",
+    "reportTitle": "Báo cáo danh sách",
+    "reportReason": "Lý do",
+    "chooseReportReason": "Chọn lý do",
+    "reportDetail": "Chi tiết",
+    "submitReport": "Gửi báo cáo",
+    "duplicateReport": "Bạn đã báo cáo mục này.",
+    "reportSubmitted": "Đã nhận được báo cáo.",
+    "reportReasons": {
+      "false_info": "Thông tin mặt hàng sai",
+      "price_mismatch": "Giá hoặc mô tả không khớp",
+      "scam": "Nghi ngờ lừa đảo",
+      "inappropriate": "Nội dung không phù hợp",
+      "schedule_issue": "Vấn đề về địa điểm đón hoặc lịch trình",
+      "other": "Khác"
+    },
+    "mapsView": "Xem trên Google Maps",
+    "mapsDirections": "Nhận chỉ đường",
+    "reportHistory": "Lịch sử báo cáo",
+    "reportReceived": "Đã nhận",
+    "removeImage": "Xóa hình ảnh",
+    "products": {
+      "riceCooker": {
+        "name": "Nồi cơm điện",
+        "pickup": "Ga Anam, Lối ra 3",
+        "seller": "Trao đổi sinh viên · Mia"
+      },
+      "deskLamp": {
+        "name": "Đèn bàn",
+        "pickup": "Cổng chính KU",
+        "seller": "Sinh viên KU · Joon"
+      },
+      "beddingSet": {
+        "name": "Bộ chăn ga gối đệm",
+        "pickup": "Nhà quốc tế CJ",
+        "seller": "Trao đổi sinh viên · Lea"
+      },
+      "electricKettle": {
+        "name": "Ấm đun nước điện",
+        "pickup": "Anam Ogeori",
+        "seller": "Sinh viên KU · Tối thiểu"
+      },
+      "miniFan": {
+        "name": "Quạt Mini",
+        "pickup": "KU Central Plaza",
+        "seller": "Sinh viên trao đổi · Noah"
+      },
+      "storageBoxes": {
+        "name": "Bộ hộp đựng",
+        "pickup": "Ga Anam, Lối ra 2",
+        "seller": "Sinh viên KU · Hana"
+      }
+    }
+  },
+  "localGuide": {
+    "eyebrow": "HƯỚNG DẪN ĐỊA PHƯƠNG",
+    "title": "Sống thuận tiện quanh Anam",
+    "body": "Hướng dẫn thực tế về các địa điểm gần KU. Kết quả tìm kiếm Kakao và địa điểm được kiểm tra nội bộ được hiển thị cùng nhau.",
+    "all": "Tất cả",
+    "englishAvailable": "Có thể hỗ trợ tiếng Anh",
+    "studentTip": "Mẹo cho sinh viên",
+    "empty": "Chưa có địa điểm trong danh mục này.",
+    "categories": {
+      "Food": "Ẩm thực",
+      "Halal": "Halal",
+      "Vegan": "Thuần chay",
+      "Hospital": "Bệnh viện",
+      "Pharmacy": "Nhà thuốc",
+      "Hair Salon": "Tiệm tóc",
+      "Cafe": "Quán cà phê",
+      "Grocery": "Cửa hàng thực phẩm"
+    },
+    "distanceFromKu": "{{distance}} từ KU",
+    "actions": {
+      "view": "Xem Hướng dẫn địa phương"
+    },
+    "places": {
+      "anamClinic": {
+        "name": "Phòng khám đa khoa quốc tế Anam · Mẫu",
+        "description": "Danh sách mẫu cho một phòng khám gần đó có thể cung cấp hỗ trợ ngôn ngữ.",
+        "location": "Gần ga Anam",
+        "tip": "Hãy gọi trước để xác nhận các dịch vụ, giờ làm việc và hỗ trợ ngôn ngữ hiện tại."
+      },
+      "kuPharmacy": {
+        "name": "Nhà thuốc cổng KU · Mẫu",
+        "description": "Danh sách mẫu cho một hiệu thuốc gần khuôn viên trường.",
+        "location": "Gần cổng chính KU",
+        "tip": "Mang theo tên thuốc hoặc ảnh rõ nét khi yêu cầu trợ giúp."
+      },
+      "seoulKitchen": {
+        "name": "Nhà bếp Halal Seoul · Mẫu",
+        "description": "Danh sách mẫu cho bữa ăn phù hợp với người theo đạo Hồi gần khuôn viên trường.",
+        "location": "Anam-ro",
+        "tip": "Xác nhận thành phần hiện tại và chứng nhận trực tiếp với nhà hàng."
+      },
+      "greenTable": {
+        "name": "Bảng xanh · Mẫu",
+        "description": "Danh sách mẫu các món ăn thân thiện với người ăn chay.",
+        "location": "Gần Anam Ogeori",
+        "tip": "Hỏi về nước sốt và nước dùng nếu bạn tránh các thành phần động vật."
+      },
+      "studyCafe": {
+        "name": "Quán cà phê học tập tại trường · Mẫu",
+        "description": "Mẫu danh sách quán cà phê yên tĩnh, thân thiện với học tập.",
+        "location": "Gần KU Central Plaza",
+        "tip": "Kiểm tra các quy định về chỗ ngồi hiện hành trước một buổi học dài."
+      },
+      "neighborhoodMart": {
+        "name": "Siêu thị khu phố Anam · Hàng mẫu",
+        "description": "Danh sách mẫu về cửa hàng tạp hóa hàng ngày và đồ gia dụng cơ bản.",
+        "location": "Gần ga Anam",
+        "tip": "So sánh đơn giá khi mua đồ dùng thiết yếu trong gia đình."
+      }
+    }
+  },
+  "verification": {
+    "signIn": "Đăng nhập",
+    "continue": "Tiếp tục bằng email KU",
+    "title": "Xác minh sinh viên",
+    "email": "Email trường",
+    "authTitle": "Tiếp tục với email KU của bạn",
+    "authBody": "Chúng tôi sẽ gửi mã gồm sáu chữ số đến email có kết thúc chính xác bằng @korea.ac.kr.",
+    "sendCode": "Gửi mã xác minh",
+    "sending": "Đang gửi mã…",
+    "linkSent": "Chúng tôi đã gửi liên kết đăng nhập tới email của bạn.",
+    "openLink": "Mở liên kết đăng nhập trong email đó để tiếp tục.",
+    "code": "Mã xác minh",
+    "verifyCode": "Mã xác minh",
+    "verifying": "Đang xác minh…",
+    "resend": "Gửi lại mã",
+    "resendCooldown": "Gửi lại sau {{seconds}} giây",
+    "changeEmail": "Thay đổi email",
+    "signOut": "Đăng xuất",
+    "verifiedKu": "Email KU đã được xác minh",
+    "securityNote": "KU Settle không bao giờ hỏi mật khẩu của bạn. Bỏ qua bất kỳ mã nào bạn không yêu cầu.",
+    "body": "Nguyên mẫu này chỉ kiểm tra định dạng email KU và không gửi email. Dịch vụ trực tiếp sẽ yêu cầu xác minh thông qua email thực tế của Đại học Hàn Quốc.",
+    "emailPlaceholder": "sinh viên@korea.ac.kr",
+    "submit": "Xác minh cho bản demo",
+    "success": "Bạn đã được xác minh cho bản demo này",
+    "student": "Trao đổi sinh viên"
+  },
+  "profile": {
+    "guestName": "Khách",
+    "save": "Lưu hồ sơ",
+    "arrival": "Ngày dự kiến đến",
+    "housing": "Nơi ở",
+    "name": "Tên",
+    "create": "Tạo lộ trình",
+    "languageNote": "Bạn có thể đổi ngôn ngữ sau.",
+    "accountTitle": "Tài khoản của bạn",
+    "accountTasks": "nhiệm vụ đã hoàn thành",
+    "accountListings": "danh sách",
+    "deleteAccount": "Xóa tài khoản",
+    "deleteTitle": "Xóa vĩnh viễn tài khoản của bạn?",
+    "deleteBody": "Việc này không thể hoàn tác được. Hồ sơ, tiến trình vòng đời và mọi danh sách thị trường của bạn sẽ bị xóa.",
+    "deleteProfile": "Tài khoản và hồ sơ",
+    "deleteProgress": "Tiến trình vòng đời",
+    "deleteListings": "Tất cả danh sách đang hoạt động, đã bán, ẩn và đã xóa",
+    "typeEmail": "Nhập email của bạn để xác nhận",
+    "continueDelete": "Tiếp tục",
+    "deleteForever": "Xóa vĩnh viễn",
+    "deleteSuccess": "Tài khoản của bạn đã bị xóa.",
+    "importTitle": "Nhập gói của thiết bị này?",
+    "importBody": "Không có gì được tải lên cho đến khi bạn xác nhận. Dữ liệu demo không bao giờ được nhập.",
+    "importProfile": "hồ sơ",
+    "importTasks": "nhiệm vụ đã hoàn thành",
+    "importProducts": "danh sách địa phương",
+    "importConfirm": "Nhập dữ liệu đã chọn",
+    "importSuccess": "Gói thiết bị của bạn đã được nhập.",
+    "notNow": "Không phải bây giờ",
+    "demoArrival": "Hồ sơ demo",
+    "dorm": "Ký túc xá KU",
+    "offCampus": "Nhà ở ngoài khuôn viên trường",
+    "setupEyebrow": "CÁ NHÂN HÓA KẾ HOẠCH CỦA BẠN",
+    "setupTitle": "Hãy thiết lập kế hoạch vòng đời KU của bạn",
+    "setupBody": "Hãy cho chúng tôi biết những điều cơ bản để nhiệm vụ về nhà ở đến và đi phù hợp với tình huống của bạn. Không có tài khoản nào được tạo.",
+    "namePlaceholder": "Tên của bạn",
+    "arrivalDate": "Ngày đến dự kiến",
+    "housingType": "Loại nhà ở",
+    "skip": "Thiết lập sau"
+  },
+  "admin": {
+    "eyebrow": "QUẢN TRỊ VẬN HÀNH",
+    "title": "Bảng quản trị",
+    "products": "Sản phẩm",
+    "reservations": "Đặt trước",
+    "reports": "Báo cáo",
+    "tasks": "Nhiệm vụ",
+    "export": "Xuất dữ liệu",
+    "import": "Nhập dữ liệu",
+    "productSection": "Quản lý sản phẩm",
+    "reservationSection": "Quản lý đặt trước",
+    "reportSection": "Quản lý báo cáo",
+    "noData": "Không có dữ liệu.",
+    "demoNotice": "Màn hình quản lý demo chỉ dành cho thiết bị, không phải công cụ quản trị viên an toàn.",
+    "reset": "Đặt lại bản demo",
+    "confirmReset": "Đặt lại tất cả dữ liệu demo?",
+    "confirmDelete": "Xóa mục này cũng như các mục đặt chỗ và báo cáo của nó?",
+    "lifecycleSection": "Tóm tắt vòng đời",
+    "reportNew": "Đã nhận",
+    "reportReviewed": "Đang xem xét",
+    "reportResolved": "Đã giải quyết",
+    "completedTasks": "Đã hoàn thành {{count}} mục",
+    "trackedTasks": "{{count}} nhiệm vụ",
+    "progress": "{{progress}}% tiến độ"
+  },
+  "reset": {
+    "button": "Đặt lại dữ liệu của tôi",
+    "title": "Đặt lại dữ liệu của bạn?",
+    "confirm": "Đặt lại",
+    "body": "Thao tác này sẽ xóa hồ sơ đã lưu, danh sách kiểm tra vòng đời, xác minh, danh sách thị trường, tìm kiếm và bộ lọc trên thiết bị này. Ngôn ngữ của bạn vẫn giữ nguyên."
+  },
+  "validation": {
+    "requiredFields": "Vui lòng điền tất cả trường bắt buộc.",
+    "positivePrice": "Nhập giá lớn hơn 0.",
+    "itemRequired": "Nhập tên sản phẩm.",
+    "pickupRequired": "Nhập địa điểm nhận.",
+    "pickupScheduleRequired": "Chọn ngày và phạm vi thời gian lấy hàng hợp lệ.",
+    "validEmail": "Nhập email @korea.ac.kr hợp lệ.",
+    "nameRequired": "Nhập tên tối đa 80 ký tự.",
+    "invalidDate": "Nhập ngày hợp lệ.",
+    "validPrice": "Nhập giá KRW dương hợp lệ.",
+    "otpLength": "Nhập mã gồm sáu chữ số."
+  },
+  "errors": {
+    "generic": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "imageInvalid": "Chọn tệp ảnh hợp lệ.",
+    "missingTranslation": "Nội dung này tạm thời được hiển thị bằng tiếng Anh.",
+    "rateLimit": "Quá nhiều yêu cầu. Vui lòng đợi.",
+    "sessionExpired": "Phiên đã hết hạn. Vui lòng đăng nhập lại.",
+    "permissionDenied": "Bạn không có quyền thực hiện thao tác này.",
+    "offline": "Bạn đang ngoại tuyến. Thay đổi chưa được lưu.",
+    "saveFailed": "Không thể lưu. Vui lòng thử lại.",
+    "storageQuota": "Không có đủ bộ nhớ trình duyệt. Hãy xóa một hình ảnh lớn và thử lại.",
+    "storage": "Không thể đọc được dữ liệu đã lưu. Mặc định an toàn đã được khôi phục.",
+    "supabaseNotConfigured": "Dịch vụ tài khoản chưa được kết nối. Định cấu hình URL Supabase công khai và khóa có thể xuất bản để cho phép đăng nhập.",
+    "supabaseUnavailable": "Dịch vụ tài khoản tạm thời không khả dụng.",
+    "invalidOtp": "Mã không chính xác hoặc đã hết hạn. Yêu cầu mã mới.",
+    "imageTooLarge": "Chọn hình ảnh nhỏ hơn 2 MB."
+  },
+  "accessibility": {
+    "brandHome": "Trang chủ KU Settle",
+    "profile": "Mở hồ sơ ẩn danh",
+    "productDetails": "Xem chi tiết {{product}}",
+    "closeLanguage": "Đóng menu ngôn ngữ",
+    "lifecycleTabs": "Các giai đoạn của vòng đời",
+    "stageProgress": "{{stage}}: {{completed}} trên {{total}}, {{progress}}",
+    "placeCategory": "Lọc địa điểm theo {{category}}",
+    "marketMode": "Chế độ thị trường"
+  }
 }

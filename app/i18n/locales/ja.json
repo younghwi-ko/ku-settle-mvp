@@ -182,7 +182,7 @@
     "arrivalDate": "到着予定日",
     "housingType": "住居タイプ",
     "create": "自分のプランを作成",
-    "skip": "デモでスキップ",
+    "skip": "あとで設定",
     "languageNote": "設定後も言語を変更できます。"
   },
   "admin": { "eyebrow": "デモ管理", "title": "デモ管理パネル", "demoNotice": "安全な管理者ツールではなく、この端末だけのデモ画面です。", "products": "商品", "reservations": "予約", "reports": "報告", "tasks": "タスク", "export": "すべてエクスポート", "import": "インポート", "reset": "デモをリセット", "confirmReset": "すべてのデモデータをリセットしますか？", "confirmDelete": "商品と関連する予約・報告を削除しますか？", "productSection": "商品管理", "reservationSection": "予約管理", "reportSection": "報告管理", "lifecycleSection": "ライフサイクル概要", "reportNew": "受付済み", "reportReviewed": "確認中", "reportResolved": "処理済み", "completedTasks": "完了 {{count}}件", "trackedTasks": "全タスク {{count}}件", "progress": "進捗 {{progress}}%", "noData": "表示するデータがありません。" },

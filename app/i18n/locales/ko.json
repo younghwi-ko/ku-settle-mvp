@@ -182,7 +182,7 @@
     "arrivalDate": "입국 예정일",
     "housingType": "주거 유형",
     "create": "나만의 계획 만들기",
-    "skip": "데모로 건너뛰기",
+    "skip": "나중에 설정",
     "languageNote": "설정 후에도 언어를 변경할 수 있습니다."
   },
   "admin": { "eyebrow": "데모 관리", "title": "데모 관리자 패널", "demoNotice": "보안 관리자 기능이 아닌 현재 기기 전용 데모 관리 화면입니다.", "products": "상품", "reservations": "예약", "reports": "신고", "tasks": "작업", "export": "전체 내보내기", "import": "가져오기", "reset": "데모 초기화", "confirmReset": "모든 데모 데이터를 초기화할까요?", "confirmDelete": "이 상품과 연결된 예약·신고를 삭제할까요?", "productSection": "상품 관리", "reservationSection": "예약 관리", "reportSection": "신고 관리", "lifecycleSection": "라이프사이클 요약", "reportNew": "접수됨", "reportReviewed": "확인 중", "reportResolved": "처리 완료", "completedTasks": "완료 작업 {{count}}개", "trackedTasks": "전체 작업 {{count}}개", "progress": "진행률 {{progress}}%", "noData": "표시할 데이터가 없습니다." },

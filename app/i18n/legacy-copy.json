@@ -1,0 +1,5692 @@
+{
+  "20": {
+    "en": "20",
+    "ko": "20",
+    "ja": "20",
+    "zh-CN": "20",
+    "uz": "20",
+    "vi": "20",
+    "mn": "20",
+    "ms": "20"
+  },
+  " · ": {
+    "en": " · ",
+    "ko": "·",
+    "ja": "·",
+    "zh-CN": "·",
+    "uz": "·",
+    "vi": "·",
+    "mn": "·",
+    "ms": "·"
+  },
+  " · Internal verified ": {
+    "en": " · Internal verified ",
+    "ko": "· 내부 검증",
+    "ja": "· 内部検証済み",
+    "zh-CN": "· 内部验证",
+    "uz": "· Ichki tasdiqlangan",
+    "vi": "· Đã xác minh nội bộ",
+    "mn": "· Дотооддоо баталгаажуулсан",
+    "ms": "· Dalaman disahkan"
+  },
+  " · Kakao API candidates ": {
+    "en": " · Kakao API candidates ",
+    "ko": "· 카카오 API 후보",
+    "ja": "· カカオ API 候補",
+    "zh-CN": "·Kakao API候选者",
+    "uz": "· Kakao API nomzodlari",
+    "vi": "· Ứng viên API Kakao",
+    "mn": "· Какао API нэр дэвшигчид",
+    "ms": "· Calon API Kakao"
+  },
+  " · Location check needed ": {
+    "en": " · Location check needed ",
+    "ko": "· 위치 확인이 필요함",
+    "ja": "· 場所の確認が必要です",
+    "zh-CN": "·需要检查位置",
+    "uz": "· Joylashuvni tekshirish kerak",
+    "vi": "· Cần kiểm tra vị trí",
+    "mn": "· Байршлыг шалгах шаардлагатай",
+    "ms": "· Semakan lokasi diperlukan"
+  },
+  " · Map-ready ": {
+    "en": " · Map-ready ",
+    "ko": "· 지도 준비",
+    "ja": "· マップ対応",
+    "zh-CN": "· 地图就绪",
+    "uz": "· Xaritaga tayyor",
+    "vi": "· Sẵn sàng cho bản đồ",
+    "mn": "· Газрын зурагт бэлэн",
+    "ms": "· Sedia Peta"
+  },
+  " · Showing ": {
+    "en": " · Showing ",
+    "ko": "· 표시 중",
+    "ja": "· 表示中",
+    "zh-CN": "· 显示",
+    "uz": "· Koʻrsatilmoqda",
+    "vi": "· Đang hiển thị",
+    "mn": "· Харуулж байна",
+    "ms": "· Menunjukkan"
+  },
+  " · Under review.": {
+    "en": " · Under review.",
+    "ko": "· 검토 중입니다.",
+    "ja": "· 検討中。",
+    "zh-CN": "· 正在审查中。",
+    "uz": "· Ko‘rib chiqilmoqda.",
+    "vi": "· Đang được xem xét.",
+    "mn": "· Хянаж байна.",
+    "ms": "· Dalam semakan."
+  },
+  " days": {
+    "en": " days",
+    "ko": "일",
+    "ja": "日",
+    "zh-CN": "天",
+    "uz": "kun",
+    "vi": "ngày",
+    "mn": "хоног",
+    "ms": "hari"
+  },
+  " KRW": {
+    "en": " KRW",
+    "ko": "원",
+    "ja": "ウォン",
+    "zh-CN": "韩元",
+    "uz": "KRW",
+    "vi": "KRW",
+    "mn": "вон",
+    "ms": "KRW"
+  },
+  " min": {
+    "en": " min",
+    "ko": "분",
+    "ja": "分",
+    "zh-CN": "分钟",
+    "uz": "min",
+    "vi": "phút",
+    "mn": "мин",
+    "ms": "min"
+  },
+  "_": {
+    "en": "_",
+    "ko": "_",
+    "ja": "_",
+    "zh-CN": "_",
+    "uz": "_",
+    "vi": "_",
+    "mn": "_",
+    "ms": "_"
+  },
+  "-": {
+    "en": "-",
+    "ko": "-",
+    "ja": "-",
+    "zh-CN": "-",
+    "uz": "-",
+    "vi": "-",
+    "mn": "-",
+    "ms": "-"
+  },
+  "—": {
+    "en": "—",
+    "ko": "—",
+    "ja": "—",
+    "zh-CN": "—",
+    "uz": "—",
+    "vi": "—",
+    "mn": "—",
+    "ms": "—"
+  },
+  ",": {
+    "en": ",",
+    "ko": ",",
+    "ja": "、",
+    "zh-CN": ",",
+    "uz": ",",
+    "vi": ",",
+    "mn": ",",
+    "ms": ","
+  },
+  ", ": {
+    "en": ", ",
+    "ko": ",",
+    "ja": "、",
+    "zh-CN": ",",
+    "uz": ",",
+    "vi": ",",
+    "mn": ",",
+    "ms": ","
+  },
+  ": ": {
+    "en": ": ",
+    "ko": ":",
+    "ja": ":",
+    "zh-CN": "：",
+    "uz": ":",
+    "vi": ":",
+    "mn": ":",
+    "ms": ":"
+  },
+  "?": {
+    "en": "?",
+    "ko": "?",
+    "ja": "?",
+    "zh-CN": "？",
+    "uz": "?",
+    "vi": "?",
+    "mn": "?",
+    "ms": "?"
+  },
+  ".": {
+    "en": ".",
+    "ko": ".",
+    "ja": "。",
+    "zh-CN": "。",
+    "uz": ".",
+    "vi": ".",
+    "mn": ".",
+    "ms": "."
+  },
+  "../i18n": {
+    "en": "../i18n",
+    "ko": "../i18n",
+    "ja": "../i18n",
+    "zh-CN": "../i18n",
+    "uz": "../i18n",
+    "vi": "../i18n",
+    "mn": "../i18n",
+    "ms": "../i18n"
+  },
+  "../i18n/legacy-copy": {
+    "en": "../i18n/legacy-copy",
+    "ko": "../i18n/레거시-복사",
+    "ja": "../i18n/レガシーコピー",
+    "zh-CN": "../i18n/legacy-copy",
+    "uz": "../i18n/legacy-copy",
+    "vi": "../i18n/legacy-copy",
+    "mn": "../i18n/legacy-copy",
+    "ms": "../i18n/legacy-copy"
+  },
+  "./data": {
+    "en": "./data",
+    "ko": "./데이터",
+    "ja": "./data",
+    "zh-CN": "./数据",
+    "uz": "./ma'lumotlar",
+    "vi": "./data",
+    "mn": "./өгөгдөл",
+    "ms": "./data"
+  },
+  "./i18n": {
+    "en": "./i18n",
+    "ko": "./i18n",
+    "ja": "./i18n",
+    "zh-CN": "./i18n",
+    "uz": "./i18n",
+    "vi": "./i18n",
+    "mn": "./i18n",
+    "ms": "./i18n"
+  },
+  "./i18n/legacy-copy": {
+    "en": "./i18n/legacy-copy",
+    "ko": "./i18n/legacy-copy",
+    "ja": "./i18n/legacy-copy",
+    "zh-CN": "./i18n/legacy-copy",
+    "uz": "./i18n/legacy-copy",
+    "vi": "./i18n/legacy-copy",
+    "mn": "./i18n/legacy-copy",
+    "ms": "./i18n/legacy-copy"
+  },
+  "./lib/local-data": {
+    "en": "./lib/local-data",
+    "ko": "./lib/local-data",
+    "ja": "./lib/local-data",
+    "zh-CN": "./lib/local-data",
+    "uz": "./lib/local-data",
+    "vi": "./lib/local-data",
+    "mn": "./lib/local-data",
+    "ms": "./lib/local-data"
+  },
+  "/api/admin/audit": {
+    "en": "/api/admin/audit",
+    "ko": "/api/admin/audit",
+    "ja": "/api/admin/audit",
+    "zh-CN": "/api/admin/audit",
+    "uz": "/api/admin/audit",
+    "vi": "/api/admin/kiểm toán",
+    "mn": "/api/admin/audit",
+    "ms": "/api/admin/audit"
+  },
+  "/api/admin/guides": {
+    "en": "/api/admin/guides",
+    "ko": "/api/admin/guides",
+    "ja": "/api/admin/guides",
+    "zh-CN": "/api/admin/guides",
+    "uz": "/api/admin/guides",
+    "vi": "/api/admin/guides",
+    "mn": "/api/admin/guides",
+    "ms": "/api/admin/guides"
+  },
+  "/api/admin/guides/": {
+    "en": "/api/admin/guides/",
+    "ko": "/api/admin/guides/",
+    "ja": "/api/admin/guides/",
+    "zh-CN": "/api/admin/guides/",
+    "uz": "/api/admin/guides/",
+    "vi": "/api/admin/guides/",
+    "mn": "/api/admin/guides/",
+    "ms": "/api/admin/guides/"
+  },
+  "/api/admin/listings": {
+    "en": "/api/admin/listings",
+    "ko": "/api/admin/listings",
+    "ja": "/api/admin/listings",
+    "zh-CN": "/api/admin/listings",
+    "uz": "/api/admin/listings",
+    "vi": "/api/admin/listings",
+    "mn": "/api/admin/listings",
+    "ms": "/api/admin/listings"
+  },
+  "/api/admin/listings/": {
+    "en": "/api/admin/listings/",
+    "ko": "/api/admin/listings/",
+    "ja": "/api/admin/listings/",
+    "zh-CN": "/api/admin/listings/",
+    "uz": "/api/admin/listings/",
+    "vi": "/api/admin/listings/",
+    "mn": "/api/admin/listings/",
+    "ms": "/api/admin/listings/"
+  },
+  "/api/admin/logout": {
+    "en": "/api/admin/logout",
+    "ko": "/api/admin/로그아웃",
+    "ja": "/api/admin/logout",
+    "zh-CN": "/api/admin/logout",
+    "uz": "/api/admin/logout",
+    "vi": "/api/admin/đăng xuất",
+    "mn": "/api/admin/logout",
+    "ms": "/api/admin/logout"
+  },
+  "/api/admin/operations": {
+    "en": "/api/admin/operations",
+    "ko": "/api/admin/작업",
+    "ja": "/api/admin/operations",
+    "zh-CN": "/api/admin/操作",
+    "uz": "/api/admin/operations",
+    "vi": "/api/admin/hoạt động",
+    "mn": "/api/admin/operations",
+    "ms": "/api/admin/operations"
+  },
+  "/api/admin/operations/": {
+    "en": "/api/admin/operations/",
+    "ko": "/api/admin/작업/",
+    "ja": "/api/admin/operations/",
+    "zh-CN": "/api/管理/操作/",
+    "uz": "/api/admin/operations/",
+    "vi": "/api/admin/hoạt động/",
+    "mn": "/api/admin/operations/",
+    "ms": "/api/admin/operations/"
+  },
+  "/api/admin/overview": {
+    "en": "/api/admin/overview",
+    "ko": "/api/admin/개요",
+    "ja": "/api/admin/overview",
+    "zh-CN": "/api/admin/概述",
+    "uz": "/api/admin/overview",
+    "vi": "/api/admin/tổng quan",
+    "mn": "/api/admin/ тойм",
+    "ms": "/api/admin/overview"
+  },
+  "/api/admin/places": {
+    "en": "/api/admin/places",
+    "ko": "/api/admin/places",
+    "ja": "/api/admin/places",
+    "zh-CN": "/api/admin/places",
+    "uz": "/api/admin/places",
+    "vi": "/api/admin/địa điểm",
+    "mn": "/api/admin/places",
+    "ms": "/api/admin/places"
+  },
+  "/api/admin/places/": {
+    "en": "/api/admin/places/",
+    "ko": "/api/admin/places/",
+    "ja": "/api/admin/places/",
+    "zh-CN": "/api/admin/places/",
+    "uz": "/api/admin/places/",
+    "vi": "/api/admin/địa điểm/",
+    "mn": "/api/admin/places/",
+    "ms": "/api/admin/places/"
+  },
+  "/api/admin/reports": {
+    "en": "/api/admin/reports",
+    "ko": "/api/admin/reports",
+    "ja": "/api/admin/reports",
+    "zh-CN": "/api/admin/reports",
+    "uz": "/api/admin/reports",
+    "vi": "/api/admin/báo cáo",
+    "mn": "/api/admin/reports",
+    "ms": "/api/admin/reports"
+  },
+  "/api/admin/reports/": {
+    "en": "/api/admin/reports/",
+    "ko": "/api/admin/reports/",
+    "ja": "/api/admin/reports/",
+    "zh-CN": "/api/admin/reports/",
+    "uz": "/api/admin/reports/",
+    "vi": "/api/admin/báo cáo/",
+    "mn": "/api/admin/reports/",
+    "ms": "/api/admin/reports/"
+  },
+  "/api/admin/reservations": {
+    "en": "/api/admin/reservations",
+    "ko": "/api/admin/reservations",
+    "ja": "/api/admin/reservations",
+    "zh-CN": "/api/admin/reservations",
+    "uz": "/api/admin/reservations",
+    "vi": "/api/admin/đặt trước",
+    "mn": "/api/admin/reservations",
+    "ms": "/api/admin/reservations"
+  },
+  "/api/admin/reservations/": {
+    "en": "/api/admin/reservations/",
+    "ko": "/api/admin/reservations/",
+    "ja": "/api/admin/reservations/",
+    "zh-CN": "/api/admin/reservations/",
+    "uz": "/api/admin/reservations/",
+    "vi": "/api/admin/reservations/",
+    "mn": "/api/admin/reservations/",
+    "ms": "/api/admin/reservations/"
+  },
+  "/api/admin/service-requests?type=delivery": {
+    "en": "/api/admin/service-requests?type=delivery",
+    "ko": "/api/admin/service-requests?type=배달",
+    "ja": "/api/admin/service-requests?type=delivery",
+    "zh-CN": "/api/admin/service-requests?type=delivery",
+    "uz": "/api/admin/service-requests?type=delivery",
+    "vi": "/api/admin/service-requests?type=delivery",
+    "mn": "/api/admin/service-requests?type=delivery",
+    "ms": "/api/admin/service-requests?type=delivery"
+  },
+  "/api/admin/service-requests?type=storage": {
+    "en": "/api/admin/service-requests?type=storage",
+    "ko": "/api/admin/service-requests?type=storage",
+    "ja": "/api/admin/service-requests?type=storage",
+    "zh-CN": "/api/admin/service-requests?type=storage",
+    "uz": "/api/admin/service-requests?type=storage",
+    "vi": "/api/admin/service-requests?type=storage",
+    "mn": "/api/admin/service-requests?type=storage",
+    "ms": "/api/admin/service-requests?type=storage"
+  },
+  "/api/admin/service-requests/": {
+    "en": "/api/admin/service-requests/",
+    "ko": "/api/admin/service-requests/",
+    "ja": "/api/admin/service-requests/",
+    "zh-CN": "/api/admin/service-requests/",
+    "uz": "/api/admin/service-requests/",
+    "vi": "/api/admin/service-requests/",
+    "mn": "/api/admin/service-requests/",
+    "ms": "/api/admin/service-requests/"
+  },
+  "/api/admin/session": {
+    "en": "/api/admin/session",
+    "ko": "/api/관리자/세션",
+    "ja": "/api/admin/セッション",
+    "zh-CN": "/api/admin/session",
+    "uz": "/api/admin/session",
+    "vi": "/api/admin/phiên",
+    "mn": "/api/admin/session",
+    "ms": "/api/admin/session"
+  },
+  "/api/admin/tickets": {
+    "en": "/api/admin/tickets",
+    "ko": "/api/admin/tickets",
+    "ja": "/api/admin/tickets",
+    "zh-CN": "/api/admin/门票",
+    "uz": "/api/admin/tickets",
+    "vi": "/api/admin/tickets",
+    "mn": "/api/admin/tickets",
+    "ms": "/api/admin/tickets"
+  },
+  "/api/admin/tickets/": {
+    "en": "/api/admin/tickets/",
+    "ko": "/api/admin/tickets/",
+    "ja": "/api/admin/tickets/",
+    "zh-CN": "/api/admin/tickets/",
+    "uz": "/api/admin/tickets/",
+    "vi": "/api/admin/tickets/",
+    "mn": "/api/admin/tickets/",
+    "ms": "/api/admin/tickets/"
+  },
+  "&": {
+    "en": "&",
+    "ko": "&",
+    "ja": "&",
+    "zh-CN": "&",
+    "uz": "va",
+    "vi": "&",
+    "mn": "&",
+    "ms": "&"
+  },
+  "2026-08-29": {
+    "en": "2026-08-29",
+    "ko": "2026-08-29",
+    "ja": "2026-08-29",
+    "zh-CN": "2026-08-29",
+    "uz": "2026-08-29",
+    "vi": "2026-08-29",
+    "mn": "2026-08-29",
+    "ms": "2026-08-29"
+  },
+  "7,30": {
+    "en": "7,30",
+    "ko": "7,30",
+    "ja": "7,30",
+    "zh-CN": "7,30",
+    "uz": "7,30",
+    "vi": "7,30",
+    "mn": "7,30",
+    "ms": "7,30"
+  },
+  "academic": {
+    "en": "academic",
+    "ko": "학문적",
+    "ja": "学術",
+    "zh-CN": "学术",
+    "uz": "akademik",
+    "vi": "học thuật",
+    "mn": "академич",
+    "ms": "akademik"
+  },
+  "Academic Life": {
+    "en": "Academic Life",
+    "ko": "학업생활",
+    "ja": "学生生活",
+    "zh-CN": "学术生活",
+    "uz": "Akademik hayot",
+    "vi": "Đời sống học thuật",
+    "mn": "Эрдмийн амьдрал",
+    "ms": "Kehidupan Akademik"
+  },
+  "Academic system menus and dates are controlled by the university. Use current KU notices for deadlines.": {
+    "en": "Academic system menus and dates are controlled by the university. Use current KU notices for deadlines.",
+    "ko": "학사 시스템 메뉴와 날짜는 대학에서 관리합니다. 마감일은 최신 KU 공지를 사용하세요.",
+    "ja": "学術システムのメニューと日付は大学によって管理されます。期限については現在の KU 通知を使用してください。",
+    "zh-CN": "学术系统菜单和日期由大学控制。使用当前的 KU 通知作为截止日期。",
+    "uz": "Akademik tizim menyulari va sanalari universitet tomonidan nazorat qilinadi. Belgilangan muddatlar uchun joriy KU xabarnomalaridan foydalaning.",
+    "vi": "Các menu và ngày trong hệ thống học vụ do trường quản lý. Hãy kiểm tra thông báo KU mới nhất để biết thời hạn.",
+    "mn": "Эрдмийн системийн цэс, огноог их сургууль хянадаг. Эцсийн хугацаанд одоогийн KU мэдэгдлүүдийг ашиглана уу.",
+    "ms": "Menu dan tarikh sistem akademik dikawal oleh universiti. Gunakan notis KU semasa untuk tarikh akhir."
+  },
+  "account": {
+    "en": "account",
+    "ko": "계정",
+    "ja": "アカウント",
+    "zh-CN": "帐户",
+    "uz": "hisobi",
+    "vi": "account",
+    "mn": "бүртгэл",
+    "ms": "akaun"
+  },
+  "active": {
+    "en": "active",
+    "ko": "활성",
+    "ja": "がアクティブです",
+    "zh-CN": "活跃",
+    "uz": "faol",
+    "vi": "đang hoạt động",
+    "mn": "идэвхтэй",
+    "ms": "aktif"
+  },
+  "Add an image to help buyers understand the condition.": {
+    "en": "Add an image to help buyers understand the condition.",
+    "ko": "구매자의 상태 이해를 돕기 위해 이미지를 추가합니다.",
+    "ja": "購入者が状態を理解できるように画像を追加します。",
+    "zh-CN": "添加图片以帮助买家了解状况。",
+    "uz": "Xaridorlarga shartni tushunishga yordam berish uchun rasm qo'shing.",
+    "vi": "Thêm hình ảnh để người mua hiểu rõ tình trạng.",
+    "mn": "Худалдан авагчдад нөхцөл байдлыг ойлгоход нь туслахын тулд зураг нэмнэ үү.",
+    "ms": "Tambahkan imej untuk membantu pembeli memahami syarat tersebut."
+  },
+  "Add personal task": {
+    "en": "Add personal task",
+    "ko": "개인 작업 추가",
+    "ja": "個人タスクを追加",
+    "zh-CN": "添加个人任务",
+    "uz": "Shaxsiy vazifa qo‘shing",
+    "vi": "Thêm nhiệm vụ cá nhân",
+    "mn": "Хувийн даалгавар нэмнэ үү",
+    "ms": "Tambah tugas peribadi"
+  },
+  "Add place": {
+    "en": "Add place",
+    "ko": "장소 추가",
+    "ja": "場所を追加",
+    "zh-CN": "添加地点",
+    "uz": "Joy qoʻshing",
+    "vi": "Thêm địa điểm",
+    "mn": "Газар нэмэх",
+    "ms": "Tambah tempat"
+  },
+  "Address": {
+    "en": "Address",
+    "ko": "주소",
+    "ja": "アドレス",
+    "zh-CN": "地址",
+    "uz": "Manzil",
+    "vi": "Địa chỉ",
+    "mn": "Хаяг",
+    "ms": "Alamat"
+  },
+  "Admin API access": {
+    "en": "Admin API access",
+    "ko": "관리 API 액세스",
+    "ja": "管理者 API アクセス",
+    "zh-CN": "管理 API 访问",
+    "uz": "Admin API kirish",
+    "vi": "Quyền truy cập API quản trị",
+    "mn": "Админ API хандалт",
+    "ms": "Akses API pentadbir"
+  },
+  "admin cleanup": {
+    "en": "admin cleanup",
+    "ko": "관리자 정리",
+    "ja": "管理者のクリーンアップ",
+    "zh-CN": "管理清理",
+    "uz": "administratorni tozalash",
+    "vi": "dọn dẹp quản trị viên",
+    "mn": "админ цэвэрлэгээ",
+    "ms": "pembersihan pentadbir"
+  },
+  "Admin panel": {
+    "en": "Admin panel",
+    "ko": "관리자 패널",
+    "ja": "管理パネル",
+    "zh-CN": "管理面板",
+    "uz": "Administrator paneli",
+    "vi": "Bảng quản trị",
+    "mn": "Админ самбар",
+    "ms": "Panel pentadbir"
+  },
+  "Admin permission is required.": {
+    "en": "Admin permission is required.",
+    "ko": "관리자 권한이 필요합니다.",
+    "ja": "管理者権限が必要です。",
+    "zh-CN": "需要管理员权限。",
+    "uz": "Administrator ruxsati talab qilinadi.",
+    "vi": "Cần có sự cho phép của quản trị viên.",
+    "mn": "Админы зөвшөөрөл шаардлагатай.",
+    "ms": "Kebenaran pentadbir diperlukan."
+  },
+  "Admin status management": {
+    "en": "Admin status management",
+    "ko": "관리자 상태 관리",
+    "ja": "管理者のステータス管理",
+    "zh-CN": "管理员状态管理",
+    "uz": "Administrator holatini boshqarish",
+    "vi": "Quản lý trạng thái quản trị viên",
+    "mn": "Админ статусын удирдлага",
+    "ms": "Pengurusan status pentadbir"
+  },
+  "admin_required": {
+    "en": "admin_required",
+    "ko": "관리자_필수",
+    "ja": "admin_required",
+    "zh-CN": "admin_required",
+    "uz": "admin_talab",
+    "vi": "admin_required",
+    "mn": "админ_шаардлагатай",
+    "ms": "pentadbir_diperlukan"
+  },
+  "admin-audit-log": {
+    "en": "admin-audit-log",
+    "ko": "관리자-감사-로그",
+    "ja": "管理者監査ログ",
+    "zh-CN": "管理审核日志",
+    "uz": "admin-audit-log",
+    "vi": "quản trị viên-kiểm toán-log",
+    "mn": "админ-аудит-лог",
+    "ms": "log-audit pentadbir"
+  },
+  "admin-audit-row": {
+    "en": "admin-audit-row",
+    "ko": "관리 감사 행",
+    "ja": "管理者監査行",
+    "zh-CN": "管理审核行",
+    "uz": "admin-audit-qator",
+    "vi": "quản trị-kiểm toán-hàng",
+    "mn": "админ-аудит-мөр",
+    "ms": "baris-audit pentadbir"
+  },
+  "admin-auth-form": {
+    "en": "admin-auth-form",
+    "ko": "관리자 인증 양식",
+    "ja": "管理者認証フォーム",
+    "zh-CN": "管理验证表单",
+    "uz": "admin-auth-form",
+    "vi": "biểu mẫu quản trị viên-xác thực",
+    "mn": "админ баталгаажуулах маягт",
+    "ms": "admin-auth-form"
+  },
+  "admin-create-form": {
+    "en": "admin-create-form",
+    "ko": "관리자-생성-양식",
+    "ja": "管理者作成フォーム",
+    "zh-CN": "管理创建表单",
+    "uz": "admin-yaratish-shakl",
+    "vi": "admin-tạo-form",
+    "mn": "админ-үүсгэх-маягт",
+    "ms": "admin-create-form"
+  },
+  "admin-create-form admin-operation-form": {
+    "en": "admin-create-form admin-operation-form",
+    "ko": "관리자 생성 양식 관리 작업 양식",
+    "ja": "管理者作成フォーム 管理者操作フォーム",
+    "zh-CN": "管理创建表单 管理操作表单",
+    "uz": "admin-yaratish-shakl administrator-operatsiya shakli",
+    "vi": "admin-tạo-form quản trị-hoạt động-form",
+    "mn": "админ-хэлбэр үүсгэх админ-үйл ажиллагааны маягт",
+    "ms": "admin-create-form admin-operation-form"
+  },
+  "admin-data-card": {
+    "en": "admin-data-card",
+    "ko": "관리자-데이터-카드",
+    "ja": "管理者データカード",
+    "zh-CN": "管理数据卡",
+    "uz": "admin-ma'lumotlar kartasi",
+    "vi": "thẻ dữ liệu quản trị viên",
+    "mn": "админ-өгөгдлийн карт",
+    "ms": "kad-data-pentadbir"
+  },
+  "admin-data-card admin-service-card": {
+    "en": "admin-data-card admin-service-card",
+    "ko": "관리자-데이터-카드 관리자-서비스-카드",
+    "ja": "管理データカード 管理サービスカード",
+    "zh-CN": "管理数据卡 管理服务卡",
+    "uz": "admin-ma'lumotlar-karta administrator-xizmat-karta",
+    "vi": "thẻ quản trị-dữ liệu quản trị-thẻ dịch vụ",
+    "mn": "админ-өгөгдлийн карт админ-үйлчилгээний карт",
+    "ms": "kad-data-pentadbiran-kad-perkhidmatan"
+  },
+  "admin-data-list": {
+    "en": "admin-data-list",
+    "ko": "관리자 데이터 목록",
+    "ja": "管理データリスト",
+    "zh-CN": "管理数据列表",
+    "uz": "administrator maʼlumotlar roʻyxati",
+    "vi": "danh sách dữ liệu quản trị viên",
+    "mn": "админ-өгөгдлийн жагсаалт",
+    "ms": "senarai-data-pentadbir"
+  },
+  "admin-inline-actions": {
+    "en": "admin-inline-actions",
+    "ko": "관리자 인라인 작업",
+    "ja": "管理インラインアクション",
+    "zh-CN": "管理内联操作",
+    "uz": "administrator-inline-amallar",
+    "vi": "quản trị viên-hành động nội tuyến",
+    "mn": "админ-inline-үйлдэл",
+    "ms": "admin-inline-actions"
+  },
+  "admin-list-toolbar": {
+    "en": "admin-list-toolbar",
+    "ko": "관리자 목록 도구 모음",
+    "ja": "管理者リストツールバー",
+    "zh-CN": "管理列表工具栏",
+    "uz": "administrator roʻyxati asboblar paneli",
+    "vi": "thanh công cụ danh sách quản trị viên",
+    "mn": "админ-жагсаалтын самбар",
+    "ms": "bar alat senarai-pentadbir"
+  },
+  "admin-pagination": {
+    "en": "admin-pagination",
+    "ko": "관리자-페이지 매김",
+    "ja": "管理者ページネーション",
+    "zh-CN": "管理分页",
+    "uz": "admin-sahifalash",
+    "vi": "quản trị-phân trang",
+    "mn": "админ-хуудас",
+    "ms": "pentadbir-penomboran"
+  },
+  "admin-processed": {
+    "en": "admin-processed",
+    "ko": "관리자 처리됨",
+    "ja": "管理者処理",
+    "zh-CN": "管理员处理",
+    "uz": "administrator tomonidan qayta ishlangan",
+    "vi": "do quản trị viên xử lý",
+    "mn": "админ боловсруулсан",
+    "ms": "diproses oleh pentadbir"
+  },
+  "admin-server-error": {
+    "en": "admin-server-error",
+    "ko": "관리자-서버-오류",
+    "ja": "管理サーバーエラー",
+    "zh-CN": "管理服务器错误",
+    "uz": "admin-server-xato",
+    "vi": "lỗi-máy chủ quản trị",
+    "mn": "админ серверийн алдаа",
+    "ms": "ralat-pelayan-pentadbir"
+  },
+  "admin-server-heading": {
+    "en": "admin-server-heading",
+    "ko": "관리자-서버-헤딩",
+    "ja": "管理サーバー見出し",
+    "zh-CN": "管理服务器标题",
+    "uz": "administrator-server sarlavhasi",
+    "vi": "tiêu đề quản trị viên-máy chủ",
+    "mn": "админ-сервер-толгой",
+    "ms": "admin-server-heading"
+  },
+  "admin-server-metrics": {
+    "en": "admin-server-metrics",
+    "ko": "관리-서버-메트릭",
+    "ja": "管理サーバーメトリクス",
+    "zh-CN": "管理服务器指标",
+    "uz": "administrator-server koʻrsatkichlari",
+    "vi": "quản trị viên-máy chủ-số liệu",
+    "mn": "админ-серверийн хэмжүүр",
+    "ms": "pentadbir-pelayan-metrik"
+  },
+  "admin-server-notice": {
+    "en": "admin-server-notice",
+    "ko": "관리자-서버-공지",
+    "ja": "管理サーバー通知",
+    "zh-CN": "管理服务器通知",
+    "uz": "administrator-server-xabarnoma",
+    "vi": "quản trị-máy chủ-thông báo",
+    "mn": "админ-сервер-мэдэгдэл",
+    "ms": "notis pelayan-pentadbir"
+  },
+  "admin-server-panel": {
+    "en": "admin-server-panel",
+    "ko": "관리-서버-패널",
+    "ja": "管理サーバーパネル",
+    "zh-CN": "管理服务器面板",
+    "uz": "administrator-server-paneli",
+    "vi": "bảng quản trị-máy chủ",
+    "mn": "админ-серверийн самбар",
+    "ms": "panel pelayan-pentadbir"
+  },
+  "admin-server-panel admin-server-panel-full": {
+    "en": "admin-server-panel admin-server-panel-full",
+    "ko": "관리자-서버-패널 관리자-서버-패널-전체",
+    "ja": "管理サーバーパネル管理サーバーパネルフル",
+    "zh-CN": "管理服务器面板 管理服务器面板完整",
+    "uz": "admin-server-panel administrator-server-panel-to'liq",
+    "vi": "bảng quản trị-máy chủ quản trị-máy chủ-bảng-đầy đủ",
+    "mn": "админ-сервер-самбар админ-сервер-самбар дүүрэн",
+    "ms": "admin-server-panel admin-server-panel-penuh"
+  },
+  "admin-server-tabs": {
+    "en": "admin-server-tabs",
+    "ko": "관리자-서버-탭",
+    "ja": "管理サーバータブ",
+    "zh-CN": "管理服务器选项卡",
+    "uz": "administrator-server-yorliqlari",
+    "vi": "quản trị viên-máy chủ-tab",
+    "mn": "админ-сервер таб",
+    "ms": "tab pelayan-pentadbir"
+  },
+  "admin-service-details": {
+    "en": "admin-service-details",
+    "ko": "관리자-서비스-세부사항",
+    "ja": "管理サービスの詳細",
+    "zh-CN": "管理服务详细信息",
+    "uz": "administrator xizmati tafsilotlari",
+    "vi": "quản trị-dịch vụ-chi tiết",
+    "mn": "админ үйлчилгээний дэлгэрэнгүй",
+    "ms": "butiran perkhidmatan-pentadbiran"
+  },
+  "admin-service-field": {
+    "en": "admin-service-field",
+    "ko": "관리 서비스 필드",
+    "ja": "管理サービスフィールド",
+    "zh-CN": "管理服务字段",
+    "uz": "admin-xizmat maydoni",
+    "vi": "trường dịch vụ quản trị",
+    "mn": "админ үйлчилгээний талбар",
+    "ms": "medan perkhidmatan-pentadbiran"
+  },
+  "Administrative, healthcare, finance, and telecom conditions may change. Check the latest official notice.": {
+    "en": "Administrative, healthcare, finance, and telecom conditions may change. Check the latest official notice.",
+    "ko": "행정, 의료, 금융, 통신 조건이 변경될 수 있습니다. 최신 공식 공지를 확인하세요.",
+    "ja": "行政、医療、金融、通信の状況は変更される可能性があります。最新の公式通知を確認してください。",
+    "zh-CN": "行政、医疗保健、财务和电信条件可能会发生变化。查看最新官方通知。",
+    "uz": "Maʼmuriy, sogʻliqni saqlash, moliya va telekommunikatsiya shartlari oʻzgarishi mumkin. Oxirgi rasmiy xabarni tekshiring.",
+    "vi": "Các điều kiện hành chính, y tế, tài chính và viễn thông có thể thay đổi. Kiểm tra thông báo chính thức mới nhất.",
+    "mn": "Захиргаа, эрүүл мэнд, санхүү, харилцаа холбооны нөхцөл өөрчлөгдөж болно. Хамгийн сүүлийн албан ёсны мэдэгдлийг шалгана уу.",
+    "ms": "Keadaan pentadbiran, penjagaan kesihatan, kewangan dan telekom mungkin berubah. Semak notis rasmi terkini."
+  },
+  "Administrator tokens and account passwords are not stored or displayed outside this screen.": {
+    "en": "Administrator tokens and account passwords are not stored or displayed outside this screen.",
+    "ko": "관리자 토큰과 계정 비밀번호는 이 화면 외부에 저장되거나 표시되지 않습니다.",
+    "ja": "管理者トークンとアカウント パスワードは、この画面の外には保存または表示されません。",
+    "zh-CN": "管理员令牌和帐户密码不会存储或显示在此屏幕之外。",
+    "uz": "Administrator tokenlari va hisob parollari bu ekrandan tashqarida saqlanmaydi yoki koʻrsatilmaydi.",
+    "vi": "Mã thông báo quản trị viên và mật khẩu tài khoản không được lưu trữ hoặc hiển thị bên ngoài màn hình này.",
+    "mn": "Администраторын токенууд болон бүртгэлийн нууц үгийг энэ дэлгэцийн гадна хадгалахгүй эсвэл харуулахгүй.",
+    "ms": "Token pentadbir dan kata laluan akaun tidak disimpan atau dipaparkan di luar skrin ini."
+  },
+  "After submission, the operations team updates the status and estimate guidance. Payments are not processed in this service.": {
+    "en": "After submission, the operations team updates the status and estimate guidance. Payments are not processed in this service.",
+    "ko": "제출 후 운영팀에서는 상태 및 견적 안내를 업데이트합니다. 이 서비스에서는 결제가 처리되지 않습니다.",
+    "ja": "送信後、運用チームはステータスと見積もりガイダンスを更新します。このサービスでは支払いは処理されません。",
+    "zh-CN": "提交后，运营团队会更新状态和估算指南。此服务不处理付款。",
+    "uz": "Taqdim etilgandan so'ng, operatsion guruh holat va taxminiy ko'rsatmalarni yangilaydi. Ushbu xizmatda to'lovlar amalga oshirilmaydi.",
+    "vi": "Sau khi gửi, nhóm vận hành sẽ cập nhật trạng thái và hướng dẫn ước tính. Thanh toán không được xử lý trong dịch vụ này.",
+    "mn": "Илгээсэний дараа үйл ажиллагааны баг статус болон тооцооллын удирдамжийг шинэчилдэг. Энэ үйлчилгээнд төлбөр тооцоо хийгддэггүй.",
+    "ms": "Selepas penyerahan, pasukan operasi mengemas kini status dan panduan anggaran. Pembayaran tidak diproses dalam perkhidmatan ini."
+  },
+  "airport-route": {
+    "en": "airport-route",
+    "ko": "공항 노선",
+    "ja": "空港ルート",
+    "zh-CN": "机场路线",
+    "uz": "aeroport yoʻnalishi",
+    "vi": "sân bay-tuyến đường",
+    "mn": "нисэх онгоцны буудал-маршрут",
+    "ms": "laluan lapangan terbang"
+  },
+  "airport-to-ku": {
+    "en": "airport-to-ku",
+    "ko": "공항-구",
+    "ja": "空港から区まで",
+    "zh-CN": "机场至区",
+    "uz": "aeroportdan Ku",
+    "vi": "sân bay-to-ku",
+    "mn": "нисэх онгоцны буудлаас Ку",
+    "ms": "lapangan terbang-ke-ku"
+  },
+  "alert": {
+    "en": "alert",
+    "ko": "경고",
+    "ja": "アラート",
+    "zh-CN": "警报",
+    "uz": "ogohlantirish",
+    "vi": "cảnh báo",
+    "mn": "сэрэмжлүүлэг",
+    "ms": "berjaga-jaga"
+  },
+  "all": {
+    "en": "all",
+    "ko": "모두",
+    "ja": "すべて",
+    "zh-CN": "全部",
+    "uz": "hammasi",
+    "vi": "tất cả",
+    "mn": "бүгд",
+    "ms": "semua"
+  },
+  "All": {
+    "en": "All",
+    "ko": "모두",
+    "ja": "すべて",
+    "zh-CN": "全部",
+    "uz": "Hammasi",
+    "vi": "Tất cả",
+    "mn": "Бүгд",
+    "ms": "Semua"
+  },
+  "All campuses": {
+    "en": "All campuses",
+    "ko": "모든 캠퍼스",
+    "ja": "すべてのキャンパス",
+    "zh-CN": "所有校区",
+    "uz": "Barcha kampuslar",
+    "vi": "Tất cả các cơ sở",
+    "mn": "Бүх кампусууд",
+    "ms": "Semua kampus"
+  },
+  "All dates": {
+    "en": "All dates",
+    "ko": "모든 날짜",
+    "ja": "すべての日付",
+    "zh-CN": "所有日期",
+    "uz": "Barcha sanalar",
+    "vi": "Tất cả các ngày",
+    "mn": "Бүх огноо",
+    "ms": "Semua tarikh"
+  },
+  "All statuses": {
+    "en": "All statuses",
+    "ko": "모든 상태",
+    "ja": "全ステータス",
+    "zh-CN": "所有状态",
+    "uz": "Barcha holatlar",
+    "vi": "Tất cả trạng thái",
+    "mn": "Бүх статус",
+    "ms": "Semua status"
+  },
+  "Allow extra time for transfers and luggage": {
+    "en": "Allow extra time for transfers and luggage",
+    "ko": "환승 및 수하물에 대한 추가 시간을 허용하십시오.",
+    "ja": "乗り継ぎと荷物のために余分な時間を確保してください",
+    "zh-CN": "留出额外的时间用于接送和行李托运",
+    "uz": "Oʻtkazmalar va yuklar uchun qoʻshimcha vaqt ajrating",
+    "vi": "Dành thêm thời gian cho việc di chuyển và hành lý",
+    "mn": "Шилжүүлэг болон ачаа тээшэнд нэмэлт цаг гаргаарай",
+    "ms": "Berikan masa tambahan untuk pemindahan dan bagasi"
+  },
+  "Anam Campus": {
+    "en": "Anam Campus",
+    "ko": "안암캠퍼스",
+    "ja": "安南キャンパス",
+    "zh-CN": "安南校区",
+    "uz": "Anam kampusi",
+    "vi": "Cơ sở Anam",
+    "mn": "Анам хотхон",
+    "ms": "Kampus Anam"
+  },
+  "Anonymous profile": {
+    "en": "Anonymous profile",
+    "ko": "익명 프로필",
+    "ja": "匿名プロフィール",
+    "zh-CN": "匿名个人资料",
+    "uz": "Anonim profil",
+    "vi": "Hồ sơ ẩn danh",
+    "mn": "Нэргүй профайл",
+    "ms": "Profil tanpa nama"
+  },
+  "Anonymous-session access": {
+    "en": "Anonymous-session access",
+    "ko": "익명 세션 액세스",
+    "ja": "匿名セッション アクセス",
+    "zh-CN": "匿名会话访问",
+    "uz": "Anonim seansga kirish",
+    "vi": "Truy cập phiên ẩn danh",
+    "mn": "Нэргүй сессийн хандалт",
+    "ms": "Akses sesi tanpa nama"
+  },
+  "Application ready": {
+    "en": "Application ready",
+    "ko": "애플리케이션 준비됨",
+    "ja": "アプリケーションの準備ができました",
+    "zh-CN": "申请准备就绪",
+    "uz": "Ilova tayyor",
+    "vi": "Đơn đăng ký đã sẵn sàng",
+    "mn": "Програм бэлэн боллоо",
+    "ms": "Permohonan sedia"
+  },
+  "application-ready": {
+    "en": "application-ready",
+    "ko": "애플리케이션 준비 완료",
+    "ja": "アプリケーション対応",
+    "zh-CN": "应用就绪",
+    "uz": "ilovaga tayyor",
+    "vi": "sẵn sàng cho ứng dụng",
+    "mn": "хэрэглэхэд бэлэн",
+    "ms": "sedia aplikasi"
+  },
+  "application/json": {
+    "en": "application/json",
+    "ko": "애플리케이션/json",
+    "ja": "アプリケーション/json",
+    "zh-CN": "应用程序/json",
+    "uz": "ilova/json",
+    "vi": "ứng dụng/json",
+    "mn": "програм/json",
+    "ms": "application/json"
+  },
+  "arc": {
+    "en": "arc",
+    "ko": "호",
+    "ja": "弧",
+    "zh-CN": "弧",
+    "uz": "yoyi",
+    "vi": "vòng cung",
+    "mn": "нум",
+    "ms": "arka"
+  },
+  "arc-current-check": {
+    "en": "arc-current-check",
+    "ko": "아크 전류 검사",
+    "ja": "アーク電流チェック",
+    "zh-CN": "电弧电流检查",
+    "uz": "yoy oqimini tekshirish",
+    "vi": "kiểm tra dòng điện hồ quang",
+    "mn": "нуман гүйдэл шалгах",
+    "ms": "arc-current-check"
+  },
+  "arrival": {
+    "en": "arrival",
+    "ko": "도착",
+    "ja": "到着",
+    "zh-CN": "到达",
+    "uz": "kelish",
+    "vi": "đến",
+    "mn": "ирэх",
+    "ms": "ketibaan"
+  },
+  "Arrival & Transportation": {
+    "en": "Arrival & Transportation",
+    "ko": "도착 및 교통",
+    "ja": "到着と交通手段",
+    "zh-CN": "抵达及交通",
+    "uz": "Kelish va tashish",
+    "vi": "Đến và Vận chuyển",
+    "mn": "Ирэх ба тээвэрлэлт",
+    "ms": "Ketibaan & Pengangkutan"
+  },
+  "Ask staff about ingredients and allergies before ordering.": {
+    "en": "Ask staff about ingredients and allergies before ordering.",
+    "ko": "주문하기 전에 재료와 알레르기에 대해 직원에게 문의하십시오.",
+    "ja": "原材料やアレルギーについてはご注文前にスタッフにお問い合わせください。",
+    "zh-CN": "点餐前请询问工作人员成分和过敏情况。",
+    "uz": "Buyurtma berishdan oldin xodimlardan ingredientlar va allergiya haqida so'rang.",
+    "vi": "Hãy hỏi nhân viên về thành phần và dị ứng trước khi gọi món.",
+    "mn": "Захиалга хийхээсээ өмнө найрлага болон харшлын талаар ажилтнуудаас асуу.",
+    "ms": "Tanya kakitangan tentang ramuan dan alahan sebelum membuat pesanan."
+  },
+  "Ask the provider about language support": {
+    "en": "Ask the provider about language support",
+    "ko": "제공업체에 언어 지원에 대해 문의하세요.",
+    "ja": "言語サポートについてプロバイダーに問い合わせる",
+    "zh-CN": "向提供商询问语言支持",
+    "uz": "Provayderdan tilni qoʻllab-quvvatlash haqida soʻrang",
+    "vi": "Hỏi nhà cung cấp về hỗ trợ ngôn ngữ",
+    "mn": "Хэлний тусламжийн талаар үйлчилгээ үзүүлэгчээс асуу",
+    "ms": "Tanya pembekal tentang sokongan bahasa"
+  },
+  "audit": {
+    "en": "audit",
+    "ko": "감사",
+    "ja": "監査",
+    "zh-CN": "审核",
+    "uz": "audit",
+    "vi": "kiểm toán",
+    "mn": "аудит",
+    "ms": "audit"
+  },
+  "Audit log": {
+    "en": "Audit log",
+    "ko": "감사 로그",
+    "ja": "監査ログ",
+    "zh-CN": "审核日志",
+    "uz": "Audit jurnali",
+    "vi": "Nhật ký kiểm tra",
+    "mn": "Аудитын бүртгэл",
+    "ms": "Log audit"
+  },
+  "auditLog": {
+    "en": "auditLog",
+    "ko": "감사 로그",
+    "ja": "監査ログ",
+    "zh-CN": "审计日志",
+    "uz": "audit jurnali",
+    "vi": "nhật ký kiểm tra",
+    "mn": "аудитын бүртгэл",
+    "ms": "auditLog"
+  },
+  "Authentication uses an HttpOnly cookie. The token and operator name are not saved in browser storage.": {
+    "en": "Authentication uses an HttpOnly cookie. The token and operator name are not saved in browser storage.",
+    "ko": "인증은 HttpOnly 쿠키를 사용합니다. 토큰과 운영자 이름은 브라우저 저장소에 저장되지 않습니다.",
+    "ja": "認証には HttpOnly Cookie が使用されます。トークンとオペレーター名はブラウザーのストレージには保存されません。",
+    "zh-CN": "身份验证使用 HttpOnly cookie。令牌和操作员名称不会保存在浏览器存储中。",
+    "uz": "Autentifikatsiya HttpOnly cookie faylidan foydalanadi. Token va operator nomi brauzer xotirasida saqlanmaydi.",
+    "vi": "Xác thực sử dụng cookie HttpOnly. Mã thông báo và tên nhà điều hành không được lưu trong bộ lưu trữ của trình duyệt.",
+    "mn": "Баталгаажуулалт нь HttpOnly күүки ашигладаг. Токен болон операторын нэрийг хөтчийн санд хадгалдаггүй.",
+    "ms": "Pengesahan menggunakan kuki HttpOnly. Nama token dan operator tidak disimpan dalam storan penyemak imbas."
+  },
+  "Available hours": {
+    "en": "Available hours",
+    "ko": "이용 가능 시간",
+    "ja": "利用可能時間",
+    "zh-CN": "可用时间",
+    "uz": "Mavjud soatlar",
+    "vi": "Số giờ có sẵn",
+    "mn": "Боломжтой цаг",
+    "ms": "Waktu tersedia"
+  },
+  "Available now": {
+    "en": "Available now",
+    "ko": "지금 이용 가능",
+    "ja": "現在利用可能です",
+    "zh-CN": "现已上市",
+    "uz": "Hozir mavjud",
+    "vi": "Hiện có sẵn",
+    "mn": "Одоо ашиглах боломжтой",
+    "ms": "Tersedia sekarang"
+  },
+  "Bring the medicine name or a photo and tell the pharmacist about current medicines.": {
+    "en": "Bring the medicine name or a photo and tell the pharmacist about current medicines.",
+    "ko": "약명이나 사진을 지참하고 현재 약에 대해 약사에게 알려주세요.",
+    "ja": "薬の名前または写真を持参し、現在の薬について薬剤師に伝えてください。",
+    "zh-CN": "带上药品名称或照片，告诉药剂师当前的药品。",
+    "uz": "Dori nomini yoki fotosuratini keltiring va farmatsevtga hozirgi dori-darmonlar haqida aytib bering.",
+    "vi": "Mang theo tên thuốc hoặc ảnh và cho dược sĩ biết về các loại thuốc hiện tại.",
+    "mn": "Эмийн нэр эсвэл зургийг авчирч, эм зүйчдээ одоо байгаа эмийн талаар хэлээрэй.",
+    "ms": "Bawa nama ubat atau gambar dan beritahu ahli farmasi tentang ubat-ubatan semasa."
+  },
+  "Buy the required bags if needed": {
+    "en": "Buy the required bags if needed",
+    "ko": "필요한 경우 필요한 가방을 구매하세요.",
+    "ja": "必要に応じて必要なバッグを購入してください",
+    "zh-CN": "如果需要购买所需的袋子",
+    "uz": "Agar kerak bo'lsa, kerakli sumkalarni sotib oling",
+    "vi": "Mua những túi cần thiết nếu cần",
+    "mn": "Шаардлагатай бол шаардлагатай цүнхийг худалдаж аваарай",
+    "ms": "Beli beg yang diperlukan jika perlu"
+  },
+  "Call 119 in an emergency": {
+    "en": "Call 119 in an emergency",
+    "ko": "긴급상황 발생 시 119에 신고하세요.",
+    "ja": "緊急の場合は119番に電話してください",
+    "zh-CN": "紧急情况请拨打119",
+    "uz": "Favqulodda vaziyatda 119 raqamiga qo‘ng‘iroq qiling",
+    "vi": "Gọi 119 trong trường hợp khẩn cấp",
+    "mn": "Яаралтай үед 119 руу залгана уу",
+    "ms": "Hubungi 119 dalam kecemasan"
+  },
+  "Campus": {
+    "en": "Campus",
+    "ko": "캠퍼스",
+    "ja": "キャンパス",
+    "zh-CN": "校园",
+    "uz": "Kampus",
+    "vi": "Khuôn viên trường",
+    "mn": "Хотхон",
+    "ms": "Kampus"
+  },
+  "Campus pickup": {
+    "en": "Campus pickup",
+    "ko": "캠퍼스 픽업",
+    "ja": "キャンパスピックアップ",
+    "zh-CN": "校园接送",
+    "uz": "Kampusdan olib ketish",
+    "vi": "Đón tại trường",
+    "mn": "Хотхонд очих",
+    "ms": "Pengambilan kampus"
+  },
+  "Campus selection": {
+    "en": "Campus selection",
+    "ko": "캠퍼스 선택",
+    "ja": "キャンパス選択",
+    "zh-CN": "校园选择",
+    "uz": "Kampus tanlash",
+    "vi": "Lựa chọn trường",
+    "mn": "Хотхоны сонголт",
+    "ms": "Pemilihan kampus"
+  },
+  "Campus storage": {
+    "en": "Campus storage",
+    "ko": "캠퍼스 스토리지",
+    "ja": "キャンパスストレージ",
+    "zh-CN": "校园存储",
+    "uz": "Kampus xotirasi",
+    "vi": "Bộ nhớ trong khuôn viên trường",
+    "mn": "Хотхоны агуулах",
+    "ms": "Storan kampus"
+  },
+  "Cancel": {
+    "en": "Cancel",
+    "ko": "취소",
+    "ja": "キャンセル",
+    "zh-CN": "取消",
+    "uz": "Bekor qilish",
+    "vi": "Hủy",
+    "mn": "Цуцлах",
+    "ms": "Batal"
+  },
+  "Cancel all": {
+    "en": "Cancel all",
+    "ko": "모두 취소",
+    "ja": "すべてキャンセル",
+    "zh-CN": "全部取消",
+    "uz": "Hammasini bekor qilish",
+    "vi": "Hủy tất cả",
+    "mn": "Бүгдийг цуцлах",
+    "ms": "Batalkan semua"
+  },
+  "Cancel request": {
+    "en": "Cancel request",
+    "ko": "요청 취소",
+    "ja": "リクエストのキャンセル",
+    "zh-CN": "取消请求",
+    "uz": "So‘rovni bekor qilish",
+    "vi": "Hủy yêu cầu",
+    "mn": "Хүсэлтийг цуцлах",
+    "ms": "Batalkan permintaan"
+  },
+  "Cancel reservation": {
+    "en": "Cancel reservation",
+    "ko": "예약 취소",
+    "ja": "予約をキャンセルする",
+    "zh-CN": "取消预订",
+    "uz": "Bandlovni bekor qilish",
+    "vi": "Hủy đặt chỗ",
+    "mn": "Захиалгаа цуцлах",
+    "ms": "Batalkan tempahan"
+  },
+  "cancelled": {
+    "en": "cancelled",
+    "ko": "취소됨",
+    "ja": "はキャンセルされました",
+    "zh-CN": "已取消",
+    "uz": "bekor qilindi",
+    "vi": "đã hủy",
+    "mn": "цуцлагдсан",
+    "ms": "dibatalkan"
+  },
+  "Cancelled": {
+    "en": "Cancelled",
+    "ko": "취소됨",
+    "ja": "キャンセルされました",
+    "zh-CN": "已取消",
+    "uz": "Bekor qilingan",
+    "vi": "Đã hủy",
+    "mn": "Цуцлагдсан",
+    "ms": "Dibatalkan"
+  },
+  "Category": {
+    "en": "Category",
+    "ko": "카테고리",
+    "ja": "カテゴリ",
+    "zh-CN": "类别",
+    "uz": "Turkum",
+    "vi": "Danh mục",
+    "mn": "Ангилал",
+    "ms": "Kategori"
+  },
+  "Cautions": {
+    "en": "Cautions",
+    "ko": "주의사항",
+    "ja": "注意事項",
+    "zh-CN": "注意事项",
+    "uz": "Ogohlantirishlar",
+    "vi": "Lưu ý",
+    "mn": "Анхааруулга",
+    "ms": "Awas"
+  },
+  "Changes saved.": {
+    "en": "Changes saved.",
+    "ko": "변경 사항이 저장되었습니다.",
+    "ja": "変更が保存されました。",
+    "zh-CN": "更改已保存。",
+    "uz": "Oʻzgarishlar saqlandi.",
+    "vi": "Đã lưu các thay đổi.",
+    "mn": "Өөрчлөлтүүдийг хадгалсан.",
+    "ms": "Perubahan disimpan."
+  },
+  "Check airline baggage limits": {
+    "en": "Check airline baggage limits",
+    "ko": "항공사 수하물 제한 확인",
+    "ja": "航空会社の手荷物制限を確認する",
+    "zh-CN": "检查航空行李限额",
+    "uz": "Aviakompaniya bagaj limitlarini tekshiring",
+    "vi": "Kiểm tra giới hạn hành lý của hãng hàng không",
+    "mn": "Агаарын тээшний хязгаарыг шалгана уу",
+    "ms": "Semak had bagasi syarikat penerbangan"
+  },
+  "Check current ARC guidance": {
+    "en": "Check current ARC guidance",
+    "ko": "현재 ARC 지침을 확인하세요.",
+    "ja": "現在の ARC ガイダンスを確認する",
+    "zh-CN": "检查当前 ARC 指南",
+    "uz": "Joriy ARC yoʻriqnomasini tekshiring",
+    "vi": "Kiểm tra hướng dẫn ARC hiện tại",
+    "mn": "Одоогийн ARC удирдамжийг шалгана уу",
+    "ms": "Semak panduan ARC semasa"
+  },
+  "Check departments, registration, and hours through the official channel before visiting.": {
+    "en": "Check departments, registration, and hours through the official channel before visiting.",
+    "ko": "방문 전 공식채널을 통해 부서, 수강신청, 운영시간을 확인하세요.",
+    "ja": "訪問する前に、公式チャンネルを通じて部門、登録、営業時間を確認してください。",
+    "zh-CN": "参观前请通过官方渠道查询部门、登记和时间。",
+    "uz": "Tashrifdan oldin boʻlimlar, roʻyxatdan oʻtish va ish vaqtini rasmiy kanal orqali tekshiring.",
+    "vi": "Kiểm tra các bộ phận, đăng ký và giờ qua kênh chính thức trước khi truy cập.",
+    "mn": "Очихоосоо өмнө албан ёсны сувгаар хэлтэс, бүртгэл, цагийг шалгана уу.",
+    "ms": "Semak jabatan, pendaftaran dan waktu kerja melalui saluran rasmi sebelum melawat."
+  },
+  "Check device compatibility, identity requirements, and current plan terms before purchase.": {
+    "en": "Check device compatibility, identity requirements, and current plan terms before purchase.",
+    "ko": "구매하기 전에 장치 호환성, ID 요구 사항 및 현재 요금제 조건을 확인하세요.",
+    "ja": "購入前に、デバイスの互換性、ID 要件、および現在のプラン条件を確認してください。",
+    "zh-CN": "购买前检查设备兼容性、身份要求和当前计划条款。",
+    "uz": "Xarid qilishdan oldin qurilma mosligini, identifikatsiya talablarini va joriy reja shartlarini tekshiring.",
+    "vi": "Kiểm tra khả năng tương thích của thiết bị, yêu cầu về danh tính và điều khoản hiện tại của gói trước khi mua.",
+    "mn": "Худалдан авахаасаа өмнө төхөөрөмжийн нийцтэй байдал, таниулах шаардлага, одоогийн төлөвлөгөөний нөхцөлийг шалгана уу.",
+    "ms": "Semak keserasian peranti, keperluan identiti dan syarat pelan semasa sebelum membeli."
+  },
+  "Check each menu": {
+    "en": "Check each menu",
+    "ko": "각 메뉴 확인",
+    "ja": "各メニューを確認する",
+    "zh-CN": "检查每个菜单",
+    "uz": "Har bir menyuni tekshiring",
+    "vi": "Kiểm tra từng menu",
+    "mn": "Цэс бүрийг шалгана уу",
+    "ms": "Semak setiap menu"
+  },
+  "Check eSIM compatibility": {
+    "en": "Check eSIM compatibility",
+    "ko": "eSIM 호환성 확인",
+    "ja": "eSIM の互換性を確認する",
+    "zh-CN": "检查 eSIM 兼容性",
+    "uz": "eSIM mosligini tekshiring",
+    "vi": "Kiểm tra khả năng tương thích của eSIM",
+    "mn": "eSIM нийцтэй эсэхийг шалгана уу",
+    "ms": "Semak keserasian eSIM"
+  },
+  "Check opening hours and payment methods before visiting.": {
+    "en": "Check opening hours and payment methods before visiting.",
+    "ko": "방문 전 영업시간과 결제방법을 확인하세요.",
+    "ja": "ご来店前に営業時間やお支払い方法をご確認ください。",
+    "zh-CN": "参观前请检查开放时间和付款方式。",
+    "uz": "tashrif buyurishdan oldin ish soatlari va toʻlov usullarini tekshiring.",
+    "vi": "Kiểm tra giờ mở cửa và phương thức thanh toán trước khi truy cập.",
+    "mn": "Очихоосоо өмнө ажлын цаг болон төлбөрийн хэрэгслийг шалгана уу.",
+    "ms": "Semak waktu buka dan kaedah pembayaran sebelum melawat."
+  },
+  "Check payment and key instructions": {
+    "en": "Check payment and key instructions",
+    "ko": "결제 및 열쇠 안내 확인",
+    "ja": "支払いと鍵の指示を確認してください",
+    "zh-CN": "检查付款和关键说明",
+    "uz": "Toʻlov va asosiy koʻrsatmalarni tekshiring",
+    "vi": "Kiểm tra thanh toán và hướng dẫn sử dụng chìa khóa",
+    "mn": "Төлбөр болон үндсэн зааврыг шалгана уу",
+    "ms": "Semak pembayaran dan arahan utama"
+  },
+  "Check reservation, fulfillment, and support-ticket updates here.": {
+    "en": "Check reservation, fulfillment, and support-ticket updates here.",
+    "ko": "여기에서 예약, 이행 및 지원 티켓 업데이트를 확인하세요.",
+    "ja": "ここで予約、履行、サポートチケットの最新情報を確認してください。",
+    "zh-CN": "在此处检查预订、履行和支持票证更新。",
+    "uz": "Bu yerda bandlov, toʻlovlar va qoʻllab-quvvatlash-chipta yangilanishlarini tekshiring.",
+    "vi": "Kiểm tra thông tin cập nhật về đặt chỗ, thực hiện và hỗ trợ vé tại đây.",
+    "mn": "Захиалга, гүйцэтгэл болон дэмжлэгийн тасалбарын шинэчлэлтийг эндээс шалгана уу.",
+    "ms": "Semak tempahan, pemenuhan dan kemas kini tiket sokongan di sini."
+  },
+  "Check seating time limits and ordering rules before visiting.": {
+    "en": "Check seating time limits and ordering rules before visiting.",
+    "ko": "방문 전 좌석 제한 시간과 주문 규정을 확인하세요.",
+    "ja": "来店前に座席制限時間と注文ルールを確認してください。",
+    "zh-CN": "参观前请检查座位时间限制和订购规则。",
+    "uz": "Tashrifdan oldin oʻtirish vaqti va buyurtma qoidalarini tekshiring.",
+    "vi": "Kiểm tra giới hạn thời gian ngồi và quy định đặt hàng trước khi ghé thăm.",
+    "mn": "Очихоосоо өмнө суудлын хязгаар болон захиалгын дүрмийг шалгана уу.",
+    "ms": "Semak had masa tempat duduk dan peraturan pesanan sebelum melawat."
+  },
+  "Check that your phone is unlocked": {
+    "en": "Check that your phone is unlocked",
+    "ko": "휴대폰이 잠금 해제되어 있는지 확인하세요",
+    "ja": "携帯電話のロックが解除されていることを確認してください",
+    "zh-CN": "检查您的手机是否已解锁",
+    "uz": "Telefoningiz qulfdan chiqarilganligini tekshiring",
+    "vi": "Kiểm tra xem điện thoại của bạn đã được mở khóa chưa",
+    "mn": "Утасныхаа түгжээг тайлсан эсэхийг шалгана уу",
+    "ms": "Semak sama ada telefon anda tidak berkunci"
+  },
+  "Check the building notice for collection days, bags, and sorting rules.": {
+    "en": "Check the building notice for collection days, bags, and sorting rules.",
+    "ko": "수거요일, 가방, 분류규정 등은 건물 공지사항을 확인하세요.",
+    "ja": "収集日、袋、分別ルールについては、建物の通知を確認してください。",
+    "zh-CN": "检查大楼通知中的收集日期、袋子和分类规则。",
+    "uz": "Yigʻish kunlari, sumkalar va saralash qoidalari uchun qurilish xabarnomasini tekshiring.",
+    "vi": "Kiểm tra thông báo của tòa nhà để biết ngày thu gom, túi đựng và quy tắc phân loại.",
+    "mn": "Барилгын мэдэгдлээс цуглуулах өдөр, уут, ангилах дүрмийг шалгана уу.",
+    "ms": "Semak notis bangunan untuk hari pengumpulan, beg dan peraturan pengisihan."
+  },
+  "Check the current fee and appointment rule": {
+    "en": "Check the current fee and appointment rule",
+    "ko": "현재 수수료 및 임명 규칙을 확인하세요",
+    "ja": "現在の料金と予約ルールを確認してください",
+    "zh-CN": "查看当前费用和预约规则",
+    "uz": "Joriy toʻlov va uchrashuv qoidasini tekshiring",
+    "vi": "Kiểm tra mức phí hiện tại và quy định cuộc hẹn",
+    "mn": "Одоогийн хураамж болон уулзалтын дүрмийг шалгана уу",
+    "ms": "Semak yuran semasa dan peraturan pelantikan"
+  },
+  "Check the district rule": {
+    "en": "Check the district rule",
+    "ko": "구역 규칙을 확인하세요",
+    "ja": "地区のルールを確認してください",
+    "zh-CN": "查看地区规则",
+    "uz": "Tuman qoidasini tekshiring",
+    "vi": "Kiểm tra quy định của quận",
+    "mn": "Дүүргийн дүрмийг шалгана уу",
+    "ms": "Semak peraturan daerah"
+  },
+  "Check the input.": {
+    "en": "Check the input.",
+    "ko": "입력을 확인하세요.",
+    "ja": "入力を確認してください。",
+    "zh-CN": "检查输入。",
+    "uz": "Kirishni tekshiring.",
+    "vi": "Kiểm tra đầu vào.",
+    "mn": "Оролтыг шалгана уу.",
+    "ms": "Semak input."
+  },
+  "Check the latest route and fare": {
+    "en": "Check the latest route and fare",
+    "ko": "최신 노선 및 요금을 확인하세요",
+    "ja": "最新の経路と運賃を確認する",
+    "zh-CN": "查看最新路线及票价",
+    "uz": "Oxirgi marshrut va tarifni tekshiring",
+    "vi": "Kiểm tra lộ trình và giá vé mới nhất",
+    "mn": "Хамгийн сүүлийн үеийн маршрут, үнээ шалгана уу",
+    "ms": "Semak laluan dan tambang terkini"
+  },
+  "Check timetable and classroom details": {
+    "en": "Check timetable and classroom details",
+    "ko": "시간표 및 강의실 상세정보를 확인하세요",
+    "ja": "時間割と教室の詳細を確認する",
+    "zh-CN": "查看时间表和教室详细信息",
+    "uz": "Jadval va sinf tafsilotlarini tekshiring",
+    "vi": "Kiểm tra thời khóa biểu và chi tiết lớp học",
+    "mn": "Цагийн хуваарь болон ангийн дэлгэрэнгүй мэдээллийг шалгана уу",
+    "ms": "Semak jadual waktu dan butiran bilik darjah"
+  },
+  "Checked ": {
+    "en": "Checked ",
+    "ko": "선택됨",
+    "ja": "チェックあり",
+    "zh-CN": "已检查",
+    "uz": "Tekshirildi",
+    "vi": "Đã kiểm tra",
+    "mn": "Шалгасан",
+    "ms": "Ditandai"
+  },
+  "Checked: ": {
+    "en": "Checked: ",
+    "ko": "확인됨:",
+    "ja": "チェック済み:",
+    "zh-CN": "已检查：",
+    "uz": "Tekshirildi:",
+    "vi": "Đã kiểm tra:",
+    "mn": "Шалгасан:",
+    "ms": "Ditandai:"
+  },
+  "Choose a service": {
+    "en": "Choose a service",
+    "ko": "서비스를 선택하세요",
+    "ja": "サービスを選択してください",
+    "zh-CN": "选择服务",
+    "uz": "Xizmatni tanlang",
+    "vi": "Chọn dịch vụ",
+    "mn": "Үйлчилгээ сонгоно уу",
+    "ms": "Pilih perkhidmatan"
+  },
+  "Choose keep, sell, donate, or ship": {
+    "en": "Choose keep, sell, donate, or ship",
+    "ko": "보관, 판매, 기부 또는 배송을 선택하세요",
+    "ja": "保管、販売、寄付、または発送を選択してください",
+    "zh-CN": "选择保留、出售、捐赠或运送",
+    "uz": "Saqlash, sotish, xayriya qilish yoki jo‘natishni tanlang",
+    "vi": "Chọn giữ, bán, tặng hoặc gửi",
+    "mn": "Хадгалах, зарах, хандивлах эсвэл тээвэрлэхийг сонгоно уу",
+    "ms": "Pilih simpan, jual, derma atau hantar"
+  },
+  "Choose rail, bus, or taxi": {
+    "en": "Choose rail, bus, or taxi",
+    "ko": "철도, 버스, 택시를 선택하세요",
+    "ja": "鉄道、バス、タクシーを選択してください",
+    "zh-CN": "选择铁路、巴士或出租车",
+    "uz": "Temir yoʻl, avtobus yoki taksini tanlang",
+    "vi": "Chọn đường sắt, xe buýt hoặc taxi",
+    "mn": "Төмөр зам, автобус эсвэл такси сонгоно уу",
+    "ms": "Pilih kereta api, bas atau teksi"
+  },
+  "closed": {
+    "en": "closed",
+    "ko": "폐쇄됨",
+    "ja": "は閉店しました",
+    "zh-CN": "已关闭",
+    "uz": "yopiq",
+    "vi": "đã đóng",
+    "mn": "хаагдсан",
+    "ms": "ditutup"
+  },
+  "Collapse": {
+    "en": "Collapse",
+    "ko": "접기",
+    "ja": "崩壊",
+    "zh-CN": "折叠",
+    "uz": "Yigʻish",
+    "vi": "Thu gọn",
+    "mn": "Буулгах",
+    "ms": "Runtuh"
+  },
+  "Compare practical routes from the airport and prepare an offline destination note.": {
+    "en": "Compare practical routes from the airport and prepare an offline destination note.",
+    "ko": "공항에서 실제 경로를 비교하고 오프라인 목적지 메모를 준비합니다.",
+    "ja": "空港からの実際的なルートを比較し、オフラインの目的地メモを作成します。",
+    "zh-CN": "比较从机场出发的实际路线并准备离线目的地注释。",
+    "uz": "Aeroportdan amaliy marshrutlarni solishtiring va oflayn manzil qaydnomasini tayyorlang.",
+    "vi": "So sánh các tuyến đường thực tế từ sân bay và chuẩn bị ghi chú điểm đến ngoại tuyến.",
+    "mn": "Нисэх онгоцны буудлаас практик маршрутуудыг харьцуулж, офлайн очих газрын тэмдэглэл бэлтгэ.",
+    "ms": "Bandingkan laluan praktikal dari lapangan terbang dan sediakan nota destinasi luar talian."
+  },
+  "Compare prepaid and monthly terms": {
+    "en": "Compare prepaid and monthly terms",
+    "ko": "선불약관과 월약관 비교",
+    "ja": "プリペイド契約と月額契約の比較",
+    "zh-CN": "比较预付费和包月条款",
+    "uz": "Oldindan toʻlov va oylik shartlarni solishtiring",
+    "vi": "So sánh các kỳ hạn trả trước và hàng tháng",
+    "mn": "Урьдчилсан төлбөр болон сарын нөхцлүүдийг харьцуул",
+    "ms": "Bandingkan syarat prabayar dan bulanan"
+  },
+  "Compare SIM and eSIM options": {
+    "en": "Compare SIM and eSIM options",
+    "ko": "SIM 및 eSIM 옵션 비교",
+    "ja": "SIM と eSIM のオプションを比較する",
+    "zh-CN": "比较 SIM 和 eSIM 选项",
+    "uz": "SIM va eSIM opsiyalarini solishtiring",
+    "vi": "So sánh các tùy chọn SIM và eSIM",
+    "mn": "SIM болон eSIM-н сонголтыг харьцуулна уу",
+    "ms": "Bandingkan pilihan SIM dan eSIM"
+  },
+  "completed": {
+    "en": "completed",
+    "ko": "완료됨",
+    "ja": "完了",
+    "zh-CN": "已完成",
+    "uz": "yakunlandi",
+    "vi": "đã hoàn thành",
+    "mn": "дууссан",
+    "ms": "selesai"
+  },
+  "Completed": {
+    "en": "Completed",
+    "ko": "완료됨",
+    "ja": "完了しました",
+    "zh-CN": "已完成",
+    "uz": "Tugallandi",
+    "vi": "Đã hoàn thành",
+    "mn": "Дууссан",
+    "ms": "Selesai"
+  },
+  "Confirm before visiting": {
+    "en": "Confirm before visiting",
+    "ko": "방문 전 확인하세요",
+    "ja": "ご来店前にご確認ください",
+    "zh-CN": "访问前确认",
+    "uz": "Tashrifdan oldin tasdiqlang",
+    "vi": "Xác nhận trước khi truy cập",
+    "mn": "Очихоосоо өмнө баталгаажуулна уу",
+    "ms": "Sahkan sebelum melawat"
+  },
+  "Confirm housing handover date": {
+    "en": "Confirm housing handover date",
+    "ko": "주택 인수일 확인",
+    "ja": "住宅引き渡し日の確認",
+    "zh-CN": "确认房屋交接日期",
+    "uz": "Uy-joy topshirish sanasini tasdiqlang",
+    "vi": "Xác nhận ngày bàn giao nhà",
+    "mn": "Орон сууц хүлээлгэн өгөх огноог баталгаажуулна уу",
+    "ms": "Sahkan tarikh penyerahan perumahan"
+  },
+  "Confirm international shipping restrictions before payment": {
+    "en": "Confirm international shipping restrictions before payment",
+    "ko": "결제 전 해외 배송 제한 사항을 확인하세요.",
+    "ja": "支払い前に国際配送制限を確認してください",
+    "zh-CN": "付款前确认国际运输限制",
+    "uz": "Toʻlovdan oldin xalqaro yuk tashish cheklovlarini tasdiqlang",
+    "vi": "Xác nhận các hạn chế vận chuyển quốc tế trước khi thanh toán",
+    "mn": "Төлбөрийн өмнө олон улсын тээвэрлэлтийн хязгаарлалтыг баталгаажуулна уу",
+    "ms": "Sahkan sekatan penghantaran antarabangsa sebelum pembayaran"
+  },
+  "Confirm the final walking route": {
+    "en": "Confirm the final walking route",
+    "ko": "최종 도보 경로 확인",
+    "ja": "最終的な歩行ルートを確認する",
+    "zh-CN": "确认最终行走路线",
+    "uz": "Yakuniy yurish marshrutini tasdiqlang",
+    "vi": "Xác nhận lộ trình đi bộ cuối cùng",
+    "mn": "Эцсийн алхах замыг баталгаажуулна уу",
+    "ms": "Sahkan laluan berjalan kaki terakhir"
+  },
+  "Confirm your assigned building": {
+    "en": "Confirm your assigned building",
+    "ko": "할당된 건물을 확인하세요",
+    "ja": "割り当てられた建物を確認してください",
+    "zh-CN": "确认您分配的建筑物",
+    "uz": "Belgilangan binoni tasdiqlang",
+    "vi": "Xác nhận tòa nhà được chỉ định của bạn",
+    "mn": "Өөрийн томилогдсон барилгыг баталгаажуулна уу",
+    "ms": "Sahkan bangunan yang anda berikan"
+  },
+  "Confirm your status": {
+    "en": "Confirm your status",
+    "ko": "상태 확인",
+    "ja": "ステータスを確認してください",
+    "zh-CN": "确认您的状态",
+    "uz": "Holatingizni tasdiqlang",
+    "vi": "Xác nhận trạng thái của bạn",
+    "mn": "Өөрийн статусаа баталгаажуулна уу",
+    "ms": "Sahkan status anda"
+  },
+  "Conflict: refresh and retry.": {
+    "en": "Conflict: refresh and retry.",
+    "ko": "충돌: 새로고침하고 다시 시도하세요.",
+    "ja": "競合: 更新して再試行してください。",
+    "zh-CN": "冲突：刷新并重试。",
+    "uz": "Mojaro: yangilang va qayta urinib ko'ring.",
+    "vi": "Xung đột: làm mới và thử lại.",
+    "mn": "Зөрчил: сэргээж, дахин оролдоно уу.",
+    "ms": "Konflik: muat semula dan cuba semula."
+  },
+  "Consultation ready": {
+    "en": "Consultation ready",
+    "ko": "상담 준비 완료",
+    "ja": "相談可能",
+    "zh-CN": "咨询准备就绪",
+    "uz": "Maslahat tayyor",
+    "vi": "Tư vấn đã sẵn sàng",
+    "mn": "Зөвлөгөөнд бэлэн байна",
+    "ms": "Perundingan sedia"
+  },
+  "consultation-ready": {
+    "en": "consultation-ready",
+    "ko": "상담 준비 완료",
+    "ja": "相談対応",
+    "zh-CN": "咨询就绪",
+    "uz": "maslahatga tayyor",
+    "vi": "sẵn sàng tư vấn",
+    "mn": "зөвлөгөө өгөхөд бэлэн байна",
+    "ms": "perundingan-sedia"
+  },
+  "Content checked": {
+    "en": "Content checked",
+    "ko": "콘텐츠 확인됨",
+    "ja": "チェックされた内容",
+    "zh-CN": "内容已检查",
+    "uz": "Kontent tekshirildi",
+    "vi": "Đã kiểm tra nội dung",
+    "mn": "Агуулгыг шалгасан",
+    "ms": "Kandungan disemak"
+  },
+  "Content origin": {
+    "en": "Content origin",
+    "ko": "콘텐츠 출처",
+    "ja": "コンテンツの出所",
+    "zh-CN": "内容来源",
+    "uz": "Kontent kelib chiqishi",
+    "vi": "Nguồn gốc nội dung",
+    "mn": "Агуулгын гарал үүсэл",
+    "ms": "Asal kandungan"
+  },
+  "contentCheckedAt": {
+    "en": "contentCheckedAt",
+    "ko": "contentCheckedAt",
+    "ja": "コンテンツチェック済み",
+    "zh-CN": "内容检查处",
+    "uz": "contentCheckedAt",
+    "vi": "nội dungCheckedAt",
+    "mn": "контентCheckedAt",
+    "ms": "contentCheckedAt"
+  },
+  "Correction draft (not sent externally)": {
+    "en": "Correction draft (not sent externally)",
+    "ko": "수정 초안(외부로 전송되지 않음)",
+    "ja": "修正草案 (外部には送信されません)",
+    "zh-CN": "修正稿（不对外发送）",
+    "uz": "Tuzatish qoralama (tashqi yuborilmagan)",
+    "vi": "Bản nháp sửa chữa (không được gửi ra bên ngoài)",
+    "mn": "Залруулгын ноорог (гаднаас илгээгээгүй)",
+    "ms": "Draf pembetulan (tidak dihantar secara luaran)"
+  },
+  "Cost guidance: ": {
+    "en": "Cost guidance: ",
+    "ko": "비용 안내:",
+    "ja": "コストのガイダンス:",
+    "zh-CN": "成本指导：",
+    "uz": "Xarajatlar bo'yicha ko'rsatma:",
+    "vi": "Hướng dẫn chi phí:",
+    "mn": "Зардлын удирдамж:",
+    "ms": "Panduan kos:"
+  },
+  "Could not connect to the server.": {
+    "en": "Could not connect to the server.",
+    "ko": "서버에 연결할 수 없습니다.",
+    "ja": "サーバーに接続できませんでした。",
+    "zh-CN": "无法连接到服务器。",
+    "uz": "Serverga ulanib boʻlmadi.",
+    "vi": "Không thể kết nối với máy chủ.",
+    "mn": "Серверт холбогдож чадсангүй.",
+    "ms": "Tidak dapat menyambung ke pelayan."
+  },
+  "Could not create the ticket.": {
+    "en": "Could not create the ticket.",
+    "ko": "티켓을 생성할 수 없습니다.",
+    "ja": "チケットを作成できませんでした。",
+    "zh-CN": "无法创建票证。",
+    "uz": "Chipta yaratib bo‘lmadi.",
+    "vi": "Không thể tạo vé.",
+    "mn": "Тасалбар үүсгэж чадсангүй.",
+    "ms": "Tidak dapat mencipta tiket."
+  },
+  "Could not load notifications.": {
+    "en": "Could not load notifications.",
+    "ko": "알림을 로드할 수 없습니다.",
+    "ja": "通知を読み込めませんでした。",
+    "zh-CN": "无法加载通知。",
+    "uz": "Bildirishnomalarni yuklab bo‘lmadi.",
+    "vi": "Không thể tải thông báo.",
+    "mn": "Мэдэгдэл ачаалж чадсангүй.",
+    "ms": "Tidak dapat memuatkan pemberitahuan."
+  },
+  "Could not load support tickets.": {
+    "en": "Could not load support tickets.",
+    "ko": "지원 티켓을 로드할 수 없습니다.",
+    "ja": "サポート チケットをロードできませんでした。",
+    "zh-CN": "无法加载支持票证。",
+    "uz": "Yordam chiptalarini yuklab bo‘lmadi.",
+    "vi": "Không thể tải phiếu hỗ trợ.",
+    "mn": "Дэмжлэгийн тасалбарыг ачаалж чадсангүй.",
+    "ms": "Tidak dapat memuatkan tiket sokongan."
+  },
+  "Could not mark the notification as read.": {
+    "en": "Could not mark the notification as read.",
+    "ko": "알림을 읽음으로 표시할 수 없습니다.",
+    "ja": "通知を既読としてマークできませんでした。",
+    "zh-CN": "无法将通知标记为已读。",
+    "uz": "Bildirishnomani o‘qilgan deb belgilab bo‘lmadi.",
+    "vi": "Không thể đánh dấu thông báo là đã đọc.",
+    "mn": "Мэдэгдлийг уншсан гэж тэмдэглэж чадсангүй.",
+    "ms": "Tidak dapat menandakan pemberitahuan sebagai dibaca."
+  },
+  "Courier": {
+    "en": "Courier",
+    "ko": "택배",
+    "ja": "宅配便",
+    "zh-CN": "快递",
+    "uz": "Kuryer",
+    "vi": "Chuyển phát nhanh",
+    "mn": "Илгээгч",
+    "ms": "Kurier"
+  },
+  "courses": {
+    "en": "courses",
+    "ko": "강좌",
+    "ja": "コース",
+    "zh-CN": "课程",
+    "uz": "kurslari",
+    "vi": "khóa học",
+    "mn": "курс",
+    "ms": "kursus"
+  },
+  "Create listing": {
+    "en": "Create listing",
+    "ko": "목록 생성",
+    "ja": "リストの作成",
+    "zh-CN": "创建列表",
+    "uz": "Roʻyxat yaratish",
+    "vi": "Tạo danh sách",
+    "mn": "Жагсаалт үүсгэх",
+    "ms": "Buat penyenaraian"
+  },
+  "daily": {
+    "en": "daily",
+    "ko": "매일",
+    "ja": "毎日",
+    "zh-CN": "每日",
+    "uz": "har kuni",
+    "vi": "hàng ngày",
+    "mn": "өдөр бүр",
+    "ms": "setiap hari"
+  },
+  "Daily Life": {
+    "en": "Daily Life",
+    "ko": "일상생활",
+    "ja": "日常生活",
+    "zh-CN": "日常生活",
+    "uz": "Kundalik hayot",
+    "vi": "Cuộc sống hàng ngày",
+    "mn": "Өдөр тутмын амьдрал",
+    "ms": "Kehidupan Harian"
+  },
+  "danger-link": {
+    "en": "danger-link",
+    "ko": "위험 링크",
+    "ja": "危険リンク",
+    "zh-CN": "危险链接",
+    "uz": "xavfli havola",
+    "vi": "liên kết nguy hiểm",
+    "mn": "аюулын холбоос",
+    "ms": "pautan bahaya"
+  },
+  "date": {
+    "en": "date",
+    "ko": "날짜",
+    "ja": "の日付",
+    "zh-CN": "日期",
+    "uz": "sanasi",
+    "vi": "ngày",
+    "mn": "огноо",
+    "ms": "tarikh"
+  },
+  "Dates can differ by program": {
+    "en": "Dates can differ by program",
+    "ko": "날짜는 프로그램에 따라 다를 수 있습니다.",
+    "ja": "日付はプログラムによって異なる場合があります",
+    "zh-CN": "日期可能因节目而异",
+    "uz": "Sanalar dasturga qarab farq qilishi mumkin",
+    "vi": "Ngày có thể khác nhau tùy theo chương trình",
+    "mn": "Огноо хөтөлбөрөөс хамаарч өөр өөр байж болно",
+    "ms": "Tarikh boleh berbeza mengikut program"
+  },
+  "days": {
+    "en": "days",
+    "ko": "일",
+    "ja": "日",
+    "zh-CN": "天",
+    "uz": "kun",
+    "vi": "ngày",
+    "mn": "хоног",
+    "ms": "hari"
+  },
+  "Default": {
+    "en": "Default",
+    "ko": "기본값",
+    "ja": "デフォルト",
+    "zh-CN": "默认",
+    "uz": "Standart",
+    "vi": "Mặc định",
+    "mn": "Өгөгдмөл",
+    "ms": "Lalai"
+  },
+  "Delete": {
+    "en": "Delete",
+    "ko": "삭제",
+    "ja": "削除",
+    "zh-CN": "删除",
+    "uz": "Oʻchirish",
+    "vi": "Xóa",
+    "mn": "Устгах",
+    "ms": "Padam"
+  },
+  "Delete place": {
+    "en": "Delete place",
+    "ko": "장소 삭제",
+    "ja": "場所を削除",
+    "zh-CN": "删除地点",
+    "uz": "Joyni oʻchirish",
+    "vi": "Xóa địa điểm",
+    "mn": "Газрыг устгах",
+    "ms": "Padam tempat"
+  },
+  "Delete this place?": {
+    "en": "Delete this place?",
+    "ko": "이 장소를 삭제하시겠습니까?",
+    "ja": "この場所を削除しますか?",
+    "zh-CN": "删除这个地方？",
+    "uz": "Bu joy oʻchirilsinmi?",
+    "vi": "Xóa địa điểm này?",
+    "mn": "Энэ газрыг устгах уу?",
+    "ms": "Padamkan tempat ini?"
+  },
+  "deleted": {
+    "en": "deleted",
+    "ko": "삭제됨",
+    "ja": "を削除しました",
+    "zh-CN": "已删除",
+    "uz": "oʻchirildi",
+    "vi": "đã xóa",
+    "mn": "устгасан",
+    "ms": "dipadamkan"
+  },
+  "delivery": {
+    "en": "delivery",
+    "ko": "배달",
+    "ja": "の配達",
+    "zh-CN": "交付",
+    "uz": "yetkazib berish",
+    "vi": "giao hàng",
+    "mn": "хүргэлт",
+    "ms": "penghantaran"
+  },
+  "Delivery": {
+    "en": "Delivery",
+    "ko": "배달",
+    "ja": "配送",
+    "zh-CN": "交付",
+    "uz": "Yetkazib berish",
+    "vi": "Giao hàng",
+    "mn": "Хүргэлт",
+    "ms": "Penghantaran"
+  },
+  "Delivery and storage requests are submitted from a live listing. This selection is only a preparation guide and does not change a request status.": {
+    "en": "Delivery and storage requests are submitted from a live listing. This selection is only a preparation guide and does not change a request status.",
+    "ko": "배송 및 보관 요청은 실시간 목록에서 제출됩니다. 이 선택은 단지 준비 지침일 뿐이며 요청 상태를 변경하지 않습니다.",
+    "ja": "配送および保管リクエストはライブ リスティングから送信されます。この選択は単なる準備ガイドであり、リクエストのステータスは変更されません。",
+    "zh-CN": "交付和存储请求是从实时列表提交的。此选择仅作为准备指南，不会更改请求状态。",
+    "uz": "Yetkazib berish va saqlash soʻrovlari jonli roʻyxatdan yuboriladi. Bu tanlov faqat tayyorgarlik koʻrsatmasi boʻlib, soʻrov holatini oʻzgartirmaydi.",
+    "vi": "Yêu cầu giao hàng và lưu trữ được gửi từ danh sách trực tiếp. Lựa chọn này chỉ là hướng dẫn chuẩn bị và không thay đổi trạng thái yêu cầu.",
+    "mn": "Хүргэлтийн болон хадгалах хүсэлтийг шууд жагсаалтаас илгээсэн. Энэ сонголт нь зөвхөн бэлтгэлийн гарын авлага бөгөөд хүсэлтийн статусыг өөрчлөхгүй.",
+    "ms": "Permintaan penghantaran dan penyimpanan diserahkan daripada penyenaraian langsung. Pemilihan ini hanyalah panduan penyediaan dan tidak mengubah status permintaan."
+  },
+  "Delivery method": {
+    "en": "Delivery method",
+    "ko": "배송 방법",
+    "ja": "配送方法",
+    "zh-CN": "配送方式",
+    "uz": "Yetkazib berish usuli",
+    "vi": "Phương thức giao hàng",
+    "mn": "Хүргэлтийн арга",
+    "ms": "Kaedah penghantaran"
+  },
+  "Delivery provider integration": {
+    "en": "Delivery provider integration",
+    "ko": "배송업체 통합",
+    "ja": "配信プロバイダーの統合",
+    "zh-CN": "交付提供商集成",
+    "uz": "Yetkazib beruvchi provayder integratsiyasi",
+    "vi": "Tích hợp nhà cung cấp dịch vụ giao hàng",
+    "mn": "Хүргэлтийн үйлчилгээ үзүүлэгчийн нэгдэл",
+    "ms": "Penyepaduan pembekal penghantaran"
+  },
+  "demo": {
+    "en": "demo",
+    "ko": "데모",
+    "ja": "デモ",
+    "zh-CN": "演示",
+    "uz": "demo",
+    "vi": "bản trình diễn",
+    "mn": "демо",
+    "ms": "tunjuk cara"
+  },
+  "Demo": {
+    "en": "Demo",
+    "ko": "데모",
+    "ja": "デモ",
+    "zh-CN": "演示",
+    "uz": "Namoyish",
+    "vi": "Bản trình diễn",
+    "mn": "Демо",
+    "ms": "Tunjuk cara"
+  },
+  "Demo content": {
+    "en": "Demo content",
+    "ko": "데모 콘텐츠",
+    "ja": "デモ コンテンツ",
+    "zh-CN": "演示内容",
+    "uz": "Demo kontenti",
+    "vi": "Nội dung demo",
+    "mn": "Демо контент",
+    "ms": "Kandungan demo"
+  },
+  "Demo information": {
+    "en": "Demo information",
+    "ko": "데모 정보",
+    "ja": "デモ情報",
+    "zh-CN": "演示信息",
+    "uz": "Demo haqida maʼlumot",
+    "vi": "Thông tin demo",
+    "mn": "Демо мэдээлэл",
+    "ms": "Maklumat demo"
+  },
+  "demoOrigin": {
+    "en": "demoOrigin",
+    "ko": "데모원산지",
+    "ja": "デモオリジン",
+    "zh-CN": "演示来源",
+    "uz": "demoOrigin",
+    "vi": "demoOrigin",
+    "mn": "demoOrigin",
+    "ms": "demoOrigin"
+  },
+  "departure": {
+    "en": "departure",
+    "ko": "출발",
+    "ja": "出発",
+    "zh-CN": "出发",
+    "uz": "ketish",
+    "vi": "khởi hành",
+    "mn": "явах",
+    "ms": "berlepas"
+  },
+  "Departure": {
+    "en": "Departure",
+    "ko": "출발",
+    "ja": "出発",
+    "zh-CN": "出发",
+    "uz": "Ketish",
+    "vi": "Khởi hành",
+    "mn": "Явах",
+    "ms": "Berlepas"
+  },
+  "Departure service guide": {
+    "en": "Departure service guide",
+    "ko": "출국 서비스 안내",
+    "ja": "出発サービスのご案内",
+    "zh-CN": "出发服务指南",
+    "uz": "Ketish boʻyicha xizmat koʻrsatmasi",
+    "vi": "Hướng dẫn dịch vụ khởi hành",
+    "mn": "Явах үйлчилгээний гарын авлага",
+    "ms": "Panduan perkhidmatan berlepas"
+  },
+  "departure-checklist": {
+    "en": "departure-checklist",
+    "ko": "출발 체크리스트",
+    "ja": "出発チェックリスト",
+    "zh-CN": "出发清单",
+    "uz": "jo‘nab ketish-nazorat ro‘yxati",
+    "vi": "danh sách kiểm tra khởi hành",
+    "mn": "явах шалгах хуудас",
+    "ms": "senarai semak berlepas"
+  },
+  "departure-shipping": {
+    "en": "departure-shipping",
+    "ko": "출발-배송",
+    "ja": "出発-出荷",
+    "zh-CN": "出发-运输",
+    "uz": "jo‘nash-jo‘natish",
+    "vi": "khởi hành-vận chuyển",
+    "mn": "явах-тээвэрлэлт",
+    "ms": "penghantaran berlepas"
+  },
+  "Description": {
+    "en": "Description",
+    "ko": "설명",
+    "ja": "説明",
+    "zh-CN": "说明",
+    "uz": "Tavsif",
+    "vi": "Mô tả",
+    "mn": "Тодорхойлолт",
+    "ms": "Penerangan"
+  },
+  "details": {
+    "en": "details",
+    "ko": "세부정보",
+    "ja": "の詳細",
+    "zh-CN": "详细信息",
+    "uz": "tafsilotlari",
+    "vi": "chi tiết",
+    "mn": "дэлгэрэнгүй",
+    "ms": "butiran"
+  },
+  "Directions": {
+    "en": "Directions",
+    "ko": "오시는 길",
+    "ja": "行き方",
+    "zh-CN": "路线",
+    "uz": "Yoʻnalishlar",
+    "vi": "Chỉ đường",
+    "mn": "Чиглэл",
+    "ms": "Arah"
+  },
+  "Disposal": {
+    "en": "Disposal",
+    "ko": "폐기",
+    "ja": "の廃棄",
+    "zh-CN": "处置",
+    "uz": "Utilizatsiya qilish",
+    "vi": "Xử lý",
+    "mn": "Устгах",
+    "ms": "Pelupusan"
+  },
+  "Do not rely on an old checklist": {
+    "en": "Do not rely on an old checklist",
+    "ko": "오래된 체크리스트에 의존하지 마십시오",
+    "ja": "古いチェックリストに頼らないでください",
+    "zh-CN": "不要依赖旧的清单",
+    "uz": "Eski nazorat roʻyxatiga tayanmang",
+    "vi": "Đừng dựa vào danh sách kiểm tra cũ",
+    "mn": "Хуучин шалгах хуудас дээр бүү найд",
+    "ms": "Jangan bergantung pada senarai semak lama"
+  },
+  "Donation": {
+    "en": "Donation",
+    "ko": "기부",
+    "ja": "寄付",
+    "zh-CN": "捐赠",
+    "uz": "Xayriya",
+    "vi": "Đóng góp",
+    "mn": "Хандив",
+    "ms": "Derma"
+  },
+  "dorm": {
+    "en": "dorm",
+    "ko": "기숙사",
+    "ja": "寮",
+    "zh-CN": "宿舍",
+    "uz": "yotoqxonasi",
+    "vi": "ký túc xá",
+    "mn": "дотуур байр",
+    "ms": "asrama"
+  },
+  "dorm-checkin-steps": {
+    "en": "dorm-checkin-steps",
+    "ko": "기숙사 체크인 단계",
+    "ja": "寮のチェックイン手順",
+    "zh-CN": "宿舍入住步骤",
+    "uz": "yotoqxonada roʻyxatdan oʻtish bosqichlari",
+    "vi": "ký túc xá-đăng ký-bước",
+    "mn": "дотуур байранд бүртгүүлэх алхамууд",
+    "ms": "langkah daftar masuk asrama"
+  },
+  "Dormitory rules and check-in windows can change by term. Use the latest notice from the university before travelling.": {
+    "en": "Dormitory rules and check-in windows can change by term. Use the latest notice from the university before travelling.",
+    "ko": "기숙사 규정 및 입사 창구는 학기별로 변경될 수 있습니다. 여행하기 전에 대학의 최신 공지를 활용하세요.",
+    "ja": "寮の規則とチェックイン窓口は学期ごとに変更される場合があります。旅行前に大学からの最新の通知をご確認ください。",
+    "zh-CN": "宿舍规则和入住时间可能会因学期而异。出行前请使用大学的最新通知。",
+    "uz": "Yotoqxona qoidalari va roʻyxatdan oʻtish oynalari muddatga qarab oʻzgarishi mumkin. Sayohat qilishdan oldin universitetning so'nggi xabarnomasidan foydalaning.",
+    "vi": "Nội quy ký túc xá và thời gian nhận phòng có thể thay đổi theo thời hạn. Sử dụng thông báo mới nhất từ ​​trường đại học trước khi đi du lịch.",
+    "mn": "Дотуур байрны дүрэм болон бүртгэлийн цонхыг улирал бүрээр өөрчилж болно. Аялахаасаа өмнө их сургуулийн хамгийн сүүлийн мэдэгдлийг ашиглана уу.",
+    "ms": "Peraturan asrama dan tingkap daftar masuk boleh berubah mengikut tempoh. Gunakan notis terkini daripada universiti sebelum melancong."
+  },
+  "draft": {
+    "en": "draft",
+    "ko": "초안",
+    "ja": "ドラフト",
+    "zh-CN": "草案",
+    "uz": "qoralama",
+    "vi": "bản nháp",
+    "mn": "ноорог",
+    "ms": "draf"
+  },
+  "Due date": {
+    "en": "Due date",
+    "ko": "마감일",
+    "ja": "期限",
+    "zh-CN": "截止日期",
+    "uz": "Tugash sanasi",
+    "vi": "Ngày đáo hạn",
+    "mn": "Эцсийн хугацаа",
+    "ms": "Tarikh tamat tempoh"
+  },
+  "Duration": {
+    "en": "Duration",
+    "ko": "기간",
+    "ja": "持続時間",
+    "zh-CN": "持续时间",
+    "uz": "Davomiyligi",
+    "vi": "Thời lượng",
+    "mn": "Үргэлжлэх хугацаа",
+    "ms": "Tempoh"
+  },
+  "Edit details": {
+    "en": "Edit details",
+    "ko": "세부정보 편집",
+    "ja": "詳細の編集",
+    "zh-CN": "编辑详细信息",
+    "uz": "Tafsilotlarni tahrirlash",
+    "vi": "Chỉnh sửa chi tiết",
+    "mn": "Дэлгэрэнгүй мэдээллийг засах",
+    "ms": "Edit butiran"
+  },
+  "Edit listing": {
+    "en": "Edit listing",
+    "ko": "목록 편집",
+    "ja": "リストの編集",
+    "zh-CN": "编辑列表",
+    "uz": "Roʻyxatni tahrirlash",
+    "vi": "Chỉnh sửa danh sách",
+    "mn": "Жагсаалтыг засах",
+    "ms": "Edit penyenaraian"
+  },
+  "emergency-119": {
+    "en": "emergency-119",
+    "ko": "비상-119",
+    "ja": "緊急-119",
+    "zh-CN": "紧急119",
+    "uz": "favqulodda vaziyat - 119",
+    "vi": "khẩn cấp-119",
+    "mn": "яаралтай тусламж-119",
+    "ms": "kecemasan-119"
+  },
+  "empty-state": {
+    "en": "empty-state",
+    "ko": "빈 상태",
+    "ja": "空の状態",
+    "zh-CN": "空状态",
+    "uz": "boʻsh holat",
+    "vi": "trạng thái trống",
+    "mn": "хоосон төлөв",
+    "ms": "keadaan kosong"
+  },
+  "en": {
+    "en": "en",
+    "ko": "ko",
+    "ja": "ja",
+    "zh-CN": "zh",
+    "uz": "uz",
+    "vi": "vi",
+    "mn": "en",
+    "ms": "en"
+  },
+  "Enter a subject and message.": {
+    "en": "Enter a subject and message.",
+    "ko": "제목과 메시지를 입력하세요.",
+    "ja": "件名とメッセージを入力します。",
+    "zh-CN": "输入主题和消息。",
+    "uz": "Mavzu va xabarni kiriting.",
+    "vi": "Nhập chủ đề và tin nhắn.",
+    "mn": "Гарчиг болон мессеж оруулна уу.",
+    "ms": "Masukkan subjek dan mesej."
+  },
+  "Enter admin token": {
+    "en": "Enter admin token",
+    "ko": "관리자 토큰을 입력하세요",
+    "ja": "管理者トークンを入力してください",
+    "zh-CN": "输入管理员令牌",
+    "uz": "Administrator tokenini kiriting",
+    "vi": "Nhập mã thông báo quản trị",
+    "mn": "Админ токеныг оруулна уу",
+    "ms": "Masukkan token pentadbir"
+  },
+  "Enter ADMIN_API_TOKEN": {
+    "en": "Enter ADMIN_API_TOKEN",
+    "ko": "ADMIN_API_TOKEN을 입력하세요.",
+    "ja": "ADMIN_API_TOKEN を入力してください",
+    "zh-CN": "输入 ADMIN_API_TOKEN",
+    "uz": "ADMIN_API_TOKEN kiriting",
+    "vi": "Nhập ADMIN_API_TOKEN",
+    "mn": "ADMIN_API_TOKEN оруулна уу",
+    "ms": "Masukkan ADMIN_API_TOKEN"
+  },
+  "Enter your KU email and password.": {
+    "en": "Enter your KU email and password.",
+    "ko": "고려대 이메일과 비밀번호를 입력하세요.",
+    "ja": "KU のメールアドレスとパスワードを入力してください。",
+    "zh-CN": "输入您的 KU 电子邮件和密码。",
+    "uz": "KU email va parolingizni kiriting.",
+    "vi": "Nhập email và mật khẩu KU của bạn.",
+    "mn": "KU имэйл болон нууц үгээ оруулна уу.",
+    "ms": "Masukkan e-mel dan kata laluan KU anda."
+  },
+  "Estimate / cost guidance": {
+    "en": "Estimate / cost guidance",
+    "ko": "견적 / 비용 안내",
+    "ja": "見積もり/コストのガイダンス",
+    "zh-CN": "估算/成本指导",
+    "uz": "Taxminiy / xarajat bo'yicha ko'rsatma",
+    "vi": "Ước tính/hướng dẫn chi phí",
+    "mn": "Тооцоолол / зардлын удирдамж",
+    "ms": "Panduan anggaran / kos"
+  },
+  "Estimate monthly data": {
+    "en": "Estimate monthly data",
+    "ko": "월간 데이터 추정",
+    "ja": "月次データの推定",
+    "zh-CN": "估计每月数据",
+    "uz": "Oylik maʼlumotlarni hisoblang",
+    "vi": "Ước tính dữ liệu hàng tháng",
+    "mn": "Сарын өгөгдлийг тооцоолох",
+    "ms": "Anggarkan data bulanan"
+  },
+  "Estimate viewed": {
+    "en": "Estimate viewed",
+    "ko": "조회된 견적",
+    "ja": "見積りを閲覧しました",
+    "zh-CN": "估计已浏览",
+    "uz": "Taxminiy koʻrilgan",
+    "vi": "Ước tính đã xem",
+    "mn": "Тооцооллыг үзсэн",
+    "ms": "Anggaran dilihat"
+  },
+  "Estimated cost: estimate required": {
+    "en": "Estimated cost: estimate required",
+    "ko": "예상 비용: 추정 필요",
+    "ja": "推定コスト: 推定が必要です",
+    "zh-CN": "预计费用：需要估算",
+    "uz": "Taxminiy xarajat: smeta zarur",
+    "vi": "Chi phí ước tính: yêu cầu ước tính",
+    "mn": "Тооцоолсон зардал: шаардлагатай тооцоо",
+    "ms": "Anggaran kos: anggaran diperlukan"
+  },
+  "Estimated time": {
+    "en": "Estimated time",
+    "ko": "예상 시간",
+    "ja": "推定所要時間",
+    "zh-CN": "预计时间",
+    "uz": "Taxminiy vaqt",
+    "vi": "Thời gian dự kiến",
+    "mn": "Тооцоолсон хугацаа",
+    "ms": "Anggaran masa"
+  },
+  "expired": {
+    "en": "expired",
+    "ko": "만료됨",
+    "ja": "の有効期限が切れました",
+    "zh-CN": "已过期",
+    "uz": "muddati tugagan",
+    "vi": "đã hết hạn",
+    "mn": "хугацаа дууссан",
+    "ms": "tamat tempoh"
+  },
+  "Export": {
+    "en": "Export",
+    "ko": "내보내기",
+    "ja": "エクスポート",
+    "zh-CN": "导出",
+    "uz": "Eksport",
+    "vi": "Xuất",
+    "mn": "Экспорт",
+    "ms": "Eksport"
+  },
+  "External messaging and inquiries": {
+    "en": "External messaging and inquiries",
+    "ko": "외부 메시지 및 문의사항",
+    "ja": "外部からのメッセージと問い合わせ",
+    "zh-CN": "外部消息和查询",
+    "uz": "Tashqi xabarlar va so'rovlar",
+    "vi": "Tin nhắn và yêu cầu bên ngoài",
+    "mn": "Гадаад мессеж, лавлагаа",
+    "ms": "Pemesejan dan pertanyaan luaran"
+  },
+  "eyebrow": {
+    "en": "eyebrow",
+    "ko": "눈썹",
+    "ja": "眉毛",
+    "zh-CN": "眉毛",
+    "uz": "qosh",
+    "vi": "lông mày",
+    "mn": "хөмсөг",
+    "ms": "kening"
+  },
+  "Find course registration dates": {
+    "en": "Find course registration dates",
+    "ko": "수강신청일 찾기",
+    "ja": "科目登録日の検索",
+    "zh-CN": "查找课程注册日期",
+    "uz": "Kursga roʻyxatdan oʻtish sanalarini toping",
+    "vi": "Tìm ngày đăng ký khóa học",
+    "mn": "Хичээлийн бүртгэлийн огноог олоорой",
+    "ms": "Cari tarikh pendaftaran kursus"
+  },
+  "Find the building collection notice": {
+    "en": "Find the building collection notice",
+    "ko": "건물 수집 공지 찾기",
+    "ja": "建物コレクションの通知を見つける",
+    "zh-CN": "查找楼宇征集启事",
+    "uz": "Binoni yig'ish haqidagi bildirishnomani toping",
+    "vi": "Tìm thông báo thu phí tòa nhà",
+    "mn": "Барилга цуглуулах мэдэгдлийг ол",
+    "ms": "Cari notis pengumpulan bangunan"
+  },
+  "Find the current portal, course registration, timetable, and notice locations.": {
+    "en": "Find the current portal, course registration, timetable, and notice locations.",
+    "ko": "현재 포탈, 수강신청, 시간표, 공지사항 위치를 찾아보세요.",
+    "ja": "現在のポータル、コース登録、時間割、お知らせの場所を確認します。",
+    "zh-CN": "查找当前门户、课程注册、时间表和通知位置。",
+    "uz": "Joriy portal, kursni roʻyxatdan oʻtkazish, jadval va eʼlon joylarini toping.",
+    "vi": "Tìm cổng thông tin hiện tại, đăng ký khóa học, thời gian biểu và địa điểm thông báo.",
+    "mn": "Одоогийн портал, курсын бүртгэл, цагийн хуваарь болон мэдэгдлийн байршлыг олоорой.",
+    "ms": "Cari portal semasa, pendaftaran kursus, jadual waktu dan lokasi notis."
+  },
+  "Find, check, and save practical information from official sources.": {
+    "en": "Find, check, and save practical information from official sources.",
+    "ko": "공식 출처에서 실용적인 정보를 찾고, 확인하고, 저장하세요.",
+    "ja": "公式情報源から実用的な情報を検索、確認、保存します。",
+    "zh-CN": "从官方来源查找、检查和保存实用信息。",
+    "uz": "Rasmiy manbalardan amaliy maʼlumotlarni toping, tekshiring va saqlang.",
+    "vi": "Tìm, kiểm tra và lưu thông tin thiết thực từ các nguồn chính thức.",
+    "mn": "Албан ёсны эх сурвалжаас практик мэдээллийг олж, шалгаж, хадгал.",
+    "ms": "Cari, semak dan simpan maklumat praktikal daripada sumber rasmi."
+  },
+  "First-response target: ": {
+    "en": "First-response target: ",
+    "ko": "최초 대응 목표:",
+    "ja": "最初の対応ターゲット:",
+    "zh-CN": "第一响应目标：",
+    "uz": "Birinchi javob maqsadi:",
+    "vi": "Mục tiêu phản hồi đầu tiên:",
+    "mn": "Эхний хариултын зорилт:",
+    "ms": "Sasaran tindak balas pertama:"
+  },
+  "Follow the current dormitory notice as the final source": {
+    "en": "Follow the current dormitory notice as the final source",
+    "ko": "현재 기숙사 공지사항을 최종 소스로 따릅니다.",
+    "ja": "最終情報源として現在の寮通知に従ってください。",
+    "zh-CN": "以当前宿舍通知为准",
+    "uz": "Yakuniy manba sifatida joriy yotoqxona xabariga amal qiling",
+    "vi": "Thực hiện theo thông báo ký túc xá hiện tại là nguồn cuối cùng",
+    "mn": "Одоогийн дотуур байрны мэдэгдлийг эцсийн эх сурвалж болгон дагана уу",
+    "ms": "Ikuti notis asrama semasa sebagai sumber akhir"
+  },
+  "Follow the dispatcher instructions": {
+    "en": "Follow the dispatcher instructions",
+    "ko": "파견자의 지시를 따르십시오.",
+    "ja": "ディスパッチャーの指示に従ってください",
+    "zh-CN": "按照调度员的指示进行操作",
+    "uz": "Dispetcher koʻrsatmalariga amal qiling",
+    "vi": "Làm theo hướng dẫn của người điều phối",
+    "mn": "Диспетчерийн зааврыг дагана уу",
+    "ms": "Ikut arahan penghantar"
+  },
+  "For the current free-operation setup, sign-up, resend verification, and password reset do not send email. Existing accounts can sign in.": {
+    "en": "For the current free-operation setup, sign-up, resend verification, and password reset do not send email. Existing accounts can sign in.",
+    "ko": "현재 무료운영 설정에서는 회원가입, 인증재발송, 비밀번호 재설정 등의 이메일은 발송되지 않습니다. 기존 계정으로 로그인할 수 있습니다.",
+    "ja": "現在の無料操作設定では、サインアップ、検証の再送信、およびパスワードのリセットでは電子メールは送信されません。既存のアカウントはサインインできます。",
+    "zh-CN": "对于当前的自由操作设置，注册、重新发送验证和密码重置不发送电子邮件。现有帐户可以登录。",
+    "uz": "Joriy bepul ishlash sozlamalari uchun roʻyxatdan oʻting, qayta yuborish tekshiruvi va parolni qayta oʻrnatish uchun elektron pochta xabarlarini yubormang. Mavjud hisoblar tizimga kirishi mumkin.",
+    "vi": "Đối với thiết lập hoạt động tự do hiện tại, đăng ký, gửi lại xác minh và đặt lại mật khẩu không gửi email. Tài khoản hiện tại có thể đăng nhập.",
+    "mn": "Одоогийн үнэгүй үйлдлийн тохиргоонд бүртгүүлэх, дахин илгээх баталгаажуулалт, нууц үг шинэчлэх зэрэгт имэйл илгээж болохгүй. Одоо байгаа бүртгэлүүд нэвтэрч болно.",
+    "ms": "Untuk persediaan operasi bebas semasa, daftar, hantar semula pengesahan dan tetapan semula kata laluan jangan hantar e-mel. Akaun sedia ada boleh log masuk."
+  },
+  "For urgent medical or fire emergencies in Korea, call 119. For non-urgent care, confirm the provider and language support first.": {
+    "en": "For urgent medical or fire emergencies in Korea, call 119. For non-urgent care, confirm the provider and language support first.",
+    "ko": "국내 긴급의료, 화재 등 긴급상황 발생 시 119로 신고하고, 긴급하지 않은 진료의 경우 제공처 및 언어지원 여부를 먼저 확인하세요.",
+    "ja": "韓国で緊急医療または火災の緊急事態が発生した場合は、119 番に電話してください。緊急でない治療については、まず医療提供者と言語サポートを確認してください。",
+    "zh-CN": "对于韩国的紧急医疗或火灾紧急情况，请致电 119。对于非紧急护理，请首先确认提供者和语言支持。",
+    "uz": "Koreyada shoshilinch tibbiy yoki yongʻin bilan bogʻliq favqulodda vaziyatlar uchun 119 raqamiga qoʻngʻiroq qiling. Shoshilinch boʻlmagan yordam uchun avval provayder va til yordamini tasdiqlang.",
+    "vi": "Đối với các trường hợp khẩn cấp về y tế hoặc hỏa hoạn ở Hàn Quốc, hãy gọi 119. Đối với dịch vụ chăm sóc không khẩn cấp, trước tiên hãy xác nhận nhà cung cấp và hỗ trợ ngôn ngữ.",
+    "mn": "Солонгост яаралтай эмнэлгийн болон гал түймрийн үед яаралтай тусламж авах бол 119 руу залгана уу. Яаралтай бус тусламж авахын тулд эхлээд үйлчилгээ үзүүлэгч болон хэлний дэмжлэгийг баталгаажуулна уу.",
+    "ms": "Untuk kecemasan perubatan atau kebakaran yang mendesak di Korea, hubungi 119. Untuk penjagaan tidak segera, sahkan pembekal dan sokongan bahasa terlebih dahulu."
+  },
+  "From": {
+    "en": "From",
+    "ko": "부터",
+    "ja": "から",
+    "zh-CN": "来自",
+    "uz": "Kimdan",
+    "vi": "Từ",
+    "mn": "-аас",
+    "ms": "Daripada"
+  },
+  "good": {
+    "en": "good",
+    "ko": "좋아요",
+    "ja": "良い",
+    "zh-CN": "好",
+    "uz": "yaxshi",
+    "vi": "tốt",
+    "mn": "сайн",
+    "ms": "bagus"
+  },
+  "Guide source management": {
+    "en": "Guide source management",
+    "ko": "가이드 소스 관리",
+    "ja": "ガイドのソース管理",
+    "zh-CN": "指南源管理",
+    "uz": "Manba boshqaruvini koʻrsating",
+    "vi": "Quản lý nguồn hướng dẫn",
+    "mn": "Эх сурвалжийн менежментийг чиглүүлэх",
+    "ms": "Panduan pengurusan sumber"
+  },
+  "Guide source status": {
+    "en": "Guide source status",
+    "ko": "가이드 소스 상태",
+    "ja": "ガイドソースのステータス",
+    "zh-CN": "指南源状态",
+    "uz": "Qoʻllanma manbasi holati",
+    "vi": "Trạng thái nguồn hướng dẫn",
+    "mn": "Хөтөч эх сурвалжийн төлөв",
+    "ms": "Status sumber panduan"
+  },
+  "Guide sources": {
+    "en": "Guide sources",
+    "ko": "가이드 소스",
+    "ja": "ガイドのソース",
+    "zh-CN": "指南来源",
+    "uz": "Qoʻllanma manbalari",
+    "vi": "Nguồn hướng dẫn",
+    "mn": "Хөтөч эх сурвалжууд",
+    "ms": "Panduan sumber"
+  },
+  "guideOverrides": {
+    "en": "guideOverrides",
+    "ko": "가이드 재정의",
+    "ja": "ガイドオーバーライド",
+    "zh-CN": "指南覆盖",
+    "uz": "qoʻllanma bekor qiladi",
+    "vi": "hướng dẫnGhi đè",
+    "mn": "хөтөч хүчингүй болгодог",
+    "ms": "guideOverrides"
+  },
+  "guides": {
+    "en": "guides",
+    "ko": "가이드",
+    "ja": "ガイド",
+    "zh-CN": "指南",
+    "uz": "qoʻllanmalar",
+    "vi": "hướng dẫn",
+    "mn": "хөтөч",
+    "ms": "panduan"
+  },
+  "Guides": {
+    "en": "Guides",
+    "ko": "가이드",
+    "ja": "ガイド",
+    "zh-CN": "指南",
+    "uz": "Qoʻllanmalar",
+    "vi": "Hướng dẫn",
+    "mn": "Хөтөч",
+    "ms": "Pemandu"
+  },
+  "Halal certified": {
+    "en": "Halal certified",
+    "ko": "할랄 인증",
+    "ja": "ハラール認証済み",
+    "zh-CN": "清真认证",
+    "uz": "Halol sertifikatlangan",
+    "vi": "Chứng nhận Halal",
+    "mn": "Халал сертификаттай",
+    "ms": "Disahkan Halal"
+  },
+  "Halal menu available": {
+    "en": "Halal menu available",
+    "ko": "할랄 메뉴 이용 가능",
+    "ja": "ハラールメニューあり",
+    "zh-CN": "提供清真菜单",
+    "uz": "Halol menyusi mavjud",
+    "vi": "Có sẵn thực đơn Halal",
+    "mn": "Халал цэс боломжтой",
+    "ms": "Menu halal tersedia"
+  },
+  "healthcare": {
+    "en": "healthcare",
+    "ko": "건강 관리",
+    "ja": "ヘルスケア",
+    "zh-CN": "医疗保健",
+    "uz": "sog'liqni saqlash",
+    "vi": "chăm sóc sức khỏe",
+    "mn": "эрүүл мэндийн үйлчилгээ",
+    "ms": "penjagaan kesihatan"
+  },
+  "Healthcare & Emergency": {
+    "en": "Healthcare & Emergency",
+    "ko": "의료 및 응급 상황",
+    "ja": "ヘルスケアと緊急事態",
+    "zh-CN": "医疗保健和紧急情况",
+    "uz": "Sog‘liqni saqlash va favqulodda vaziyatlar",
+    "vi": "Chăm sóc sức khỏe & cấp cứu",
+    "mn": "Эрүүл мэнд, яаралтай тусламж",
+    "ms": "Penjagaan Kesihatan & Kecemasan"
+  },
+  "hidden": {
+    "en": "hidden",
+    "ko": "숨김",
+    "ja": "非表示",
+    "zh-CN": "隐藏",
+    "uz": "yashirin",
+    "vi": "ẩn",
+    "mn": "нуугдсан",
+    "ms": "tersembunyi"
+  },
+  "Hide completed": {
+    "en": "Hide completed",
+    "ko": "숨기기 완료",
+    "ja": "非表示が完了しました",
+    "zh-CN": "隐藏完成",
+    "uz": "Yashirish tugallandi",
+    "vi": "Ẩn hoàn tất",
+    "mn": "Нуух дууссан",
+    "ms": "Sembunyikan selesai"
+  },
+  "HiKorea": {
+    "en": "HiKorea",
+    "ko": "하이코리아",
+    "ja": "HiKorea",
+    "zh-CN": "HiKorea",
+    "uz": "HiKorea",
+    "vi": "Xin chàoKorea",
+    "mn": "HiKorea",
+    "ms": "HiKorea"
+  },
+  "Home": {
+    "en": "Home",
+    "ko": "홈",
+    "ja": "ホーム",
+    "zh-CN": "首页",
+    "uz": "Uy",
+    "vi": "Trang chủ",
+    "mn": "Нүүр хуудас",
+    "ms": "Rumah"
+  },
+  "household-essentials": {
+    "en": "household-essentials",
+    "ko": "가정 필수품",
+    "ja": "家庭用品",
+    "zh-CN": "家庭必需品",
+    "uz": "uy-roʻzgʻor uchun zaruriy mahsulotlar",
+    "vi": "đồ dùng gia đình thiết yếu",
+    "mn": "гэр ахуйн хэрэгцээт зүйлс",
+    "ms": "keperluan rumah"
+  },
+  "housing": {
+    "en": "housing",
+    "ko": "주택",
+    "ja": "ハウジング",
+    "zh-CN": "住房",
+    "uz": "uy-joy",
+    "vi": "nhà ở",
+    "mn": "орон сууц",
+    "ms": "perumahan"
+  },
+  "Housing": {
+    "en": "Housing",
+    "ko": "주택",
+    "ja": "ハウジング",
+    "zh-CN": "住房",
+    "uz": "Uy-joy",
+    "vi": "Nhà ở",
+    "mn": "Орон сууц",
+    "ms": "Perumahan"
+  },
+  "https://dorm.korea.ac.kr/": {
+    "en": "https://dorm.korea.ac.kr/",
+    "ko": "https://dorm.korea.ac.kr/",
+    "ja": "https://dorm.korea.ac.kr/",
+    "zh-CN": "https://dorm.korea.ac.kr/",
+    "uz": "https://dorm.korea.ac.kr/",
+    "vi": "https://dorm.korea.ac.kr/",
+    "mn": "https://dorm.korea.ac.kr/",
+    "ms": "https://dorm.korea.ac.kr/"
+  },
+  "https://english.seoul.go.kr/": {
+    "en": "https://english.seoul.go.kr/",
+    "ko": "https://english.seoul.go.kr/",
+    "ja": "https://english.seoul.go.kr/",
+    "zh-CN": "https://english.seoul.go.kr/",
+    "uz": "https://english.seoul.go.kr/",
+    "vi": "https://english.seoul.go.kr/",
+    "mn": "https://english.seoul.go.kr/",
+    "ms": "https://english.seoul.go.kr/"
+  },
+  "https://english.seoul.go.kr/service/living/convenience/3-communication/": {
+    "en": "https://english.seoul.go.kr/service/living/convenience/3-communication/",
+    "ko": "https://english.seoul.go.kr/service/living/convenience/3-communication/",
+    "ja": "https://english.seoul.go.kr/service/living/convenience/3-communication/",
+    "zh-CN": "https://english.seoul.go.kr/service/living/convenience/3-communication/",
+    "uz": "https://english.seoul.go.kr/service/living/convenience/3-communication/",
+    "vi": "https://english.seoul.go.kr/service/living/convenience/3-communication/",
+    "mn": "https://english.seoul.go.kr/service/living/convenience/3-communication/",
+    "ms": "https://english.seoul.go.kr/service/living/convenience/3-communication/"
+  },
+  "https://news.seoul.go.kr/env/archives/507225": {
+    "en": "https://news.seoul.go.kr/env/archives/507225",
+    "ko": "https://news.seoul.go.kr/env/archives/507225",
+    "ja": "https://news.seoul.go.kr/env/archives/507225",
+    "zh-CN": "https://news.seoul.go.kr/env/archives/507225",
+    "uz": "https://news.seoul.go.kr/env/archives/507225",
+    "vi": "https://news.seoul.go.kr/env/archives/507225",
+    "mn": "https://news.seoul.go.kr/env/archives/507225",
+    "ms": "https://news.seoul.go.kr/env/archives/507225"
+  },
+  "https://portal.korea.ac.kr/p/PR/": {
+    "en": "https://portal.korea.ac.kr/p/PR/",
+    "ko": "https://portal.korea.ac.kr/p/PR/",
+    "ja": "https://portal.korea.ac.kr/p/PR/",
+    "zh-CN": "https://portal.korea.ac.kr/p/PR/",
+    "uz": "https://portal.korea.ac.kr/p/PR/",
+    "vi": "https://portal.korea.ac.kr/p/PR/",
+    "mn": "https://portal.korea.ac.kr/p/PR/",
+    "ms": "https://portal.korea.ac.kr/p/PR/"
+  },
+  "https://www.gov.kr/portal/foreigner/ko": {
+    "en": "https://www.gov.kr/portal/foreigner/ko",
+    "ko": "https://www.gov.kr/portal/foreigner/ko",
+    "ja": "https://www.gov.kr/portal/foreigner/ko",
+    "zh-CN": "https://www.gov.kr/portal/foreigner/ko",
+    "uz": "https://www.gov.kr/portal/foreigner/ko",
+    "vi": "https://www.gov.kr/portal/forigner/ko",
+    "mn": "https://www.gov.kr/portal/foreigner/ko",
+    "ms": "https://www.gov.kr/portal/foreigner/ko"
+  },
+  "https://www.hikorea.go.kr/": {
+    "en": "https://www.hikorea.go.kr/",
+    "ko": "https://www.hikorea.go.kr/",
+    "ja": "https://www.hikorea.go.kr/",
+    "zh-CN": "https://www.hikorea.go.kr/",
+    "uz": "https://www.hikorea.go.kr/",
+    "vi": "https://www.hikorea.go.kr/",
+    "mn": "https://www.hikorea.go.kr/",
+    "ms": "https://www.hikorea.go.kr/"
+  },
+  "https://www.koreapost.go.kr/eng/subIndex/4418.do": {
+    "en": "https://www.koreapost.go.kr/eng/subIndex/4418.do",
+    "ko": "https://www.koreapost.go.kr/eng/subIndex/4418.do",
+    "ja": "https://www.koreapost.go.kr/eng/subIndex/4418.do",
+    "zh-CN": "https://www.koreapost.go.kr/eng/subIndex/4418.do",
+    "uz": "https://www.koreapost.go.kr/eng/subIndex/4418.do",
+    "vi": "https://www.koreapost.go.kr/eng/subIndex/4418.do",
+    "mn": "https://www.koreapost.go.kr/eng/subIndex/4418.do",
+    "ms": "https://www.koreapost.go.kr/eng/subIndex/4418.do"
+  },
+  "immigration": {
+    "en": "immigration",
+    "ko": "이민",
+    "ja": "入国管理",
+    "zh-CN": "移民",
+    "uz": "immigratsiya",
+    "vi": "nhập cư",
+    "mn": "цагаачлал",
+    "ms": "imigresen"
+  },
+  "Immigration": {
+    "en": "Immigration",
+    "ko": "이민",
+    "ja": "入国審査",
+    "zh-CN": "移民",
+    "uz": "Immigratsiya",
+    "vi": "Nhập cư",
+    "mn": "Цагаачлал",
+    "ms": "Imigresen"
+  },
+  "Immigration requirements are status-dependent and can change. Treat this article as a checklist for finding the current official notice.": {
+    "en": "Immigration requirements are status-dependent and can change. Treat this article as a checklist for finding the current official notice.",
+    "ko": "이민 요건은 신분에 따라 다르며 변경될 수 있습니다. 이 기사를 최신 공식 공지를 찾기 위한 체크리스트로 활용하세요.",
+    "ja": "入国要件はステータスに依存し、変更される可能性があります。この記事は、最新の公式通知を見つけるためのチェックリストとして扱ってください。",
+    "zh-CN": "移民要求取决于身份并且可能会发生变化。将本文视为查找当前官方通知的清单。",
+    "uz": "Immigratsiya talablari maqomga bog'liq va o'zgarishi mumkin. Ushbu maqolani joriy rasmiy xabarni topish uchun nazorat ro'yxati sifatida ko'rib chiqing.",
+    "vi": "Yêu cầu nhập cư phụ thuộc vào tình trạng và có thể thay đổi. Hãy coi bài viết này như một danh sách kiểm tra để tìm thông báo chính thức hiện tại.",
+    "mn": "Цагаачлалын шаардлага нь статусаас хамаардаг бөгөөд өөрчлөгдөж болно. Энэ нийтлэлийг одоогийн албан ёсны мэдэгдлийг олох хяналтын хуудас болгон авч үзье.",
+    "ms": "Keperluan imigresen bergantung kepada status dan boleh berubah. Anggap artikel ini sebagai senarai semak untuk mencari notis rasmi semasa."
+  },
+  "Import": {
+    "en": "Import",
+    "ko": "가져오기",
+    "ja": "インポート",
+    "zh-CN": "导入",
+    "uz": "Import",
+    "vi": "Nhập",
+    "mn": "Импорт",
+    "ms": "Import"
+  },
+  "Important": {
+    "en": "Important",
+    "ko": "중요",
+    "ja": "重要",
+    "zh-CN": "重要",
+    "uz": "Muhim",
+    "vi": "Quan trọng",
+    "mn": "Чухал",
+    "ms": "Penting"
+  },
+  "In progress": {
+    "en": "In progress",
+    "ko": "진행 중",
+    "ja": "進行中",
+    "zh-CN": "进行中",
+    "uz": "Davom etmoqda",
+    "vi": "Đang tiến hành",
+    "mn": "Явж байна",
+    "ms": "Sedang berjalan"
+  },
+  "in-progress": {
+    "en": "in-progress",
+    "ko": "진행 중",
+    "ja": "進行中",
+    "zh-CN": "进行中",
+    "uz": "bajarilmoqda",
+    "vi": "đang được tiến hành",
+    "mn": "хийгдэж байна",
+    "ms": "sedang berjalan"
+  },
+  "inactive": {
+    "en": "inactive",
+    "ko": "비활성",
+    "ja": "が非アクティブです",
+    "zh-CN": "不活动",
+    "uz": "faol emas",
+    "vi": "không hoạt động",
+    "mn": "идэвхгүй",
+    "ms": "tidak aktif"
+  },
+  "include": {
+    "en": "include",
+    "ko": "포함",
+    "ja": "を含む",
+    "zh-CN": "包括",
+    "uz": "oʻz ichiga oladi",
+    "vi": "bao gồm",
+    "mn": "орно",
+    "ms": "termasuk"
+  },
+  "Include deleted": {
+    "en": "Include deleted",
+    "ko": "삭제됨 포함",
+    "ja": "削除済みを含む",
+    "zh-CN": "包括已删除",
+    "uz": "Oʻchirilganlarni kiritish",
+    "vi": "Bao gồm đã xóa",
+    "mn": "Устгасан оруулах",
+    "ms": "Sertakan dipadamkan"
+  },
+  "Incomplete first": {
+    "en": "Incomplete first",
+    "ko": "처음에는 불완전함",
+    "ja": "最初が不完全",
+    "zh-CN": "先不完整",
+    "uz": "Avval tugallanmagan",
+    "vi": "Chưa hoàn thành trước",
+    "mn": "Эхлээд дутуу",
+    "ms": "Tidak lengkap dahulu"
+  },
+  "Information status": {
+    "en": "Information status",
+    "ko": "정보현황",
+    "ja": "情報ステータス",
+    "zh-CN": "信息状态",
+    "uz": "Axborot holati",
+    "vi": "Trạng thái thông tin",
+    "mn": "Мэдээллийн төлөв",
+    "ms": "Status maklumat"
+  },
+  "Interest in delivery and storage": {
+    "en": "Interest in delivery and storage",
+    "ko": "배송 및 보관에 대한 관심",
+    "ja": "配送と保管に対する関心",
+    "zh-CN": "对交付和存储的兴趣",
+    "uz": "Yetkazib berish va saqlashga qiziqish",
+    "vi": "Quan tâm đến việc giao hàng và lưu trữ",
+    "mn": "Хүргэлт, хадгалах сонирхол",
+    "ms": "Minat dalam penghantaran dan penyimpanan"
+  },
+  "Internal cancellation reason": {
+    "en": "Internal cancellation reason",
+    "ko": "내부 취소 사유",
+    "ja": "内部キャンセル理由",
+    "zh-CN": "内部取消原因",
+    "uz": "Ichki bekor qilish sababi",
+    "vi": "Lý do hủy nội bộ",
+    "mn": "Цуцлах дотоод шалтгаан",
+    "ms": "Sebab pembatalan dalaman"
+  },
+  "Internal operations note": {
+    "en": "Internal operations note",
+    "ko": "내부 운영 참고사항",
+    "ja": "内部操作に関するメモ",
+    "zh-CN": "内部操作说明",
+    "uz": "Ichki operatsiyalar eslatmasi",
+    "vi": "Ghi chú hoạt động nội bộ",
+    "mn": "Дотоод үйл ажиллагааны тэмдэглэл",
+    "ms": "Nota operasi dalaman"
+  },
+  "Internal processing note": {
+    "en": "Internal processing note",
+    "ko": "내부 처리 참고 사항",
+    "ja": "内部処理メモ",
+    "zh-CN": "内部处理说明",
+    "uz": "Ichki qayta ishlash eslatmasi",
+    "vi": "Ghi chú xử lý nội bộ",
+    "mn": "Дотоод боловсруулалтын тэмдэглэл",
+    "ms": "Nota pemprosesan dalaman"
+  },
+  "invalid_admin_token": {
+    "en": "invalid_admin_token",
+    "ko": "valid_admin_token",
+    "ja": "無効な管理者トークン",
+    "zh-CN": "invalid_admin_token",
+    "uz": "invalid_admin_token",
+    "vi": "không hợp lệ_admin_token",
+    "mn": "хүчингүй_admin_token",
+    "ms": "invalid_admin_token"
+  },
+  "Item name": {
+    "en": "Item name",
+    "ko": "아이템 이름",
+    "ja": "項目名",
+    "zh-CN": "项目名称",
+    "uz": "Element nomi",
+    "vi": "Tên mặt hàng",
+    "mn": "Зүйлийн нэр",
+    "ms": "Nama item"
+  },
+  "kakao": {
+    "en": "kakao",
+    "ko": "카카오",
+    "ja": "カカオ",
+    "zh-CN": "kakao",
+    "uz": "kakao",
+    "vi": "kakao",
+    "mn": "какао",
+    "ms": "kakao"
+  },
+  "Kakao API key is not configured. Showing demo places.": {
+    "en": "Kakao API key is not configured. Showing demo places.",
+    "ko": "카카오 API 키가 설정되지 않았습니다. 데모 장소를 표시합니다.",
+    "ja": "Kakao API キーが設定されていません。デモ会場を表示します。",
+    "zh-CN": "Kakao API 密钥未配置。显示演示地点。",
+    "uz": "Kakao API kaliti sozlanmagan. Namoyish joylari koʻrsatilmoqda.",
+    "vi": "Khóa API Kakao chưa được định cấu hình. Hiển thị các địa điểm demo.",
+    "mn": "Kakao API түлхүүрийг тохируулаагүй байна. Демо газруудыг харуулж байна.",
+    "ms": "Kunci API Kakao tidak dikonfigurasikan. Menunjukkan tempat demo."
+  },
+  "Kakao map could not be loaded. Use the list and external map links.": {
+    "en": "Kakao map could not be loaded. Use the list and external map links.",
+    "ko": "카카오맵을 불러오지 못했습니다. 목록 및 외부 지도 링크를 이용하세요.",
+    "ja": "カカオマップをロードできませんでした。リストと外部マップのリンクを使用します。",
+    "zh-CN": "Kakao 地图无法加载。使用列表和外部地图​​链接。",
+    "uz": "Kakao xaritasini yuklab boʻlmadi. Ro'yxat va tashqi xarita havolalaridan foydalaning.",
+    "vi": "Không thể tải bản đồ Kakao. Sử dụng danh sách và liên kết bản đồ bên ngoài.",
+    "mn": "Какао газрын зургийг ачаалж чадсангүй. Жагсаалт болон газрын зургийн гадаад холбоосыг ашиглана уу.",
+    "ms": "Peta Kakao tidak dapat dimuatkan. Gunakan senarai dan pautan peta luaran."
+  },
+  "Kakao place search · 4 km radius": {
+    "en": "Kakao place search · 4 km radius",
+    "ko": "카카오 장소 검색 · 반경 4km",
+    "ja": "カカオの場所検索 · 半径 4 km",
+    "zh-CN": "Kakao地点搜索·4公里半径",
+    "uz": "Kakao joy qidirish · 4 km radius",
+    "vi": "Tìm kiếm địa điểm Kakao · Bán kính 4 km",
+    "mn": "Какаогийн газар хайх · 4 км радиус",
+    "ms": "Carian tempat Kakao · 4 km radius"
+  },
+  "Kakao place search failed. Showing demo places.": {
+    "en": "Kakao place search failed. Showing demo places.",
+    "ko": "카카오 장소 검색에 실패했습니다. 데모 장소를 표시합니다.",
+    "ja": "カカオの場所の検索に失敗しました。デモ会場を表示します。",
+    "zh-CN": "Kakao 地点搜索失败。显示演示地点。",
+    "uz": "Kakao joy qidirish amalga oshmadi. Namoyish joylari koʻrsatilmoqda.",
+    "vi": "Tìm kiếm địa điểm Kakao không thành công. Hiển thị các địa điểm demo.",
+    "mn": "Какаогийн газрын хайлт амжилтгүй боллоо. Демо газруудыг харуулж байна.",
+    "ms": "Carian tempat Kakao gagal. Menunjukkan tempat demo."
+  },
+  "Kakao search result": {
+    "en": "Kakao search result",
+    "ko": "카카오 검색결과",
+    "ja": "カカオの検索結果",
+    "zh-CN": "Kakao 搜索结果",
+    "uz": "Kakao qidiruvi natijasi",
+    "vi": "Kết quả tìm kiếm Kakao",
+    "mn": "Какао хайлтын үр дүн",
+    "ms": "Hasil carian Kakao"
+  },
+  "Keep a backup taxi plan": {
+    "en": "Keep a backup taxi plan",
+    "ko": "백업 택시 계획을 유지하세요",
+    "ja": "予備のタクシー計画を立てておく",
+    "zh-CN": "保留备用出租车计划",
+    "uz": "Zaxira taksi rejasini saqlang",
+    "vi": "Giữ kế hoạch taxi dự phòng",
+    "mn": "Таксины нөөц төлөвлөгөөг хадгал",
+    "ms": "Simpan pelan teksi sandaran"
+  },
+  "Keep the emergency number and your location ready before an urgent situation happens.": {
+    "en": "Keep the emergency number and your location ready before an urgent situation happens.",
+    "ko": "긴급 상황이 발생하기 전에 긴급 전화번호와 현재 위치를 미리 준비해 두십시오.",
+    "ja": "緊急事態が発生する前に、緊急電話番号と現在地を準備しておいてください。",
+    "zh-CN": "在紧急情况发生之前，请准备好紧急电话号码和您的位置。",
+    "uz": "Favqulodda vaziyat roʻy berishidan oldin favqulodda vaziyat raqami va joylashuvingizni tayyor saqlang.",
+    "vi": "Luôn sẵn sàng số điện thoại khẩn cấp và vị trí của bạn trước khi tình huống khẩn cấp xảy ra.",
+    "mn": "Яаралтай нөхцөл байдал үүсэхээс өмнө яаралтай тусламжийн дугаар болон байршлаа бэлэн байлгаарай.",
+    "ms": "Simpan nombor kecemasan dan lokasi anda sedia sebelum situasi mendesak berlaku."
+  },
+  "Keep your passport and insurance information accessible": {
+    "en": "Keep your passport and insurance information accessible",
+    "ko": "여권과 보험 정보를 접근 가능하게 유지하세요",
+    "ja": "パスポートと保険情報にアクセスできるようにしておいてください",
+    "zh-CN": "确保您的护照和保险信息易于访问",
+    "uz": "Pasport va sugʻurta maʼlumotlaringiz ochiq boʻlsin",
+    "vi": "Giữ thông tin hộ chiếu và bảo hiểm của bạn có thể truy cập được",
+    "mn": "Паспорт болон даатгалын мэдээллээ нээлттэй байлга",
+    "ms": "Pastikan maklumat pasport dan insurans anda boleh diakses"
+  },
+  "keyword": {
+    "en": "keyword",
+    "ko": "키워드",
+    "ja": "キーワード",
+    "zh-CN": "关键字",
+    "uz": "kalit soʻz",
+    "vi": "từ khóa",
+    "mn": "түлхүүр үг",
+    "ms": "kata kunci"
+  },
+  "Know the emergency number 119": {
+    "en": "Know the emergency number 119",
+    "ko": "긴급전화번호 119를 알아두세요",
+    "ja": "緊急通報番号 119 を知っておく",
+    "zh-CN": "知道紧急号码119",
+    "uz": "119 tez yordam raqamini biling",
+    "vi": "Biết số khẩn cấp 119",
+    "mn": "Яаралтай тусламжийн 119 дугаарыг мэдэж аваарай",
+    "ms": "Ketahui nombor kecemasan 119"
+  },
+  "Korea Post": {
+    "en": "Korea Post",
+    "ko": "우정사업본부",
+    "ja": "韓国郵便",
+    "zh-CN": "韩国邮政",
+    "uz": "Korea Post",
+    "vi": "Bưu điện Hàn Quốc",
+    "mn": "Солонгосын шуудан",
+    "ms": "Korea Post"
+  },
+  "Korea University Dormitory": {
+    "en": "Korea University Dormitory",
+    "ko": "고려대학교 기숙사",
+    "ja": "高麗大学寮",
+    "zh-CN": "高丽大学宿舍",
+    "uz": "Koreya universiteti yotoqxonasi",
+    "vi": "Ký túc xá Đại học Hàn Quốc",
+    "mn": "Солонгосын их сургуулийн дотуур байр",
+    "ms": "Asrama Universiti Korea"
+  },
+  "Korea University Portal": {
+    "en": "Korea University Portal",
+    "ko": "고려대학교 포털",
+    "ja": "高麗大学ポータル",
+    "zh-CN": "高丽大学门户网站",
+    "uz": "Koreya universiteti portali",
+    "vi": "Cổng thông tin đại học Hàn Quốc",
+    "mn": "Солонгосын их сургуулийн портал",
+    "ms": "Portal Universiti Korea"
+  },
+  "korea-university": {
+    "en": "korea-university",
+    "ko": "고려대학교",
+    "ja": "韓国大学",
+    "zh-CN": "韩国大学",
+    "uz": "koreya universiteti",
+    "vi": "đại học hàn quốc",
+    "mn": "солонгос-их сургууль",
+    "ms": "universiti-korea"
+  },
+  "Korean Government": {
+    "en": "Korean Government",
+    "ko": "대한민국 정부",
+    "ja": "韓国政府",
+    "zh-CN": "韩国政府",
+    "uz": "Koreya hukumati",
+    "vi": "Chính phủ Hàn Quốc",
+    "mn": "Солонгосын Засгийн газар",
+    "ms": "Kerajaan Korea"
+  },
+  "KU account sign in": {
+    "en": "KU account sign in",
+    "ko": "고려대 계정 로그인",
+    "ja": "KU アカウントのサインイン",
+    "zh-CN": "KU 帐户登录",
+    "uz": "KU hisobiga kirish",
+    "vi": "Đăng nhập tài khoản KU",
+    "mn": "KU бүртгэлд нэвтэрнэ үү",
+    "ms": "Log masuk akaun KU"
+  },
+  "ku-portal-basics": {
+    "en": "ku-portal-basics",
+    "ko": "ku-portal-기본",
+    "ja": "ku-portal-basics",
+    "zh-CN": "ku-portal-基础知识",
+    "uz": "ku-portal-asoslari",
+    "vi": "ku-portal-cơ bản",
+    "mn": "ku-portal-үндсэн",
+    "ms": "ku-portal-asas"
+  },
+  "Last processed": {
+    "en": "Last processed",
+    "ko": "마지막으로 처리됨",
+    "ja": "最後に処理されました",
+    "zh-CN": "最后处理",
+    "uz": "Oxirgi qayta ishlangan",
+    "vi": "Được xử lý lần cuối",
+    "mn": "Хамгийн сүүлд боловсруулсан",
+    "ms": "Terakhir diproses"
+  },
+  "Last updated: ": {
+    "en": "Last updated: ",
+    "ko": "마지막 업데이트:",
+    "ja": "最終更新日:",
+    "zh-CN": "最后更新：",
+    "uz": "Oxirgi yangilangan:",
+    "vi": "Cập nhật lần cuối:",
+    "mn": "Хамгийн сүүлд шинэчлэгдсэн:",
+    "ms": "Kemas kini terakhir:"
+  },
+  "Latest": {
+    "en": "Latest",
+    "ko": "최신",
+    "ja": "最新",
+    "zh-CN": "最新",
+    "uz": "Oxirgi",
+    "vi": "Mới nhất",
+    "mn": "Хамгийн сүүлийн үеийн",
+    "ms": "Terkini"
+  },
+  "Learn local recycling basics": {
+    "en": "Learn local recycling basics",
+    "ko": "지역 재활용 기본 사항 알아보기",
+    "ja": "地域のリサイクルの基本を学ぶ",
+    "zh-CN": "了解当地的回收基础知识",
+    "uz": "Mahalliy qayta ishlash asoslarini oʻrganing",
+    "vi": "Tìm hiểu thông tin cơ bản về tái chế tại địa phương",
+    "mn": "Орон нутгийн дахин боловсруулалтын үндсийг сур",
+    "ms": "Ketahui asas kitar semula tempatan"
+  },
+  "Life Guide": {
+    "en": "Life Guide",
+    "ko": "생활 가이드",
+    "ja": "ライフガイド",
+    "zh-CN": "生活指南",
+    "uz": "Hayotiy qoʻllanma",
+    "vi": "Hướng dẫn cuộc sống",
+    "mn": "Амьдралын хөтөч",
+    "ms": "Panduan Hidup"
+  },
+  "List items to sell or ship": {
+    "en": "List items to sell or ship",
+    "ko": "판매 또는 배송할 품목 목록",
+    "ja": "販売または発送するアイテムのリストを表示します",
+    "zh-CN": "列出要出售或运送的物品",
+    "uz": "Sotish yoki jo‘natish uchun mahsulotlar ro‘yxati",
+    "vi": "Liệt kê các mặt hàng để bán hoặc vận chuyển",
+    "mn": "Борлуулах эсвэл тээвэрлэх зүйлсийг жагсаах",
+    "ms": "Senaraikan item untuk dijual atau dihantar"
+  },
+  "Listing and reservation flow": {
+    "en": "Listing and reservation flow",
+    "ko": "상장 및 예약 절차",
+    "ja": "出品・予約の流れ",
+    "zh-CN": "列表和预订流程",
+    "uz": "Roʻyxat va bandlov oqimi",
+    "vi": "Quy trình niêm yết và đặt chỗ",
+    "mn": "Жагсаалт болон захиалгын урсгал",
+    "ms": "Aliran penyenaraian dan tempahan"
+  },
+  "listings": {
+    "en": "listings",
+    "ko": "목록",
+    "ja": "のリスト",
+    "zh-CN": "清单",
+    "uz": "roʻyxati",
+    "vi": "danh sách",
+    "mn": "жагсаалт",
+    "ms": "penyenaraian"
+  },
+  "Listings": {
+    "en": "Listings",
+    "ko": "목록",
+    "ja": "リスト",
+    "zh-CN": "清单",
+    "uz": "Roʻyxatlar",
+    "vi": "Danh sách",
+    "mn": "Жагсаалт",
+    "ms": "Penyenaraian"
+  },
+  "Live listings": {
+    "en": "Live listings",
+    "ko": "실시간 목록",
+    "ja": "ライブリスト",
+    "zh-CN": "实时列表",
+    "uz": "Jonli roʻyxatlar",
+    "vi": "Danh sách trực tiếp",
+    "mn": "Шууд жагсаалт",
+    "ms": "Penyenaraian langsung"
+  },
+  "Load more": {
+    "en": "Load more",
+    "ko": "더 로드하기",
+    "ja": "もっと読み込む",
+    "zh-CN": "加载更多",
+    "uz": "Yana yuklash",
+    "vi": "Tải thêm",
+    "mn": "Илүү их ачаална уу",
+    "ms": "Muatkan lagi"
+  },
+  "Loading map…": {
+    "en": "Loading map…",
+    "ko": "지도 로드 중…",
+    "ja": "マップを読み込み中…",
+    "zh-CN": "加载地图...",
+    "uz": "Xarita yuklanmoqda…",
+    "vi": "Đang tải bản đồ…",
+    "mn": "Газрын зургийг ачаалж байна...",
+    "ms": "Memuatkan peta…"
+  },
+  "Loading notifications…": {
+    "en": "Loading notifications…",
+    "ko": "알림 로드 중…",
+    "ja": "通知を読み込んでいます…",
+    "zh-CN": "正在加载通知...",
+    "uz": "Bildirishnomalar yuklanmoqda…",
+    "vi": "Đang tải thông báo…",
+    "mn": "Мэдэгдлийг ачаалж байна...",
+    "ms": "Memuatkan pemberitahuan…"
+  },
+  "Loading support tickets…": {
+    "en": "Loading support tickets…",
+    "ko": "지원 티켓 로드 중…",
+    "ja": "サポート チケットを読み込み中…",
+    "zh-CN": "正在加载支持票证...",
+    "uz": "Yordam chiptalari yuklanmoqda…",
+    "vi": "Đang tải phiếu hỗ trợ…",
+    "mn": "Тусламжийн тасалбарыг ачаалж байна...",
+    "ms": "Memuatkan tiket sokongan…"
+  },
+  "loading-state": {
+    "en": "loading-state",
+    "ko": "로딩 상태",
+    "ja": "ロード状態",
+    "zh-CN": "加载状态",
+    "uz": "yuklanish holati",
+    "vi": "trạng thái tải",
+    "mn": "ачаалах төлөв",
+    "ms": "keadaan memuatkan"
+  },
+  "Location": {
+    "en": "Location",
+    "ko": "위치",
+    "ja": "場所",
+    "zh-CN": "位置",
+    "uz": "Joylashuv",
+    "vi": "Vị trí",
+    "mn": "Байршил",
+    "ms": "Lokasi"
+  },
+  "Log out": {
+    "en": "Log out",
+    "ko": "로그아웃",
+    "ja": "ログアウト",
+    "zh-CN": "退出",
+    "uz": "Chiqish",
+    "vi": "Đăng xuất",
+    "mn": "Гарах",
+    "ms": "Log keluar"
+  },
+  "Log out admin": {
+    "en": "Log out admin",
+    "ko": "관리자 로그아웃",
+    "ja": "管理者からログアウトします",
+    "zh-CN": "退出管理员",
+    "uz": "Admin tizimdan chiqing",
+    "vi": "Đăng xuất quản trị viên",
+    "mn": "Админаас гарна уу",
+    "ms": "Log keluar pentadbir"
+  },
+  "lucide-react": {
+    "en": "lucide-react",
+    "ko": "루시드 반응",
+    "ja": "ルシド反応",
+    "zh-CN": "lucide反应",
+    "uz": "luside-reaksiya",
+    "vi": "phản ứng sáng suốt",
+    "mn": "lucide-react",
+    "ms": "tindak balas terang"
+  },
+  "luggage": {
+    "en": "luggage",
+    "ko": "수하물",
+    "ja": "の荷物",
+    "zh-CN": "行李",
+    "uz": "yuk",
+    "vi": "hành lý",
+    "mn": "ачаа тээш",
+    "ms": "bagasi"
+  },
+  "main": {
+    "en": "main",
+    "ko": "메인",
+    "ja": "メイン",
+    "zh-CN": "主要",
+    "uz": "asosiy",
+    "vi": "chính",
+    "mn": "үндсэн",
+    "ms": "utama"
+  },
+  "Map location needs confirmation": {
+    "en": "Map location needs confirmation",
+    "ko": "지도 위치 확인 필요",
+    "ja": "地図の位置を確認する必要があります",
+    "zh-CN": "地图位置需要确认",
+    "uz": "Xaritadagi joylashuv tasdiqlanishi kerak",
+    "vi": "Vị trí bản đồ cần được xác nhận",
+    "mn": "Газрын зургийн байршлыг баталгаажуулах шаардлагатай",
+    "ms": "Lokasi peta memerlukan pengesahan"
+  },
+  "Map ready": {
+    "en": "Map ready",
+    "ko": "지도 준비됨",
+    "ja": "マップの準備ができました",
+    "zh-CN": "地图准备就绪",
+    "uz": "Xarita tayyor",
+    "vi": "Bản đồ đã sẵn sàng",
+    "mn": "Газрын зураг бэлэн",
+    "ms": "Peta sedia"
+  },
+  "Measure and pack items": {
+    "en": "Measure and pack items",
+    "ko": "품목 측정 및 포장",
+    "ja": "商品の採寸と梱包",
+    "zh-CN": "测量并包装物品",
+    "uz": "Elementlarni oʻlchash va qadoqlash",
+    "vi": "Đo và đóng gói đồ đạc",
+    "mn": "Эд зүйлсийг хэмжиж, савлана",
+    "ms": "Ukur dan bungkus item"
+  },
+  "Message": {
+    "en": "Message",
+    "ko": "메시지",
+    "ja": "メッセージ",
+    "zh-CN": "留言",
+    "uz": "Xabar",
+    "vi": "Tin nhắn",
+    "mn": "Зурвас",
+    "ms": "Mesej"
+  },
+  "Method": {
+    "en": "Method",
+    "ko": "방법",
+    "ja": "メソッド",
+    "zh-CN": "方法",
+    "uz": "Usul",
+    "vi": "Phương thức",
+    "mn": "Арга",
+    "ms": "Kaedah"
+  },
+  "Method selected": {
+    "en": "Method selected",
+    "ko": "방법이 선택됨",
+    "ja": "選択されたメソッド",
+    "zh-CN": "选择的方法",
+    "uz": "Usul tanlandi",
+    "vi": "Phương pháp đã chọn",
+    "mn": "Сонгосон арга",
+    "ms": "Kaedah dipilih"
+  },
+  "method-selected": {
+    "en": "method-selected",
+    "ko": "방법 선택됨",
+    "ja": "メソッドが選択されました",
+    "zh-CN": "方法选择",
+    "uz": "usuli tanlangan",
+    "vi": "đã chọn phương thức",
+    "mn": "аргыг сонгосон",
+    "ms": "dipilih kaedah"
+  },
+  "Mobile & Banking": {
+    "en": "Mobile & Banking",
+    "ko": "모바일 및 뱅킹",
+    "ja": "モバイルとバンキング",
+    "zh-CN": "移动和银行业务",
+    "uz": "Mobil va banking",
+    "vi": "Di động & Ngân hàng",
+    "mn": "Мобайл ба Банк",
+    "ms": "Mudah Alih & Perbankan"
+  },
+  "mobile-banking": {
+    "en": "mobile-banking",
+    "ko": "모바일 뱅킹",
+    "ja": "モバイルバンキング",
+    "zh-CN": "手机银行",
+    "uz": "mobil-banking",
+    "vi": "ngân hàng di động",
+    "mn": "мобайл банк",
+    "ms": "perbankan mudah alih"
+  },
+  "My reservations": {
+    "en": "My reservations",
+    "ko": "내 예약",
+    "ja": "私の予約",
+    "zh-CN": "我的预订",
+    "uz": "Mening bandlovlarim",
+    "vi": "Đặt chỗ của tôi",
+    "mn": "Миний захиалга",
+    "ms": "Tempahan saya"
+  },
+  "Needs confirmation": {
+    "en": "Needs confirmation",
+    "ko": "확인 필요",
+    "ja": "確認が必要です",
+    "zh-CN": "需要确认",
+    "uz": "Tasdiqlash kerak",
+    "vi": "Cần xác nhận",
+    "mn": "Баталгаажуулах шаардлагатай",
+    "ms": "Memerlukan pengesahan"
+  },
+  "needs_confirmation": {
+    "en": "needs_confirmation",
+    "ko": "필요_확인",
+    "ja": "確認が必要",
+    "zh-CN": "需要确认",
+    "uz": "tasdiqlanishi kerak",
+    "vi": "cần xác nhận",
+    "mn": "баталгаажуулах шаардлагатай",
+    "ms": "memerlukan_pengesahan"
+  },
+  "network": {
+    "en": "network",
+    "ko": "네트워크",
+    "ja": "ネットワーク",
+    "zh-CN": "网络",
+    "uz": "tarmoq",
+    "vi": "trạng thái",
+    "mn": "сүлжээ",
+    "ms": "rangkaian"
+  },
+  "new": {
+    "en": "new",
+    "ko": "새로운",
+    "ja": "新しい",
+    "zh-CN": "新",
+    "uz": "yangi",
+    "vi": "mới",
+    "mn": "шинэ",
+    "ms": "baharu"
+  },
+  "New-account password policy: 12+ characters with upper, lower, and number.": {
+    "en": "New-account password policy: 12+ characters with upper, lower, and number.",
+    "ko": "신규 계정 비밀번호 정책: 대문자, 소문자, 숫자를 포함하여 12자 이상입니다.",
+    "ja": "新しいアカウントのパスワード ポリシー: 12 文字以上の大文字、小文字、数字。",
+    "zh-CN": "新账户密码策略：12+字符，包含大写、小写、数字。",
+    "uz": "Yangi hisob paroli siyosati: yuqori, pastki va sonli 12+ belgi.",
+    "vi": "Chính sách mật khẩu tài khoản mới: 12 ký tự trở lên gồm hoa, thường và số.",
+    "mn": "Шинэ дансны нууц үгийн бодлого: дээд, доод, тоо бүхий 12+ тэмдэгт.",
+    "ms": "Dasar kata laluan akaun baharu: 12+ aksara dengan bahagian atas, bawah dan nombor."
+  },
+  "No checked date": {
+    "en": "No checked date",
+    "ko": "확인된 날짜가 없습니다.",
+    "ja": "チェックされた日付がありません",
+    "zh-CN": "没有检查日期",
+    "uz": "Belgilanmagan sana",
+    "vi": "Không có ngày kiểm tra",
+    "mn": "Сонгосон огноо байхгүй",
+    "ms": "Tiada tarikh yang disemak"
+  },
+  "No confirmed places are available. Expand the nearby search and confirm the menu and preparation environment before visiting.": {
+    "en": "No confirmed places are available. Expand the nearby search and confirm the menu and preparation environment before visiting.",
+    "ko": "확인된 장소가 없습니다. 주변검색을 확대해 메뉴와 준비환경을 확인 후 방문해주세요.",
+    "ja": "確認された場所はありません。近隣検索を拡大し、メニューや調理環境をご確認の上ご来店ください。",
+    "zh-CN": "没有已确认的位置。扩大附近搜索范围，确认菜单和准备环境后再前往。",
+    "uz": "Tasdiqlangan joylar mavjud emas. Yaqin atrofdagi qidiruvni kengaytiring va tashrif buyurishdan oldin menyu va tayyorgarlik muhitini tasdiqlang.",
+    "vi": "Không có địa điểm nào được xác nhận. Mở rộng tìm kiếm gần đó và xác nhận menu cũng như môi trường chuẩn bị trước khi truy cập.",
+    "mn": "Баталгаажсан газар байхгүй. Ойролцоох хайлтыг өргөжүүлж, очихын өмнө цэс болон бэлтгэлийн орчинг баталгаажуулна уу.",
+    "ms": "Tiada tempat yang disahkan tersedia. Kembangkan carian berdekatan dan sahkan menu dan persekitaran penyediaan sebelum melawat."
+  },
+  "No coordinates to display.": {
+    "en": "No coordinates to display.",
+    "ko": "표시할 좌표가 없습니다.",
+    "ja": "表示する座標がありません。",
+    "zh-CN": "没有可显示的坐标。",
+    "uz": "Ko'rsatish uchun koordinatalar yo'q.",
+    "vi": "Không có tọa độ để hiển thị.",
+    "mn": "Харуулах координат алга.",
+    "ms": "Tiada koordinat untuk dipaparkan."
+  },
+  "No data.": {
+    "en": "No data.",
+    "ko": "데이터가 없습니다.",
+    "ja": "データがありません。",
+    "zh-CN": "无数据。",
+    "uz": "Maʼlumot yoʻq.",
+    "vi": "Không có dữ liệu.",
+    "mn": "Өгөгдөл алга.",
+    "ms": "Tiada data."
+  },
+  "No date": {
+    "en": "No date",
+    "ko": "날짜 없음",
+    "ja": "日付なし",
+    "zh-CN": "无日期",
+    "uz": "Sana yoʻq",
+    "vi": "Không có ngày",
+    "mn": "Огноо байхгүй",
+    "ms": "Tiada tarikh"
+  },
+  "No guides found.": {
+    "en": "No guides found.",
+    "ko": "가이드를 찾을 수 없습니다.",
+    "ja": "ガイドが見つかりません。",
+    "zh-CN": "未找到指南。",
+    "uz": "Qo‘llanma topilmadi.",
+    "vi": "Không tìm thấy hướng dẫn nào.",
+    "mn": "Хөтөч олдсонгүй.",
+    "ms": "Tiada panduan ditemui."
+  },
+  "No notifications yet.": {
+    "en": "No notifications yet.",
+    "ko": "아직 알림이 없습니다.",
+    "ja": "まだ通知はありません。",
+    "zh-CN": "尚未收到通知。",
+    "uz": "Hozircha bildirishnomalar yoʻq.",
+    "vi": "Chưa có thông báo nào.",
+    "mn": "Одоогоор мэдэгдэл алга.",
+    "ms": "Tiada pemberitahuan lagi."
+  },
+  "No official source available": {
+    "en": "No official source available",
+    "ko": "공식 출처가 없습니다.",
+    "ja": "利用可能な公式ソースはありません",
+    "zh-CN": "没有可用的官方来源",
+    "uz": "Rasmiy manba mavjud emas",
+    "vi": "Không có nguồn chính thức",
+    "mn": "Албан ёсны эх сурвалж байхгүй",
+    "ms": "Tiada sumber rasmi tersedia"
+  },
+  "no-store": {
+    "en": "no-store",
+    "ko": "매장 없음",
+    "ja": "店舗なし",
+    "zh-CN": "无商店",
+    "uz": "doʻkonsiz",
+    "vi": "không có cửa hàng",
+    "mn": "дэлгүүр байхгүй",
+    "ms": "tiada kedai"
+  },
+  "Not selected": {
+    "en": "Not selected",
+    "ko": "선택되지 않음",
+    "ja": "未選択",
+    "zh-CN": "未选择",
+    "uz": "Tanlanmagan",
+    "vi": "Không được chọn",
+    "mn": "Сонгоогүй",
+    "ms": "Tidak dipilih"
+  },
+  "Not started": {
+    "en": "Not started",
+    "ko": "시작되지 않음",
+    "ja": "未開始",
+    "zh-CN": "未开始",
+    "uz": "Boshlanmagan",
+    "vi": "Chưa bắt đầu",
+    "mn": "Эхлээгүй байна",
+    "ms": "Tidak dimulakan"
+  },
+  "Note": {
+    "en": "Note",
+    "ko": "참고",
+    "ja": "注記",
+    "zh-CN": "注意",
+    "uz": "Eslatma",
+    "vi": "Lưu ý",
+    "mn": "Тэмдэглэл",
+    "ms": "Nota"
+  },
+  "Notifications": {
+    "en": "Notifications",
+    "ko": "알림",
+    "ja": "通知",
+    "zh-CN": "通知",
+    "uz": "Bildirishnomalar",
+    "vi": "Thông báo",
+    "mn": "Мэдэгдэл",
+    "ms": "Pemberitahuan"
+  },
+  "number": {
+    "en": "number",
+    "ko": "번호",
+    "ja": "番号",
+    "zh-CN": "号码",
+    "uz": "raqami",
+    "vi": "số",
+    "mn": "дугаар",
+    "ms": "nombor"
+  },
+  "off": {
+    "en": "off",
+    "ko": "꺼짐",
+    "ja": "オフ",
+    "zh-CN": "关闭",
+    "uz": "oʻchirilgan",
+    "vi": "tắt",
+    "mn": "унтраасан",
+    "ms": "dimatikan"
+  },
+  "official": {
+    "en": "official",
+    "ko": "공식",
+    "ja": "公式",
+    "zh-CN": "官方",
+    "uz": "rasmiy",
+    "vi": "chính thức",
+    "mn": "official",
+    "ms": "rasmi"
+  },
+  "Official source": {
+    "en": "Official source",
+    "ko": "공식 출처",
+    "ja": "公式ソース",
+    "zh-CN": "官方来源",
+    "uz": "Rasmiy manba",
+    "vi": "Nguồn chính thức",
+    "mn": "Албан ёсны эх сурвалж",
+    "ms": "Sumber rasmi"
+  },
+  "Official source needs confirmation": {
+    "en": "Official source needs confirmation",
+    "ko": "공식 출처 확인이 필요함",
+    "ja": "公式ソースには確認が必要です",
+    "zh-CN": "官方消息来源需要确认",
+    "uz": "Rasmiy manba tasdiqlanishi kerak",
+    "vi": "Nguồn chính thức cần xác nhận",
+    "mn": "Албан ёсны эх сурвалж баталгаажуулах шаардлагатай",
+    "ms": "Sumber rasmi memerlukan pengesahan"
+  },
+  "Official URL": {
+    "en": "Official URL",
+    "ko": "공식 URL",
+    "ja": "公式URL",
+    "zh-CN": "官方网址",
+    "uz": "Rasmiy URL",
+    "vi": "URL chính thức",
+    "mn": "Албан ёсны URL",
+    "ms": "URL Rasmi"
+  },
+  "official-guide": {
+    "en": "official-guide",
+    "ko": "공식 가이드",
+    "ja": "公式ガイド",
+    "zh-CN": "官方指南",
+    "uz": "rasmiy qoʻllanma",
+    "vi": "chính thức-hướng dẫn",
+    "mn": "албан ёсны хөтөч",
+    "ms": "panduan rasmi"
+  },
+  "Official-source guide": {
+    "en": "Official-source guide",
+    "ko": "공식 소스 가이드",
+    "ja": "公式ソース ガイド",
+    "zh-CN": "官方来源指南",
+    "uz": "Rasmiy manba qoʻllanma",
+    "vi": "Hướng dẫn nguồn chính thức",
+    "mn": "Албан ёсны эх сурвалжийн гарын авлага",
+    "ms": "Panduan sumber rasmi"
+  },
+  "open": {
+    "en": "open",
+    "ko": "열림",
+    "ja": "オープン",
+    "zh-CN": "打开",
+    "uz": "ochiq",
+    "vi": "mở",
+    "mn": "нээлттэй",
+    "ms": "terbuka"
+  },
+  "Open official source": {
+    "en": "Open official source",
+    "ko": "공식 소스 공개",
+    "ja": "公式ソースをオープン",
+    "zh-CN": "开放官方源码",
+    "uz": "Ochiq rasmiy manba",
+    "vi": "Mã nguồn mở chính thức",
+    "mn": "Нээлттэй албан ёсны эх сурвалж",
+    "ms": "Sumber rasmi terbuka"
+  },
+  "Open the current HiKorea notice": {
+    "en": "Open the current HiKorea notice",
+    "ko": "현재 하이코리아 공지사항 열기",
+    "ja": "現在の HiKorea 通知を開く",
+    "zh-CN": "打开当前HiKorea通知",
+    "uz": "Joriy HiKorea bildirishnomasini oching",
+    "vi": "Mở thông báo HiKorea hiện tại",
+    "mn": "Одоогийн HiKorea мэдэгдлийг нээнэ үү",
+    "ms": "Buka notis HiKorea semasa"
+  },
+  "Open the KU portal": {
+    "en": "Open the KU portal",
+    "ko": "고려대학교 포털을 열어주세요",
+    "ja": "KU ポータルを開く",
+    "zh-CN": "打开 KU 门户",
+    "uz": "KU portalini oching",
+    "vi": "Mở cổng KU",
+    "mn": "KU порталыг нээнэ үү",
+    "ms": "Buka portal KU"
+  },
+  "Open the latest dorm notice": {
+    "en": "Open the latest dorm notice",
+    "ko": "최근 기숙사 공지 열기",
+    "ja": "最新の寮通知を開く",
+    "zh-CN": "打开最新宿舍通知",
+    "uz": "Yotoqxona haqidagi oxirgi xabarni oching",
+    "vi": "Mở thông báo ký túc xá mới nhất",
+    "mn": "Дотуур байрны хамгийн сүүлийн мэдэгдлийг нээнэ үү",
+    "ms": "Buka notis asrama terkini"
+  },
+  "Operating rules": {
+    "en": "Operating rules",
+    "ko": "운영 규칙",
+    "ja": "運用ルール",
+    "zh-CN": "操作规则",
+    "uz": "Ishlash qoidalari",
+    "vi": "Quy tắc hoạt động",
+    "mn": "Үйлдлийн дүрэм",
+    "ms": "Peraturan pengendalian"
+  },
+  "operationRules": {
+    "en": "operationRules",
+    "ko": "작업규칙",
+    "ja": "操作ルール",
+    "zh-CN": "操作规则",
+    "uz": "operatsiya qoidalari",
+    "vi": "Quy tắc hoạt động",
+    "mn": "үйлдлийн дүрэм",
+    "ms": "operationRules"
+  },
+  "operations": {
+    "en": "operations",
+    "ko": "작업",
+    "ja": "操作",
+    "zh-CN": "操作",
+    "uz": "operatsiyalari",
+    "vi": "hoạt động",
+    "mn": "үйлдлүүд",
+    "ms": "operasi"
+  },
+  "Operator name": {
+    "en": "Operator name",
+    "ko": "운영자 이름",
+    "ja": "オペレーター名",
+    "zh-CN": "操作员姓名",
+    "uz": "Operator nomi",
+    "vi": "Tên nhà điều hành",
+    "mn": "Операторын нэр",
+    "ms": "Nama operator"
+  },
+  "Operator response": {
+    "en": "Operator response",
+    "ko": "운영자 응답",
+    "ja": "オペレーターの応答",
+    "zh-CN": "操作员响应",
+    "uz": "Operator javobi",
+    "vi": "Phản hồi của người vận hành",
+    "mn": "Операторын хариулт",
+    "ms": "Respons operator"
+  },
+  "Organize sales, storage, shipping, and housing handover before departure.": {
+    "en": "Organize sales, storage, shipping, and housing handover before departure.",
+    "ko": "출발 전 판매, 보관, 배송, 숙소 인수 등을 준비합니다.",
+    "ja": "出発前に販売、保管、発送、住宅の引き渡しを手配します。",
+    "zh-CN": "出发前组织销售、仓储、运输和房屋移交。",
+    "uz": "Ketishdan oldin sotish, saqlash, jo‘natish va uy-joy topshirishni tashkil qiling.",
+    "vi": "Tổ chức bán hàng, lưu kho, vận chuyển, bàn giao nhà ở trước khi khởi hành.",
+    "mn": "Явахаасаа өмнө борлуулалт, хадгалалт, тээвэрлэлт, орон сууц хүлээлгэн өгөх ажлыг зохион байгуулна.",
+    "ms": "Atur jualan, penyimpanan, penghantaran dan penyerahan perumahan sebelum berlepas."
+  },
+  "Organize the notice, arrival window, and items required for your dorm check-in.": {
+    "en": "Organize the notice, arrival window, and items required for your dorm check-in.",
+    "ko": "기숙사 체크인에 필요한 공지 사항, 도착 창구, 필요한 물품을 정리하세요.",
+    "ja": "通知、到着窓口、寮のチェックインに必要なアイテムを整理します。",
+    "zh-CN": "整理通知、到达窗口以及宿舍入住所需的物品。",
+    "uz": "Yotoqxonada roʻyxatdan oʻtish uchun zarur boʻlgan xabarnoma, kelish oynasi va narsalarni tartibga soling.",
+    "vi": "Sắp xếp thông báo, thời gian đến và các vật dụng cần thiết khi nhận phòng ký túc xá của bạn.",
+    "mn": "Дотуур байранд ороход шаардагдах мэдэгдэл, ирэх цонх болон зүйлсийг цэгцлээрэй.",
+    "ms": "Susun notis, tetingkap ketibaan dan item yang diperlukan untuk daftar masuk asrama anda."
+  },
+  "Overdue": {
+    "en": "Overdue",
+    "ko": "기한이 지났습니다",
+    "ja": "期限切れ",
+    "zh-CN": "逾期",
+    "uz": "Muddati o'tgan",
+    "vi": "Quá hạn",
+    "mn": "Хугацаа хэтэрсэн",
+    "ms": "Tertunggak"
+  },
+  "Overrides": {
+    "en": "Overrides",
+    "ko": "재정의",
+    "ja": "オーバーライド",
+    "zh-CN": "覆盖",
+    "uz": "bekor qiladi",
+    "vi": "Ghi đè",
+    "mn": "Дарж бичнэ",
+    "ms": "Mengatasi"
+  },
+  "overview": {
+    "en": "overview",
+    "ko": "개요",
+    "ja": "の概要",
+    "zh-CN": "概述",
+    "uz": "umumiy koʻrinish",
+    "vi": "tổng quan",
+    "mn": "тойм",
+    "ms": "gambaran keseluruhan"
+  },
+  "Overview": {
+    "en": "Overview",
+    "ko": "개요",
+    "ja": "概要",
+    "zh-CN": "概述",
+    "uz": "Umumiy koʻrinish",
+    "vi": "Tổng quan",
+    "mn": "Тойм",
+    "ms": "Gambaran keseluruhan"
+  },
+  "Parcel": {
+    "en": "Parcel",
+    "ko": "소포",
+    "ja": "小包",
+    "zh-CN": "包裹",
+    "uz": "Posilka",
+    "vi": "Bưu kiện",
+    "mn": "Илгээмж",
+    "ms": "Bungkusan"
+  },
+  "Partner storage": {
+    "en": "Partner storage",
+    "ko": "파트너 스토리지",
+    "ja": "パートナー ストレージ",
+    "zh-CN": "合作伙伴存储",
+    "uz": "Hamkor xotirasi",
+    "vi": "Bộ nhớ của đối tác",
+    "mn": "Түншийн хадгалах сан",
+    "ms": "Storan rakan kongsi"
+  },
+  "password": {
+    "en": "password",
+    "ko": "비밀번호",
+    "ja": "のパスワード",
+    "zh-CN": "密码",
+    "uz": "parol",
+    "vi": "mật khẩu",
+    "mn": "нууц үг",
+    "ms": "kata laluan"
+  },
+  "Password": {
+    "en": "Password",
+    "ko": "비밀번호",
+    "ja": "パスワード",
+    "zh-CN": "密码",
+    "uz": "Parol",
+    "vi": "Mật khẩu",
+    "mn": "Нууц үг",
+    "ms": "Kata laluan"
+  },
+  "PATCH": {
+    "en": "PATCH",
+    "ko": "패치",
+    "ja": "パッチ",
+    "zh-CN": "补丁",
+    "uz": "PATCH",
+    "vi": "VÁ",
+    "mn": "PATCH",
+    "ms": "PATCH"
+  },
+  "Personal task": {
+    "en": "Personal task",
+    "ko": "개인 작업",
+    "ja": "個人的なタスク",
+    "zh-CN": "个人任务",
+    "uz": "Shaxsiy vazifa",
+    "vi": "Nhiệm vụ cá nhân",
+    "mn": "Хувийн даалгавар",
+    "ms": "Tugas peribadi"
+  },
+  "Pickup": {
+    "en": "Pickup",
+    "ko": "픽업",
+    "ja": "ピックアップ",
+    "zh-CN": "拾取",
+    "uz": "Olib ketish",
+    "vi": "Nhận hàng",
+    "mn": "Татаж авах",
+    "ms": "Angkat"
+  },
+  "Pickup location": {
+    "en": "Pickup location",
+    "ko": "픽업 위치",
+    "ja": "受け取り場所",
+    "zh-CN": "上车地点",
+    "uz": "Olib ketish joyi",
+    "vi": "Địa điểm đón",
+    "mn": "Ачаа авах байршил",
+    "ms": "Lokasi pengambilan"
+  },
+  "Place management": {
+    "en": "Place management",
+    "ko": "장소 관리",
+    "ja": "プレイス管理",
+    "zh-CN": "场所管理",
+    "uz": "Joyni boshqarish",
+    "vi": "Quản lý địa điểm",
+    "mn": "Газрын менежмент",
+    "ms": "Pengurusan tempat"
+  },
+  "Place name": {
+    "en": "Place name",
+    "ko": "지명",
+    "ja": "地名",
+    "zh-CN": "地名",
+    "uz": "Joy nomi",
+    "vi": "Tên địa điểm",
+    "mn": "Газрын нэр",
+    "ms": "Nama tempat"
+  },
+  "Place status": {
+    "en": "Place status",
+    "ko": "장소 상태",
+    "ja": "場所のステータス",
+    "zh-CN": "地点状态",
+    "uz": "Joy holati",
+    "vi": "Trạng thái địa điểm",
+    "mn": "Байршлын төлөв",
+    "ms": "Status tempat"
+  },
+  "placeOverrides": {
+    "en": "placeOverrides",
+    "ko": "placeOverrides",
+    "ja": "placeOverrides",
+    "zh-CN": "地点覆盖",
+    "uz": "joyni bekor qiladi",
+    "vi": "ghi đè địa điểm",
+    "mn": "газрыг хүчингүй болгодог",
+    "ms": "placeOverrides"
+  },
+  "places": {
+    "en": "places",
+    "ko": "장소",
+    "ja": "場所",
+    "zh-CN": "地点",
+    "uz": "joylar",
+    "vi": "địa điểm",
+    "mn": "газар",
+    "ms": "tempat"
+  },
+  "Places": {
+    "en": "Places",
+    "ko": "장소",
+    "ja": "場所",
+    "zh-CN": "地点",
+    "uz": "Joylar",
+    "vi": "Địa điểm",
+    "mn": "Газрууд",
+    "ms": "Tempat"
+  },
+  "Plan availability and registration requirements vary by provider. Confirm the current offer directly with the provider.": {
+    "en": "Plan availability and registration requirements vary by provider. Confirm the current offer directly with the provider.",
+    "ko": "계획 가용성 및 등록 요구 사항은 공급자에 따라 다릅니다. 제공업체에 직접 현재 제안을 확인하세요.",
+    "ja": "プランの利用可能性と登録要件はプロバイダーによって異なります。現在のオファーをプロバイダーに直接確認してください。",
+    "zh-CN": "计划的可用性和注册要求因提供商而异。直接与提供商确认当前报价。",
+    "uz": "Rejaning mavjudligi va roʻyxatdan oʻtish talablari provayderga qarab farq qiladi. Joriy taklifni bevosita provayder bilan tasdiqlang.",
+    "vi": "Tính khả dụng của gói và yêu cầu đăng ký sẽ khác nhau tùy theo nhà cung cấp. Xác nhận ưu đãi hiện tại trực tiếp với nhà cung cấp.",
+    "mn": "Төлөвлөгөөний боломж болон бүртгэлийн шаардлага нь үйлчилгээ үзүүлэгчээс хамаарч өөр өөр байдаг. Одоогийн саналыг үйлчилгээ үзүүлэгчтэй шууд баталгаажуулна уу.",
+    "ms": "Ketersediaan pelan dan keperluan pendaftaran berbeza mengikut pembekal. Sahkan tawaran semasa terus dengan pembekal."
+  },
+  "Plan shipping and move-out": {
+    "en": "Plan shipping and move-out",
+    "ko": "배송 및 퇴거 계획",
+    "ja": "発送と引っ越しの計画を立てる",
+    "zh-CN": "计划运输和搬出",
+    "uz": "Yetkazib berish va ko‘chirishni rejalashtiring",
+    "vi": "Lập kế hoạch vận chuyển và chuyển đi",
+    "mn": "Тээвэрлэлт болон нүүлгэлтийг төлөвлө",
+    "ms": "Rancang penghantaran dan perpindahan keluar"
+  },
+  "Planned integrations": {
+    "en": "Planned integrations",
+    "ko": "계획된 통합",
+    "ja": "計画された統合",
+    "zh-CN": "计划整合",
+    "uz": "Rejalashtirilgan integratsiya",
+    "vi": "Tích hợp theo kế hoạch",
+    "mn": "Төлөвлөсөн интеграци",
+    "ms": "Penyepaduan yang dirancang"
+  },
+  "POST": {
+    "en": "POST",
+    "ko": "게시",
+    "ja": "投稿",
+    "zh-CN": "发布",
+    "uz": "POST",
+    "vi": "BÀI ĐĂNG",
+    "mn": "POST",
+    "ms": "SIARAN"
+  },
+  "Preparation": {
+    "en": "Preparation",
+    "ko": "준비",
+    "ja": "準備",
+    "zh-CN": "准备",
+    "uz": "Tayyorgarlik",
+    "vi": "Chuẩn bị",
+    "mn": "Бэлтгэл",
+    "ms": "Persediaan"
+  },
+  "Prepare consultation": {
+    "en": "Prepare consultation",
+    "ko": "상담 준비",
+    "ja": "相談の準備",
+    "zh-CN": "准备咨询",
+    "uz": "Maslahat tayyorlang",
+    "vi": "Chuẩn bị tư vấn",
+    "mn": "Зөвлөгөө бэлтгэх",
+    "ms": "Sediakan perundingan"
+  },
+  "Prepare for dormitory check-in": {
+    "en": "Prepare for dormitory check-in",
+    "ko": "기숙사 체크인 준비",
+    "ja": "寮チェックインの準備をする",
+    "zh-CN": "准备入住宿舍",
+    "uz": "Yotoqxonada roʻyxatdan oʻtishga tayyorlaning",
+    "vi": "Chuẩn bị nhận phòng ký túc xá",
+    "mn": "Дотуур байранд ороход бэлтгэ",
+    "ms": "Bersedia untuk daftar masuk asrama"
+  },
+  "Prepare only the documents listed there": {
+    "en": "Prepare only the documents listed there",
+    "ko": "거기에 기재된 서류만 준비하세요",
+    "ja": "そこに記載されている書類のみを準備してください",
+    "zh-CN": "仅准备那里列出的文件",
+    "uz": "Faqat u erda sanab o'tilgan hujjatlarni tayyorlang",
+    "vi": "Chỉ chuẩn bị các tài liệu được liệt kê ở đó",
+    "mn": "Зөвхөн тэнд жагсаасан баримт бичгүүдийг бэлтгэ",
+    "ms": "Sediakan hanya dokumen yang disenaraikan di sana"
+  },
+  "Prepare the requested documents": {
+    "en": "Prepare the requested documents",
+    "ko": "요청서류를 준비하세요",
+    "ja": "要求された書類を準備します",
+    "zh-CN": "准备所需文件",
+    "uz": "Talab qilingan hujjatlarni tayyorlang",
+    "vi": "Chuẩn bị các tài liệu được yêu cầu",
+    "mn": "Хүссэн бичиг баримтыг бэлтгэ",
+    "ms": "Sediakan dokumen yang diminta"
+  },
+  "Price": {
+    "en": "Price",
+    "ko": "가격",
+    "ja": "価格",
+    "zh-CN": "价格",
+    "uz": "Narxi",
+    "vi": "Giá",
+    "mn": "Үнэ",
+    "ms": "Harga"
+  },
+  "primary": {
+    "en": "primary",
+    "ko": "기본",
+    "ja": "プライマリー",
+    "zh-CN": "初级",
+    "uz": "asosiy",
+    "vi": "chính",
+    "mn": "үндсэн",
+    "ms": "utama"
+  },
+  "Processing is complete.": {
+    "en": "Processing is complete.",
+    "ko": "처리가 완료되었습니다.",
+    "ja": "処理が完了しました。",
+    "zh-CN": "处理完成。",
+    "uz": "Qayta ishlash tugallandi.",
+    "vi": "Quá trình xử lý hoàn tất.",
+    "mn": "Боловсруулж дууслаа.",
+    "ms": "Pemprosesan selesai."
+  },
+  "Product image": {
+    "en": "Product image",
+    "ko": "제품 이미지",
+    "ja": "商品画像",
+    "zh-CN": "产品图片",
+    "uz": "Mahsulot tasviri",
+    "vi": "Hình ảnh sản phẩm",
+    "mn": "Бүтээгдэхүүний зураг",
+    "ms": "Imej produk"
+  },
+  "Provider prices and customs rules can change. Compare current terms and keep receipts for important shipments.": {
+    "en": "Provider prices and customs rules can change. Compare current terms and keep receipts for important shipments.",
+    "ko": "공급자 가격과 관세 규정은 변경될 수 있습니다. 현재 조건을 비교하고 중요한 배송에 대한 영수증을 보관하세요.",
+    "ja": "プロバイダーの価格と関税規則は変更される可能性があります。現在の条件を比較し、重要な発送の領収書を保管してください。",
+    "zh-CN": "提供商价格和海关规则可能会发生变化。比较当前条款并保留重要货件的收据。",
+    "uz": "Provayder narxlari va bojxona qoidalari oʻzgarishi mumkin. Joriy shartlarni solishtiring va muhim yuklar uchun kvitansiyalarni saqlang.",
+    "vi": "Giá của nhà cung cấp và quy định hải quan có thể thay đổi. So sánh các điều khoản hiện tại và giữ biên lai cho các lô hàng quan trọng.",
+    "mn": "Үйлчилгээ үзүүлэгчийн үнэ болон гаалийн дүрэм өөрчлөгдөж болно. Одоогийн нөхцлүүдийг харьцуулж, чухал ачилтуудын баримтыг хөтөл.",
+    "ms": "Harga pembekal dan peraturan kastam boleh berubah. Bandingkan syarat semasa dan simpan resit untuk penghantaran penting."
+  },
+  "Put items out at the stated time": {
+    "en": "Put items out at the stated time",
+    "ko": "정해진 시간에 물건을 꺼내세요",
+    "ja": "指定された時間にアイテムを出します",
+    "zh-CN": "在规定的时间把物品拿出来",
+    "uz": "Elementlarni belgilangan vaqtda qo'ying",
+    "vi": "Bỏ đồ ra vào thời gian đã nêu",
+    "mn": "Зүйлсээ заасан цагт нь гарга",
+    "ms": "Letakkan item pada masa yang dinyatakan"
+  },
+  "Quote required": {
+    "en": "Quote required",
+    "ko": "견적이 필요합니다.",
+    "ja": "引用が必要です",
+    "zh-CN": "需要报价",
+    "uz": "Iqtibos talab qilinadi",
+    "vi": "Cần trích dẫn",
+    "mn": "Үнийн санал авах шаардлагатай",
+    "ms": "Sebut harga diperlukan"
+  },
+  "Quote viewed": {
+    "en": "Quote viewed",
+    "ko": "견적 조회됨",
+    "ja": "引用を閲覧しました",
+    "zh-CN": "已查看报价",
+    "uz": "Iqtibos koʻrildi",
+    "vi": "Đã xem trích dẫn",
+    "mn": "Үнийн саналыг үзсэн",
+    "ms": "Petikan dilihat"
+  },
+  "quote-viewed": {
+    "en": "quote-viewed",
+    "ko": "인용문 조회됨",
+    "ja": "引用閲覧済み",
+    "zh-CN": "引用已查看",
+    "uz": "iqtibos orqali koʻrib chiqildi",
+    "vi": "đã xem trích dẫn",
+    "mn": "ишлэлээр үзсэн",
+    "ms": "dilihat petikan"
+  },
+  "rate_limited": {
+    "en": "rate_limited",
+    "ko": "비율_제한됨",
+    "ja": "レート制限付き",
+    "zh-CN": "速率受限",
+    "uz": "tarif_cheklangan",
+    "vi": "rate_limited",
+    "mn": "үнэ_хязгаарлагдмал",
+    "ms": "kadar_terhad"
+  },
+  "react": {
+    "en": "react",
+    "ko": "반응하다",
+    "ja": "反応する",
+    "zh-CN": "反应",
+    "uz": "reaktsiya",
+    "vi": "phản ứng",
+    "mn": "хариу үйлдэл үзүүлэх",
+    "ms": "bertindak balas"
+  },
+  "Read the current identity requirement": {
+    "en": "Read the current identity requirement",
+    "ko": "현재 신원 요구 사항 읽기",
+    "ja": "現在の ID 要件を読む",
+    "zh-CN": "阅读当前的身份要求",
+    "uz": "Joriy identifikatsiya talabini oʻqing",
+    "vi": "Đọc yêu cầu nhận dạng hiện tại",
+    "mn": "Одоогийн иргэний үнэмлэхний шаардлагыг уншина уу",
+    "ms": "Baca keperluan identiti semasa"
+  },
+  "Real payments": {
+    "en": "Real payments",
+    "ko": "실제 결제",
+    "ja": "実際の支払い",
+    "zh-CN": "实际付款",
+    "uz": "Haqiqiy to'lovlar",
+    "vi": "Thanh toán thực tế",
+    "mn": "Бодит төлбөр",
+    "ms": "Pembayaran sebenar"
+  },
+  "recommendation": {
+    "en": "recommendation",
+    "ko": "추천",
+    "ja": "の推奨事項",
+    "zh-CN": "推荐",
+    "uz": "tavsiyasi",
+    "vi": "đề xuất",
+    "mn": "зөвлөмж",
+    "ms": "syor"
+  },
+  "Recommended now": {
+    "en": "Recommended now",
+    "ko": "지금 추천",
+    "ja": "今お勧めします",
+    "zh-CN": "立即推荐",
+    "uz": "Hozir tavsiya etiladi",
+    "vi": "Được đề xuất ngay bây giờ",
+    "mn": "Одоо санал болгож байна",
+    "ms": "Disyorkan sekarang"
+  },
+  "Record any room condition issues": {
+    "en": "Record any room condition issues",
+    "ko": "객실 상태 문제 기록",
+    "ja": "部屋の状態の問題を記録します",
+    "zh-CN": "记录任何房间条件问题",
+    "uz": "Xonadagi har qanday muammoni yozib oling",
+    "vi": "Ghi lại mọi vấn đề về tình trạng phòng",
+    "mn": "Өрөөний нөхцөл байдлын аливаа асуудлыг тэмдэглэ",
+    "ms": "Rakam sebarang isu keadaan bilik"
+  },
+  "Record tracking and handover details": {
+    "en": "Record tracking and handover details",
+    "ko": "추적 및 인계 세부정보 기록",
+    "ja": "追跡と引き継ぎの詳細を記録する",
+    "zh-CN": "记录跟踪和移交详细信息",
+    "uz": "Kuzatuv va topshirish tafsilotlarini yozib oling",
+    "vi": "Ghi lại chi tiết theo dõi và bàn giao",
+    "mn": "Хяналт болон хүлээлгэн өгөх дэлгэрэнгүй мэдээллийг бичнэ үү",
+    "ms": "Rakam butiran penjejakan dan penyerahan"
+  },
+  "Record when cancelling": {
+    "en": "Record when cancelling",
+    "ko": "취소 시 기록",
+    "ja": "キャンセル時の記録",
+    "zh-CN": "取消时记录",
+    "uz": "Bekor qilishda yozib oling",
+    "vi": "Ghi lại khi hủy",
+    "mn": "Цуцлах үед бичнэ үү",
+    "ms": "Rakam apabila membatalkan"
+  },
+  "Recycling and food-waste rules vary by district and building. Use the local notice as the final source.": {
+    "en": "Recycling and food-waste rules vary by district and building. Use the local notice as the final source.",
+    "ko": "재활용 및 음식물 쓰레기 규정은 지역 및 건물에 따라 다릅니다. 지역 공지를 최종 소스로 사용하세요.",
+    "ja": "リサイクルと食品廃棄物の規則は、地区や建物によって異なります。現地の通知を最終情報源として使用してください。",
+    "zh-CN": "回收和食物垃圾规则因地区和建筑物而异。以当地公告作为最终来源。",
+    "uz": "Qayta ishlash va oziq-ovqat chiqindilari qoidalari tuman va binolarga qarab farq qiladi. Yakuniy manba sifatida mahalliy xabarnomadan foydalaning.",
+    "vi": "Các quy định về tái chế và rác thải thực phẩm khác nhau tùy theo quận và tòa nhà. Sử dụng thông báo địa phương làm nguồn cuối cùng.",
+    "mn": "Дахин боловсруулах болон хүнсний хог хаягдлын дүрэм нь дүүрэг, барилгаас хамаарч өөр өөр байдаг. Орон нутгийн мэдэгдлийг эцсийн эх сурвалж болгон ашигла.",
+    "ms": "Peraturan kitar semula dan sisa makanan berbeza mengikut daerah dan bangunan. Gunakan notis tempatan sebagai sumber akhir."
+  },
+  "recycling-basics": {
+    "en": "recycling-basics",
+    "ko": "재활용 기본",
+    "ja": "recycling-basics",
+    "zh-CN": "回收基础知识",
+    "uz": "qayta ishlash asoslari",
+    "vi": "tái chế-cơ bản",
+    "mn": "дахин боловсруулах-үндсэн",
+    "ms": "asas kitar semula"
+  },
+  "Reference ": {
+    "en": "Reference ",
+    "ko": "참조",
+    "ja": "リファレンス",
+    "zh-CN": "参考",
+    "uz": "Malumot",
+    "vi": "Tham khảo",
+    "mn": "Лавлагаа",
+    "ms": "Rujukan"
+  },
+  "Reference: ": {
+    "en": "Reference: ",
+    "ko": "참조:",
+    "ja": "参照:",
+    "zh-CN": "参考：",
+    "uz": "Malumot:",
+    "vi": "Tham khảo:",
+    "mn": "Лавлагаа:",
+    "ms": "Rujukan:"
+  },
+  "Refresh": {
+    "en": "Refresh",
+    "ko": "새로 고침",
+    "ja": "リフレッシュ",
+    "zh-CN": "刷新",
+    "uz": "Yangilash",
+    "vi": "Làm mới",
+    "mn": "Дахин сэргээх",
+    "ms": "Muat semula"
+  },
+  "Refresh server data": {
+    "en": "Refresh server data",
+    "ko": "서버 데이터 새로 고침",
+    "ja": "サーバー データを更新する",
+    "zh-CN": "刷新服务器数据",
+    "uz": "Server maʼlumotlarini yangilash",
+    "vi": "Làm mới dữ liệu máy chủ",
+    "mn": "Серверийн өгөгдлийг сэргээх",
+    "ms": "Muat semula data pelayan"
+  },
+  "Report listing": {
+    "en": "Report listing",
+    "ko": "보고서 목록",
+    "ja": "レポートのリスト",
+    "zh-CN": "报告列表",
+    "uz": "Roʻyxat haqida xabar berish",
+    "vi": "Báo cáo danh sách",
+    "mn": "Жагсаалтыг мэдээлэх",
+    "ms": "Laporkan penyenaraian"
+  },
+  "reports": {
+    "en": "reports",
+    "ko": "보고",
+    "ja": "レポート",
+    "zh-CN": "报告",
+    "uz": "hisobotlari",
+    "vi": "báo cáo",
+    "mn": "тайлан",
+    "ms": "laporan"
+  },
+  "Reports": {
+    "en": "Reports",
+    "ko": "보고서",
+    "ja": "レポート",
+    "zh-CN": "报告",
+    "uz": "Hisobotlar",
+    "vi": "Báo cáo",
+    "mn": "Тайлангууд",
+    "ms": "Laporan"
+  },
+  "Request details": {
+    "en": "Request details",
+    "ko": "요청 세부정보",
+    "ja": "リクエストの詳細",
+    "zh-CN": "请求详细信息",
+    "uz": "Tafsilotlarni soʻrash",
+    "vi": "Chi tiết yêu cầu",
+    "mn": "Дэлгэрэнгүй мэдээллийг хүсэх",
+    "ms": "Minta butiran"
+  },
+  "reservations": {
+    "en": "reservations",
+    "ko": "예약",
+    "ja": "の予約",
+    "zh-CN": "保留",
+    "uz": "bandlovlar",
+    "vi": "đặt chỗ",
+    "mn": "захиалга",
+    "ms": "tempahan"
+  },
+  "Reservations": {
+    "en": "Reservations",
+    "ko": "예약",
+    "ja": "予約",
+    "zh-CN": "预订",
+    "uz": "bandlovlar",
+    "vi": "Đặt chỗ",
+    "mn": "Захиалга",
+    "ms": "Tempahan"
+  },
+  "Reserve item": {
+    "en": "Reserve item",
+    "ko": "예약 아이템",
+    "ja": "予約商品",
+    "zh-CN": "保留项目",
+    "uz": "Elementni zaxiralash",
+    "vi": "Vật phẩm dự trữ",
+    "mn": "Зүйлийг нөөцлөх",
+    "ms": "Simpan item"
+  },
+  "reserved": {
+    "en": "reserved",
+    "ko": "예약됨",
+    "ja": "予約済み",
+    "zh-CN": "保留",
+    "uz": "band qilingan",
+    "vi": "đã đặt trước",
+    "mn": "нөөцөлсөн",
+    "ms": "terpelihara"
+  },
+  "Reserved": {
+    "en": "Reserved",
+    "ko": "예약됨",
+    "ja": "予約済み",
+    "zh-CN": "保留",
+    "uz": "Zaxiralangan",
+    "vi": "Đã đặt trước",
+    "mn": "нөөцөлсөн",
+    "ms": "Terpelihara"
+  },
+  "Reset my data": {
+    "en": "Reset my data",
+    "ko": "내 데이터 재설정",
+    "ja": "データをリセット",
+    "zh-CN": "重置我的数据",
+    "uz": "Maʼlumotlarimni tiklash",
+    "vi": "Đặt lại dữ liệu của tôi",
+    "mn": "Миний өгөгдлийг дахин тохируул",
+    "ms": "Tetapkan semula data saya"
+  },
+  "resolved": {
+    "en": "resolved",
+    "ko": "해결됨",
+    "ja": "解決済み",
+    "zh-CN": "已解决",
+    "uz": "hal qilindi",
+    "vi": "đã giải quyết",
+    "mn": "шийдвэрлэсэн",
+    "ms": "diselesaikan"
+  },
+  "Restore": {
+    "en": "Restore",
+    "ko": "복원",
+    "ja": "復元",
+    "zh-CN": "恢复",
+    "uz": "Qayta tiklash",
+    "vi": "Khôi phục",
+    "mn": "Сэргээх",
+    "ms": "Pulihkan"
+  },
+  "Retry": {
+    "en": "Retry",
+    "ko": "재시도",
+    "ja": "再試行",
+    "zh-CN": "重试",
+    "uz": "Qayta urinib ko‘ring",
+    "vi": "Thử lại",
+    "mn": "Дахин оролдоно уу",
+    "ms": "Cuba semula"
+  },
+  "Review notices before each deadline": {
+    "en": "Review notices before each deadline",
+    "ko": "각 마감일 이전에 공지사항을 검토하세요.",
+    "ja": "各締め切り前に通知を確認してください",
+    "zh-CN": "在每个截止日期之前审查通知",
+    "uz": "Har bir muddatdan oldin bildirishnomalarni ko'rib chiqing",
+    "vi": "Xem lại thông báo trước mỗi thời hạn",
+    "mn": "Эцсийн хугацаа бүрийн өмнө мэдэгдлийг хянана",
+    "ms": "Semak notis sebelum setiap tarikh akhir"
+  },
+  "Review the estimate guidance.": {
+    "en": "Review the estimate guidance.",
+    "ko": "견적 안내를 검토합니다.",
+    "ja": "見積もりガイダンスを確認します。",
+    "zh-CN": "查看估算指南。",
+    "uz": "Taxminiy yoʻriqnomani koʻrib chiqing.",
+    "vi": "Xem lại hướng dẫn ước tính.",
+    "mn": "Тооцоолсон удирдамжийг хянана уу.",
+    "ms": "Semak panduan anggaran."
+  },
+  "Review the preparation guidance for ": {
+    "en": "Review the preparation guidance for ",
+    "ko": "준비 지침을 검토합니다.",
+    "ja": "の準備ガイダンスを確認してください",
+    "zh-CN": "查看准备指南",
+    "uz": "Tayyorgarlik yoʻriqnomasini koʻrib chiqing",
+    "vi": "Xem lại hướng dẫn chuẩn bị cho",
+    "mn": "Бэлтгэх зааварчилгаатай танилцана уу",
+    "ms": "Semak panduan penyediaan untuk"
+  },
+  "reviewed": {
+    "en": "reviewed",
+    "ko": "검토됨",
+    "ja": "をレビューしました",
+    "zh-CN": "已审核",
+    "uz": "koʻrib chiqildi",
+    "vi": "đã được đánh giá",
+    "mn": "-г шалгасан",
+    "ms": "disemak"
+  },
+  "reviewing": {
+    "en": "reviewing",
+    "ko": "검토 중",
+    "ja": "のレビュー",
+    "zh-CN": "审查",
+    "uz": "koʻrib chiqilmoqda",
+    "vi": "đang xem xét",
+    "mn": "хянаж байна",
+    "ms": "menyemak"
+  },
+  "Route times and fares change. Check the official transport operator before leaving the airport.": {
+    "en": "Route times and fares change. Check the official transport operator before leaving the airport.",
+    "ko": "노선 시간과 요금이 변경됩니다. 공항을 떠나기 전에 공식 운송업체를 확인하세요.",
+    "ja": "ルートの時間と運賃が変更されます。空港を出る前に公式交通機関を確認してください。",
+    "zh-CN": "路线时间和票价发生变化。离开机场前请咨询官方交通运营商。",
+    "uz": "Yoʻnalish vaqtlari va tariflar oʻzgaradi. Aeroportdan chiqishdan oldin rasmiy transport operatorini tekshiring.",
+    "vi": "Thời gian tuyến và giá vé thay đổi. Kiểm tra nhà điều hành vận tải chính thức trước khi rời sân bay.",
+    "mn": "Маршрутын цаг, үнэ өөрчлөгдөнө. Нисэх онгоцны буудлаас гарахын өмнө албан ёсны тээврийн операторыг шалгана уу.",
+    "ms": "Masa laluan dan tambang berubah. Semak operator pengangkutan rasmi sebelum meninggalkan lapangan terbang."
+  },
+  "Rules vary by neighborhood": {
+    "en": "Rules vary by neighborhood",
+    "ko": "규칙은 지역에 따라 다릅니다.",
+    "ja": "ルールは地域によって異なります",
+    "zh-CN": "规则因社区而异",
+    "uz": "Qoidalar mahallaga qarab farq qiladi",
+    "vi": "Các quy tắc khác nhau tùy theo khu vực",
+    "mn": "Дүрэм нь хөрш зэргэлдээ өөр өөр байдаг",
+    "ms": "Peraturan berbeza mengikut kejiranan"
+  },
+  "Sale": {
+    "en": "Sale",
+    "ko": "할인",
+    "ja": "セール",
+    "zh-CN": "销售",
+    "uz": "Sotish",
+    "vi": "Giảm giá",
+    "mn": "Хямдрал",
+    "ms": "Jualan"
+  },
+  "Sample content": {
+    "en": "Sample content",
+    "ko": "샘플 콘텐츠",
+    "ja": "サンプルコンテンツ",
+    "zh-CN": "示例内容",
+    "uz": "Namuna kontent",
+    "vi": "Nội dung mẫu",
+    "mn": "Жишээ контент",
+    "ms": "Contoh kandungan"
+  },
+  "Sample data": {
+    "en": "Sample data",
+    "ko": "샘플 데이터",
+    "ja": "サンプルデータ",
+    "zh-CN": "样本数据",
+    "uz": "Maʼlumotlar namunasi",
+    "vi": "Dữ liệu mẫu",
+    "mn": "Жишээ өгөгдөл",
+    "ms": "Data sampel"
+  },
+  "Save": {
+    "en": "Save",
+    "ko": "저장",
+    "ja": "保存",
+    "zh-CN": "保存",
+    "uz": "Saqlash",
+    "vi": "Lưu",
+    "mn": "Хадгалах",
+    "ms": "Simpan"
+  },
+  "Save 119": {
+    "en": "Save 119",
+    "ko": "저장 119",
+    "ja": "Save 119",
+    "zh-CN": "保存 119",
+    "uz": "119 tani saqlang",
+    "vi": "Tiết kiệm 119",
+    "mn": "119-г хадгал",
+    "ms": "Simpan 119"
+  },
+  "Save check-in hours and location": {
+    "en": "Save check-in hours and location",
+    "ko": "체크인 시간 및 위치 저장",
+    "ja": "チェックイン時間と場所を保存する",
+    "zh-CN": "保存入住时间和地点",
+    "uz": "Roʻyxatdan oʻtish vaqti va joylashuvini saqlang",
+    "vi": "Lưu giờ nhận phòng và địa điểm",
+    "mn": "Бүртгүүлэх цаг, байршлыг хадгал",
+    "ms": "Simpan waktu daftar masuk dan lokasi"
+  },
+  "Save operations": {
+    "en": "Save operations",
+    "ko": "저장 작업",
+    "ja": "保存操作",
+    "zh-CN": "保存操作",
+    "uz": "Amallarni saqlash",
+    "vi": "Lưu thao tác",
+    "mn": "Үйлдлүүдийг хадгалах",
+    "ms": "Simpan operasi"
+  },
+  "Save the academic notice page": {
+    "en": "Save the academic notice page",
+    "ko": "학사공지 페이지 저장",
+    "ja": "学術通知ページを保存する",
+    "zh-CN": "保存学术通知页面",
+    "uz": "Akademik bildirishnoma sahifasini saqlang",
+    "vi": "Lưu trang thông báo học tập",
+    "mn": "Эрдмийн мэдэгдлийн хуудсыг хадгална уу",
+    "ms": "Simpan halaman notis akademik"
+  },
+  "Save the official page": {
+    "en": "Save the official page",
+    "ko": "공식 페이지 저장",
+    "ja": "公式ページを保存する",
+    "zh-CN": "保存官方页面",
+    "uz": "Rasmiy sahifani saqlang",
+    "vi": "Lưu trang chính thức",
+    "mn": "Албан ёсны хуудсыг хадгална уу",
+    "ms": "Simpan halaman rasmi"
+  },
+  "Save the provider support contact": {
+    "en": "Save the provider support contact",
+    "ko": "공급자 지원 연락처 저장",
+    "ja": "プロバイダーのサポート連絡先を保存します",
+    "zh-CN": "保存提供商支持联系人",
+    "uz": "Provayderni qoʻllab-quvvatlash kontaktini saqlang",
+    "vi": "Lưu liên hệ hỗ trợ của nhà cung cấp",
+    "mn": "Үйлчилгээ үзүүлэгчийн тусламжийн холбоо барих хаягийг хадгална уу",
+    "ms": "Simpan kenalan sokongan pembekal"
+  },
+  "Save the transfer points": {
+    "en": "Save the transfer points",
+    "ko": "환승 지점 저장",
+    "ja": "移行ポイントを保存する",
+    "zh-CN": "保存传送点",
+    "uz": "Oʻtkazish nuqtalarini saqlang",
+    "vi": "Lưu điểm chuyển",
+    "mn": "Дамжуулах цэгүүдийг хадгал",
+    "ms": "Simpan mata pemindahan"
+  },
+  "Saved delivery and storage requests": {
+    "en": "Saved delivery and storage requests",
+    "ko": "저장된 배송 및 보관 요청",
+    "ja": "保存された配送および保管リクエスト",
+    "zh-CN": "已保存的递送和存储请求",
+    "uz": "Saqlangan yetkazib berish va saqlash soʻrovlari",
+    "vi": "Đã lưu yêu cầu phân phối và lưu trữ",
+    "mn": "Хүргэлтийн болон хадгалах хүсэлтийг хадгалсан",
+    "ms": "Permintaan penghantaran dan penyimpanan yang disimpan"
+  },
+  "Saved to the server.": {
+    "en": "Saved to the server.",
+    "ko": "서버에 저장되었습니다.",
+    "ja": "サーバーに保存されました。",
+    "zh-CN": "已保存到服务器。",
+    "uz": "Serverga saqlandi.",
+    "vi": "Đã lưu vào máy chủ.",
+    "mn": "Серверт хадгалагдсан.",
+    "ms": "Disimpan ke pelayan."
+  },
+  "School and company partnership potential": {
+    "en": "School and company partnership potential",
+    "ko": "학교와 회사의 파트너십 가능성",
+    "ja": "学校と企業のパートナーシップの可能性",
+    "zh-CN": "学校与公司合作的潜力",
+    "uz": "Maktab va kompaniya hamkorlik salohiyati",
+    "vi": "Tiềm năng hợp tác giữa trường học và công ty",
+    "mn": "Сургууль болон компанийн түншлэлийн боломж",
+    "ms": "Potensi perkongsian sekolah dan syarikat"
+  },
+  "Science & Engineering": {
+    "en": "Science & Engineering",
+    "ko": "과학 및 공학",
+    "ja": "科学と工学",
+    "zh-CN": "科学与工程",
+    "uz": "Fan va muhandislik",
+    "vi": "Khoa học & Kỹ thuật",
+    "mn": "Шинжлэх ухаан ба инженерчлэл",
+    "ms": "Sains & Kejuruteraan"
+  },
+  "Scope: ": {
+    "en": "Scope: ",
+    "ko": "범위:",
+    "ja": "範囲:",
+    "zh-CN": "范围：",
+    "uz": "Qo'llash doirasi:",
+    "vi": "Phạm vi:",
+    "mn": "Хамрах хүрээ:",
+    "ms": "Skop:"
+  },
+  "search": {
+    "en": "search",
+    "ko": "검색",
+    "ja": "検索",
+    "zh-CN": "搜索",
+    "uz": "qidiruv",
+    "vi": "tìm kiếm",
+    "mn": "хайх",
+    "ms": "carian"
+  },
+  "Search": {
+    "en": "Search",
+    "ko": "검색",
+    "ja": "検索",
+    "zh-CN": "搜索",
+    "uz": "Qidiruv",
+    "vi": "Tìm kiếm",
+    "mn": "Хайх",
+    "ms": "Cari"
+  },
+  "Search admin data": {
+    "en": "Search admin data",
+    "ko": "관리자 데이터 검색",
+    "ja": "管理データの検索",
+    "zh-CN": "搜索管理数据",
+    "uz": "Administrator maʼlumotlarini qidirish",
+    "vi": "Tìm kiếm dữ liệu quản trị viên",
+    "mn": "Админ датаг хайх",
+    "ms": "Cari data pentadbir"
+  },
+  "Search guides": {
+    "en": "Search guides",
+    "ko": "검색 가이드",
+    "ja": "検索ガイド",
+    "zh-CN": "搜索指南",
+    "uz": "Qidiruv qoʻllanmalari",
+    "vi": "Hướng dẫn tìm kiếm",
+    "mn": "Хөтөч хайх",
+    "ms": "Panduan carian"
+  },
+  "Search places": {
+    "en": "Search places",
+    "ko": "장소 검색",
+    "ja": "場所を検索",
+    "zh-CN": "搜索地点",
+    "uz": "Joylarni qidirish",
+    "vi": "Tìm kiếm địa điểm",
+    "mn": "Газар хайх",
+    "ms": "Cari tempat"
+  },
+  "Search tasks": {
+    "en": "Search tasks",
+    "ko": "작업 검색",
+    "ja": "タスクの検索",
+    "zh-CN": "搜索任务",
+    "uz": "Qidiruv vazifalari",
+    "vi": "Nhiệm vụ tìm kiếm",
+    "mn": "Даалгавруудыг хайх",
+    "ms": "Tugasan carian"
+  },
+  "Search the relevant residence service": {
+    "en": "Search the relevant residence service",
+    "ko": "해당 레지던스 서비스 검색",
+    "ja": "関連する居住サービスを検索する",
+    "zh-CN": "搜索相关居住服务",
+    "uz": "Tegishli yashash xizmatini qidiring",
+    "vi": "Tìm kiếm dịch vụ cư trú có liên quan",
+    "mn": "Холбогдох оршин суух үйлчилгээг хайх",
+    "ms": "Cari perkhidmatan kediaman yang berkaitan"
+  },
+  "Search title or content": {
+    "en": "Search title or content",
+    "ko": "제목 또는 내용 검색",
+    "ja": "タイトルまたは内容を検索",
+    "zh-CN": "搜索标题或内容",
+    "uz": "Sarlavha yoki kontentni qidiring",
+    "vi": "Tìm kiếm tiêu đề hoặc nội dung",
+    "mn": "Гарчиг эсвэл контент хайх",
+    "ms": "Cari tajuk atau kandungan"
+  },
+  "Searching Kakao places…": {
+    "en": "Searching Kakao places…",
+    "ko": "카카오 장소 검색 중…",
+    "ja": "カカオの場所を検索しています…",
+    "zh-CN": "正在搜索 Kakao 地点...",
+    "uz": "Kakao joylari qidirilmoqda…",
+    "vi": "Đang tìm kiếm địa điểm trên Kakao…",
+    "mn": "Какаогийн газруудыг хайж байна...",
+    "ms": "Mencari tempat Kakao…"
+  },
+  "secondary": {
+    "en": "secondary",
+    "ko": "보조",
+    "ja": "二次",
+    "zh-CN": "中学",
+    "uz": "ikkinchi darajali",
+    "vi": "thứ cấp",
+    "mn": "хоёрдогч",
+    "ms": "menengah"
+  },
+  "Selected": {
+    "en": "Selected",
+    "ko": "선택됨",
+    "ja": "選択済み",
+    "zh-CN": "已选择",
+    "uz": "Tanlangan",
+    "vi": "Đã chọn",
+    "mn": "Сонгосон",
+    "ms": "Dipilih"
+  },
+  "Selected product": {
+    "en": "Selected product",
+    "ko": "선택한 제품",
+    "ja": "選択された商品",
+    "zh-CN": "所选产品",
+    "uz": "Tanlangan mahsulot",
+    "vi": "Sản phẩm được chọn",
+    "mn": "Сонгосон бүтээгдэхүүн",
+    "ms": "Produk terpilih"
+  },
+  "sell-items": {
+    "en": "sell-items",
+    "ko": "판매 품목",
+    "ja": "販売アイテム",
+    "zh-CN": "出售物品",
+    "uz": "sotilgan tovarlar",
+    "vi": "bán vật phẩm",
+    "mn": "зарах зүйл",
+    "ms": "barang jualan"
+  },
+  "Seller": {
+    "en": "Seller",
+    "ko": "판매자",
+    "ja": "販売者",
+    "zh-CN": "卖家",
+    "uz": "Sotuvchi",
+    "vi": "Người bán",
+    "mn": "Худалдагч",
+    "ms": "Penjual"
+  },
+  "Seoul Metropolitan Government": {
+    "en": "Seoul Metropolitan Government",
+    "ko": "서울시청",
+    "ja": "ソウル市",
+    "zh-CN": "首尔市政府",
+    "uz": "Seul Metropolitan hukumati",
+    "vi": "Chính quyền thành phố Seoul",
+    "mn": "Сөүл хотын захиргаа",
+    "ms": "Kerajaan Metropolitan Seoul"
+  },
+  "Separate food waste as instructed": {
+    "en": "Separate food waste as instructed",
+    "ko": "음식물 쓰레기는 지시에 따라 분리수거하세요",
+    "ja": "指示に従って食品廃棄物を分別する",
+    "zh-CN": "按照指示分类食物垃圾",
+    "uz": "Oziq-ovqat chiqindilarini ko'rsatmalarga muvofiq ajrating",
+    "vi": "Phân loại rác thải thực phẩm theo hướng dẫn",
+    "mn": "Хоолны хаягдлыг зааврын дагуу салга",
+    "ms": "Asingkan sisa makanan seperti yang diarahkan"
+  },
+  "Server state restore": {
+    "en": "Server state restore",
+    "ko": "서버 상태 복원",
+    "ja": "サーバー状態の復元",
+    "zh-CN": "服务器状态恢复",
+    "uz": "Server holatini tiklash",
+    "vi": "Khôi phục trạng thái máy chủ",
+    "mn": "Серверийн төлөвийг сэргээх",
+    "ms": "Pemulihan keadaan pelayan"
+  },
+  "Server-stored operations · administrators only": {
+    "en": "Server-stored operations · administrators only",
+    "ko": "서버에 저장된 작업 · 관리자 전용",
+    "ja": "サーバーに保存された操作 · 管理者のみ",
+    "zh-CN": "服务器存储的操作·仅限管理员",
+    "uz": "Serverda saqlanadigan operatsiyalar · faqat administratorlar uchun",
+    "vi": "Hoạt động được lưu trữ trên máy chủ · chỉ dành cho quản trị viên",
+    "mn": "Серверт хадгалагдсан үйлдлүүд · зөвхөн админууд",
+    "ms": "Operasi disimpan pelayan · pentadbir sahaja"
+  },
+  "Service is in progress.": {
+    "en": "Service is in progress.",
+    "ko": "서비스가 진행 중입니다.",
+    "ja": "サービスが進行中です。",
+    "zh-CN": "服务正在进行中。",
+    "uz": "Xizmat davom etmoqda.",
+    "vi": "Dịch vụ đang được tiến hành.",
+    "mn": "Үйлчилгээ явагдаж байна.",
+    "ms": "Perkhidmatan sedang dijalankan."
+  },
+  "Service model": {
+    "en": "Service model",
+    "ko": "서비스 모델",
+    "ja": "サービスモデル",
+    "zh-CN": "服务模式",
+    "uz": "Xizmat modeli",
+    "vi": "Mô hình dịch vụ",
+    "mn": "Үйлчилгээний загвар",
+    "ms": "Model perkhidmatan"
+  },
+  "serviceRequests": {
+    "en": "serviceRequests",
+    "ko": "serviceRequests",
+    "ja": "サービスリクエスト",
+    "zh-CN": "服务请求",
+    "uz": "xizmat soʻrovlari",
+    "vi": "yêu cầu dịch vụ",
+    "mn": "үйлчилгээний Хүсэлт",
+    "ms": "serviceRequests"
+  },
+  "Set up access to KU academic systems": {
+    "en": "Set up access to KU academic systems",
+    "ko": "고려대 학술 시스템에 대한 액세스 설정",
+    "ja": "KU 学術システムへのアクセスをセットアップする",
+    "zh-CN": "设置对 KU 学术系统的访问",
+    "uz": "KU akademik tizimlariga kirishni sozlash",
+    "vi": "Thiết lập quyền truy cập vào hệ thống học thuật KU",
+    "mn": "KU академик системд хандах хандалтыг тохируулна уу",
+    "ms": "Sediakan akses kepada sistem akademik KU"
+  },
+  "Show active only": {
+    "en": "Show active only",
+    "ko": "활성 상태만 표시",
+    "ja": "アクティブのみを表示",
+    "zh-CN": "仅显示活动状态",
+    "uz": "Faqat faolni ko'rsatish",
+    "vi": "Chỉ hiển thị hoạt động",
+    "mn": "Зөвхөн идэвхтэй харуулах",
+    "ms": "Tunjukkan aktif sahaja"
+  },
+  "Show completed": {
+    "en": "Show completed",
+    "ko": "쇼가 완료되었습니다",
+    "ja": "ショーが完了しました",
+    "zh-CN": "显示已完成",
+    "uz": "Namoyish tugallandi",
+    "vi": "Hiển thị đã hoàn thành",
+    "mn": "Үзэсгэлэн дууссан",
+    "ms": "Tayangan selesai"
+  },
+  "Show favorites only": {
+    "en": "Show favorites only",
+    "ko": "즐겨찾기만 표시",
+    "ja": "お気に入りのみを表示",
+    "zh-CN": "仅显示收藏夹",
+    "uz": "Faqat sevimlilarni ko'rsatish",
+    "vi": "Chỉ hiển thị mục yêu thích",
+    "mn": "Зөвхөн дуртай зүйлсийг харуулах",
+    "ms": "Tunjukkan kegemaran sahaja"
+  },
+  "Sign in": {
+    "en": "Sign in",
+    "ko": "로그인",
+    "ja": "サインイン",
+    "zh-CN": "登录",
+    "uz": "Tizimga kiring",
+    "vi": "Đăng nhập",
+    "mn": "Нэвтрэх",
+    "ms": "Log masuk"
+  },
+  "Sign in using your existing KU account": {
+    "en": "Sign in using your existing KU account",
+    "ko": "기존 KU 계정을 사용하여 로그인",
+    "ja": "既存の KU アカウントを使用してサインインします",
+    "zh-CN": "使用您现有的 KU 帐户登录",
+    "uz": "Mavjud KU hisobingizdan foydalanib tizimga kiring",
+    "vi": "Đăng nhập bằng tài khoản KU hiện có của bạn",
+    "mn": "Одоо байгаа KU бүртгэлээ ашиглан нэвтэрнэ үү",
+    "ms": "Log masuk menggunakan akaun KU sedia ada anda"
+  },
+  "Sign in with an existing @korea.ac.kr account. You can connect this browser's anonymous data after signing in.": {
+    "en": "Sign in with an existing @korea.ac.kr account. You can connect this browser's anonymous data after signing in.",
+    "ko": "기존 @korea.ac.kr 계정으로 로그인하세요. 로그인한 후 이 브라우저의 익명 데이터에 연결할 수 있습니다.",
+    "ja": "既存の @korea.ac.kr アカウントでサインインします。サインイン後、このブラウザーの匿名データに接続できます。",
+    "zh-CN": "使用现有的 @korea.ac.kr 帐户登录。您可以在登录后连接此浏览器的匿名数据。",
+    "uz": "Mavjud @korea.ac.kr hisobi bilan kiring. Siz tizimga kirganingizdan so'ng ushbu brauzerning anonim ma'lumotlarini ulashingiz mumkin.",
+    "vi": "Đăng nhập bằng tài khoản @korea.ac.kr hiện có. Bạn có thể kết nối dữ liệu ẩn danh của trình duyệt này sau khi đăng nhập.",
+    "mn": "Одоо байгаа @korea.ac.kr бүртгэлээр нэвтэрнэ үү. Та нэвтэрсний дараа энэ хөтчийн үл мэдэгдэх өгөгдлийг холбож болно.",
+    "ms": "Log masuk dengan akaun @korea.ac.kr sedia ada. Anda boleh menyambungkan data awanama penyemak imbas ini selepas log masuk."
+  },
+  "Sign-in failed. Check your email, password, and verification status.": {
+    "en": "Sign-in failed. Check your email, password, and verification status.",
+    "ko": "로그인에 실패했습니다. 이메일, 비밀번호, 인증 상태를 확인하세요.",
+    "ja": "サインインに失敗しました。メールアドレス、パスワード、認証ステータスを確認してください。",
+    "zh-CN": "登录失败。检查您的电子邮件、密码和验证状态。",
+    "uz": "Tizimga kirish amalga oshmadi. Elektron pochta, parol va tasdiqlash holatini tekshiring.",
+    "vi": "Đăng nhập không thành công. Kiểm tra email, mật khẩu và trạng thái xác minh của bạn.",
+    "mn": "Нэвтэрч чадсангүй. Имэйл, нууц үг, баталгаажуулалтын статусаа шалгана уу.",
+    "ms": "Log masuk gagal. Semak e-mel, kata laluan dan status pengesahan anda."
+  },
+  "Sign-up and email verification are being prepared": {
+    "en": "Sign-up and email verification are being prepared",
+    "ko": "회원가입 및 이메일 인증 준비 중",
+    "ja": "サインアップと電子メール認証を準備中です",
+    "zh-CN": "正在准备注册和电子邮件验证",
+    "uz": "Roʻyxatdan oʻtish va elektron pochta orqali tasdiqlash tayyorlanmoqda",
+    "vi": "Việc đăng ký và xác minh email đang được chuẩn bị",
+    "mn": "Бүртгэл болон цахим шуудан баталгаажуулалтыг бэлдэж байна",
+    "ms": "Pendaftaran dan pengesahan e-mel sedang disediakan"
+  },
+  "Sign-up is available after email delivery is configured.": {
+    "en": "Sign-up is available after email delivery is configured.",
+    "ko": "이메일 발송 설정 후 회원가입이 가능합니다.",
+    "ja": "電子メール配信の設定後にサインアップが可能になります。",
+    "zh-CN": "配置电子邮件传送后即可进行注册。",
+    "uz": "Roʻyxatdan oʻtish elektron pochta joʻnatmalari sozlangandan soʻng mumkin.",
+    "vi": "Đăng ký có sẵn sau khi định cấu hình gửi email.",
+    "mn": "Имэйл хүргэлтийг тохируулсны дараа бүртгүүлэх боломжтой.",
+    "ms": "Pendaftaran tersedia selepas penghantaran e-mel dikonfigurasikan."
+  },
+  "Signing in…": {
+    "en": "Signing in…",
+    "ko": "로그인 중…",
+    "ja": "サインイン中…",
+    "zh-CN": "正在登录...",
+    "uz": "Tizimga kirish…",
+    "vi": "Đang đăng nhập…",
+    "mn": "Нэвтэрч байна...",
+    "ms": "Melog masuk…"
+  },
+  "sim": {
+    "en": "sim",
+    "ko": "심",
+    "ja": "シム",
+    "zh-CN": "模拟",
+    "uz": "sim",
+    "vi": "sim",
+    "mn": "сим",
+    "ms": "sim"
+  },
+  "sim-compare": {
+    "en": "sim-compare",
+    "ko": "시뮬레이션 비교",
+    "ja": "sim比較",
+    "zh-CN": "模拟比较",
+    "uz": "taqqoslash",
+    "vi": "sim-so sánh",
+    "mn": "харьцуулах",
+    "ms": "sim-bandingkan"
+  },
+  "sim-esim-options": {
+    "en": "sim-esim-options",
+    "ko": "sim-esim-옵션",
+    "ja": "sim-esim-オプション",
+    "zh-CN": "sim-esim-选项",
+    "uz": "sim-esim-opsiyalari",
+    "vi": "sim-esim-tùy chọn",
+    "mn": "sim-esim-сонголтууд",
+    "ms": "sim-esim-options"
+  },
+  "Soft delete": {
+    "en": "Soft delete",
+    "ko": "일시 삭제",
+    "ja": "論理的な削除",
+    "zh-CN": "软删除",
+    "uz": "Yumshoq oʻchirish",
+    "vi": "Xóa mềm",
+    "mn": "Зөөлөн устгах",
+    "ms": "Padam lembut"
+  },
+  "soft_deleted": {
+    "en": "soft_deleted",
+    "ko": "소프트 삭제됨",
+    "ja": "ソフト削除済み",
+    "zh-CN": "软删除",
+    "uz": "soft_deleted",
+    "vi": "soft_deleted",
+    "mn": "зөөлөн устгасан",
+    "ms": "soft_deleted"
+  },
+  "sold": {
+    "en": "sold",
+    "ko": "판매됨",
+    "ja": "販売済み",
+    "zh-CN": "已售出",
+    "uz": "sotilgan",
+    "vi": "đã bán",
+    "mn": "зарагдсан",
+    "ms": "dijual"
+  },
+  "Sort": {
+    "en": "Sort",
+    "ko": "정렬",
+    "ja": "並べ替え",
+    "zh-CN": "排序",
+    "uz": "Saralash",
+    "vi": "Sắp xếp",
+    "mn": "Эрэмбэлэх",
+    "ms": "Isih"
+  },
+  "Sort containers and labels": {
+    "en": "Sort containers and labels",
+    "ko": "컨테이너 및 라벨 정렬",
+    "ja": "容器とラベルを並べ替える",
+    "zh-CN": "对容器和标签进行排序",
+    "uz": "Konteynerlar va teglarni saralash",
+    "vi": "Sắp xếp thùng chứa và nhãn",
+    "mn": "Контейнер болон шошгыг ангилах",
+    "ms": "Isih bekas dan label"
+  },
+  "Source name": {
+    "en": "Source name",
+    "ko": "소스 이름",
+    "ja": "ソース名",
+    "zh-CN": "来源名称",
+    "uz": "Manba nomi",
+    "vi": "Tên nguồn",
+    "mn": "Эх сурвалжийн нэр",
+    "ms": "Nama sumber"
+  },
+  "Source URL": {
+    "en": "Source URL",
+    "ko": "소스 URL",
+    "ja": "ソース URL",
+    "zh-CN": "来源网址",
+    "uz": "Manba URL manzili",
+    "vi": "URL nguồn",
+    "mn": "Эх сурвалж URL",
+    "ms": "URL Sumber"
+  },
+  "sourceStatus": {
+    "en": "sourceStatus",
+    "ko": "소스상태",
+    "ja": "ソースステータス",
+    "zh-CN": "来源状态",
+    "uz": "manbaStatus",
+    "vi": "nguồnTrạng thái",
+    "mn": "эх Статус",
+    "ms": "sourceStatus"
+  },
+  "spin": {
+    "en": "spin",
+    "ko": "스핀",
+    "ja": "スピン",
+    "zh-CN": "旋转",
+    "uz": "aylanish",
+    "vi": "xoay",
+    "mn": "эргүүлэх",
+    "ms": "putaran"
+  },
+  "Start admin session": {
+    "en": "Start admin session",
+    "ko": "관리 세션 시작",
+    "ja": "管理者セッションを開始します",
+    "zh-CN": "启动管理会话",
+    "uz": "Administrator seansini boshlang",
+    "vi": "Bắt đầu phiên quản trị",
+    "mn": "Админ сессийг эхлүүлэх",
+    "ms": "Mulakan sesi pentadbir"
+  },
+  "State your location clearly": {
+    "en": "State your location clearly",
+    "ko": "귀하의 위치를 명확하게 말하십시오",
+    "ja": "現在地を明確に述べてください",
+    "zh-CN": "清楚地说明您的位置",
+    "uz": "Joylashuvingizni aniq ayting",
+    "vi": "Nêu rõ vị trí của bạn",
+    "mn": "Өөрийн байршлыг тодорхой зааж өгнө үү",
+    "ms": "Nyatakan lokasi anda dengan jelas"
+  },
+  "status": {
+    "en": "status",
+    "ko": "상태",
+    "ja": "ステータス",
+    "zh-CN": "状态",
+    "uz": "holati",
+    "vi": "status",
+    "mn": "төлөв",
+    "ms": "status"
+  },
+  "Status": {
+    "en": "Status",
+    "ko": "상태",
+    "ja": "ステータス",
+    "zh-CN": "状态",
+    "uz": "Holati",
+    "vi": "Trạng thái",
+    "mn": "Статус",
+    "ms": "Status"
+  },
+  "Steps": {
+    "en": "Steps",
+    "ko": "단계",
+    "ja": "ステップ",
+    "zh-CN": "步骤",
+    "uz": "Qadamlar",
+    "vi": "Bước",
+    "mn": "Алхам",
+    "ms": "Langkah"
+  },
+  "storage": {
+    "en": "storage",
+    "ko": "저장",
+    "ja": "ストレージ",
+    "zh-CN": "存储",
+    "uz": "xotira",
+    "vi": "lưu trữ",
+    "mn": "хадгалах сан",
+    "ms": "storan"
+  },
+  "Storage": {
+    "en": "Storage",
+    "ko": "저장",
+    "ja": "ストレージ",
+    "zh-CN": "存储",
+    "uz": "Saqlash",
+    "vi": "Lưu trữ",
+    "mn": "Хадгалах",
+    "ms": "Storan"
+  },
+  "Storage location": {
+    "en": "Storage location",
+    "ko": "저장 위치",
+    "ja": "保管場所",
+    "zh-CN": "存储位置",
+    "uz": "Saqlash joyi",
+    "vi": "Vị trí lưu trữ",
+    "mn": "Хадгалах байршил",
+    "ms": "Lokasi storan"
+  },
+  "Storage period": {
+    "en": "Storage period",
+    "ko": "보관 기간",
+    "ja": "保管期間",
+    "zh-CN": "保存期限",
+    "uz": "Saqlash muddati",
+    "vi": "Thời gian lưu trữ",
+    "mn": "Хадгалах хугацаа",
+    "ms": "Tempoh penyimpanan"
+  },
+  "Storage provider integration": {
+    "en": "Storage provider integration",
+    "ko": "스토리지 제공업체 통합",
+    "ja": "ストレージプロバイダーの統合",
+    "zh-CN": "存储提供商集成",
+    "uz": "Saqlash provayderi integratsiyasi",
+    "vi": "Tích hợp nhà cung cấp dịch vụ lưu trữ",
+    "mn": "Хадгалах үйлчилгээ үзүүлэгчийн нэгдэл",
+    "ms": "Penyepaduan pembekal storan"
+  },
+  "Student supply and demand": {
+    "en": "Student supply and demand",
+    "ko": "학생의 수요와 공급",
+    "ja": "学生の需要と供給",
+    "zh-CN": "学生供需",
+    "uz": "Talaba talabi va taklifi",
+    "vi": "Cung cầu sinh viên",
+    "mn": "Оюутны эрэлт нийлүүлэлт",
+    "ms": "Penawaran dan permintaan pelajar"
+  },
+  "Subject": {
+    "en": "Subject",
+    "ko": "제목",
+    "ja": "件名",
+    "zh-CN": "主题",
+    "uz": "Mavzu",
+    "vi": "Chủ đề",
+    "mn": "Сэдэв",
+    "ms": "Subjek"
+  },
+  "Submit ticket": {
+    "en": "Submit ticket",
+    "ko": "티켓 제출",
+    "ja": "チケットを送信",
+    "zh-CN": "提交票证",
+    "uz": "Chipta yuboring",
+    "vi": "Gửi vé",
+    "mn": "Тасалбар илгээх",
+    "ms": "Serahkan tiket"
+  },
+  "Submitted: ": {
+    "en": "Submitted: ",
+    "ko": "제출됨:",
+    "ja": "提出済み:",
+    "zh-CN": "已提交：",
+    "uz": "Yuborilgan:",
+    "vi": "Đã gửi:",
+    "mn": "Илгээсэн:",
+    "ms": "Diserahkan:"
+  },
+  "Support": {
+    "en": "Support",
+    "ko": "지원",
+    "ja": "サポート",
+    "zh-CN": "支持",
+    "uz": "Yordam",
+    "vi": "Hỗ trợ",
+    "mn": "Дэмжлэг",
+    "ms": "Sokongan"
+  },
+  "Task name": {
+    "en": "Task name",
+    "ko": "작업 이름",
+    "ja": "タスク名",
+    "zh-CN": "任务名称",
+    "uz": "Vazifa nomi",
+    "vi": "Tên nhiệm vụ",
+    "mn": "Ажлын нэр",
+    "ms": "Nama tugas"
+  },
+  "test data cleanup": {
+    "en": "test data cleanup",
+    "ko": "테스트 데이터 정리",
+    "ja": "テストデータのクリーンアップ",
+    "zh-CN": "测试数据清理",
+    "uz": "test maʼlumotlarini tozalash",
+    "vi": "dọn dẹp dữ liệu thử nghiệm",
+    "mn": "өгөгдөл цэвэрлэх туршилт",
+    "ms": "ujian pembersihan data"
+  },
+  "The application is being confirmed.": {
+    "en": "The application is being confirmed.",
+    "ko": "신청이 확인 중입니다.",
+    "ja": "申請を確認中です。",
+    "zh-CN": "申请正在确认中。",
+    "uz": "Ariza tasdiqlanmoqda.",
+    "vi": "Đơn đăng ký đang được xác nhận.",
+    "mn": "Өргөдлийг баталгаажуулж байна.",
+    "ms": "Permohonan sedang disahkan."
+  },
+  "The monthly free Kakao call limit was reached. Showing demo places.": {
+    "en": "The monthly free Kakao call limit was reached. Showing demo places.",
+    "ko": "카카오월간 무료 통화 한도에 도달했습니다. 데모 장소를 표시합니다.",
+    "ja": "毎月の無料カカオ通話制限に達しました。デモ会場を表示します。",
+    "zh-CN": "已达到每月免费 Kakao 通话限额。显示演示地点。",
+    "uz": "Oylik bepul Kakao qo‘ng‘iroqlari chegarasiga yetdi. Namoyish joylari koʻrsatilmoqda.",
+    "vi": "Đã đạt đến giới hạn cuộc gọi Kakao miễn phí hàng tháng. Hiển thị các địa điểm demo.",
+    "mn": "Сарын үнэгүй Какао дуудлагын хязгаарт хүрсэн. Демо газруудыг харуулж байна.",
+    "ms": "Had panggilan percuma Kakao bulanan telah dicapai. Menunjukkan tempat demo."
+  },
+  "The operations team is reviewing your request.": {
+    "en": "The operations team is reviewing your request.",
+    "ko": "운영팀에서 귀하의 요청을 검토 중입니다.",
+    "ja": "運用チームがあなたのリクエストを検討しています。",
+    "zh-CN": "运营团队正在审核您的请求。",
+    "uz": "Operatsion guruh soʻrovingizni koʻrib chiqmoqda.",
+    "vi": "Nhóm vận hành đang xem xét yêu cầu của bạn.",
+    "mn": "Үйл ажиллагааны баг таны хүсэлтийг хянаж байна.",
+    "ms": "Pasukan operasi sedang menyemak permintaan anda."
+  },
+  "The request was cancelled.": {
+    "en": "The request was cancelled.",
+    "ko": "요청이 취소되었습니다.",
+    "ja": "リクエストはキャンセルされました。",
+    "zh-CN": "请求已取消。",
+    "uz": "So‘rov bekor qilindi.",
+    "vi": "Yêu cầu đã bị hủy.",
+    "mn": "Хүсэлтийг цуцалсан.",
+    "ms": "Permintaan telah dibatalkan."
+  },
+  "The token is not stored; authentication uses a server HttpOnly session.": {
+    "en": "The token is not stored; authentication uses a server HttpOnly session.",
+    "ko": "토큰은 저장되지 않습니다. 인증은 서버 HttpOnly 세션을 사용합니다.",
+    "ja": "トークンは保存されません。認証ではサーバーの HttpOnly セッションが使用されます。",
+    "zh-CN": "未存储令牌；身份验证使用服务器 HttpOnly 会话。",
+    "uz": "Token saqlanmaydi; autentifikatsiya serverning HttpOnly seansidan foydalanadi.",
+    "vi": "Mã thông báo không được lưu trữ; xác thực sử dụng phiên HttpOnly của máy chủ.",
+    "mn": "Токен хадгалагдаагүй; баталгаажуулалт нь серверийн HttpOnly сессийг ашигладаг.",
+    "ms": "Token tidak disimpan; pengesahan menggunakan sesi HttpOnly pelayan."
+  },
+  "This comparison is general guidance, not a provider offer": {
+    "en": "This comparison is general guidance, not a provider offer",
+    "ko": "이 비교는 공급자 제안이 아닌 일반적인 지침입니다.",
+    "ja": "この比較は一般的なガイダンスであり、プロバイダーの提案ではありません",
+    "zh-CN": "此比较是一般指导，而不是提供商的报价",
+    "uz": "Bu taqqoslash provayder taklifi emas, balki umumiy yoʻl-yoʻriqdir",
+    "vi": "Sự so sánh này là hướng dẫn chung, không phải là ưu đãi của nhà cung cấp",
+    "mn": "Энэ харьцуулалт нь үйлчилгээ үзүүлэгчийн санал биш, ерөнхий удирдамж юм",
+    "ms": "Perbandingan ini adalah panduan umum, bukan tawaran pembekal"
+  },
+  "This is a Kakao search result; confirm the detailed category and operating information before visiting.": {
+    "en": "This is a Kakao search result; confirm the detailed category and operating information before visiting.",
+    "ko": "카카오 검색 결과입니다. 자세한 카테고리와 운영정보를 확인하신 후 방문해주세요.",
+    "ja": "これはカカオの検索結果です。詳しいカテゴリーや営業情報をご確認の上、ご来店ください。",
+    "zh-CN": "这是Kakao搜索结果；参观前请确认详细的类别和经营信息。",
+    "uz": "Bu Kakao qidiruv natijasi; tashrif buyurishdan oldin batafsil toifa va operatsion ma'lumotni tasdiqlang.",
+    "vi": "Đây là kết quả tìm kiếm trên Kakao; xác nhận danh mục chi tiết và thông tin vận hành trước khi truy cập.",
+    "mn": "Энэ бол Какао хайлтын илэрц; зочлохын өмнө нарийвчилсан ангилал, үйл ажиллагааны мэдээллийг баталгаажуулна уу.",
+    "ms": "Ini ialah hasil carian Kakao; mengesahkan kategori terperinci dan maklumat operasi sebelum melawat."
+  },
+  "This is the content review date, not an official update date.": {
+    "en": "This is the content review date, not an official update date.",
+    "ko": "이는 공식적인 업데이트 날짜가 아닌 콘텐츠 검토 날짜입니다.",
+    "ja": "これはコンテンツのレビュー日であり、正式な更新日ではありません。",
+    "zh-CN": "这是内容审核日期，而不是官方更新日期。",
+    "uz": "Bu kontentni koʻrib chiqish sanasi, rasmiy yangilanish sanasi emas.",
+    "vi": "Đây là ngày xem xét nội dung, không phải ngày cập nhật chính thức.",
+    "mn": "Энэ бол контентыг шалгах огноо бөгөөд албан ёсны шинэчлэлтийн огноо биш юм.",
+    "ms": "Ini ialah tarikh semakan kandungan, bukan tarikh kemas kini rasmi."
+  },
+  "This week": {
+    "en": "This week",
+    "ko": "이번 주",
+    "ja": "今週",
+    "zh-CN": "本周",
+    "uz": "Bu hafta",
+    "vi": "Tuần này",
+    "mn": "Энэ долоо хоногт",
+    "ms": "Minggu ini"
+  },
+  "tickets": {
+    "en": "tickets",
+    "ko": "티켓",
+    "ja": "チケット",
+    "zh-CN": "门票",
+    "uz": "chiptalar",
+    "vi": "vé",
+    "mn": "тасалбар",
+    "ms": "tiket"
+  },
+  "Tickets": {
+    "en": "Tickets",
+    "ko": "티켓",
+    "ja": "チケット",
+    "zh-CN": "门票",
+    "uz": "Chiptalar",
+    "vi": "Vé",
+    "mn": "Тасалбар",
+    "ms": "Tiket"
+  },
+  "To": {
+    "en": "To",
+    "ko": "로",
+    "ja": "へ",
+    "zh-CN": "至",
+    "uz": "Kimga",
+    "vi": "Đến",
+    "mn": "руу",
+    "ms": "Kepada"
+  },
+  "Today": {
+    "en": "Today",
+    "ko": "오늘",
+    "ja": "今日",
+    "zh-CN": "今天",
+    "uz": "Bugun",
+    "vi": "Hôm nay",
+    "mn": "Өнөөдөр",
+    "ms": "Hari ini"
+  },
+  "Too many requests. Try again later.": {
+    "en": "Too many requests. Try again later.",
+    "ko": "요청이 너무 많습니다. 나중에 다시 시도하세요.",
+    "ja": "リクエストが多すぎます。後でもう一度試してください。",
+    "zh-CN": "请求太多。稍后再试。",
+    "uz": "Juda koʻp soʻrovlar. Keyinroq qayta urinib ko‘ring.",
+    "vi": "Quá nhiều yêu cầu. Hãy thử lại sau.",
+    "mn": "Хэт олон хүсэлт байна. Дараа дахин оролдоно уу.",
+    "ms": "Terlalu banyak permintaan. Cuba lagi nanti."
+  },
+  "Travel from the airport to KU": {
+    "en": "Travel from the airport to KU",
+    "ko": "공항에서 고려대까지 이동",
+    "ja": "空港からKUまでの移動",
+    "zh-CN": "从机场前往 KU",
+    "uz": "Aeroportdan KUga sayohat",
+    "vi": "Di chuyển từ sân bay về KU",
+    "mn": "Нисэх онгоцны буудлаас КҮ хүртэл аялах",
+    "ms": "Perjalanan dari lapangan terbang ke KU"
+  },
+  "unavailable": {
+    "en": "unavailable",
+    "ko": "사용할 수 없음",
+    "ja": "は利用できません",
+    "zh-CN": "不可用",
+    "uz": "mavjud emas",
+    "vi": "không có sẵn",
+    "mn": "боломжгүй",
+    "ms": "tidak tersedia"
+  },
+  "universityId": {
+    "en": "universityId",
+    "ko": "대학 ID",
+    "ja": "大学 ID",
+    "zh-CN": "大学ID",
+    "uz": "universitet identifikatori",
+    "vi": "trường đại họcId",
+    "mn": "их сургуулийн ID",
+    "ms": "universitiId"
+  },
+  "url": {
+    "en": "url",
+    "ko": "URL",
+    "ja": "URL",
+    "zh-CN": "网址",
+    "uz": "url",
+    "vi": "địa chỉ",
+    "mn": "url",
+    "ms": "url"
+  },
+  "use client": {
+    "en": "use client",
+    "ko": "클라이언트 사용",
+    "ja": "使用クライアント",
+    "zh-CN": "使用客户端",
+    "uz": "mijozdan foydalanish",
+    "vi": "sử dụng ứng dụng khách",
+    "mn": "үйлчлүүлэгч ашиглах",
+    "ms": "gunakan klien"
+  },
+  "Use emergency services for urgent situations": {
+    "en": "Use emergency services for urgent situations",
+    "ko": "긴급 상황에는 응급 서비스를 사용하세요.",
+    "ja": "緊急の場合は緊急サービスを利用する",
+    "zh-CN": "在紧急情况下使用紧急服务",
+    "uz": "Favqulodda vaziyatlarda favqulodda xizmatlardan foydalaning",
+    "vi": "Sử dụng dịch vụ khẩn cấp cho những tình huống khẩn cấp",
+    "mn": "Яаралтай тохиолдолд яаралтай тусламжийн үйлчилгээг ашиглана уу",
+    "ms": "Gunakan perkhidmatan kecemasan untuk situasi mendesak"
+  },
+  "Use HiKorea to confirm the documents and appointment rules that apply to your status.": {
+    "en": "Use HiKorea to confirm the documents and appointment rules that apply to your status.",
+    "ko": "HiKOREA를 통해 귀하의 신분에 적용되는 서류와 임명 규정을 확인하세요.",
+    "ja": "HiKorea を使用して、あなたのステータスに適用される書類と任命規則を確認してください。",
+    "zh-CN": "使用 HiKorea 确认适用于您身份的文件和预约规则。",
+    "uz": "Maqomingizga tegishli hujjatlar va uchrashuv qoidalarini tasdiqlash uchun HiKorea-dan foydalaning.",
+    "vi": "Sử dụng HiKorea để xác nhận các tài liệu và quy tắc cuộc hẹn áp dụng cho trạng thái của bạn.",
+    "mn": "HiKorea-г ашиглан өөрийн статуст хамаарах бичиг баримт болон томилгооны дүрмийг баталгаажуулна уу.",
+    "ms": "Gunakan HiKorea untuk mengesahkan dokumen dan peraturan temu janji yang digunakan pada status anda."
+  },
+  "Use this in-app ticket instead of external messaging. Our first-response target is within two business days.": {
+    "en": "Use this in-app ticket instead of external messaging. Our first-response target is within two business days.",
+    "ko": "외부 메시지 대신 이 인앱 티켓을 사용하세요. 첫 번째 응답 목표는 영업일 기준 2일 이내입니다.",
+    "ja": "外部メッセージの代わりにこのアプリ内チケットを使用してください。最初の対応は 2 営業日以内を目標としています。",
+    "zh-CN": "使用此应用内票证而不是外部消息传递。我们的第一响应目标是在两个工作日内。",
+    "uz": "Tashqi xabarlar oʻrniga ushbu ilova ichidagi chiptadan foydalaning. Bizning birinchi javob maqsadimiz ikki ish kuni ichida.",
+    "vi": "Sử dụng vé trong ứng dụng này thay vì nhắn tin bên ngoài. Mục tiêu phản hồi đầu tiên của chúng tôi là trong vòng hai ngày làm việc.",
+    "mn": "Гадны мессежийн оронд энэ апп доторх тасалбарыг ашиглаарай. Бидний эхний зорилт бол ажлын хоёр өдрийн дотор.",
+    "ms": "Gunakan tiket dalam apl ini dan bukannya pemesejan luaran. Sasaran respons pertama kami adalah dalam masa dua hari perniagaan."
+  },
+  "Vegan menu available": {
+    "en": "Vegan menu available",
+    "ko": "비건 메뉴 이용 가능",
+    "ja": "ビーガンメニューあり",
+    "zh-CN": "提供素食菜单",
+    "uz": "Vegan menyusi mavjud",
+    "vi": "Có sẵn thực đơn chay",
+    "mn": "Веган цэс боломжтой",
+    "ms": "Menu vegan tersedia"
+  },
+  "Vegan specialist": {
+    "en": "Vegan specialist",
+    "ko": "채식주의 전문가",
+    "ja": "ビーガン専門家",
+    "zh-CN": "素食专家",
+    "uz": "Vegan mutaxassisi",
+    "vi": "Chuyên gia ăn chay",
+    "mn": "Веган мэргэжилтэн",
+    "ms": "Pakar vegan"
+  },
+  "verified": {
+    "en": "verified",
+    "ko": "확인됨",
+    "ja": "を確認しました",
+    "zh-CN": "已验证",
+    "uz": "tasdiqlandi",
+    "vi": "đã xác minh",
+    "mn": "баталгаажуулсан",
+    "ms": "disahkan"
+  },
+  "Verified": {
+    "en": "Verified",
+    "ko": "확인됨",
+    "ja": "確認済み",
+    "zh-CN": "已验证",
+    "uz": "Tasdiqlangan",
+    "vi": "Đã xác minh",
+    "mn": "Баталгаажсан",
+    "ms": "Disahkan"
+  },
+  "Verified information": {
+    "en": "Verified information",
+    "ko": "확인된 정보",
+    "ja": "確認済みの情報",
+    "zh-CN": "已验证信息",
+    "uz": "Tasdiqlangan maʼlumot",
+    "vi": "Thông tin đã được xác minh",
+    "mn": "Баталгаажсан мэдээлэл",
+    "ms": "Maklumat yang disahkan"
+  },
+  "Verified source": {
+    "en": "Verified source",
+    "ko": "확인된 소스",
+    "ja": "検証済みのソース",
+    "zh-CN": "来源已验证",
+    "uz": "Tasdiqlangan manba",
+    "vi": "Nguồn đã được xác minh",
+    "mn": "Баталгаажсан эх сурвалж",
+    "ms": "Sumber yang disahkan"
+  },
+  "version_conflict": {
+    "en": "version_conflict",
+    "ko": "버전_충돌",
+    "ja": "バージョン競合",
+    "zh-CN": "版本冲突",
+    "uz": "version_conflict",
+    "vi": "phiên bản_xung đột",
+    "mn": "хувилбарын зөрчил",
+    "ms": "version_conflict"
+  },
+  "View details": {
+    "en": "View details",
+    "ko": "자세히 보기",
+    "ja": "詳細を見る",
+    "zh-CN": "查看详情",
+    "uz": "Tafsilotlarni ko‘rish",
+    "vi": "Xem chi tiết",
+    "mn": "Дэлгэрэнгүйг харах",
+    "ms": "Lihat butiran"
+  },
+  "View estimate": {
+    "en": "View estimate",
+    "ko": "견적 보기",
+    "ja": "見積もりを見る",
+    "zh-CN": "查看估计",
+    "uz": "Taxmini koʻrish",
+    "vi": "Xem ước tính",
+    "mn": "Тооцооллыг харах",
+    "ms": "Lihat anggaran"
+  },
+  "View map": {
+    "en": "View map",
+    "ko": "지도 보기",
+    "ja": "地図を見る",
+    "zh-CN": "查看地图",
+    "uz": "Xaritani ko‘rish",
+    "vi": "Xem bản đồ",
+    "mn": "Газрын зургийг харах",
+    "ms": "Lihat peta"
+  },
+  "View on Kakao Map": {
+    "en": "View on Kakao Map",
+    "ko": "카카오맵에서 보기",
+    "ja": "カカオマップで見る",
+    "zh-CN": "在 Kakao 地图上查看",
+    "uz": "Kakao xaritasida ko‘rish",
+    "vi": "Xem trên bản đồ Kakao",
+    "mn": "Какао газрын зураг дээр харах",
+    "ms": "Lihat pada Peta Kakao"
+  },
+  "View profile": {
+    "en": "View profile",
+    "ko": "프로필 보기",
+    "ja": "プロフィールを見る",
+    "zh-CN": "查看个人资料",
+    "uz": "Profilni ko‘rish",
+    "vi": "Xem hồ sơ",
+    "mn": "Профайлыг харах",
+    "ms": "Lihat profil"
+  },
+  "View related lifecycle task": {
+    "en": "View related lifecycle task",
+    "ko": "관련 수명 주기 작업 보기",
+    "ja": "関連するライフサイクル タスクの表示",
+    "zh-CN": "查看相关生命周期任务",
+    "uz": "Tegishli hayot aylanishi vazifasini koʻrish",
+    "vi": "Xem nhiệm vụ vòng đời liên quan",
+    "mn": "Холбогдох амьдралын мөчлөгийн ажлыг харах",
+    "ms": "Lihat tugas kitaran hayat yang berkaitan"
+  },
+  "View source": {
+    "en": "View source",
+    "ko": "소스 보기",
+    "ja": "ソースを表示",
+    "zh-CN": "查看源代码",
+    "uz": "Manbani ko‘rish",
+    "vi": "Xem nguồn",
+    "mn": "Эх сурвалжийг харах",
+    "ms": "Lihat sumber"
+  },
+  "Write the destination in Korean": {
+    "en": "Write the destination in Korean",
+    "ko": "목적지를 한글로 적어주세요",
+    "ja": "目的地を韓国語で書きます",
+    "zh-CN": "用韩语写下目的地",
+    "uz": "Manzilni koreys tilida yozing",
+    "vi": "Viết điểm đến bằng tiếng Hàn",
+    "mn": "Очих газраа солонгосоор бичнэ үү",
+    "ms": "Tulis destinasi dalam bahasa Korea"
+  },
+  "Write your address in Korean": {
+    "en": "Write your address in Korean",
+    "ko": "주소를 한글로 적어주세요",
+    "ja": "住所を韓国語で書きます",
+    "zh-CN": "用韩语写下您的地址",
+    "uz": "Manzilingizni koreys tilida yozing",
+    "vi": "Viết địa chỉ của bạn bằng tiếng Hàn",
+    "mn": "Хаягаа солонгосоор бичнэ үү",
+    "ms": "Tulis alamat anda dalam bahasa Korea"
+  },
+  "You have no reservations yet.": {
+    "en": "You have no reservations yet.",
+    "ko": "아직 예약이 없습니다.",
+    "ja": "まだ予約がありません。",
+    "zh-CN": "您还没有预订。",
+    "uz": "Sizda hali bandlov yoʻq.",
+    "vi": "Bạn chưa có đặt chỗ nào.",
+    "mn": "Танд одоогоор захиалга алга.",
+    "ms": "Anda belum mempunyai tempahan lagi."
+  },
+  "Your request has been submitted.": {
+    "en": "Your request has been submitted.",
+    "ko": "귀하의 요청이 제출되었습니다.",
+    "ja": "リクエストが送信されました。",
+    "zh-CN": "您的请求已提交。",
+    "uz": "So‘rovingiz yuborildi.",
+    "vi": "Yêu cầu của bạn đã được gửi.",
+    "mn": "Таны хүсэлтийг илгээсэн.",
+    "ms": "Permintaan anda telah diserahkan."
+  },
+  "Your request information is being prepared.": {
+    "en": "Your request information is being prepared.",
+    "ko": "귀하의 요청 정보를 준비 중입니다.",
+    "ja": "リクエスト情報を準備中です。",
+    "zh-CN": "正在准备您的请求信息。",
+    "uz": "So‘rovingiz ma’lumotlari tayyorlanmoqda.",
+    "vi": "Thông tin yêu cầu của bạn đang được chuẩn bị.",
+    "mn": "Таны хүсэлтийн мэдээллийг бэлтгэж байна.",
+    "ms": "Maklumat permintaan anda sedang disediakan."
+  },
+  "Your selected service and progress are saved. Payment, provider, and messaging integrations are planned.": {
+    "en": "Your selected service and progress are saved. Payment, provider, and messaging integrations are planned.",
+    "ko": "선택한 서비스와 진행 상황이 저장됩니다. 결제, 공급자 및 메시징 통합이 계획되어 있습니다.",
+    "ja": "選択したサービスと進行状況が保存されます。支払い、プロバイダー、メッセージングの統合が計画されています。",
+    "zh-CN": "您选择的服务和进度已保存。支付、提供商和消息传递集成已在计划中。",
+    "uz": "Siz tanlagan xizmat va taraqqiyotingiz saqlanadi. Toʻlov, provayder va xabar almashish integratsiyasi rejalashtirilgan.",
+    "vi": "Dịch vụ và tiến trình đã chọn của bạn sẽ được lưu. Tích hợp thanh toán, nhà cung cấp và nhắn tin đã được lên kế hoạch.",
+    "mn": "Таны сонгосон үйлчилгээ болон явц хадгалагдсан. Төлбөр, үйлчилгээ үзүүлэгч, мессежийг нэгтгэхээр төлөвлөж байна.",
+    "ms": "Perkhidmatan dan kemajuan pilihan anda disimpan. Penyepaduan pembayaran, pembekal dan pemesejan dirancang."
+  }
+}

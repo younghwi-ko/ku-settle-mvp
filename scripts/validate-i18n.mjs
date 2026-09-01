@@ -7,6 +7,7 @@ import { detectLocale, supportedLocales } from "../app/i18n/types.ts";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const expectedNamespaces = ["common", "navigation", "home", "onboarding", "marketplace", "localGuide", "verification", "profile", "admin", "reset", "validation", "errors", "accessibility"];
+const leakedMarkerPattern = /\[\[\d+\]\]\]/;
 
 function deepMerge(base, override) {
   const output = { ...base };
@@ -34,6 +35,7 @@ const locales = Object.fromEntries(await Promise.all(supportedLocales.map(async 
   const source = await readFile(`${projectRoot}app/i18n/locales/${locale}.json`, "utf8");
   return [locale, JSON.parse(source)];
 })));
+const legacyCopy = JSON.parse(await readFile(`${projectRoot}app/i18n/legacy-copy.json`, "utf8"));
 
 for (const locale of supportedLocales) assert.ok(Object.keys(locales[locale]).every((key) => expectedNamespaces.includes(key)), `${locale}: unknown namespace`);
 
@@ -44,9 +46,21 @@ for (const locale of supportedLocales) {
   for (const [key, value] of candidate) {
     assert.equal(typeof value, "string", `${locale}:${key} must be a string`);
     assert.ok(value.trim().length > 0, `${locale}:${key} is empty`);
+    assert.ok(!leakedMarkerPattern.test(value), `${locale}:${key} contains a leaked translation marker`);
+    assert.equal(value.includes("\n"), String(reference.get(key)).includes("\n"), `${locale}:${key} has an unexpected line break`);
     assert.ok(!/^\w+(?:[:.]\w+){1,}$/.test(value), `${locale}:${key} looks like an exposed translation key`);
     assert.deepEqual(interpolationVariables(value), interpolationVariables(reference.get(key)), `${locale}:${key} interpolation variables differ from English`);
     if (["uz", "vi", "mn", "ms"].includes(locale)) assert.ok(!/[가-힣]/.test(value), `${locale}:${key} unexpectedly exposes Korean text`);
+  }
+}
+for (const [source, translations] of Object.entries(legacyCopy)) {
+  assert.ok(source.trim(), "legacy translation source is empty");
+  for (const locale of supportedLocales) {
+    assert.equal(typeof translations[locale], "string", `legacy copy is missing ${locale}: ${source}`);
+    assert.ok(translations[locale].trim(), `legacy copy is empty for ${locale}: ${source}`);
+    assert.ok(!leakedMarkerPattern.test(translations[locale]), `legacy ${locale} contains a leaked translation marker: ${source}`);
+    assert.equal(translations[locale].includes("\n"), source.includes("\n"), `legacy ${locale} has an unexpected line break: ${source}`);
+    if (["uz", "vi", "mn", "ms"].includes(locale)) assert.ok(!/[가-힣]/.test(translations[locale]), `legacy ${locale} unexpectedly exposes Korean text: ${source}`);
   }
 }
 
@@ -84,4 +98,4 @@ const fallbackInstance = i18next.createInstance();
 await fallbackInstance.init({ resources: fallbackResources, lng: "ja", fallbackLng: "en", ns: ["common"], defaultNS: "common", initAsync: false });
 assert.equal(fallbackInstance.t("cancel"), locales.en.common.cancel, "production fallback must display English instead of a key");
 
-console.log(`i18n validation passed: ${supportedLocales.length} locales, ${expectedNamespaces.length} namespaces, ${reference.size} leaf keys`);
+console.log(`i18n validation passed: ${supportedLocales.length} locales, ${expectedNamespaces.length} namespaces, ${reference.size} leaf keys, ${Object.keys(legacyCopy).length} inline phrases`);

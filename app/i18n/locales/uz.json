@@ -1,15 +1,663 @@
 {
-  "common": {"complete":"Tugallash","completed":"Tugallandi","notStarted":"Boshlanmagan","inProgress":"Jarayonda","available":"Mavjud","reserved":"Band qilingan","close":"Yopish","cancel":"Bekor qilish","sampleData":"Namuna ma’lumotlari","sampleOnly":"Namuna mahsulotlari haqiqiy savdo uchun emas.","liveData":"Haqiqiy e’lon","saving":"Saqlanmoqda…","saved":"Saqlandi","yes":"Ha","no":"Yo‘q"},
-  "navigation": {"home":"Bosh sahifa","onboarding":"Hayot bosqichlari","marketplace":"Kampus bozori","localGuide":"Mahalliy qo‘llanma","lifeGuide":"Hayot qo‘llanmasi","admin":"Administrator","brandTagline":"Kelishdan ketishgacha","language":"Til","selectLanguage":"Tilni tanlang","currentLanguage":"Joriy til: {{language}}","openMenu":"Menyuni ochish","closeMenu":"Menyuni yopish","footerNotice":"Kirishsiz foydalaning · Korea University rasmiy xizmati emas · Namuna mahsulotlari haqiqiy savdo uchun emas"},
-  "home": {"eyebrow":"XALQARO TALABA YORDAMCHISI","greeting":"Korea University’ga xush kelibsiz, {{name}}","lead":"Kelishdan ketishgacha shaxsiy rejangiz.","body":"Universitet hayotida nimani tayyorlash, keyin nima qilish va qayerda bajarishni bir joyda ko‘ring.","primaryAction":"Rejamni ochish","secondaryAction":"Kampus bozorini ko‘rish","trust":{"account":"Hisobsiz foydalanish","languages":"8 tilda mavjud","journey":"Kelishdan ketishgacha"},"todaySummary":"Bugun va yaqin kunlar","noUpcoming":"Bugun rejalashtirilgan ish yo‘q.","explore":"Ko‘rish"},
-  "onboarding": {"title":"KU hayot rejangiz","body":"Kelishdan oldin va ketishgacha kerakli ro‘yxatni bajaring.","overallProgress":"Umumiy jarayon","prepare":"Nima tayyorlash kerak","estimatedTime":"Taxminiy vaqt","practicalNote":"Amaliy eslatma","officialGuidance":"Rasmiy ma’lumot","markComplete":"Bajarildi: {{task}}","markIncomplete":"Bajarilmadi: {{task}}"},
-  "marketplace": {"eyebrow":"KAMPUS BOZORI","title":"Bir talabaning ortiqcha buyumi boshqasiga kerak bo‘lishi mumkin","body":"Kirishsiz mahsulot joylang va band qiling. Namuna va haqiqiy e’lonlar alohida ko‘rsatiladi.","incoming":"KU’ga yangi keldim","leaving":"KU’dan ketmoqdaman","search":"Mahsulot qidirish","clearSearch":"Qidiruvni tozalash","all":"Barchasi","condition":"Holati","pickup":"Olib ketish joyi","seller":"Sotuvchi","details":"Batafsil","contact":"Sotuvchi bilan bog‘lanish","empty":"Qidiruvga mos mahsulot topilmadi.","form":{"title":"Keyingi talaba uchun mahsulot joylang","body":"Rasm qo‘shsangiz, xaridor mahsulot holatini yaxshiroq tushunadi.","itemName":"Mahsulot nomi","price":"Narx","category":"Toifa","condition":"Holati","pickup":"Olib ketish joyi","availability":"Mavjud vaqt","submit":"E’lon joylash","success":"Mahsulot e’lon qilindi."},"markSold":"Sotildi deb belgilash","hideListing":"E’lonni yashirish","showListing":"E’lonni ko‘rsatish","cancelReservation":"Bandni bekor qilish","deleteListing":"E’lonni o‘chirish","myReservations":"Mening bandlarim","confirmReservation":"Band qilishni tasdiqlash","imageHint":"PNG, JPG yoki WebP · 8 MB gacha"},
-  "localGuide": {"eyebrow":"MAHALLIY QO‘LLANMA","title":"Anam atrofida qulay yashang","body":"KU yaqinidagi joylar uchun amaliy qo‘llanma. Kakao qidiruv natijalari va ichki tekshirilgan joylar birga ko‘rsatiladi.","all":"Barchasi","englishAvailable":"Ingliz tilida xizmat bo‘lishi mumkin","studentTip":"Talaba uchun maslahat","empty":"Bu toifada joy topilmadi.","categories":{"Food":"Ovqat","Halal":"Halol","Vegan":"Vegan","Hospital":"Kasalxona","Pharmacy":"Dorixona","Hair Salon":"Sartaroshxona","Cafe":"Kafe","Grocery":"Oziq-ovqat do‘koni"}},
-  "verification": {"signIn":"Kirish","continue":"KU elektron pochtasi bilan davom etish","title":"Talaba ma’lumotini tekshirish","email":"Universitet elektron pochtasi"},
-  "profile": {"guestName":"Mehmon","save":"Profilni saqlash","arrival":"Kelish sanasi","housing":"Yashash joyi","name":"Ism","create":"Rejamni yaratish","languageNote":"Tilni keyin ham o‘zgartirishingiz mumkin."},
-  "admin": {"eyebrow":"Administrator boshqaruvi","title":"Administrator paneli","products":"Mahsulotlar","reservations":"Bandlar","reports":"Shikoyatlar","tasks":"Vazifalar","export":"Eksport","import":"Import","productSection":"Mahsulotlarni boshqarish","reservationSection":"Bandlarni boshqarish","reportSection":"Shikoyatlarni boshqarish","noData":"Ma’lumot yo‘q."},
-  "reset": {"button":"Ma’lumotlarimni tiklash","title":"Ma’lumotlaringizni tiklaysizmi?","confirm":"Tiklash"},
-  "validation": {"requiredFields":"Barcha majburiy maydonlarni to‘ldiring.","positivePrice":"Noldan katta narx kiriting.","itemRequired":"Mahsulot nomini kiriting.","pickupRequired":"Olib ketish joyini kiriting."},
-  "errors": {"generic":"Xatolik yuz berdi. Qayta urinib ko‘ring.","imageInvalid":"To‘g‘ri rasm faylini tanlang.","missingTranslation":"Bu mazmun vaqtincha ingliz tilida ko‘rsatilmoqda.","rateLimit":"Juda ko‘p urinish. Biroz kuting.","sessionExpired":"Sessiya tugadi. Qayta kiring.","permissionDenied":"Bu amal uchun ruxsatingiz yo‘q.","offline":"Internet aloqasi yo‘q. O‘zgarish saqlanmadi.","saveFailed":"Saqlanmadi. Qayta urinib ko‘ring."},
-  "accessibility": {"brandHome":"KU Settle bosh sahifasi","profile":"Anonim profilni ochish","productDetails":"{{product}} tafsilotlarini ko‘rish","closeLanguage":"Til menyusini yopish"}
+  "common": {
+    "complete": "Tugallash",
+    "completed": "Tugallandi",
+    "notStarted": "Boshlanmagan",
+    "inProgress": "Jarayonda",
+    "available": "Mavjud",
+    "reserved": "Band qilingan",
+    "close": "Yopish",
+    "cancel": "Bekor qilish",
+    "sampleData": "Namuna ma’lumotlari",
+    "sampleOnly": "Namuna mahsulotlari haqiqiy savdo uchun emas.",
+    "liveData": "Haqiqiy e’lon",
+    "saving": "Saqlanmoqda…",
+    "saved": "Saqlandi",
+    "yes": "Ha",
+    "no": "Yo‘q",
+    "verified": "KU talabasi tasdiqlandi",
+    "demoData": "Namoyish maʼlumotlari",
+    "sample": "Namuna",
+    "durationMinutes": "{{min}}–{{max}} min",
+    "countOfTotal": "{{completed}} / {{total}}",
+    "copyright": "© {{year}} KU Settle"
+  },
+  "navigation": {
+    "home": "Bosh sahifa",
+    "onboarding": "Hayot bosqichlari",
+    "marketplace": "Kampus bozori",
+    "localGuide": "Mahalliy qo‘llanma",
+    "lifeGuide": "Hayot qo‘llanmasi",
+    "admin": "Administrator",
+    "brandTagline": "Kelishdan ketishgacha",
+    "language": "Til",
+    "selectLanguage": "Tilni tanlang",
+    "currentLanguage": "Joriy til: {{language}}",
+    "openMenu": "Menyuni ochish",
+    "closeMenu": "Menyuni yopish",
+    "footerNotice": "Kirishsiz foydalaning · Korea University rasmiy xizmati emas · Namuna mahsulotlari haqiqiy savdo uchun emas",
+    "primaryLabel": "Asosiy navigatsiya",
+    "mobileLabel": "Mobil navigatsiya"
+  },
+  "home": {
+    "eyebrow": "XALQARO TALABA YORDAMCHISI",
+    "greeting": "Korea University’ga xush kelibsiz, {{name}}",
+    "lead": "Kelishdan ketishgacha shaxsiy rejangiz.",
+    "body": "Universitet hayotida nimani tayyorlash, keyin nima qilish va qayerda bajarishni bir joyda ko‘ring.",
+    "primaryAction": "Rejamni ochish",
+    "secondaryAction": "Kampus bozorini ko‘rish",
+    "trust": {
+      "account": "Hisobsiz foydalanish",
+      "languages": "8 tilda mavjud",
+      "journey": "Kelishdan ketishgacha"
+    },
+    "todaySummary": "Bugun va yaqin kunlar",
+    "noUpcoming": "Bugun rejalashtirilgan ish yo‘q.",
+    "explore": "Ko‘rish",
+    "progressTitle": "Hayotiy tsiklingizning borishi",
+    "urgentItems": "Nimaga e'tibor berish kerak",
+    "incompleteCount": "{{count}} ta tugallanmagan vazifa",
+    "progressSummaryShort": "{{progress}}% bajarildi",
+    "overdue": "Muddati o'tgan",
+    "dueToday": "Muddati bugun",
+    "dueSoon": "Tez orada",
+    "progressSummary": "{{total}} ta vazifadan {{completed}} ta bajarildi",
+    "lifecycleLabel": "Kelishdan ketishgacha sayohat",
+    "stageSummary": "{{stage}}: {{total}}dan {{completed}}, {{progress}}",
+    "openPlan": "Ochiq hayot aylanishi rejasi",
+    "recommended": "Tavsiya etilgan keyingi qadam",
+    "viewRecommended": "Tavsiya etilgan vazifani koʻrish",
+    "allCompletedTitle": "Barcha sozlash vazifalari bajarildi",
+    "allCompletedBody": "Siz KU hayot aylanish rejasini bajardingiz. Sizga kerak bo'lganda istalgan bosqichni ko'rib chiqing.",
+    "reviewCompleted": "Bajarilgan vazifalarni ko‘rib chiqing",
+    "informationToAction": "MA'LUMOT → HARAKAT",
+    "connectedJourney": "Bir sayohat, to'rtta bog'langan bosqich",
+    "features": {
+      "onboarding": "Muhim maʼlumotlarni harakatga aylantiring",
+      "marketplace": "Boshqa talabalardan hamyonbop narsalarni toping",
+      "localGuide": "KU yaqinidagi talabalar uchun qulay joylarni kashf eting"
+    }
+  },
+  "onboarding": {
+    "title": "KU hayot rejangiz",
+    "body": "Kelishdan oldin va ketishgacha kerakli ro‘yxatni bajaring.",
+    "overallProgress": "Umumiy jarayon",
+    "prepare": "Nima tayyorlash kerak",
+    "estimatedTime": "Taxminiy vaqt",
+    "practicalNote": "Amaliy eslatma",
+    "officialGuidance": "Rasmiy ma’lumot",
+    "markComplete": "Bajarildi: {{task}}",
+    "markIncomplete": "Bajarilmadi: {{task}}",
+    "eyebrow": "MA'LUMOT → HARAKAT",
+    "selectedStage": "Tanlangan bosqich",
+    "taskCount_one": "{{count}} ta vazifa bajarildi",
+    "taskCount_other": "{{count}} ta vazifa bajarildi",
+    "recommendationHint": "Tavsiya etilgan keyingi vazifangiz tanlangan bosqichda boʻlganda taʼkidlanadi.",
+    "viewNext": "Keyingi tavsiya etilgan vazifani koʻrish",
+    "stages": {
+      "beforeArrival": "Kelishidan oldin",
+      "firstWeeks": "Birinchi haftalar",
+      "campusLife": "Kampus hayoti",
+      "departure": "Ketish"
+    },
+    "actions": {
+      "openOfficial": "Rasmiy qoʻllanmani oching",
+      "openPortal": "KU portalini oching"
+    },
+    "official": {
+      "arc": {
+        "message": "Talablar va tartiblar oʻzgarishi mumkin. Ariza topshirishdan oldin HiKorea haqidagi soʻnggi maʼlumotlarni tekshiring.",
+        "link": "HiKorea saytiga tashrif buyuring"
+      }
+    },
+    "tasks": {
+      "housing-reserve": {
+        "title": "Zaxiradagi turar joy",
+        "description": "Qaerda qolishingizni tasdiqlang va turar joyingizni tasdiqlovchi hujjatni topish oson boʻlsin.",
+        "category": "Uy-joy",
+        "preparation": [
+          "Uy-joyni tasdiqlash",
+          "ko'chib o'tish uchun kontakt"
+        ],
+        "practicalNote": "Yotoqxonangiz yoki turar joyingiz boʻyicha murojaat qilgan soʻnggi maʼlumotlarni koʻrib chiqing."
+      },
+      "sim-compare": {
+        "title": "SIM karta imkoniyatlarini solishtiring",
+        "description": "Kelgandan keyin rejani tanlashdan oldin umumiy oldindan toʻlov va keyin toʻlov imkoniyatlarini solishtiring.",
+        "category": "Ulanish",
+        "preparation": [
+          "Qulfdan chiqarilgan telefon holati",
+          "kutilayotgan maʼlumotlardan foydalanish"
+        ],
+        "practicalNote": "Xarid qilishdan oldin joriy muvofiqlik va identifikatsiya talablarini tekshiring."
+      },
+      "airport-route": {
+        "title": "Aeroport marshrutini rejalashtiring",
+        "description": "Aeroportdan uyingizga boradigan umumiy marshrutni tanlang va zaxira variantni saqlang.",
+        "category": "Kelish marshruti",
+        "preparation": [
+          "Uy manzili",
+          "Oflayn marshrut eslatmasi"
+        ],
+        "practicalNote": "Joriy transport maʼlumotlarini kelish sanasiga yaqin tekshiring."
+      },
+      "arrival-essentials": {
+        "title": "Kelish uchun zarur narsalarni tayyorlang",
+        "description": "Hujjatlarni, aloqa maʼlumotlarini va siz foydalanmoqchi boʻlgan birinchi kun uchun zarur narsalarni toʻplang.",
+        "category": "Tayyorgarlik",
+        "preparation": [
+          "Sayohat hujjatlari",
+          "Muhim aloqalar",
+          "Birinchi kun uchun zaruriy narsalar"
+        ],
+        "practicalNote": "Raqamli nusxalarni asl hujjatlaringizdan alohida saqlang."
+      },
+      "dorm": {
+        "title": "Yotoqxonada roʻyxatdan oʻtish",
+        "description": "Yotoqxonaga kelish bosqichlarini bajaring va joriy yashash boʻyicha yoʻriqnomani koʻrib chiqing.",
+        "category": "Uy-joy",
+        "preparation": [
+          "Yotoqxonani tasdiqlash",
+          "Kerakli identifikatsiya"
+        ],
+        "practicalNote": "Yotoqxona tomonidan yuborilgan ko'rsatmalardan haqiqat manbai sifatida foydalaning."
+      },
+      "residence": {
+        "title": "Yashash joyini tasdiqlash",
+        "description": "Joriy uy-joy maʼlumotlarini tasdiqlang va har qanday qoʻllab-quvvatlovchi yashash maʼlumotlarini saqlang.",
+        "category": "Uy-joy",
+        "preparation": [
+          "Joriy uy-joy tafsilotlari",
+          "Uy-joy bilan bog'lanish"
+        ],
+        "practicalNote": "Maʼmuriy ariza uchun hujjatlarni tayyorlashdan oldin rasmiy yoʻriqnomani tekshiring."
+      },
+      "arc": {
+        "title": "ARC roʻyxati",
+        "description": "Koreyada qolishingizni roʻyxatdan oʻtkazish boʻyicha joriy rasmiy yoʻriqnomani koʻrib chiqing.",
+        "category": "Roʻyxatdan oʻtishda qoling",
+        "preparation": [
+          "Joriy rasmiy yoʻriqnoma",
+          "Maqomingiz uchun soʻralgan hujjatlar"
+        ],
+        "practicalNote": "HiKorea-dan haqiqat manbai sifatida foydalaning, chunki talablar o'zgarishi mumkin."
+      },
+      "bank": {
+        "title": "Bank hisobini oching",
+        "description": "Bankka tashrif buyurishdan oldin joriy hisob ochish talablarini tekshiring.",
+        "category": "Bank ishi",
+        "preparation": [
+          "Bank tomonidan talab qilingan identifikatsiya",
+          "Joriy muvofiqlik ma'lumotlari"
+        ],
+        "practicalNote": "Talablar va tilni qoʻllab-quvvatlash har xil boʻlishi mumkin, shuning uchun tashrif buyurishdan oldin ularni tasdiqlang."
+      },
+      "sim": {
+        "title": "Koreya SIM kartasini oling",
+        "description": "Identifikatsiya holati va foydalanishingizga mos keladigan joriy mobil opsiyani tanlang.",
+        "category": "Ulanish",
+        "preparation": [
+          "Qulfdan chiqarilgan telefon",
+          "Joriy identifikatsiya"
+        ],
+        "practicalNote": "Roʻyxatdan oʻtishdan oldin joriy reja shartlari va identifikatsiya talablarini tasdiqlang."
+      },
+      "account": {
+        "title": "KU hisobingizni faollashtiring",
+        "description": "KU portaliga va siz uchun mavjud raqamli xizmatlarga kirishni sozlang.",
+        "category": "KU tizimlari",
+        "preparation": [
+          "Talaba identifikatori maʼlumotlari",
+          "KU hisobi boʻyicha koʻrsatmalar"
+        ],
+        "practicalNote": "KU Digital Information Services joriy koʻrsatmalariga amal qiling."
+      },
+      "courses": {
+        "title": "Kurs jadvalingizni tasdiqlang",
+        "description": "Roʻyxatdan oʻtgan kurslar, sinf xonalari va KU tizimlaridagi joriy bildirishnomalarni koʻrib chiqing.",
+        "category": "Kurslar",
+        "preparation": [
+          "KU portaliga kirish",
+          "Joriy kurs rejasi"
+        ],
+        "practicalNote": "Saqlangan sanalarga tayanmasdan, joriy KU bildirishnomalaridan foydalaning."
+      },
+      "healthcare": {
+        "title": "Chet tiliga mos keladigan tibbiy yordamni toping",
+        "description": "Til qoʻllab-quvvatlashi mavjudligini koʻrsatadigan demo roʻyxatlarini oʻrganing.",
+        "category": "Sog'liqni saqlash",
+        "preparation": [
+          "Mahalliy qo'llanma",
+          "Shaxsiy salomatlik eslatmalari"
+        ],
+        "practicalNote": "Joriy xizmatlar va tilni qoʻllab-quvvatlashni tasdiqlash uchun bevosita provayder bilan bogʻlaning."
+      },
+      "campus-dining": {
+        "title": "Kampusdagi ovqatlanish joylari bilan tanishing",
+        "description": "Kampus atrofidagi demo taomlar roʻyxatini oʻrganish uchun Mahalliy qoʻllanmadan foydalaning.",
+        "category": "Ovqatlanish",
+        "preparation": [
+          "Parhez afzalligi",
+          "Mahalliy gid"
+        ],
+        "practicalNote": "Joriy menyu va ingredientlarni tashrif buyurishdan oldin tasdiqlang."
+      },
+      "household-essentials": {
+        "title": "Uy uchun zarur narsalarni toping",
+        "description": "Talabalar turar joyida foydali narsalar uchun demo bozor roʻyxatini koʻrib chiqing.",
+        "category": "Kundalik hayot",
+        "preparation": [
+          "Xaridlar roʻyxati",
+          "Olib ketish rejasi"
+        ],
+        "practicalNote": "Ushbu prototipdagi roʻyxatlar va tranzaksiyalar faqat demo uchun moʻljallangan."
+      },
+      "student-marketplace": {
+        "title": "Talabalar bozoridan foydalaning",
+        "description": "KU-talabalar bozori kiruvchi va ketayotgan talabalarni qanday bog‘lashi mumkinligini o‘rganing.",
+        "category": "Talabalar bozori",
+        "preparation": [
+          "Demo tekshiruvi",
+          "Marketplace afzalliklari"
+        ],
+        "practicalNote": "Joriy prototip demo tekshiruvdan foydalanadi; jonli xizmat universitet elektron pochtasini talab qiladi."
+      },
+      "sell-items": {
+        "title": "Sotiladigan uy-roʻzgʻor buyumlari roʻyxati",
+        "description": "Kiruvchi talabalar sizga kerak boʻlmagan narsalarni topishi uchun demo roʻyxat yarating.",
+        "category": "Bozor",
+        "preparation": [
+          "Mahsulot tafsilotlari",
+          "Olib ketish mavjudligi"
+        ],
+        "practicalNote": "Bu prototip toʻlovlar yoki xabarlarni qayta ishlamaydi."
+      },
+      "luggage": {
+        "title": "Bagajni saqlash yoki yetkazib berishni tashkil qiling",
+        "description": "Umumiy saqlash yoki yetkazib berish imkoniyatlarini solishtiring va oʻz bandlov maʼlumotlaringizni birga saqlang.",
+        "category": "Bagaj",
+        "preparation": [
+          "Bagaj roʻyxati",
+          "Manzil tafsilotlari"
+        ],
+        "practicalNote": "Joriy shartlar, narxlar va cheklovlarni bevosita siz tanlagan provayder bilan tasdiqlang."
+      },
+      "departure-checklist": {
+        "title": "Ketishning toʻliq nazorat roʻyxati",
+        "description": "Jo'nashdan oldin turar joy, kampus, narsalaringiz va sayohat vazifalaringizni ko'rib chiqing.",
+        "category": "Ketish",
+        "preparation": [
+          "Shaxsiy vazifalar roʻyxati",
+          "Muhim kontaktlar",
+          "Sayohat hujjatlari"
+        ],
+        "practicalNote": "Umumiy muddatga tayanmasdan, oʻzingizning tasdiqlangan sanalaringizni qoʻshing."
+      },
+      "dorm-checkout": {
+        "title": "Yotoqxonadan chiqish",
+        "description": "Joriy yotoqxonani tekshirish koʻrsatmalariga rioya qiling va xonani topshirish bosqichlarini tasdiqlang.",
+        "category": "Uy-joy",
+        "preparation": [
+          "Yotoqxonani tekshirish boʻyicha koʻrsatma",
+          "Xonani topshirish boʻyicha eslatmalar"
+        ],
+        "practicalNote": "Yotoqxonangizdagi soʻnggi koʻrsatmalardan foydalaning; bu demo muddatni belgilamaydi."
+      },
+      "move-out": {
+        "title": "Kampusdan tashqarida ko‘chirish",
+        "description": "Tasdiqlangan ko'chirish kelishuvingizni ko'rib chiqing va uy-joy topshirishga tayyorlang.",
+        "category": "Uy-joy",
+        "preparation": [
+          "Uy-joy shartnomasi",
+          "topshirish eslatmalari"
+        ],
+        "practicalNote": "Mas'uliyat va vaqtni uy-joy bilan bog'lagan holda tasdiqlang."
+      }
+    }
+  },
+  "marketplace": {
+    "eyebrow": "KAMPUS BOZORI",
+    "title": "Bir talabaning ortiqcha buyumi boshqasiga kerak bo‘lishi mumkin",
+    "body": "Kirishsiz mahsulot joylang va band qiling. Namuna va haqiqiy e’lonlar alohida ko‘rsatiladi.",
+    "incoming": "KU’ga yangi keldim",
+    "leaving": "KU’dan ketmoqdaman",
+    "search": "Mahsulot qidirish",
+    "clearSearch": "Qidiruvni tozalash",
+    "all": "Barchasi",
+    "condition": "Holati",
+    "pickup": "Olib ketish joyi",
+    "seller": "Sotuvchi",
+    "details": "Batafsil",
+    "contact": "Sotuvchi bilan bog‘lanish",
+    "empty": "Qidiruvga mos mahsulot topilmadi.",
+    "form": {
+      "title": "Keyingi talaba uchun mahsulot joylang",
+      "body": "Rasm qo‘shsangiz, xaridor mahsulot holatini yaxshiroq tushunadi.",
+      "itemName": "Mahsulot nomi",
+      "price": "Narx",
+      "category": "Toifa",
+      "condition": "Holati",
+      "pickup": "Olib ketish joyi",
+      "availability": "Mavjud vaqt",
+      "submit": "E’lon joylash",
+      "success": "Mahsulot e’lon qilindi.",
+      "itemPlaceholder": "masalan. O'quv kafedrasi",
+      "pricePlaceholder": "masalan. 20000",
+      "pickupPlaceholder": "masalan. KU asosiy darvozasi"
+    },
+    "markSold": "Sotildi deb belgilash",
+    "hideListing": "E’lonni yashirish",
+    "showListing": "E’lonni ko‘rsatish",
+    "cancelReservation": "Bandni bekor qilish",
+    "deleteListing": "E’lonni o‘chirish",
+    "myReservations": "Mening bandlarim",
+    "confirmReservation": "Band qilishni tasdiqlash",
+    "imageHint": "PNG, JPG yoki WebP · 8 MB gacha",
+    "categories": {
+      "Home": "Uy",
+      "Kitchen": "Oshxona",
+      "Electronics": "Elektronika",
+      "Bedding": "Choyshablar"
+    },
+    "conditions": {
+      "likeNew": "Yangidek",
+      "good": "Yaxshi",
+      "used": "Ishlatilgan",
+      "clean": "Tozalash"
+    },
+    "flow": {
+      "verification": "Anonim sessiya",
+      "listing": "Mahsulotlar roʻyxati",
+      "pickup": "Kampusdan olib ketish",
+      "transaction": "Toʻgʻridan-toʻgʻri tranzaksiya"
+    },
+    "contactTitle": "Sotuvchiga murojaat qiling",
+    "contactBody": "Bu taqdimot demosi. Jonli xizmatda sizning xabaringiz faqat xavfsiz KU chat orqali yuboriladi.",
+    "message": "Salom! Bu hali ham mavjudmi? Men uni kampus yaqinida olsam bo'ladi.",
+    "messageReady": "Demo xabar tayyor",
+    "changePickup": "Qabul qilish vaqtini o'zgartiring",
+    "savePickup": "Jadvalni saqlash",
+    "pickupPast": "Olib ketish vaqti o‘tdi",
+    "reservationCompleted": "Tugallandi",
+    "reservationCancelled": "Bekor qilingan",
+    "loadMore": "Yana yuklash",
+    "loadingMore": "Yana yuklanmoqda…",
+    "actions": {
+      "browse": "Bozorni koʻrib chiqish",
+      "list": "Elementni roʻyxatga kiriting"
+    },
+    "userSeller": "KU talabasi · {{name}}",
+    "authRequiredTitle": "Haqiqiy elementni roʻyxatga olish uchun tizimga kiring",
+    "authRequiredBody": "Mehmon rejalari bu qurilmada qoladi. Talabalar bozorida roʻyxatni chop etish uchun KU elektron pochta manzilingizni tasdiqlang.",
+    "markActive": "Mavjud deb belgilang",
+    "cancelSold": "Sotilgan holatini bekor qilish",
+    "favorite": "Sevimli",
+    "unfavorite": "Sevimlilardan olib tashlash",
+    "reservationHolder": "tomonidan zahiralangan",
+    "restoreListing": "Roʻyxatni tiklash",
+    "showDeleted": "Koʻrsatish oʻchirildi",
+    "hideDeleted": "Oʻchirilgan yashirish",
+    "deleted": "Oʻchirildi",
+    "hidden": "Yashirin",
+    "sold": "Sotilgan",
+    "myListings": "Mening roʻyxatlarim",
+    "noOwnListings": "Sizda hali hech qanday roʻyxat yoʻq.",
+    "reservedBy": "Zaxira qilgan: {{name}}",
+    "soldUnavailable": "Bu narsa allaqachon sotilgan deb belgilangan.",
+    "reservationSummary": "Zaxiralangan elementlar",
+    "reservationActive": "Faol bandlov",
+    "pickupNotSet": "Olib ketish vaqti sozlanmagan",
+    "pickupScheduleTitle": "Qabul qilish vaqtini tanlang",
+    "pickupDate": "Olib ketish sanasi",
+    "pickupStart": "Boshlanish vaqti",
+    "pickupEnd": "Tugash vaqti",
+    "reportTitle": "Roʻyxat haqida xabar berish",
+    "reportReason": "Sabab",
+    "chooseReportReason": "Sababini tanlang",
+    "reportDetail": "Tafsilotlar",
+    "submitReport": "Hisobot yuborish",
+    "duplicateReport": "Siz allaqachon bu haqda xabar bergansiz.",
+    "reportSubmitted": "Hisobot qabul qilindi.",
+    "reportReasons": {
+      "false_info": "Element ma'lumotlari noto'g'ri",
+      "price_mismatch": "Narx yoki tavsif mos emas",
+      "scam": "Shubhali firibgarlik",
+      "inappropriate": "Nomaqbul kontent",
+      "schedule_issue": "Olib ketish joyi yoki jadval muammosi",
+      "other": "Boshqa"
+    },
+    "mapsView": "Google Xaritalarda ko‘rish",
+    "mapsDirections": "Yoʻnalishlarni oling",
+    "reportHistory": "Hisobot tarixi",
+    "reportReceived": "Qabul qilindi",
+    "removeImage": "Rasmni oʻchirish",
+    "products": {
+      "riceCooker": {
+        "name": "Guruch pishirgich",
+        "pickup": "Anam stantsiyasi, 3-chiqish",
+        "seller": "Talaba almashinuvi · Mia"
+      },
+      "deskLamp": {
+        "name": "Stol chiroqi",
+        "pickup": "KU asosiy darvozasi",
+        "seller": "KU talabasi · Joon"
+      },
+      "beddingSet": {
+        "name": "Choyshablar toʻplami",
+        "pickup": "CJ International House",
+        "seller": "almashish talabasi · Lea"
+      },
+      "electricKettle": {
+        "name": "Elektr choynak",
+        "pickup": "Anam Ogeori",
+        "seller": "KU talabasi · Min"
+      },
+      "miniFan": {
+        "name": "Mini fan",
+        "pickup": "KU Central Plaza",
+        "seller": "Talaba almashinuvi · Nuh"
+      },
+      "storageBoxes": {
+        "name": "Saqlash qutisi toʻplami",
+        "pickup": "Anam stantsiyasi, 2-chiqish",
+        "seller": "KU talabasi · Hana"
+      }
+    }
+  },
+  "localGuide": {
+    "eyebrow": "MAHALLIY QO‘LLANMA",
+    "title": "Anam atrofida qulay yashang",
+    "body": "KU yaqinidagi joylar uchun amaliy qo‘llanma. Kakao qidiruv natijalari va ichki tekshirilgan joylar birga ko‘rsatiladi.",
+    "all": "Barchasi",
+    "englishAvailable": "Ingliz tilida xizmat bo‘lishi mumkin",
+    "studentTip": "Talaba uchun maslahat",
+    "empty": "Bu toifada joy topilmadi.",
+    "categories": {
+      "Food": "Ovqat",
+      "Halal": "Halol",
+      "Vegan": "Vegan",
+      "Hospital": "Kasalxona",
+      "Pharmacy": "Dorixona",
+      "Hair Salon": "Sartaroshxona",
+      "Cafe": "Kafe",
+      "Grocery": "Oziq-ovqat do‘koni"
+    },
+    "distanceFromKu": "{{distance}}",
+    "actions": {
+      "view": "Mahalliy qoʻllanmani koʻrish"
+    },
+    "places": {
+      "anamClinic": {
+        "name": "Anam xalqaro klinikasi · Namuna",
+        "description": "Til boʻyicha yordam koʻrsatishi mumkin boʻlgan yaqin-atrofdagi klinikalar uchun namuna roʻyxati.",
+        "location": "Anam bekati yaqinida",
+        "tip": "Joriy xizmatlar, ish soatlari va tilni qoʻllab-quvvatlashni tasdiqlash uchun avval qoʻngʻiroq qiling."
+      },
+      "kuPharmacy": {
+        "name": "KU Gate Pharmacy · Namuna",
+        "description": "Kampus yaqinidagi dorixona uchun namuna roʻyxati.",
+        "location": "KU asosiy darvozasi yaqinida",
+        "tip": "Yordam so'raganda dori nomini yoki aniq suratni olib keling."
+      },
+      "seoulKitchen": {
+        "name": "Seul halol oshxonasi · Namuna",
+        "description": "Kampus yaqinidagi halol taomlar uchun namuna roʻyxati.",
+        "location": "Anam-ro",
+        "tip": "Joriy ingredientlar va sertifikatni bevosita restoran bilan tasdiqlang."
+      },
+      "greenTable": {
+        "name": "Yashil stol · Namuna",
+        "description": "Vegetarianlar uchun mos taomlar uchun namuna roʻyxati.",
+        "location": "Anam Ogeori yaqinida",
+        "tip": "Hayvonlardan saqlansangiz, soslar va bulon haqida so'rang."
+      },
+      "studyCafe": {
+        "name": "Kampus Study kafesi · Namuna",
+        "description": "Tinch oʻqish uchun qulay kafe uchun namuna roʻyxati.",
+        "location": "KU Central Plaza yaqinida",
+        "tip": "Uzoq oʻqishdan oldin joriy oʻtirish qoidalarini tekshiring."
+      },
+      "neighborhoodMart": {
+        "name": "Anam mahallasi Mart · Namuna",
+        "description": "Kundalik oziq-ovqat va uy-roʻzgʻor buyumlari uchun namuna roʻyxati.",
+        "location": "Anam bekati yaqinida",
+        "tip": "Uy-roʻzgʻor buyumlarini sotib olayotganda birlik narxlarini solishtiring."
+      }
+    }
+  },
+  "verification": {
+    "signIn": "Kirish",
+    "continue": "KU elektron pochtasi bilan davom etish",
+    "title": "Talaba ma’lumotini tekshirish",
+    "email": "Universitet elektron pochtasi",
+    "authTitle": "KU e-pochtangiz bilan davom eting",
+    "authBody": "Biz olti xonali kodni @korea.ac.kr bilan tugaydigan elektron pochta manziliga yuboramiz.",
+    "sendCode": "Tasdiqlash kodini yuboring",
+    "sending": "Kod yuborilmoqda…",
+    "linkSent": "E-pochtangizga kirish havolasini yubordik.",
+    "openLink": "Davom etish uchun ushbu e-pochtadagi tizimga kirish havolasini oching.",
+    "code": "Tasdiqlash kodi",
+    "verifyCode": "Kodni tasdiqlang",
+    "verifying": "Tekshirilmoqda…",
+    "resend": "Kodni qayta yuborish",
+    "resendCooldown": "{{seconds}} soniyada qayta yuboring",
+    "changeEmail": "E-pochta manzilini o‘zgartiring",
+    "signOut": "Chiqish",
+    "verifiedKu": "Tasdiqlangan KU email",
+    "securityNote": "KU Settle hech qachon parolingizni soʻramaydi. Siz soʻramagan kodlarga eʼtibor bermang.",
+    "body": "Bu prototip faqat KU elektron pochta formatini tekshiradi va elektron pochta xabarini yubormaydi. Jonli xizmat Koreya universitetining haqiqiy elektron pochtasi orqali tekshirishni talab qiladi.",
+    "emailPlaceholder": "student@korea.ac.kr",
+    "submit": "Demo uchun tasdiqlang",
+    "success": "Bu demo uchun tasdiqlangansiz",
+    "student": "Talaba almashinuvi"
+  },
+  "profile": {
+    "guestName": "Mehmon",
+    "save": "Profilni saqlash",
+    "arrival": "Kelish sanasi",
+    "housing": "Yashash joyi",
+    "name": "Ism",
+    "create": "Rejamni yaratish",
+    "languageNote": "Tilni keyin ham o‘zgartirishingiz mumkin.",
+    "accountTitle": "Sizning hisobingiz",
+    "accountTasks": "bajarilgan vazifalar",
+    "accountListings": "roʻyxati",
+    "deleteAccount": "Hisobni oʻchirish",
+    "deleteTitle": "Hisobingiz butunlay oʻchirilsinmi?",
+    "deleteBody": "Buni ortga qaytarib bo‘lmaydi. Profilingiz, hayot aylanish jarayoni va har bir bozor roʻyxati olib tashlanadi.",
+    "deleteProfile": "Hisob va profil",
+    "deleteProgress": "Hayotiy aylanish jarayoni",
+    "deleteListings": "Barcha faol, sotilgan, yashirin va oʻchirilgan roʻyxatlar",
+    "typeEmail": "Tasdiqlash uchun emailingizni kiriting",
+    "continueDelete": "Davom etish",
+    "deleteForever": "butunlay oʻchirish",
+    "deleteSuccess": "Hisobingiz oʻchirib tashlandi.",
+    "importTitle": "Ushbu qurilma rejasi import qilinsinmi?",
+    "importBody": "Siz tasdiqlamaguningizcha hech narsa yuklanmaydi. Namoyish ma'lumotlari hech qachon import qilinmaydi.",
+    "importProfile": "profili",
+    "importTasks": "bajarilgan vazifalar",
+    "importProducts": "mahalliy roʻyxatlar",
+    "importConfirm": "Tanlangan maʼlumotlarni import qilish",
+    "importSuccess": "Qurilmangiz rejangiz import qilindi.",
+    "notNow": "Hozir emas",
+    "demoArrival": "Namoyish profili",
+    "dorm": "KU yotoqxonasi",
+    "offCampus": "Kampusdan tashqari turar joy",
+    "setupEyebrow": "REJANI SHAXSIYLASHTIRISH",
+    "setupTitle": "Keling, KU hayot aylanish rejasini sozlaylik",
+    "setupBody": "Uyga kelish va ketish vazifalari sizning vaziyatingizga mos kelishi uchun bizga asoslarni ayting. Hech qanday hisob yaratilmagan.",
+    "namePlaceholder": "Ismingiz",
+    "arrivalDate": "Kutilayotgan kelish sanasi",
+    "housingType": "Uy-joy turi",
+    "skip": "Keyinroq sozlash"
+  },
+  "admin": {
+    "eyebrow": "Administrator boshqaruvi",
+    "title": "Administrator paneli",
+    "products": "Mahsulotlar",
+    "reservations": "Bandlar",
+    "reports": "Shikoyatlar",
+    "tasks": "Vazifalar",
+    "export": "Eksport",
+    "import": "Import",
+    "productSection": "Mahsulotlarni boshqarish",
+    "reservationSection": "Bandlarni boshqarish",
+    "reportSection": "Shikoyatlarni boshqarish",
+    "noData": "Ma’lumot yo‘q.",
+    "demoNotice": "Xavfsiz administrator vositasi emas, balki faqat qurilma demo boshqaruvi ekrani.",
+    "reset": "Namoyishni tiklash",
+    "confirmReset": "Barcha demo maʼlumotlar qayta tiklansinmi?",
+    "confirmDelete": "Bu element va uning bandlari va hisobotlari oʻchirilsinmi?",
+    "lifecycleSection": "Hayotiy davr xulosasi",
+    "reportNew": "Qabul qilindi",
+    "reportReviewed": "Ko'rib chiqilmoqda",
+    "reportResolved": "Yechilgan",
+    "completedTasks": "{{count}} bajarildi",
+    "trackedTasks": "jami {{count}} ta vazifa",
+    "progress": "{{progress}}% progress"
+  },
+  "reset": {
+    "button": "Ma’lumotlarimni tiklash",
+    "title": "Ma’lumotlaringizni tiklaysizmi?",
+    "confirm": "Tiklash",
+    "body": "Bu qurilmada saqlangan profil, hayot aylanishini tekshirish roʻyxati, tekshirish, bozor roʻyxatlari, qidiruv va filtrlarni tozalaydi. Sizning tilingiz bir xil bo'lib qoladi."
+  },
+  "validation": {
+    "requiredFields": "Barcha majburiy maydonlarni to‘ldiring.",
+    "positivePrice": "Noldan katta narx kiriting.",
+    "itemRequired": "Mahsulot nomini kiriting.",
+    "pickupRequired": "Olib ketish joyini kiriting.",
+    "pickupScheduleRequired": "Toʻgʻri qabul qilish sanasi va vaqt oraligʻini tanlang.",
+    "validEmail": "Yaroqli @korea.ac.kr elektron pochta manzilini kiriting.",
+    "nameRequired": "80 belgigacha boʻlgan nom kiriting.",
+    "invalidDate": "Yaroqli sanani kiriting.",
+    "validPrice": "Yaroqli ijobiy KRW narxini kiriting.",
+    "otpLength": "Olti xonali kodni kiriting."
+  },
+  "errors": {
+    "generic": "Xatolik yuz berdi. Qayta urinib ko‘ring.",
+    "imageInvalid": "To‘g‘ri rasm faylini tanlang.",
+    "missingTranslation": "Bu mazmun vaqtincha ingliz tilida ko‘rsatilmoqda.",
+    "rateLimit": "Juda ko‘p urinish. Biroz kuting.",
+    "sessionExpired": "Sessiya tugadi. Qayta kiring.",
+    "permissionDenied": "Bu amal uchun ruxsatingiz yo‘q.",
+    "offline": "Internet aloqasi yo‘q. O‘zgarish saqlanmadi.",
+    "saveFailed": "Saqlanmadi. Qayta urinib ko‘ring.",
+    "storageQuota": "Brauzer xotirasi yetarli emas. Katta rasmni olib tashlang va qaytadan urinib ko'ring.",
+    "storage": "Saqlangan maʼlumotlarni oʻqib boʻlmadi. Xavfsiz standart sozlamalar tiklandi.",
+    "supabaseNotConfigured": "Hisob xizmatlari hali ulanmagan. Tizimga kirishni yoqish uchun umumiy Supabase URL manzilini va nashr qilinadigan kalitni sozlang.",
+    "supabaseUnavailable": "Hisob xizmati vaqtincha ishlamayapti.",
+    "invalidOtp": "Kod noto‘g‘ri yoki muddati o‘tgan. Yangi kod talab qiling.",
+    "imageTooLarge": "2 MB dan kichikroq rasmni tanlang."
+  },
+  "accessibility": {
+    "brandHome": "KU Settle bosh sahifasi",
+    "profile": "Anonim profilni ochish",
+    "productDetails": "{{product}} tafsilotlarini ko‘rish",
+    "closeLanguage": "Til menyusini yopish",
+    "lifecycleTabs": "Hayotiy tsikl bosqichlari",
+    "stageProgress": "{{stage}}: {{total}}dan {{completed}}, {{progress}}",
+    "placeCategory": "Joylarni {{category}} boʻyicha filtrlash",
+    "marketMode": "Bozor maydoni rejimi"
+  }
 }

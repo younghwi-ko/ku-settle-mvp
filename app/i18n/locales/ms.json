@@ -1,15 +1,663 @@
 {
-  "common": {"complete":"Selesai","completed":"Telah selesai","notStarted":"Belum bermula","inProgress":"Sedang diproses","available":"Tersedia","reserved":"Ditempah","close":"Tutup","cancel":"Batal","sampleData":"Data contoh","sampleOnly":"Item contoh bukan untuk urus niaga sebenar.","liveData":"Senarai sebenar","saving":"Menyimpan…","saved":"Disimpan","yes":"Ya","no":"Tidak"},
-  "navigation": {"home":"Laman utama","onboarding":"Kitaran hidup","marketplace":"Pasaran kampus","localGuide":"Panduan tempatan","lifeGuide":"Panduan kehidupan","admin":"Pentadbir","brandTagline":"Dari ketibaan hingga pulang","language":"Bahasa","selectLanguage":"Pilih bahasa","currentLanguage":"Bahasa semasa: {{language}}","openMenu":"Buka menu","closeMenu":"Tutup menu","footerNotice":"Guna tanpa log masuk · Bukan perkhidmatan rasmi Korea University · Item contoh bukan untuk urus niaga sebenar"},
-  "home": {"eyebrow":"PEMBANTU KEHIDUPAN PELAJAR ANTARABANGSA","greeting":"Selamat datang ke Korea University, {{name}}","lead":"Pelan peribadi anda dari ketibaan hingga pulang.","body":"Lihat apa yang perlu disediakan, langkah seterusnya dan tempat untuk bertindak sepanjang kehidupan anda di KU.","primaryAction":"Buka pelan saya","secondaryAction":"Lihat pasaran kampus","trust":{"account":"Tidak perlu akaun","languages":"Tersedia dalam 8 bahasa","journey":"Dari ketibaan hingga pulang"},"todaySummary":"Hari ini dan akan datang","noUpcoming":"Tiada jadual untuk hari ini.","explore":"Teroka"},
-  "onboarding": {"title":"Pelan kehidupan KU anda","body":"Ikuti senarai semak dari sebelum tiba hingga pulang.","overallProgress":"Kemajuan keseluruhan","prepare":"Perkara untuk disediakan","estimatedTime":"Anggaran masa","practicalNote":"Nota praktikal","officialGuidance":"Panduan rasmi","markComplete":"Tandakan selesai: {{task}}","markIncomplete":"Tandakan belum selesai: {{task}}"},
-  "marketplace": {"eyebrow":"PASARAN KAMPUS","title":"Barang yang tidak lagi diperlukan seorang pelajar mungkin berguna kepada pelajar lain","body":"Senaraikan dan tempah item tanpa log masuk. Item contoh dan senarai sebenar ditandakan dengan jelas.","incoming":"Saya baru di KU","leaving":"Saya akan meninggalkan KU","search":"Cari item","clearSearch":"Kosongkan carian","all":"Semua","condition":"Keadaan","pickup":"Tempat pengambilan","seller":"Penjual","details":"Lihat butiran","contact":"Hubungi penjual","empty":"Tiada item yang sepadan.","form":{"title":"Senaraikan item untuk pelajar seterusnya","body":"Tambah gambar supaya pembeli lebih mudah melihat keadaan item.","itemName":"Nama item","price":"Harga","category":"Kategori","condition":"Keadaan","pickup":"Tempat pengambilan","availability":"Masa tersedia","submit":"Tambah senarai","success":"Item anda telah disenaraikan."},"markSold":"Tandakan sudah dijual","hideListing":"Sembunyikan senarai","showListing":"Paparkan senarai","cancelReservation":"Batalkan tempahan","deleteListing":"Padam senarai","myReservations":"Tempahan saya","confirmReservation":"Sahkan tempahan","imageHint":"PNG, JPG atau WebP · sehingga 8 MB"},
-  "localGuide": {"eyebrow":"PANDUAN TEMPATAN","title":"Hidup dengan selesa di sekitar Anam","body":"Panduan praktikal tempat berhampiran KU. Calon carian Kakao dan tempat yang disemak secara dalaman dipaparkan bersama.","all":"Semua","englishAvailable":"Sokongan bahasa Inggeris mungkin tersedia","studentTip":"Petua pelajar","empty":"Tiada tempat dalam kategori ini.","categories":{"Food":"Makanan","Halal":"Halal","Vegan":"Vegan","Hospital":"Hospital","Pharmacy":"Farmasi","Hair Salon":"Salun rambut","Cafe":"Kafe","Grocery":"Kedai runcit"}},
-  "verification": {"signIn":"Log masuk","continue":"Teruskan dengan e-mel KU","title":"Pengesahan pelajar","email":"E-mel universiti"},
-  "profile": {"guestName":"Tetamu","save":"Simpan profil","arrival":"Tarikh ketibaan","housing":"Tempat tinggal","name":"Nama","create":"Cipta pelan saya","languageNote":"Anda boleh menukar bahasa kemudian."},
-  "admin": {"eyebrow":"PENGURUSAN OPERASI","title":"Panel pentadbir","products":"Produk","reservations":"Tempahan","reports":"Laporan","tasks":"Tugasan","export":"Eksport","import":"Import","productSection":"Pengurusan produk","reservationSection":"Pengurusan tempahan","reportSection":"Pengurusan laporan","noData":"Tiada data."},
-  "reset": {"button":"Tetapkan semula data saya","title":"Tetapkan semula data anda?","confirm":"Tetapkan semula"},
-  "validation": {"requiredFields":"Lengkapkan semua medan wajib.","positivePrice":"Masukkan harga lebih daripada sifar.","itemRequired":"Masukkan nama item.","pickupRequired":"Masukkan tempat pengambilan."},
-  "errors": {"generic":"Sesuatu telah berlaku. Cuba lagi.","imageInvalid":"Pilih fail gambar yang sah.","missingTranslation":"Kandungan ini dipaparkan sementara dalam bahasa Inggeris.","rateLimit":"Terlalu banyak permintaan. Sila tunggu.","sessionExpired":"Sesi anda telah tamat. Log masuk semula.","permissionDenied":"Anda tiada kebenaran untuk tindakan ini.","offline":"Anda di luar talian. Perubahan tidak disimpan.","saveFailed":"Tidak dapat menyimpan. Cuba lagi."},
-  "accessibility": {"brandHome":"Laman utama KU Settle","profile":"Buka profil tanpa nama","productDetails":"Lihat butiran {{product}}","closeLanguage":"Tutup menu bahasa"}
+  "common": {
+    "complete": "Selesai",
+    "completed": "Telah selesai",
+    "notStarted": "Belum bermula",
+    "inProgress": "Sedang diproses",
+    "available": "Tersedia",
+    "reserved": "Ditempah",
+    "close": "Tutup",
+    "cancel": "Batal",
+    "sampleData": "Data contoh",
+    "sampleOnly": "Item contoh bukan untuk urus niaga sebenar.",
+    "liveData": "Senarai sebenar",
+    "saving": "Menyimpan…",
+    "saved": "Disimpan",
+    "yes": "Ya",
+    "no": "Tidak",
+    "verified": "Pelajar KU disahkan",
+    "demoData": "Data tunjuk cara",
+    "sample": "Sampel",
+    "durationMinutes": "{{min}}–{{max}} min",
+    "countOfTotal": "{{completed}} / {{total}}",
+    "copyright": "© {{year}} KU Settle"
+  },
+  "navigation": {
+    "home": "Laman utama",
+    "onboarding": "Kitaran hidup",
+    "marketplace": "Pasaran kampus",
+    "localGuide": "Panduan tempatan",
+    "lifeGuide": "Panduan kehidupan",
+    "admin": "Pentadbir",
+    "brandTagline": "Dari ketibaan hingga pulang",
+    "language": "Bahasa",
+    "selectLanguage": "Pilih bahasa",
+    "currentLanguage": "Bahasa semasa: {{language}}",
+    "openMenu": "Buka menu",
+    "closeMenu": "Tutup menu",
+    "footerNotice": "Guna tanpa log masuk · Bukan perkhidmatan rasmi Korea University · Item contoh bukan untuk urus niaga sebenar",
+    "primaryLabel": "Navigasi utama",
+    "mobileLabel": "Navigasi mudah alih"
+  },
+  "home": {
+    "eyebrow": "PEMBANTU KEHIDUPAN PELAJAR ANTARABANGSA",
+    "greeting": "Selamat datang ke Korea University, {{name}}",
+    "lead": "Pelan peribadi anda dari ketibaan hingga pulang.",
+    "body": "Lihat apa yang perlu disediakan, langkah seterusnya dan tempat untuk bertindak sepanjang kehidupan anda di KU.",
+    "primaryAction": "Buka pelan saya",
+    "secondaryAction": "Lihat pasaran kampus",
+    "trust": {
+      "account": "Tidak perlu akaun",
+      "languages": "Tersedia dalam 8 bahasa",
+      "journey": "Dari ketibaan hingga pulang"
+    },
+    "todaySummary": "Hari ini dan akan datang",
+    "noUpcoming": "Tiada jadual untuk hari ini.",
+    "explore": "Teroka",
+    "progressTitle": "Kemajuan kitaran hayat anda",
+    "urgentItems": "Perkara yang perlu diberi perhatian",
+    "incompleteCount": "{{count}} tugasan tidak lengkap",
+    "progressSummaryShort": "{{progress}}% selesai",
+    "overdue": "Tertunggak",
+    "dueToday": "Tamat tempoh hari ini",
+    "dueSoon": "Akan tamat tidak lama lagi",
+    "progressSummary": "{{completed}} daripada {{total}} tugasan selesai",
+    "lifecycleLabel": "Perjalanan ketibaan-ke-berlepas",
+    "stageSummary": "{{stage}}: {{completed}} daripada {{total}}, {{progress}}",
+    "openPlan": "Buka pelan kitaran hayat",
+    "recommended": "Disyorkan langkah seterusnya",
+    "viewRecommended": "Lihat tugasan yang disyorkan",
+    "allCompletedTitle": "Semua tugas persediaan selesai",
+    "allCompletedBody": "Anda telah melengkapkan pelan kitaran hayat KU anda. Semak mana-mana peringkat pada bila-bila masa anda memerlukannya.",
+    "reviewCompleted": "Semak tugasan yang telah selesai",
+    "informationToAction": "MAKLUMAT → TINDAKAN",
+    "connectedJourney": "Satu perjalanan, empat peringkat bersambung",
+    "features": {
+      "onboarding": "Tukar maklumat penting kepada tindakan",
+      "marketplace": "Cari barangan mampu milik daripada pelajar lain",
+      "localGuide": "Temui tempat mesra pelajar berhampiran KU"
+    }
+  },
+  "onboarding": {
+    "title": "Pelan kehidupan KU anda",
+    "body": "Ikuti senarai semak dari sebelum tiba hingga pulang.",
+    "overallProgress": "Kemajuan keseluruhan",
+    "prepare": "Perkara untuk disediakan",
+    "estimatedTime": "Anggaran masa",
+    "practicalNote": "Nota praktikal",
+    "officialGuidance": "Panduan rasmi",
+    "markComplete": "Tandakan selesai: {{task}}",
+    "markIncomplete": "Tandakan belum selesai: {{task}}",
+    "eyebrow": "MAKLUMAT → TINDAKAN",
+    "selectedStage": "Peringkat terpilih",
+    "taskCount_one": "{{count}} tugasan selesai",
+    "taskCount_other": "{{count}} tugasan selesai",
+    "recommendationHint": "Tugasan seterusnya yang disyorkan anda diserlahkan apabila ia berada dalam peringkat yang dipilih.",
+    "viewNext": "Lihat tugasan disyorkan seterusnya",
+    "stages": {
+      "beforeArrival": "Sebelum Ketibaan",
+      "firstWeeks": "Minggu Pertama",
+      "campusLife": "Kehidupan Kampus",
+      "departure": "Berlepas"
+    },
+    "actions": {
+      "openOfficial": "Buka panduan rasmi",
+      "openPortal": "Buka Portal KU"
+    },
+    "official": {
+      "arc": {
+        "message": "Keperluan dan prosedur mungkin berubah. Semak maklumat terkini mengenai HiKorea sebelum memohon.",
+        "link": "Lawati HiKorea"
+      }
+    },
+    "tasks": {
+      "housing-reserve": {
+        "title": "Perumahan rizab",
+        "description": "Sahkan tempat anda akan tinggal dan pastikan pengesahan perumahan anda mudah dicari.",
+        "category": "Perumahan",
+        "preparation": [
+          "Pengesahan perumahan",
+          "Hubungan pindah masuk"
+        ],
+        "practicalNote": "Semak maklumat terkini yang diberikan oleh asrama atau hubungan perumahan anda."
+      },
+      "sim-compare": {
+        "title": "Bandingkan pilihan SIM",
+        "description": "Bandingkan pilihan prabayar dan pascabayar am sebelum memilih pelan selepas ketibaan.",
+        "category": "Ketersambungan",
+        "preparation": [
+          "Status telefon tidak berkunci",
+          "Penggunaan data yang dijangka"
+        ],
+        "practicalNote": "Semak kelayakan semasa dan keperluan pengenalan sebelum membeli."
+      },
+      "airport-route": {
+        "title": "Rancang laluan lapangan terbang anda",
+        "description": "Pilih laluan umum dari lapangan terbang ke perumahan anda dan simpan pilihan sandaran.",
+        "category": "Laluan ketibaan",
+        "preparation": [
+          "Alamat perumahan",
+          "Nota laluan luar talian"
+        ],
+        "practicalNote": "Semak maklumat pengangkutan semasa berhampiran dengan tarikh ketibaan anda."
+      },
+      "arrival-essentials": {
+        "title": "Sediakan keperluan ketibaan",
+        "description": "Kumpulkan dokumen, butiran hubungan dan keperluan hari pertama yang anda harapkan untuk digunakan.",
+        "category": "Persediaan",
+        "preparation": [
+          "Dokumen perjalanan",
+          "Kenalan penting",
+          "Keperluan hari pertama"
+        ],
+        "practicalNote": "Simpan salinan digital berasingan daripada dokumen asal anda."
+      },
+      "dorm": {
+        "title": "Daftar masuk asrama",
+        "description": "Lengkapkan langkah ketibaan asrama anda dan semak panduan kediaman semasa.",
+        "category": "Perumahan",
+        "preparation": [
+          "Pengesahan asrama",
+          "Pengenalan yang diperlukan"
+        ],
+        "practicalNote": "Gunakan arahan yang dihantar oleh asrama sebagai sumber kebenaran."
+      },
+      "residence": {
+        "title": "Pengesahan tempat tinggal",
+        "description": "Sahkan butiran perumahan semasa anda dan simpan sebarang maklumat kediaman sokongan.",
+        "category": "Perumahan",
+        "preparation": [
+          "Butiran perumahan semasa",
+          "Hubungan perumahan"
+        ],
+        "practicalNote": "Semak panduan rasmi sebelum menyediakan dokumen untuk permohonan pentadbiran."
+      },
+      "arc": {
+        "title": "Pendaftaran ARC",
+        "description": "Semak panduan rasmi semasa untuk mendaftarkan penginapan anda di Korea.",
+        "category": "Kekal pendaftaran",
+        "preparation": [
+          "Panduan rasmi semasa",
+          "Dokumen yang diminta untuk status anda"
+        ],
+        "practicalNote": "Gunakan HiKorea sebagai sumber kebenaran kerana keperluan boleh berubah."
+      },
+      "bank": {
+        "title": "Buka akaun bank",
+        "description": "Semak keperluan pembukaan akaun semasa sebelum melawat bank.",
+        "category": "Perbankan",
+        "preparation": [
+          "Pengenalan diminta oleh bank",
+          "Maklumat kelayakan semasa"
+        ],
+        "practicalNote": "Keperluan dan sokongan bahasa mungkin berbeza, jadi sahkannya sebelum melawat."
+      },
+      "sim": {
+        "title": "Dapatkan SIM Korea",
+        "description": "Pilih pilihan mudah alih semasa yang sesuai dengan status pengenalan dan penggunaan anda.",
+        "category": "Ketersambungan",
+        "preparation": [
+          "Telefon tidak berkunci",
+          "Pengenalan semasa"
+        ],
+        "practicalNote": "Sahkan syarat pelan semasa dan keperluan pengenalan sebelum mendaftar."
+      },
+      "account": {
+        "title": "Aktifkan akaun KU anda",
+        "description": "Sediakan akses kepada Portal KU dan perkhidmatan digital yang tersedia untuk anda.",
+        "category": "Sistem KU",
+        "preparation": [
+          "Maklumat pengenalan pelajar",
+          "panduan akaun KU"
+        ],
+        "practicalNote": "Ikuti arahan semasa daripada KU Digital Information Services."
+      },
+      "courses": {
+        "title": "Sahkan jadual kursus anda",
+        "description": "Semak kursus berdaftar, bilik darjah dan notis semasa anda dalam sistem KU.",
+        "category": "Kursus",
+        "preparation": [
+          "Akses Portal KU",
+          "Pelan kursus semasa"
+        ],
+        "practicalNote": "Gunakan notis KU semasa dan bukannya bergantung pada tarikh yang disimpan."
+      },
+      "healthcare": {
+        "title": "Cari penjagaan kesihatan yang mesra bahasa asing",
+        "description": "Terokai penyenaraian tunjuk cara yang menunjukkan sama ada sokongan bahasa mungkin tersedia.",
+        "category": "Penjagaan kesihatan",
+        "preparation": [
+          "Jurupandu Tempatan",
+          "Nota kesihatan peribadi"
+        ],
+        "practicalNote": "Hubungi pembekal terus untuk mengesahkan perkhidmatan semasa dan sokongan bahasa."
+      },
+      "campus-dining": {
+        "title": "Terokai tempat makan kampus",
+        "description": "Gunakan Jurupandu Tempatan untuk meneroka penyenaraian makanan demo di sekitar kampus.",
+        "category": "Makan",
+        "preparation": [
+          "Pilihan pemakanan",
+          "Jurupandu Tempatan"
+        ],
+        "practicalNote": "Sahkan menu dan ramuan semasa secara langsung sebelum melawat."
+      },
+      "household-essentials": {
+        "title": "Cari barangan keperluan rumah",
+        "description": "Semak imbas penyenaraian pasaran demo untuk item yang berguna dalam perumahan pelajar.",
+        "category": "Kehidupan harian",
+        "preparation": [
+          "Senarai beli-belah",
+          "Pelan pengambilan"
+        ],
+        "practicalNote": "Penyenaraian dan urus niaga dalam prototaip ini adalah demo sahaja."
+      },
+      "student-marketplace": {
+        "title": "Gunakan pasaran pelajar",
+        "description": "Terokai cara pasaran pelajar KU boleh menghubungkan pelajar yang masuk dan akan keluar.",
+        "category": "Pasaran pelajar",
+        "preparation": [
+          "Pengesahan demo",
+          "Pilihan pasaran"
+        ],
+        "practicalNote": "Prototaip semasa menggunakan pengesahan demo; perkhidmatan langsung memerlukan e-mel universiti."
+      },
+      "sell-items": {
+        "title": "Senaraikan barangan isi rumah untuk dijual",
+        "description": "Buat penyenaraian demo supaya pelajar masuk boleh menemui item yang anda tidak perlukan lagi.",
+        "category": "Pasaran",
+        "preparation": [
+          "Butiran item",
+          "Ketersediaan pengambilan"
+        ],
+        "practicalNote": "Prototaip ini tidak memproses pembayaran atau mesej."
+      },
+      "luggage": {
+        "title": "Susun penyimpanan bagasi atau penghantaran",
+        "description": "Bandingkan storan umum atau pilihan penghantaran dan simpan butiran tempahan anda sendiri bersama-sama.",
+        "category": "Bagasi",
+        "preparation": [
+          "Senarai bagasi",
+          "Butiran destinasi"
+        ],
+        "practicalNote": "Sahkan syarat, harga dan sekatan semasa secara terus dengan pembekal yang anda pilih."
+      },
+      "departure-checklist": {
+        "title": "Senarai semak berlepas lengkap",
+        "description": "Semak perumahan, kampus, harta benda dan tugasan perjalanan anda sebelum berlepas.",
+        "category": "Berlepas",
+        "preparation": [
+          "Senarai tugas peribadi",
+          "Kenalan penting",
+          "Dokumen perjalanan"
+        ],
+        "practicalNote": "Tambahkan tarikh anda yang disahkan sendiri dan bukannya bergantung pada tarikh akhir generik."
+      },
+      "dorm-checkout": {
+        "title": "Daftar keluar asrama",
+        "description": "Ikut arahan daftar keluar asrama semasa dan sahkan langkah penyerahan bilik anda.",
+        "category": "Perumahan",
+        "preparation": [
+          "Panduan daftar keluar asrama",
+          "Nota penyerahan bilik"
+        ],
+        "practicalNote": "Gunakan arahan terkini dari asrama anda; demo ini tidak menetapkan tarikh akhir."
+      },
+      "move-out": {
+        "title": "Perpindahan keluar dari kampus",
+        "description": "Semak susunan perpindahan anda yang disahkan dan sediakan penyerahan perumahan.",
+        "category": "Perumahan",
+        "preparation": [
+          "Perjanjian perumahan",
+          "Nota penyerahan"
+        ],
+        "practicalNote": "Sahkan tanggungjawab dan masa dengan kenalan perumahan anda."
+      }
+    }
+  },
+  "marketplace": {
+    "eyebrow": "PASARAN KAMPUS",
+    "title": "Barang yang tidak lagi diperlukan seorang pelajar mungkin berguna kepada pelajar lain",
+    "body": "Senaraikan dan tempah item tanpa log masuk. Item contoh dan senarai sebenar ditandakan dengan jelas.",
+    "incoming": "Saya baru di KU",
+    "leaving": "Saya akan meninggalkan KU",
+    "search": "Cari item",
+    "clearSearch": "Kosongkan carian",
+    "all": "Semua",
+    "condition": "Keadaan",
+    "pickup": "Tempat pengambilan",
+    "seller": "Penjual",
+    "details": "Lihat butiran",
+    "contact": "Hubungi penjual",
+    "empty": "Tiada item yang sepadan.",
+    "form": {
+      "title": "Senaraikan item untuk pelajar seterusnya",
+      "body": "Tambah gambar supaya pembeli lebih mudah melihat keadaan item.",
+      "itemName": "Nama item",
+      "price": "Harga",
+      "category": "Kategori",
+      "condition": "Keadaan",
+      "pickup": "Tempat pengambilan",
+      "availability": "Masa tersedia",
+      "submit": "Tambah senarai",
+      "success": "Item anda telah disenaraikan.",
+      "itemPlaceholder": "cth. Kerusi belajar",
+      "pricePlaceholder": "cth. 20000",
+      "pickupPlaceholder": "cth. Pintu Utama KU"
+    },
+    "markSold": "Tandakan sudah dijual",
+    "hideListing": "Sembunyikan senarai",
+    "showListing": "Paparkan senarai",
+    "cancelReservation": "Batalkan tempahan",
+    "deleteListing": "Padam senarai",
+    "myReservations": "Tempahan saya",
+    "confirmReservation": "Sahkan tempahan",
+    "imageHint": "PNG, JPG atau WebP · sehingga 8 MB",
+    "categories": {
+      "Home": "Rumah",
+      "Kitchen": "Dapur",
+      "Electronics": "Elektronik",
+      "Bedding": "Peralatan tempat tidur"
+    },
+    "conditions": {
+      "likeNew": "Seperti baharu",
+      "good": "Bagus",
+      "used": "Digunakan",
+      "clean": "Bersih"
+    },
+    "flow": {
+      "verification": "Sesi tanpa nama",
+      "listing": "Penyenaraian produk",
+      "pickup": "Pengambilan kampus",
+      "transaction": "Urus niaga langsung"
+    },
+    "contactTitle": "Hubungi penjual",
+    "contactBody": "Ini ialah demo pembentangan. Dalam perkhidmatan langsung, mesej anda akan dihantar melalui sembang KU sahaja yang selamat.",
+    "message": "Hai! Adakah ini masih tersedia? Saya boleh ambil dekat kampus.",
+    "messageReady": "Mesej demo sedia",
+    "changePickup": "Tukar masa pengambilan",
+    "savePickup": "Simpan jadual",
+    "pickupPast": "Masa pengambilan telah berlalu",
+    "reservationCompleted": "Selesai",
+    "reservationCancelled": "Dibatalkan",
+    "loadMore": "Muatkan lagi",
+    "loadingMore": "Memuatkan lagi…",
+    "actions": {
+      "browse": "Semak imbas Marketplace",
+      "list": "Senaraikan item"
+    },
+    "userSeller": "pelajar KU · {{name}}",
+    "authRequiredTitle": "Log masuk untuk menyenaraikan item sebenar",
+    "authRequiredBody": "Rancangan tetamu kekal pada peranti ini. Sahkan e-mel KU anda untuk menerbitkan penyenaraian ke pasaran pelajar.",
+    "markActive": "Tandakan sebagai tersedia",
+    "cancelSold": "Batalkan status terjual",
+    "favorite": "Kegemaran",
+    "unfavorite": "Alih keluar daripada kegemaran",
+    "reservationHolder": "Dipelihara oleh",
+    "restoreListing": "Pulihkan penyenaraian",
+    "showDeleted": "Paparan dipadamkan",
+    "hideDeleted": "Sembunyikan dipadamkan",
+    "deleted": "Dipadamkan",
+    "hidden": "Tersembunyi",
+    "sold": "Dijual",
+    "myListings": "Penyenaraian saya",
+    "noOwnListings": "Anda belum mempunyai penyenaraian.",
+    "reservedBy": "Dipelihara oleh: {{name}}",
+    "soldUnavailable": "Item ini telah pun ditanda sebagai dijual.",
+    "reservationSummary": "Item tempah",
+    "reservationActive": "Tempahan aktif",
+    "pickupNotSet": "Masa pengambilan tidak ditetapkan",
+    "pickupScheduleTitle": "Pilih masa pengambilan",
+    "pickupDate": "Tarikh pengambilan",
+    "pickupStart": "Masa mula",
+    "pickupEnd": "Masa tamat",
+    "reportTitle": "Laporkan penyenaraian",
+    "reportReason": "Sebab",
+    "chooseReportReason": "Pilih sebab",
+    "reportDetail": "Butiran",
+    "submitReport": "Serahkan laporan",
+    "duplicateReport": "Anda sudah melaporkan item ini.",
+    "reportSubmitted": "Laporan diterima.",
+    "reportReasons": {
+      "false_info": "Maklumat item palsu",
+      "price_mismatch": "Harga atau keterangan tidak sepadan",
+      "scam": "Disyaki penipuan",
+      "inappropriate": "Kandungan yang tidak sesuai",
+      "schedule_issue": "Tempat pengambilan atau isu jadual",
+      "other": "Lain-lain"
+    },
+    "mapsView": "Lihat di Peta Google",
+    "mapsDirections": "Dapatkan arah",
+    "reportHistory": "Laporkan sejarah",
+    "reportReceived": "Diterima",
+    "removeImage": "Alih keluar imej",
+    "products": {
+      "riceCooker": {
+        "name": "Periuk Nasi",
+        "pickup": "Stesen Anam, Keluar 3",
+        "seller": "Pertukaran pelajar · Mia"
+      },
+      "deskLamp": {
+        "name": "Lampu Meja",
+        "pickup": "Pintu Utama KU",
+        "seller": "Pelajar KU · Joon"
+      },
+      "beddingSet": {
+        "name": "Set Tempat Tidur",
+        "pickup": "Rumah Antarabangsa CJ",
+        "seller": "Pertukaran pelajar · Lea"
+      },
+      "electricKettle": {
+        "name": "Cerek Elektrik",
+        "pickup": "Anam Ogeori",
+        "seller": "Pelajar KU · Min"
+      },
+      "miniFan": {
+        "name": "Kipas Mini",
+        "pickup": "Plaza Pusat KU",
+        "seller": "Pertukaran pelajar · Nuh"
+      },
+      "storageBoxes": {
+        "name": "Set Kotak Storan",
+        "pickup": "Stesen Anam, Keluar 2",
+        "seller": "Pelajar KU · Hana"
+      }
+    }
+  },
+  "localGuide": {
+    "eyebrow": "PANDUAN TEMPATAN",
+    "title": "Hidup dengan selesa di sekitar Anam",
+    "body": "Panduan praktikal tempat berhampiran KU. Calon carian Kakao dan tempat yang disemak secara dalaman dipaparkan bersama.",
+    "all": "Semua",
+    "englishAvailable": "Sokongan bahasa Inggeris mungkin tersedia",
+    "studentTip": "Petua pelajar",
+    "empty": "Tiada tempat dalam kategori ini.",
+    "categories": {
+      "Food": "Makanan",
+      "Halal": "Halal",
+      "Vegan": "Vegan",
+      "Hospital": "Hospital",
+      "Pharmacy": "Farmasi",
+      "Hair Salon": "Salun rambut",
+      "Cafe": "Kafe",
+      "Grocery": "Kedai runcit"
+    },
+    "distanceFromKu": "{{distance}} dari KU",
+    "actions": {
+      "view": "Lihat Jurupandu Tempatan"
+    },
+    "places": {
+      "anamClinic": {
+        "name": "Klinik Antarabangsa Anam · Sampel",
+        "description": "Contoh penyenaraian untuk klinik berdekatan yang mungkin menawarkan sokongan bahasa.",
+        "location": "Berhampiran Stesen Anam",
+        "tip": "Panggil dahulu untuk mengesahkan perkhidmatan semasa, waktu perniagaan dan sokongan bahasa."
+      },
+      "kuPharmacy": {
+        "name": "Farmasi KU Gate · Sampel",
+        "description": "Contoh penyenaraian untuk farmasi berhampiran kampus.",
+        "location": "Berhampiran Pintu Utama KU",
+        "tip": "Bawa nama ubat atau gambar yang jelas apabila meminta bantuan."
+      },
+      "seoulKitchen": {
+        "name": "Dapur Halal Seoul · Sampel",
+        "description": "Contoh penyenaraian untuk hidangan mesra halal berhampiran kampus.",
+        "location": "Anam-ro",
+        "tip": "Sahkan bahan-bahan semasa dan pensijilan terus dengan restoran."
+      },
+      "greenTable": {
+        "name": "Jadual Hijau · Sampel",
+        "description": "Penyenaraian sampel untuk hidangan mesra vegan.",
+        "location": "Berhampiran Anam Ogeori",
+        "tip": "Tanya tentang sos dan stok jika anda mengelakkan bahan haiwan."
+      },
+      "studyCafe": {
+        "name": "Kafe Pengajian Kampus · Contoh",
+        "description": "Contoh penyenaraian untuk kafe mesra belajar yang tenang.",
+        "location": "Berhampiran KU Central Plaza",
+        "tip": "Semak peraturan tempat duduk semasa sebelum sesi belajar yang panjang."
+      },
+      "neighborhoodMart": {
+        "name": "Anam Neighbourhood Mart · Sampel",
+        "description": "Contoh penyenaraian untuk barangan runcit harian dan keperluan rumah.",
+        "location": "Berhampiran Stesen Anam",
+        "tip": "Bandingkan harga seunit semasa membeli barangan keperluan rumah."
+      }
+    }
+  },
+  "verification": {
+    "signIn": "Log masuk",
+    "continue": "Teruskan dengan e-mel KU",
+    "title": "Pengesahan pelajar",
+    "email": "E-mel universiti",
+    "authTitle": "Teruskan dengan e-mel KU anda",
+    "authBody": "Kami akan menghantar kod enam digit ke e-mel yang berakhir dengan tepat dalam @korea.ac.kr.",
+    "sendCode": "Hantar kod pengesahan",
+    "sending": "Menghantar kod…",
+    "linkSent": "Kami menghantar pautan log masuk ke e-mel anda.",
+    "openLink": "Buka pautan log masuk dalam e-mel itu untuk meneruskan.",
+    "code": "Kod pengesahan",
+    "verifyCode": "Sahkan kod",
+    "verifying": "Mengesahkan…",
+    "resend": "Hantar semula kod",
+    "resendCooldown": "Hantar semula dalam {{seconds}}s",
+    "changeEmail": "Tukar e-mel",
+    "signOut": "Log keluar",
+    "verifiedKu": "E-mel KU yang disahkan",
+    "securityNote": "KU Settle tidak pernah meminta kata laluan anda. Abaikan sebarang kod yang anda tidak minta.",
+    "body": "Prototaip ini hanya menyemak format e-mel KU dan tidak menghantar e-mel. Perkhidmatan langsung memerlukan pengesahan melalui e-mel Universiti Korea yang sebenar.",
+    "emailPlaceholder": "student@korea.ac.kr",
+    "submit": "Sahkan untuk demo",
+    "success": "Anda telah disahkan untuk tunjuk cara ini",
+    "student": "Pertukaran pelajar"
+  },
+  "profile": {
+    "guestName": "Tetamu",
+    "save": "Simpan profil",
+    "arrival": "Tarikh ketibaan",
+    "housing": "Tempat tinggal",
+    "name": "Nama",
+    "create": "Cipta pelan saya",
+    "languageNote": "Anda boleh menukar bahasa kemudian.",
+    "accountTitle": "Akaun anda",
+    "accountTasks": "menyelesaikan tugasan",
+    "accountListings": "penyenaraian",
+    "deleteAccount": "Padam akaun",
+    "deleteTitle": "Padamkan akaun anda secara kekal?",
+    "deleteBody": "Ini tidak boleh dibuat asal. Profil anda, kemajuan kitaran hayat dan setiap penyenaraian pasaran akan dialih keluar.",
+    "deleteProfile": "Akaun dan profil",
+    "deleteProgress": "Kemajuan kitaran hayat",
+    "deleteListings": "Semua penyenaraian aktif, dijual, tersembunyi dan dipadamkan",
+    "typeEmail": "Taip e-mel anda untuk mengesahkan",
+    "continueDelete": "Teruskan",
+    "deleteForever": "Padam secara kekal",
+    "deleteSuccess": "Akaun anda telah dipadamkan.",
+    "importTitle": "Import pelan peranti ini?",
+    "importBody": "Tiada apa-apa dimuat naik sehingga anda mengesahkan. Data contoh tidak diimport.",
+    "importProfile": ".",
+    "importTasks": "menyelesaikan tugasan",
+    "importProducts": "penyenaraian tempatan",
+    "importConfirm": "Import data yang dipilih",
+    "importSuccess": "Pelan peranti anda telah diimport.",
+    "notNow": "Bukan sekarang",
+    "demoArrival": "Profil demo",
+    "dorm": "Asrama KU",
+    "offCampus": "Perumahan luar kampus",
+    "setupEyebrow": "PERIBADI RANCANGAN ANDA",
+    "setupTitle": "Mari sediakan pelan kitaran hayat KU anda",
+    "setupBody": "Beritahu kami perkara asas supaya tugasan perumahan ketibaan dan perlepasan sepadan dengan situasi anda. Tiada akaun dibuat.",
+    "namePlaceholder": "Nama awak",
+    "arrivalDate": "Tarikh ketibaan dijangka",
+    "housingType": "Jenis perumahan",
+    "skip": "Sediakan kemudian"
+  },
+  "admin": {
+    "eyebrow": "PENGURUSAN OPERASI",
+    "title": "Panel pentadbir",
+    "products": "Produk",
+    "reservations": "Tempahan",
+    "reports": "Laporan",
+    "tasks": "Tugasan",
+    "export": "Eksport",
+    "import": "Import",
+    "productSection": "Pengurusan produk",
+    "reservationSection": "Pengurusan tempahan",
+    "reportSection": "Pengurusan laporan",
+    "noData": "Tiada data.",
+    "demoNotice": "Skrin pengurusan demo peranti sahaja, bukan alat pentadbir selamat.",
+    "reset": "Tetapkan semula demo",
+    "confirmReset": "Tetapkan semula semua data demo?",
+    "confirmDelete": "Padamkan item ini dan tempahan serta laporannya?",
+    "lifecycleSection": "Ringkasan kitaran hayat",
+    "reportNew": "Diterima",
+    "reportReviewed": "Menyemak",
+    "reportResolved": "Selesai",
+    "completedTasks": "{{count}} selesai",
+    "trackedTasks": "{{count}} jumlah tugasan",
+    "progress": "{{progress}}% kemajuan"
+  },
+  "reset": {
+    "button": "Tetapkan semula data saya",
+    "title": "Tetapkan semula data anda?",
+    "confirm": "Tetapkan semula",
+    "body": "Ini mengosongkan profil yang disimpan, senarai semak kitaran hayat, pengesahan, penyenaraian pasaran, carian dan penapis pada peranti ini. Bahasa anda tetap sama."
+  },
+  "validation": {
+    "requiredFields": "Lengkapkan semua medan wajib.",
+    "positivePrice": "Masukkan harga lebih daripada sifar.",
+    "itemRequired": "Masukkan nama item.",
+    "pickupRequired": "Masukkan tempat pengambilan.",
+    "pickupScheduleRequired": "Pilih tarikh dan julat masa pengambilan yang sah.",
+    "validEmail": "Masukkan e-mel @korea.ac.kr yang sah.",
+    "nameRequired": "Masukkan nama sehingga 80 aksara.",
+    "invalidDate": "Masukkan tarikh yang sah.",
+    "validPrice": "Masukkan harga KRW positif yang sah.",
+    "otpLength": "Masukkan kod enam digit."
+  },
+  "errors": {
+    "generic": "Sesuatu telah berlaku. Cuba lagi.",
+    "imageInvalid": "Pilih fail gambar yang sah.",
+    "missingTranslation": "Kandungan ini dipaparkan sementara dalam bahasa Inggeris.",
+    "rateLimit": "Terlalu banyak permintaan. Sila tunggu.",
+    "sessionExpired": "Sesi anda telah tamat. Log masuk semula.",
+    "permissionDenied": "Anda tiada kebenaran untuk tindakan ini.",
+    "offline": "Anda di luar talian. Perubahan tidak disimpan.",
+    "saveFailed": "Tidak dapat menyimpan. Cuba lagi.",
+    "storageQuota": "Storan penyemak imbas tidak mencukupi. Alih keluar imej besar dan cuba lagi.",
+    "storage": "Data yang disimpan tidak dapat dibaca. Lalai selamat telah dipulihkan.",
+    "supabaseNotConfigured": "Perkhidmatan akaun belum disambungkan lagi. Konfigurasikan URL Supabase awam dan kunci boleh diterbitkan untuk mendayakan log masuk.",
+    "supabaseUnavailable": "Perkhidmatan akaun tidak tersedia buat sementara waktu.",
+    "invalidOtp": "Kod tidak betul atau tamat tempoh. Minta kod baharu.",
+    "imageTooLarge": "Pilih imej yang lebih kecil daripada 2 MB."
+  },
+  "accessibility": {
+    "brandHome": "Laman utama KU Settle",
+    "profile": "Buka profil tanpa nama",
+    "productDetails": "Lihat butiran {{product}}",
+    "closeLanguage": "Tutup menu bahasa",
+    "lifecycleTabs": "Peringkat kitaran hayat",
+    "stageProgress": "{{stage}}: {{completed}} daripada {{total}}, {{progress}}",
+    "placeCategory": "Tapis tempat mengikut {{category}}",
+    "marketMode": "Mod pasaran"
+  }
 }
