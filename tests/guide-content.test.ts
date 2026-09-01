@@ -4,7 +4,7 @@ import { expandedLifeGuideArticles, getGuideLocaleCopy } from "../app/guide-cont
 
 describe("life guide localization and sources", () => {
   const articles = [...lifeGuideArticles, ...expandedLifeGuideArticles];
-  const locales = ["en", "ko", "ja", "zh-CN"] as const;
+  const locales = ["en", "ko", "ja", "zh-CN", "uz", "vi", "mn", "ms"] as const;
 
   it("has localized preparation sections for every guide", () => {
     for (const article of articles) {
@@ -17,6 +17,14 @@ describe("life guide localization and sources", () => {
       }
     }
     expect(getGuideLocaleCopy(lifeGuideArticles[0], "ko").checklist?.[0]).toBe("내 과정에 적용되는 페이지 확인");
+  });
+
+  it.each(["uz", "vi", "mn", "ms"] as const)("does not expose mixed-language %s guide copy", (locale) => {
+    for (const article of articles) {
+      const copy = getGuideLocaleCopy(article, locale);
+      const text = [copy.title, copy.summary, copy.content, ...(copy.checklist ?? []), ...(copy.steps ?? []), ...(copy.cautions ?? [])].join(" ");
+      expect(text).not.toMatch(/tarikhs|\bCheck KU’s|\bUse the university’s|\bPrepare for dormitory\b|\bofficial housing\b|\bунтраасанicial\b/i);
+    }
   });
 
   it("only exposes verified source links and keeps content dates", () => {

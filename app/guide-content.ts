@@ -1,6 +1,7 @@
 import type { GuideLocaleCopy, LifeGuideArticle } from "./data";
 import type { Locale } from "./i18n";
 import { legacyCopy } from "./i18n/legacy-copy";
+import { guideLocaleOverrides } from "./guide-locales";
 
 const article = (value: Omit<LifeGuideArticle, "universityId" | "contentCheckedAt" | "sourceStatus">): LifeGuideArticle => ({
   ...value,
@@ -53,7 +54,8 @@ const localizedSections: Record<string, LocalizedSections> = {
 };
 
 export function getGuideLocaleCopy(article: LifeGuideArticle, locale: Locale): GuideLocaleCopy {
-  const base = (article.locales as Record<string, GuideLocaleCopy | undefined>)[locale]
+  const base = guideLocaleOverrides[article.id]?.[locale as keyof typeof guideLocaleOverrides[typeof article.id]]
+    ?? (article.locales as Record<string, GuideLocaleCopy | undefined>)[locale]
     ?? legacyCopy(locale, { title: article.title, summary: article.summary, content: article.content });
   const translated = localizedSections[article.id]?.[locale];
   const fallbackSections = legacyCopy(locale, { checklist: article.checklist, steps: article.steps, cautions: article.cautions });
