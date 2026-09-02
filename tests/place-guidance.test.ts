@@ -12,6 +12,13 @@ describe("place guidance", () => {
     expect(guidance.language).toBeUndefined();
   });
 
+  it("classifies every static campus anchor before resolving guidance", () => {
+    const campusAnchors = places.filter((place) => place.kind === "campus");
+    expect(campusAnchors.length).toBeGreaterThan(0);
+    expect(campusAnchors.every((place) => place.venueType === "campus-anchor")).toBe(true);
+    expect(campusAnchors.every((place) => !placeGuidance(place, "ko").tip.includes("진료과"))).toBe(true);
+  });
+
   it("keeps hospital language guidance and ranks verified places first", () => {
     const hospital = places.find((place) => place.category === "Hospital");
     expect(placeGuidance(hospital!, "en").language).toContain("language support");
