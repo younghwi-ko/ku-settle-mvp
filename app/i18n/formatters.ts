@@ -24,6 +24,12 @@ export function formatDate(locale: Locale, isoDate: string) {
   return new Intl.DateTimeFormat(localeTag(locale), { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }).format(new Date(Date.UTC(year, month - 1, day)));
 }
 
+export function formatDateTime(locale: Locale, value: string | Date) {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return typeof value === "string" ? value : "—";
+  return new Intl.DateTimeFormat(localeTag(locale), { dateStyle: "medium", timeStyle: "short" }).format(date);
+}
+
 export function formatDistance(locale: Locale, meters: number) {
   return new Intl.NumberFormat(localeTag(locale), { style: "unit", unit: "meter", unitDisplay: "short" }).format(meters);
 }

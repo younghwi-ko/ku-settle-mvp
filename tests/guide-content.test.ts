@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { lifeGuideArticles } from "../app/data";
 import { expandedLifeGuideArticles, getGuideLocaleCopy } from "../app/guide-content";
+import { formatDate } from "../app/i18n/formatters";
 
 describe("life guide localization and sources", () => {
   const articles = [...lifeGuideArticles, ...expandedLifeGuideArticles];
@@ -34,6 +35,14 @@ describe("life guide localization and sources", () => {
     }
     expect(expandedLifeGuideArticles.find((article) => article.id === "recycling-basics")?.officialUrl).toMatch(/^https:\/\//);
     expect(expandedLifeGuideArticles.find((article) => article.id === "sim-esim-options")?.officialUrl).toMatch(/^https:\/\//);
+  });
+
+  it("formats guide dates with the selected locale", () => {
+    expect(formatDate("mn", "2026-08-29")).toContain("наймдугаар");
+    expect(formatDate("uz", "2026-08-29")).toContain("avgust");
+    expect(formatDate("ms", "2026-08-29")).toContain("Ogos");
+    expect(formatDate("mn", "2026-08-29")).not.toMatch(/[가-힣]/);
+    expect(formatDate("uz", "2026-08-29")).not.toMatch(/M08/);
   });
 
   it("classifies verified extended guides as official-source content", () => {

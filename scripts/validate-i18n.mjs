@@ -63,6 +63,16 @@ for (const [source, translations] of Object.entries(legacyCopy)) {
     if (["uz", "vi", "mn", "ms"].includes(locale)) assert.ok(!/[가-힣]/.test(translations[locale]), `legacy ${locale} unexpectedly exposes Korean text: ${source}`);
   }
 }
+for (const locale of ["ko", "ja", "zh-CN", "uz", "vi", "mn", "ms"]) {
+  for (const source of ["Status", "Information status"]) {
+    assert.notEqual(legacyCopy[source]?.[locale], source, `${locale}:${source} still exposes the English status label`);
+  }
+}
+const forbiddenMixedGuideCopy = /tarikhs|Status maklumat|Check KU’s|Use the university’s|Prepare for dormitory|official housing|унтраасанicial/i;
+for (const locale of ["uz", "vi", "mn", "ms"]) {
+  const localeSource = await readFile(`${projectRoot}app/guide-locales.ts`, "utf8");
+  assert.ok(!forbiddenMixedGuideCopy.test(localeSource), `${locale}: guide source contains a known mixed-language phrase`);
+}
 
 const sourceFiles = await Promise.all(["app/data.ts", "app/page.tsx"].map((path) => readFile(`${projectRoot}${path}`, "utf8")));
 const referencedKeys = new Set(sourceFiles.flatMap((source) => [...source.matchAll(/["'`]((?:common|navigation|home|onboarding|marketplace|localGuide|verification|profile|reset|validation|errors|accessibility):[A-Za-z0-9_.-]+)["'`]/g)].map((match) => match[1])));
