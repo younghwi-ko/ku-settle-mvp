@@ -62,11 +62,24 @@ const guideCategoryIcons: Record<string, typeof BookOpen> = { housing: House, ar
 const categoryProductIcons: Record<ProductCategory, ProductIcon> = { Home: "box", Kitchen: "cooking", Electronics: "fan", Bedding: "bed" };
 
 function tr(t: TFunction, key: string, options?: Record<string, unknown>) {
-  const value = String(t(key.replace(/^marketplace\./, "marketplace:"), options));
   const language = (t as unknown as { lng?: string; resolvedLanguage?: string; language?: string }).lng
     ?? (t as unknown as { resolvedLanguage?: string }).resolvedLanguage
     ?? (t as unknown as { language?: string }).language
     ?? "en";
+  if (key === "localGuide:places.campusAnchor.description") {
+    const campusDescription: Record<string, string> = {
+      ko: "고려대학교 캠퍼스 위치와 건물 안내를 위한 기준점입니다.",
+      en: "A campus reference point for Korea University locations and building information.",
+      ja: "高麗大学のキャンパス位置と建物案内のための基準地点です。",
+      "zh-CN": "用于确认高丽大学校园位置和建筑信息的参考点。",
+      vi: "Điểm tham chiếu để xem vị trí và thông tin tòa nhà của Đại học Korea.",
+      uz: "Korea universiteti kampusi joylashuvi va binolar haqidagi ma’lumotlar uchun mo‘ljal.",
+      mn: "Кореа их сургуулийн кампусын байршил, барилгын мэдээллийг үзэх лавлах цэг.",
+      ms: "Titik rujukan untuk lokasi kampus dan maklumat bangunan Korea University."
+    };
+    return campusDescription[language] ?? campusDescription.en;
+  }
+  const value = String(t(key.replace(/^marketplace\./, "marketplace:"), options));
   return normalizePublicCopy(value, language as Locale);
 }
 function localizedValue<T>(values: Partial<Record<string, T>> | undefined, locale: Locale): T | undefined {

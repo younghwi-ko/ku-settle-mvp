@@ -493,6 +493,7 @@
         "location": "Gần ga Anam",
         "tip": "Hãy gọi trước để xác nhận các dịch vụ, giờ làm việc và hỗ trợ ngôn ngữ hiện tại."
       },
+      "campusAnchor": { "description": "Điểm tham chiếu để xem vị trí và thông tin tòa nhà của Đại học Korea." },
       "kuPharmacy": {
         "name": "Nhà thuốc cổng KU · Mẫu",
         "description": "Danh sách mẫu cho một hiệu thuốc gần khuôn viên trường.",

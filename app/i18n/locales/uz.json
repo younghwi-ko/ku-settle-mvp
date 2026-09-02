@@ -493,6 +493,7 @@
         "location": "Anam bekati yaqinida",
         "tip": "Joriy xizmatlar, ish soatlari va tilni qoʻllab-quvvatlashni tasdiqlash uchun avval qoʻngʻiroq qiling."
       },
+      "campusAnchor": { "description": "Korea universiteti kampusi joylashuvi va binolar haqidagi ma’lumotlar uchun mo‘ljal." },
       "kuPharmacy": {
         "name": "KU Gate Pharmacy · Namuna",
         "description": "Kampus yaqinidagi dorixona uchun namuna roʻyxati.",

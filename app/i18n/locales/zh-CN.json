@@ -150,6 +150,7 @@
     "actions": { "view": "查看生活指南" },
     "places": {
       "anamClinic": { "name": "安岩国际诊所 · 示例", "description": "可能提供语言支持的附近诊所示例信息。", "location": "安岩站附近", "tip": "请提前致电确认当前诊疗项目、营业时间和语言支持。" },
+      "campusAnchor": { "description": "用于确认高丽大学校园位置和建筑信息的参考点。" },
       "kuPharmacy": { "name": "高丽大学正门药店 · 示例", "description": "校园附近药店的示例信息。", "location": "高丽大学正门附近", "tip": "咨询时可以准备药品名称或清晰照片。" },
       "seoulKitchen": { "name": "首尔清真厨房 · 示例", "description": "校园周边清真友好餐厅的示例信息。", "location": "安岩路", "tip": "请直接向餐厅确认当前食材和认证情况。" },
       "greenTable": { "name": "Green Table · 示例", "description": "提供纯素友好餐点的地点示例。", "location": "安岩五岔路口附近", "tip": "如果需要避免动物性食材，也请确认酱料和汤底。" },

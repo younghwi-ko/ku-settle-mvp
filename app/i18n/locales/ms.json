@@ -493,6 +493,7 @@
         "location": "Berhampiran Stesen Anam",
         "tip": "Panggil dahulu untuk mengesahkan perkhidmatan semasa, waktu perniagaan dan sokongan bahasa."
       },
+      "campusAnchor": { "description": "Titik rujukan untuk lokasi kampus dan maklumat bangunan Korea University." },
       "kuPharmacy": {
         "name": "Farmasi KU Gate · Sampel",
         "description": "Contoh penyenaraian untuk farmasi berhampiran kampus.",

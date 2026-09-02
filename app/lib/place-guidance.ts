@@ -1,7 +1,29 @@
 import type { Locale } from "../i18n";
 import type { Place } from "../data";
 
-type Guidance = { language?: string; tip: string };
+type Guidance = { language?: string; tip: string; description?: string };
+
+const campusDescriptions: Record<Locale, string> = {
+  ko: "고려대학교 캠퍼스 위치와 건물 안내를 위한 기준점입니다.",
+  en: "A campus reference point for Korea University locations and building information.",
+  ja: "高麗大学のキャンパス位置と建物案内のための基準地点です。",
+  "zh-CN": "用于确认高丽大学校园位置和建筑信息的参考点。",
+  vi: "Điểm tham chiếu để xem vị trí và thông tin tòa nhà của Đại học Korea.",
+  uz: "Korea universiteti kampusi joylashuvi va binolar haqidagi ma’lumotlar uchun mo‘ljal.",
+  mn: "Кореа их сургуулийн кампусын байршил, барилгын мэдээллийг үзэх лавлах цэг.",
+  ms: "Titik rujukan untuk lokasi kampus dan maklumat bangunan Korea University."
+};
+
+const residenceDescriptions: Record<Locale, string> = {
+  ko: "기숙사 위치와 입주 안내를 위한 캠퍼스 기준점입니다.",
+  en: "A campus reference point for residence locations and move-in information.",
+  ja: "寮の場所と入居案内のためのキャンパス基準地点です。",
+  "zh-CN": "用于确认宿舍位置和入住信息的校园参考点。",
+  vi: "Điểm tham chiếu về vị trí ký túc xá và thông tin nhận phòng.",
+  uz: "Yotoqxona joylashuvi va ko‘chib kirish ma’lumotlari uchun kampus mo‘ljali.",
+  mn: "Дотуур байрны байршил, нүүж орох мэдээллийг үзэх кампусын лавлах цэг.",
+  ms: "Titik rujukan kampus untuk lokasi kediaman dan maklumat masuk."
+};
 
 const copy: Record<string, Record<Locale, Guidance>> = {
   hospital: {
@@ -57,8 +79,14 @@ const copy: Record<string, Record<Locale, Guidance>> = {
 };
 
 export function placeGuidance(place: Place, locale: Locale): Guidance {
+  if (place.kind === "campus") {
+    place.descriptionKey = "localGuide:places.campusAnchor.description";
+    delete place.displayDescription;
+  }
   const key = place.venueType === "campus-anchor" ? (place.campusPointType === "residence" ? "residence" : "campus") : place.category === "Hospital" ? "hospital" : place.category === "Pharmacy" ? "pharmacy" : "food";
-  return copy[key][locale] ?? copy[key].en;
+  const guidance = copy[key][locale] ?? copy[key].en;
+  if (place.venueType === "campus-anchor") return { ...guidance, description: (key === "residence" ? residenceDescriptions : campusDescriptions)[locale] ?? campusDescriptions.en };
+  return guidance;
 }
 
 export function placeVerificationRank(place: Place) {

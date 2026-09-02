@@ -150,6 +150,7 @@
     "actions": { "view": "로컬 가이드 보기" },
     "places": {
       "anamClinic": { "name": "안암 국제 클리닉 · 샘플", "description": "외국어 지원이 가능할 수 있는 인근 병원의 샘플 정보입니다.", "location": "안암역 인근", "tip": "방문 전에 현재 진료, 운영시간과 언어 지원 여부를 전화로 확인하세요." },
+      "campusAnchor": { "description": "고려대학교 캠퍼스 위치와 건물 안내를 위한 기준점입니다." },
       "kuPharmacy": { "name": "고려대 정문 약국 · 샘플", "description": "캠퍼스 인근 약국의 샘플 정보입니다.", "location": "고려대 정문 인근", "tip": "도움을 요청할 때 약 이름이나 선명한 사진을 준비하세요." },
       "seoulKitchen": { "name": "서울 할랄 키친 · 샘플", "description": "캠퍼스 인근 할랄 친화 식당의 샘플 정보입니다.", "location": "안암로", "tip": "현재 식재료와 인증 여부는 식당에 직접 확인하세요." },
       "greenTable": { "name": "그린 테이블 · 샘플", "description": "비건 친화 메뉴를 제공하는 장소의 샘플 정보입니다.", "location": "안암오거리 인근", "tip": "동물성 재료를 피한다면 소스와 육수도 확인하세요." },
