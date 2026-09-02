@@ -160,6 +160,7 @@
     "places": {
       "anamClinic": { "name": "Anam International Clinic · Sample", "description": "Sample listing for a nearby clinic that may offer language support.", "location": "Near Anam Station", "tip": "Call first to confirm current services, hours, and language support." },
       "campusAnchor": { "description": "A campus reference point for Korea University locations and building information." },
+      "anamHospital": { "description": "Information about services and visits at Korea University Anam Hospital." },
       "kuPharmacy": { "name": "KU Gate Pharmacy · Sample", "description": "Sample listing for a pharmacy near campus.", "location": "Near KU Main Gate", "tip": "Bring the medicine name or a clear photo when asking for help." },
       "seoulKitchen": { "name": "Seoul Halal Kitchen · Sample", "description": "Sample listing for a halal-friendly meal near campus.", "location": "Anam-ro", "tip": "Confirm current ingredients and certification directly with the restaurant." },
       "greenTable": { "name": "Green Table · Sample", "description": "Sample listing for vegan-friendly dishes.", "location": "Near Anam Ogeori", "tip": "Ask about sauces and stock if you avoid animal ingredients." },

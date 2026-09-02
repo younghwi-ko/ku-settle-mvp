@@ -83,6 +83,7 @@ export function placeGuidance(place: Place, locale: Locale): Guidance {
     place.descriptionKey = "localGuide:places.campusAnchor.description";
     delete place.displayDescription;
   }
+  if (place.id === 1 && place.category === "Hospital") place.descriptionKey = "localGuide:places.anamHospital.description";
   const key = place.venueType === "campus-anchor" ? (place.campusPointType === "residence" ? "residence" : "campus") : place.category === "Hospital" ? "hospital" : place.category === "Pharmacy" ? "pharmacy" : "food";
   const guidance = copy[key][locale] ?? copy[key].en;
   if (place.venueType === "campus-anchor") return { ...guidance, description: (key === "residence" ? residenceDescriptions : campusDescriptions)[locale] ?? campusDescriptions.en };
