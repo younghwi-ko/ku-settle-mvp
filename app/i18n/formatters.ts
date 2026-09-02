@@ -21,11 +21,11 @@ export function formatCurrency(locale: Locale, value: number) {
 export function formatDate(locale: Locale, isoDate: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return isoDate;
   const [year, month, day] = isoDate.split("-").map(Number);
-  if (locale === "uz") {
+  if (locale === "uz" || locale.startsWith("uz-")) {
     const months = ["yanvar", "fevral", "mart", "aprel", "may", "iyun", "iyul", "avgust", "sentabr", "oktabr", "noyabr", "dekabr"];
     return `${day}-${months[month - 1]}, ${year}`;
   }
-  if (locale === "mn") {
+  if (locale === "mn" || locale.startsWith("mn-")) {
     const months = ["нэгдүгээр", "хоёрдугаар", "гуравдугаар", "дөрөвдүгээр", "тавдугаар", "зургадугаар", "долдугаар", "наймдугаар", "есдүгээр", "аравдугаар", "арван нэгдүгээр", "арван хоёрдугаар"];
     return `${year} оны ${months[month - 1]} сарын ${day}`;
   }
