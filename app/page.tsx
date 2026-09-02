@@ -26,7 +26,7 @@ import { accountFetch } from "./lib/account-api";
 import { createMarketplaceItem, deleteAccount, importGuestData, loadAccount, saveProfile, saveProgress, signInWithPassword, signOut, updateMarketplaceItemStatus, validAccountPassword } from "./lib/repository";
 import { googleMapsDirectionsUrl, googleMapsSearchUrl, isKuEmail, isOwnedMarketplaceProduct, isPickupPast, isValidImageDataUrl, isValidPickupSchedule, mapServiceError, profileRowToStored, validateMarketplaceInput, type AppMode, type ProfileRow, type StoredProfile } from "./lib/domain";
 import { shouldShowVerifiedBadge } from "./lib/verification";
-import { emptyPreferences, migrateLocalData, readLocalData, writeLocalData, type LocalPreferences, type LocalReservation, type ReportDraft, type LocalServiceRequest, type ServiceRequestMode } from "./lib/local-data";
+import { emptyPreferences, isRetiredQaListing, migrateLocalData, readLocalData, writeLocalData, type LocalPreferences, type LocalReservation, type ReportDraft, type LocalServiceRequest, type ServiceRequestMode } from "./lib/local-data";
 import KakaoMap from "./components/kakao-map";
 import AdminServerPanel from "./components/admin-server-panel";
 import { dedupePlaces, isValidCoordinates, KU_CENTER, KU_SCIENCE_CENTER, matchesPlaceCategory, type KakaoSearchResponse, type CampusFilter } from "./lib/kakao";
@@ -381,7 +381,7 @@ export default function Home() {
   const stageStats = useMemo(() => getStageStats(activeTasks, done), [activeTasks, done]);
   const marketplaceProducts = useMemo(() => {
     const merged = new Map<string, MarketProduct>();
-    for (const product of [...products, ...remotePublicProducts, ...userProducts]) merged.set(String(product.id), product);
+    for (const product of [...products, ...remotePublicProducts, ...userProducts]) if (!isRetiredQaListing(product)) merged.set(String(product.id), product);
     return [...merged.values()].map((product) => localPreferences.reservedProductIds.includes(String(product.id)) && product.serviceStatus !== "sold" ? { ...product, status: "Reserved" as const } : product);
   }, [userProducts, remotePublicProducts, localPreferences.reservedProductIds]);
   const loadMoreMarketplace = useCallback(async () => {

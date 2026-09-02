@@ -11,6 +11,15 @@ describe("local data migration", () => {
     const result = migrateLocalData({ products: [{ id: "ok", priceKrw: 1000, category: "Home", condition: "good", status: "Available", icon: "box" }, { id: "bad", priceKrw: "1" }], preferences: { reservations: [{ id: "r1", productId: "ok", buyerName: "Alex", status: "active", createdAt: "2026-08-29T00:00:00Z" }] } });
     expect(result.products).toHaveLength(1); expect(result.preferences.reservedProductIds).toEqual(["ok"]);
   });
+  it("removes the retired local QA listing and its linked browser-only data", () => {
+    const qaId = "qa-manual-flow";
+    const result = migrateLocalData({ products: [{ id: qaId, name: "수동 처리 흐름 검수 상품", pickup: "KU", priceKrw: 1000, category: "Home", condition: "good", status: "Available", icon: "box", source: "sample" }], preferences: { reservedProductIds: [qaId], favoriteProductIds: [qaId], reservations: [{ id: "r1", productId: qaId, buyerName: "Alex", status: "active", createdAt: "2026-08-29T00:00:00Z" }], serviceRequests: [{ id: "s1", productId: qaId, mode: "storage", status: "method-selected", updatedAt: "2026-08-29T00:00:00Z" }] } });
+    expect(result.products).toEqual([]);
+    expect(result.preferences.reservations).toEqual([]);
+    expect(result.preferences.serviceRequests).toEqual([]);
+    expect(result.preferences.reservedProductIds).toEqual([]);
+    expect(result.preferences.favoriteProductIds).toEqual([]);
+  });
   it("migrates completed reservations and ignores malformed status values", () => {
     const result = migrateLocalData({ preferences: { reservations: [{ id: "done", productId: "p1", buyerName: "Alex", status: "completed", createdAt: "2026-08-29T00:00:00Z", completedAt: "2026-08-29T12:00:00Z" }, { id: "bad", productId: "p2", buyerName: "Alex", status: "unknown", createdAt: "bad" }] } });
     expect(result.preferences.reservations).toHaveLength(1);
