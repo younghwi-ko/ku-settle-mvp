@@ -3199,6 +3199,26 @@
     "mn": "Шууд жагсаалт",
     "ms": "Penyenaraian langsung"
   },
+  "No live listings yet. Be the first to add one.": {
+    "en": "No live listings yet. Be the first to add one.",
+    "ko": "아직 실제 등록 상품이 없습니다. 첫 상품을 등록해 보세요.",
+    "ja": "まだ実際に登録された商品はありません。最初の商品を登録してみましょう。",
+    "zh-CN": "目前还没有实际注册的商品。来发布第一个商品吧。",
+    "uz": "Hali haqiqiy e’lonlar yo‘q. Birinchi mahsulotni qo‘shing.",
+    "vi": "Chưa có sản phẩm nào được đăng. Hãy đăng sản phẩm đầu tiên.",
+    "mn": "Одоогоор бүртгэгдсэн бараа алга. Анхны бараагаа нэмээрэй.",
+    "ms": "Belum ada barangan yang didaftarkan. Jadilah orang pertama yang menambahkannya."
+  },
+  "Sample products are examples only and are not available for real transactions.": {
+    "en": "Sample products are examples only and are not available for real transactions.",
+    "ko": "샘플 상품은 예시이며 실제 거래 대상이 아닙니다.",
+    "ja": "サンプル商品は例示であり、実際の取引には利用できません。",
+    "zh-CN": "示例商品仅供参考，不能用于实际交易。",
+    "uz": "Namuna mahsulotlari faqat misol bo‘lib, haqiqiy savdo uchun mavjud emas.",
+    "vi": "Sản phẩm mẫu chỉ để minh họa và không dùng cho giao dịch thực tế.",
+    "mn": "Жишээ бараа нь зөвхөн танилцуулга бөгөөд бодит худалдаанд ашиглахгүй.",
+    "ms": "Produk sampel hanyalah contoh dan tidak tersedia untuk urus niaga sebenar."
+  },
   "Load more": {
     "en": "Load more",
     "ko": "더 로드하기",
