@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
       { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
     ];
     return [
+      { source: "/", headers: securityHeaders },
       { source: "/:path*", headers: securityHeaders },
       { source: "/api/admin/:path*", headers: [{ key: "Cache-Control", value: "no-store, max-age=0" }] },
     ];
