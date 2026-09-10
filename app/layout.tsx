@@ -4,6 +4,20 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "KU Settle",
   description: "A multilingual action-oriented companion for international students from arrival preparation through departure.",
+  applicationName: "KU Settle",
+  openGraph: {
+    type: "website",
+    title: "KU Settle",
+    description: "A multilingual action-oriented companion for international students from arrival preparation through departure.",
+    siteName: "KU Settle",
+    locale: "ko_KR",
+  },
+  twitter: {
+    card: "summary",
+    title: "KU Settle",
+    description: "A multilingual action-oriented companion for international students from arrival preparation through departure.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#102a56" };

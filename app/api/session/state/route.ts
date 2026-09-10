@@ -45,11 +45,20 @@ export async function PUT(request: Request) {
     const { error } = await client.from("guest_profiles").upsert({ session_id: session.id, display_name: displayName, arrival_date: typeof profile.arrivalDate === "string" && profile.arrivalDate ? profile.arrivalDate : null, housing_type: housing, locale: typeof body.locale === "string" ? body.locale : "en", version: 1 }, { onConflict: "session_id" });
     if (error) return apiError("state_import_failed", 502);
   }
-  if (Array.isArray(body.done)) for (const taskId of body.done.filter((value): value is string => typeof value === "string" && /^[a-z0-9-]{2,80}$/.test(value))) await client.from("guest_lifecycle_progress").upsert({ session_id: session.id, task_id: taskId, completed: true }, { onConflict: "session_id,task_id" });
-  if (record(body.preferences)) await client.from("guest_preferences").upsert({ session_id: session.id, favorite_product_ids: body.preferences.favoriteProductIds ?? [], place_favorites: body.preferences.placeFavorites ?? [], reports: body.preferences.reports ?? {}, guide_favorites: body.preferences.guideFavorites ?? [], guide_metadata: body.preferences.guideMetadata ?? {} }, { onConflict: "session_id" });
+  const importErrors: unknown[] = [];
+  if (Array.isArray(body.done)) for (const taskId of body.done.filter((value): value is string => typeof value === "string" && /^[a-z0-9-]{2,80}$/.test(value))) {
+    const { error } = await client.from("guest_lifecycle_progress").upsert({ session_id: session.id, task_id: taskId, completed: true }, { onConflict: "session_id,task_id" });
+    if (error) importErrors.push(error);
+  }
+  if (record(body.preferences)) {
+    const { error } = await client.from("guest_preferences").upsert({ session_id: session.id, favorite_product_ids: body.preferences.favoriteProductIds ?? [], place_favorites: body.preferences.placeFavorites ?? [], reports: body.preferences.reports ?? {}, guide_favorites: body.preferences.guideFavorites ?? [], guide_metadata: body.preferences.guideMetadata ?? {} }, { onConflict: "session_id" });
+    if (error) importErrors.push(error);
+  }
   if (Array.isArray(body.products)) for (const item of body.products) {
     if (!record(item) || !text(item.name, 120) || !Number.isInteger(item.priceKrw) || Number(item.priceKrw) <= 0 || !categories[item.category as string] || !conditions[item.condition as string] || !text(item.pickup, 200) || !validImage(item.imageDataUrl)) continue;
-    await client.from("guest_listings").upsert({ session_id: session.id, client_id: item.id === undefined ? null : String(item.id).slice(0, 160), seller_name: text(profile?.name, 80) ?? "Alex", item_name: item.name, description: typeof item.description === "string" ? item.description.slice(0, 2000) : "", price_krw: item.priceKrw, category: categories[item.category as string], condition: conditions[item.condition as string], pickup_location: item.pickup, availability: "available", status: item.serviceStatus === "sold" ? "sold" : item.serviceStatus === "hidden" ? "hidden" : "active", image_data_url: item.imageDataUrl ?? null }, { onConflict: "session_id,client_id" });
+    const { error } = await client.from("guest_listings").upsert({ session_id: session.id, client_id: item.id === undefined ? null : String(item.id).slice(0, 160), seller_name: text(profile?.name, 80) ?? "Alex", item_name: item.name, description: typeof item.description === "string" ? item.description.slice(0, 2000) : "", price_krw: item.priceKrw, category: categories[item.category as string], condition: conditions[item.condition as string], pickup_location: item.pickup, availability: "available", status: item.serviceStatus === "sold" ? "sold" : item.serviceStatus === "hidden" ? "hidden" : "active", image_data_url: item.imageDataUrl ?? null }, { onConflict: "session_id,client_id" });
+    if (error) importErrors.push(error);
   }
+  if (importErrors.length) return apiError("state_import_failed", 502);
   return NextResponse.json({ ok: true, imported: true });
 }

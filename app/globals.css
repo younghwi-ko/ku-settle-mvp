@@ -669,6 +669,18 @@ button:not(:disabled), a { touch-action: manipulation; }
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+@media (max-width: 420px) {
+  .topbar { gap: 10px; }
+  .brand { min-width: 0; }
+  .brand > span:last-child { min-width: 0; }
+  .brand strong { white-space: nowrap; }
+  .header-actions { min-width: 0; gap: 5px; }
+  .language-trigger { padding-left: 8px; padding-right: 8px; }
+  .language-trigger span { display: none; }
+  .mobile-menu { padding: 5px; }
+  .app-shell { overflow-x: clip; }
+}
 .guide-article-grid { max-width: 100%; }
 @media (max-width: 760px) { .guide-article-grid { grid-template-columns: 1fr; } .personal-task-tools { grid-template-columns: 1fr; } }
 @media (max-width: 700px) { .admin-metrics, .admin-grid { grid-template-columns: 1fr; } .admin-toolbar { align-items: stretch; } .admin-toolbar input, .admin-toolbar select, .admin-toolbar button, .admin-toolbar label { width: 100%; } .admin-card { align-items: flex-start; flex-direction: column; } .admin-card-actions { justify-content: flex-start; } }

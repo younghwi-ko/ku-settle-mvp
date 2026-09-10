@@ -30,8 +30,8 @@ const publicCopyReplacements: Array<[string, string]> = [
 ];
 
 const localePublicCopyReplacements: Partial<Record<Locale, Array<[string, string]>>> = {
-  en: [["Demo", "Sample"], ["demo", "sample"], ["prototype", "current service"]],
-  ko: [["데모", "샘플"], ["프로토타입", "현재 서비스"]],
+  en: [["Demo", "Sample"], ["demo", "sample"], ["This prototype is", "This service is"], ["the prototype's", "the service's"], ["prototype", "service"]],
+  ko: [["데모", "샘플"], ["이 프로토타입은", "이 서비스는"], ["현재 프로토타입은", "현재 서비스는"], ["프로토타입의", "서비스의"], ["프로토타입", "서비스"]],
   ja: [["デモ", "サンプル"], ["プロトタイプ", "現在のサービス"]],
   "zh-CN": [["演示", "示例"], ["原型", "当前服务"]],
   uz: [["Namoyish", "Namuna"], ["namoyish", "namuna"], ["Demo", "Namuna"], ["demo", "namuna"]],
