@@ -1,6 +1,6 @@
 # KU Settle
 
-KU Settle은 고려대학교 외국인 학생이 입국 준비부터 귀국까지 해야 할 일을 단계별로 확인하고 실행 화면으로 이동할 수 있는 정적 프론트엔드 프로토타입입니다.
+KU Settle은 고려대학교 외국인 학생이 입국 준비부터 귀국까지 해야 할 일을 단계별로 확인하고 실행 화면으로 이동할 수 있는 Next.js 서비스입니다. Guest/Demo 화면은 정적으로 동작하고, 계정·동기화·Marketplace·Kakao 검색은 서버 API와 Supabase를 사용합니다.
 
 > **Information → Action: 입국부터 귀국까지 이어지는 유학생 lifecycle 온보딩**
 
@@ -87,14 +87,23 @@ pnpm run build
 1. GitHub 저장소에 변경사항을 push합니다.
 2. Vercel에서 **Add New → Project**를 선택하고 저장소를 Import합니다.
 3. Framework Preset이 **Next.js**인지 확인합니다.
-4. Guest/Demo만 배포하려면 환경 변수 없이 배포합니다. 계정 기능을 사용할 때는 아래 Supabase 공개 변수 두 개를 Vercel에 설정합니다.
+4. Guest/Demo만 배포하려면 환경 변수 없이 배포합니다. 계정·동기화·Marketplace를 켤 때는 아래 변수를 Vercel **Production** 환경에 설정합니다.
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+SUPABASE_SERVICE_ROLE_KEY
+ACCOUNT_SIGNUP_ENABLED
+ADMIN_API_TOKEN
+KAKAO_REST_API_KEY
+NEXT_PUBLIC_KAKAO_JS_KEY
+KAKAO_MONTHLY_CALL_LIMIT
+PILOT_CLOSED_DATES
 ```
 
-현재 저장소가 Vercel 프로젝트와 연결되어 있다면 `main` push 뒤 자동으로 새 Production Deployment가 생성됩니다. `vercel.json`과 `next.config.ts`에 정적 배포 설정이 포함되어 있습니다.
+`SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_API_TOKEN`, `KAKAO_REST_API_KEY`는 서버 전용입니다. 브라우저에 노출되는 `NEXT_PUBLIC_*` 값과 섞어 공개하지 않습니다. `ACCOUNT_SIGNUP_ENABLED=false`이면 신규 가입은 닫히고 기존 인증 흐름만 유지됩니다. `main`에 push하면 연결된 Vercel Production 배포가 자동으로 생성됩니다.
+
+현재 저장소가 Vercel 프로젝트와 연결되어 있다면 `main` push 뒤 자동으로 새 Production Deployment가 생성됩니다. `next.config.ts`에는 보안 헤더가 포함되어 있으며, `/api/*` 서버 라우트가 동작하므로 Vercel의 Next.js preset을 사용합니다.
 
 ## 다른 컴퓨터에서 접속하는 방법
 
@@ -168,6 +177,14 @@ pnpm test:db
 8. 마지막으로 Vercel에 공개 변수 두 개만 설정합니다. service-role key와 Edge Function secret은 Vercel 클라이언트 환경에 넣지 않습니다.
 
 실제 원격 적용 전에는 pgTAP, Auth OTP, 네 언어 이메일, 계정 삭제 cascade를 별도 staging 프로젝트에서 확인하세요. `.env.example`은 변수명만 제공하며 실제 secret은 커밋하지 않습니다.
+
+### 운영 전 체크
+
+- Dashboard에서 모든 `supabase/migrations/*.sql`을 순서대로 적용하고, 각 공개 테이블의 RLS가 켜져 있는지 확인합니다. 저장소의 정책 테스트(`supabase/tests/rls.test.sql`)는 원격 Dashboard 상태를 자동으로 보증하지 않습니다.
+- Supabase 프로젝트의 일일 백업과 PITR 보존 기간을 확인하고, 운영 배포 전 복구 리허설을 한 번 수행합니다.
+- 화면의 Sample 상품은 실제 거래 대상이 아니며, 실제 등록 상품과 별도 배지로 구분합니다. 행정·의료·법률 정보는 화면의 확인일보다 공식 출처를 최종 기준으로 안내합니다.
+- Kakao 검색은 서버에서만 REST 키를 사용하고 월간 호출 상한(`KAKAO_MONTHLY_CALL_LIMIT`, 기본 2,900,000)을 둡니다. 운영에서는 Kakao 개발자 콘솔의 실제 사용량·도메인 제한·쿼터 알림을 함께 확인합니다.
+- 문의·신고·운영 변경은 관리자 화면과 `support_tickets`/`guest_reports` 기록을 기준으로 처리하고, 배포 후 첫 주에는 오류 로그와 API 응답을 매일 확인합니다.
 
 ## 앱 상태와 localStorage
 
