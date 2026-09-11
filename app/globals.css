@@ -36,7 +36,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .initial-loading { min-height: 100vh; display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--navy); background: var(--surface); }
 .initial-loading strong { font-size: 18px; letter-spacing: -.02em; }
 .initial-loading i { width: 18px; height: 18px; border: 2px solid #c9d6ea; border-top-color: var(--blue); border-radius: 50%; animation: loading-spin .7s linear infinite; }
-.service-status { position: fixed; z-index: 80; right: 20px; bottom: 20px; max-width: min(420px, calc(100vw - 40px)); padding: 12px 14px; border-radius: 12px; background: var(--navy); color: white; display: flex; align-items: center; gap: 10px; box-shadow: 0 16px 35px #0e172633; font-size: 13px; }
+.service-status { position: fixed; z-index: 120; right: 20px; bottom: 20px; max-width: min(420px, calc(100vw - 40px)); padding: 12px 14px; border-radius: 12px; background: var(--navy); color: white; display: flex; align-items: center; gap: 10px; box-shadow: 0 16px 35px #0e172633; font-size: 13px; }
 .service-status.error { background: #8b1e31; }
 .service-status button { margin-left: auto; border: 0; background: transparent; color: inherit; cursor: pointer; }
 .configuration-warning, .auth-security-note { padding: 12px; border-radius: 10px; background: #fff7e8; color: #70531a; font-size: 13px; line-height: 1.55; }
