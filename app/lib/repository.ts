@@ -2,7 +2,7 @@ import type { User } from "@supabase/supabase-js";
 import type { Locale } from "../i18n";
 import type { MarketProduct } from "../data";
 import { getSupabaseClient } from "./supabase";
-import { marketplaceRowToProduct, normalizeKuEmail, productToMarketplaceInsert, toDbHousing, type MarketplaceRow, type ProfileRow, type StoredProfile } from "./domain";
+import { marketplaceRowToProduct, normalizeKuEmail, productToMarketplaceInsert, type MarketplaceRow, type ProfileRow, type StoredProfile } from "./domain";
 
 function requiredClient() { const client = getSupabaseClient(); if (!client) throw new Error("Supabase is not configured"); return client; }
 
@@ -45,10 +45,15 @@ export async function loadAccount(user: User) {
 }
 
 export async function saveProfile(userId: string, profile: StoredProfile, locale: Locale) {
-  const { data, error } = await requiredClient().from("profiles").update({ display_name: profile.name.trim(), preferred_language: locale, expected_arrival_date: profile.arrivalDate || null, housing_type: toDbHousing(profile.housing), onboarding_completed: true }).eq("user_id", userId).select("*").single();
-  if (error) throw error;
-  await requiredClient().auth.updateUser({ data: { preferred_language: locale } });
-  return data as ProfileRow;
+  const client = requiredClient();
+  const { data: sessionData } = await client.auth.getSession();
+  const token = sessionData.session?.access_token;
+  if (!token) throw new Error("session_expired");
+  const response = await fetch("/api/account/profile", { method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${token}` }, credentials: "include", body: JSON.stringify({ name: profile.name.trim(), arrivalDate: profile.arrivalDate || null, housing: profile.housing, locale }) });
+  if (!response.ok) throw new Error(response.status === 401 ? "session_expired" : "profile_save_failed");
+  const payload = await response.json() as { profile: ProfileRow };
+  await client.auth.updateUser({ data: { preferred_language: locale } }).catch(() => undefined);
+  return payload.profile;
 }
 
 export async function saveProgress(userId: string, taskId: string, completed: boolean) {
