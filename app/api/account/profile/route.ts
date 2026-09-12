@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { apiError, jsonBody, record, text } from "@/app/lib/server-api";
-import { authenticatedPrincipal, requireSameOrigin, serverClient } from "@/app/lib/server-session";
+import { authenticatedPrincipal, serverClient } from "@/app/lib/server-session";
 
 const locales = new Set(["en", "ko", "ja", "zh-CN"]);
 
 export async function PUT(request: Request) {
-  if (!await requireSameOrigin(request)) return apiError("invalid_origin", 403);
   const principal = await authenticatedPrincipal(request);
   if (!principal) return apiError("account_required", 401);
   const body = await jsonBody(request);
