@@ -431,7 +431,7 @@ export default function Home() {
   };
   const startPersonalizedPlan = (nextProfile: UserProfile) => {
     if (appMode === "authenticated" && authUser) {
-      setServerBusy(true); void saveProfile(authUser.id, nextProfile, locale).then((row) => { setServerProfile(row); setProfile(profileRowToStored(row)); setSetupOpen(false); }).catch((error) => { const detail = error instanceof Error ? error.message : String(error); setServiceMessage(`debug:${detail}`); }).finally(() => setServerBusy(false)); return;
+      setServerBusy(true); void saveProfile(authUser.id, nextProfile, locale).then((row) => { setServerProfile(row); setProfile(profileRowToStored(row)); setSetupOpen(false); }).catch((error) => setServiceMessage(mapServiceError(error))).finally(() => setServerBusy(false)); return;
     }
     setProfile(nextProfile); setAppMode("guest"); setDone([]); setVerified(false); setSelectedStage("before-arrival"); setFocusTaskId(null); setHighlightTaskId(null); setSetupOpen(false);
   };
@@ -612,7 +612,7 @@ export default function Home() {
 
       <footer><div className="footer-brand"><span className="brand-mark small">KU</span><span><strong>KU Settle</strong><small>{tr(t, "common:copyright", { year: formatNumber(locale, new Date().getFullYear(), { useGrouping: false }) })}</small></span></div><div className="footer-actions"><span className="footer-notice">{tr(t, "navigation:footerNotice")}</span>{(["about", "terms", "privacy", "safety", "sources", "disclaimer"] as const).map((item) => <button key={item} onClick={() => setInfoPage(item)}>{item}</button>)}{appMode !== "authenticated" && <><button className="reset-demo" onClick={exportDemoData}>{locale === "ko" ? "내보내기" : locale === "ja" ? "エクスポート" : locale === "zh-CN" ? "导出" : legacyCopy(locale, "Export")}</button><label className="reset-demo">{locale === "ko" ? "가져오기" : locale === "ja" ? "インポート" : locale === "zh-CN" ? "导入" : legacyCopy(locale, "Import")}<input type="file" accept="application/json" hidden onChange={(e) => { const file = e.target.files?.[0]; if (file) importDemoData(file); }}/></label></>}</div></footer>
 
-      {(serverBusy || serviceMessage) && <div className={`service-status ${serviceMessage?.startsWith("errors:") || serviceMessage?.startsWith("debug:") ? "error" : ""}`} role="status">{serverBusy ? tr(t, "common:saving") : serviceMessage?.startsWith("debug:") ? serviceMessage.slice(6) : serviceMessage ? tr(t, serviceMessage) : ""}{serviceMessage && <button onClick={() => setServiceMessage(null)} aria-label={tr(t, "common:close")}><X size={14}/></button>}</div>}
+      {(serverBusy || serviceMessage) && <div className={`service-status ${serviceMessage?.startsWith("errors:") ? "error" : ""}`} role="status">{serverBusy ? tr(t, "common:saving") : serviceMessage ? tr(t, serviceMessage) : ""}{serviceMessage && <button onClick={() => setServiceMessage(null)} aria-label={tr(t, "common:close")}><X size={14}/></button>}</div>}
 
       {setupOpen && (
         <SetupModal t={t} submit={startPersonalizedPlan} skip={skipSetup}/>
