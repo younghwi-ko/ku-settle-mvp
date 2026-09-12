@@ -431,7 +431,7 @@ export default function Home() {
   };
   const startPersonalizedPlan = (nextProfile: UserProfile) => {
     if (appMode === "authenticated" && authUser) {
-      setServerBusy(true); void saveProfile(authUser.id, nextProfile, locale).then((row) => { setServerProfile(row); setProfile(profileRowToStored(row)); setSetupOpen(false); }).catch((error) => { const detail = error instanceof Error ? error.message : String(error); setServiceMessage(detail.startsWith("profile_save_failed") ? `debug:${detail}` : mapServiceError(error)); }).finally(() => setServerBusy(false)); return;
+      setServerBusy(true); void saveProfile(authUser.id, nextProfile, locale).then((row) => { setServerProfile(row); setProfile(profileRowToStored(row)); setSetupOpen(false); }).catch((error) => { const detail = error instanceof Error ? error.message : String(error); setServiceMessage(`debug:${detail}`); }).finally(() => setServerBusy(false)); return;
     }
     setProfile(nextProfile); setAppMode("guest"); setDone([]); setVerified(false); setSelectedStage("before-arrival"); setFocusTaskId(null); setHighlightTaskId(null); setSetupOpen(false);
   };
