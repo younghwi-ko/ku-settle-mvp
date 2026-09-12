@@ -49,11 +49,19 @@ export async function saveProfile(userId: string, profile: StoredProfile, locale
   const { data: sessionData } = await client.auth.getSession();
   const token = sessionData.session?.access_token;
   if (!token) throw new Error("session_expired");
-  const response = await fetch("/api/account/profile", { method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${token}` }, credentials: "include", body: JSON.stringify({ name: profile.name.trim(), arrivalDate: profile.arrivalDate || null, housing: profile.housing, locale }) });
-  if (!response.ok) throw new Error(response.status === 401 ? "session_expired" : "profile_save_failed");
-  const payload = await response.json() as { profile: ProfileRow };
+  const values = { display_name: profile.name.trim(), preferred_language: locale, expected_arrival_date: profile.arrivalDate || null, housing_type: profile.housing === "dorm" ? "dormitory" : "off_campus", onboarding_completed: true };
+  let saved: ProfileRow | null = null;
+  try {
+    const response = await fetch("/api/account/profile", { method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${token}` }, credentials: "include", body: JSON.stringify({ name: profile.name.trim(), arrivalDate: profile.arrivalDate || null, housing: profile.housing, locale }) });
+    if (response.ok) saved = ((await response.json()) as { profile: ProfileRow }).profile;
+  } catch { /* fall through to the authenticated client update */ }
+  if (!saved) {
+    const { data, error } = await client.from("profiles").update(values).eq("user_id", userId).select("*").single();
+    if (error || !data) throw new Error(error?.message || "profile_save_failed");
+    saved = data as ProfileRow;
+  }
   await client.auth.updateUser({ data: { preferred_language: locale } }).catch(() => undefined);
-  return payload.profile;
+  return saved;
 }
 
 export async function saveProgress(userId: string, taskId: string, completed: boolean) {
