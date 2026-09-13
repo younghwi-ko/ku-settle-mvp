@@ -30,7 +30,29 @@ const operationalGuidance: Record<string, Pick<LifeGuideArticle, "appliesTo" | "
   "ku-portal-basics": { appliesTo: "Korea University degree and exchange students with a KU account", contact: "The International Affairs/academic office contact shown in the relevant KU notice", completionCriteria: "Portal login works and the current academic schedule, registration menu, notices, and support contact are saved" }
 };
 
+const detailedArticleFields: Record<string, Partial<LifeGuideArticle>> = {
+  "dorm-checkin-steps": {
+    officialUrl: "https://dorm.korea.ac.kr/front/content/50",
+    sourceName: "고려대학교 안암학사"
+  },
+  "airport-to-ku": {
+    officialUrl: "https://www.airport.kr/ap_ko/1499/subview.do",
+    sourceName: "인천국제공항",
+    content: "Route times and fares change. Check the airport and transport operator after confirming your arrival terminal; this guide does not invent a fare or travel time.",
+    checklist: ["Confirm the airport and arrival terminal", "Search an official operator with terminal and destination", "Save a Korean destination memo", "Record transfers and a backup route"],
+    steps: ["Read the airport and terminal on your ticket, then open the airport's official transport menu", "Enter the arrival terminal and Korea University destination in the operator search and compare rail, bus, and taxi options", "Save transfer stations, exits, walking directions, and the current fare shown by the operator", "Write an offline memo such as '고려대학교 국제관, 서울 성북구 안암로 145'", "Check the last-mile route and a backup taxi option at the airport information desk"],
+    cautions: ["Allow extra time for transfers and luggage; route, fare, and service conditions must be rechecked on the day"]
+  },
+  "arc-current-check": {
+    content: "Immigration requirements are status-dependent and can change. Treat this article as a checklist for finding the current official notice; a checked item means you recorded the information, not that the government approved an application.",
+    checklist: ["Identify your status and target civil service", "Confirm the jurisdiction and office", "Check whether a reservation is required", "Prepare only the documents listed in the current notice", "Record guidance checked, reservation completed, and application submitted separately"],
+    steps: ["Find the target service in HiKorea → 민원신청 → 체류자격별 안내/공지", "Confirm the jurisdiction and responsible office from the current notice or office lookup", "Check the reservation method and complete a reservation only when the notice requires it", "Prepare exactly the documents listed for that service; do not add an unverified fee, date, or document", "Visit or submit through the stated channel, then save the receipt/result and check the stated follow-up method"],
+    cautions: ["안내 확인 완료 means you verified the current notice; 예약 완료 means an appointment was actually issued; 신청 완료 means the service accepted your submission. None of these labels alone means approval."]
+  }
+};
+
 export const expandedLifeGuideArticles: LifeGuideArticle[] = expandedLifeGuideArticlesBase.map((item) => {
+  Object.assign(item, detailedArticleFields[item.id] ?? {});
   const overrides: Partial<LifeGuideArticle> = {
     contentCheckedAt: "2026-08-29",
     contentOrigin: item.contentOrigin ?? (item.officialUrl ? "official-guide" : "demo"),
@@ -61,11 +83,26 @@ const localizedSections: Record<string, LocalizedSections> = {
   "departure-shipping": { ko: section(["판매·배송할 물품 목록 작성", "주거 인계일 확인", "항공 수하물 한도 확인"], ["보관·판매·기부·배송으로 분류", "물품 크기 측정과 포장", "운송장과 인계 내용 기록"], ["결제 전에 국제 배송 제한을 확인하세요."]), ja: section(["販売・発送する品物を一覧化", "住居の引き渡し日を確認", "航空手荷物の制限を確認"], ["保管・販売・寄付・発送に分類", "大きさを測って梱包", "追跡番号と引き渡し内容を記録"], ["支払い前に国際配送の制限を確認してください。"]), "zh-CN": section(["列出要出售或寄送的物品", "确认住房交接日期", "确认航空行李限额"], ["分类保留、出售、捐赠或寄送", "测量并包装物品", "记录追踪号和交接信息"], ["付款前请确认国际寄送限制。 "]) }
 };
 
+const detailedSections: Record<string, LocalizedSections> = {
+  "airport-to-ku": {
+    ko: section(["항공권에서 공항·도착 터미널 확인", "터미널과 목적지로 공식 운영기관 검색", "한국어 목적지 메모 저장", "환승·요금·대체 경로 기록"], ["공항 공식 교통 메뉴 열기", "터미널·목적지로 철도·버스·택시 비교", "환승역·출구·도보 경로 저장", "'고려대학교 국제관, 서울 성북구 안암로 145' 메모 작성", "공항 안내데스크에서 당일 경로와 대안을 재확인"], ["노선·요금·운영 조건은 당일 다시 확인하고 환승과 수하물 시간을 넉넉히 잡으세요."]),
+    en: section(["Confirm the airport and arrival terminal", "Search an official operator with terminal and destination", "Save a Korean destination memo", "Record transfers, fare, and a backup route"], ["Open the airport's official transport menu", "Compare rail, bus, and taxi using terminal and destination", "Save transfer stations, exits, and walking directions", "Write a memo such as '고려대학교 국제관, 서울 성북구 안암로 145'", "Reconfirm the route and backup at the airport information desk"], ["Recheck route, fare, and operating conditions on the day."]),
+    ja: section(["空港と到着ターミナルを確認", "ターミナルと目的地で公式事業者を検索", "韓国語の目的地メモを保存", "乗り換え・運賃・代替経路を記録"], ["空港公式の交通メニューを開く", "ターミナルと目的地で鉄道・バス・タクシーを比較", "乗り換え駅・出口・徒歩経路を保存", "韓国語の目的地メモを書く", "空港案内所で当日の経路を再確認"], ["経路・運賃・運行条件は当日に確認してください。"]),
+    "zh-CN": section(["确认机场和到达航站楼", "用航站楼和目的地搜索官方运营方", "保存韩文目的地备忘录", "记录换乘、票价和备用路线"], ["打开机场官方交通菜单", "按航站楼和目的地比较铁路、公交和出租车", "保存换乘站、出口和步行路线", "写下韩文目的地备忘", "在机场咨询台再次确认当天路线"], ["路线、票价和运营条件请在当天确认。"])
+  },
+  "arc-current-check": {
+    ko: section(["체류 자격과 대상 민원 찾기", "관할 기관·사무소 확인", "예약 필요 여부와 예약 완료 확인", "현재 공지에 적힌 서류만 준비", "안내 확인·예약·신청 완료를 별도로 기록"], ["하이코리아 → 민원신청 → 체류자격별 안내/공지에서 대상 민원 찾기", "공지 또는 기관 조회에서 관할과 담당 사무소 확인", "예약 방법과 필요 여부 확인 후 필요한 경우에만 예약", "공지에 적힌 서류만 준비하고 확인되지 않은 비용·날짜·서류는 추가하지 않기", "방문·제출 후 접수증/결과와 후속 확인 방법 저장"], ["안내 확인은 정보 기록, 예약 완료는 예약번호 발급, 신청 완료는 접수 확인을 뜻하며 승인과 다릅니다."]),
+    en: section(["Identify your status and target service", "Confirm the jurisdiction and office", "Check whether a reservation is required", "Prepare only the listed documents", "Record guidance, reservation, and submission separately"], ["Find the service in HiKorea → e-Application → status-specific guidance/notices", "Confirm the responsible office from the notice or office lookup", "Check the reservation method and reserve only when required", "Prepare only listed documents; do not add unverified fees, dates, or documents", "After visiting or submitting, save the receipt/result and follow-up method"], ["These labels record your progress and do not mean government approval."]),
+    ja: section(["在留資格と対象手続きを確認", "管轄と担当窓口を確認", "予約の要否を確認", "最新案内の書類だけを準備", "案内・予約・申請を分けて記録"], ["HiKoreaの電子申請 → 在留資格別案内・お知らせで手続きを探す", "案内または機関検索で担当窓口を確認", "予約方法を確認し必要な場合だけ予約", "未確認の費用・日付・書類を追加しない", "訪問・提出後に受付・結果とフォロー方法を保存"], ["これらの表示は進捗の記録であり、政府の承認を意味しません。"]),
+    "zh-CN": section(["确认居留身份和目标业务", "确认管辖机构和窗口", "确认预约是否必要", "只准备最新通知列出的材料", "分别记录指南、预约和提交"], ["在 HiKorea 电子申请 → 按居留身份的指南/通知中查找业务", "通过通知或机构查询确认负责窗口", "确认预约方式，仅在需要时预约", "不要添加未经确认的费用、日期或材料", "到访/提交后保存受理结果和后续方法"], ["这些标签只记录进度，不代表政府批准。"])
+  }
+};
+
 export function getGuideLocaleCopy(article: LifeGuideArticle, locale: Locale): GuideLocaleCopy {
   const base = guideLocaleOverrides[article.id]?.[locale as keyof typeof guideLocaleOverrides[typeof article.id]]
     ?? (article.locales as Record<string, GuideLocaleCopy | undefined>)[locale]
     ?? legacyCopy(locale, { title: article.title, summary: article.summary, content: article.content });
-  const translated = localizedSections[article.id]?.[locale];
+  const translated = detailedSections[article.id]?.[locale] ?? localizedSections[article.id]?.[locale];
   const fallbackSections = legacyCopy(locale, { checklist: article.checklist, steps: article.steps, cautions: article.cautions });
   return { ...base, checklist: translated?.checklist ?? fallbackSections.checklist, steps: translated?.steps ?? fallbackSections.steps, cautions: translated?.cautions ?? fallbackSections.cautions };
 }

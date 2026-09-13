@@ -104,7 +104,7 @@ function guideMenuHint(locale: Locale, id: string) {
     "arc-current-check": { ko: "HiKorea → 민원신청 → 체류자격별 안내/공지에서 본인 체류 자격의 최신 항목을 확인하세요.", en: "HiKorea → e-Application → status-specific guidance/notices: use the current item for your status.", ja: "HiKorea → 電子申請 → 在留資格別案内・お知らせで自分の資格の最新項目を確認します。", "zh-CN": "HiKorea → 电子申请 → 按居留身份查看最新指南/通知。" },
     "dorm-checkin-steps": { ko: "고려대 기숙사 사이트 → 입사/공지에서 해당 학기 배정·입사 시간·서류를 확인하세요.", en: "Korea University Dormitory → Admission/Notice: check your term's assignment, check-in window, and documents.", ja: "高麗大学寮サイト → 入寮・お知らせで学期の割り当て、時間、書類を確認します。", "zh-CN": "高丽大学宿舍网站 → 入住/通知：确认本学期分配、入住时间和材料。" },
     "ku-portal-basics": { ko: "KU Portal → 학사일정·수강신청·공지사항 메뉴에서 과정에 맞는 일정을 확인하세요.", en: "KU Portal → Academic calendar, Course registration, and Notices: check the entry for your programme.", ja: "KUポータル → 学事日程・履修登録・お知らせでプログラムの予定を確認します。", "zh-CN": "KU门户 → 学术日程、选课和通知：确认适用于自己项目的安排。" },
-    "airport-to-ku": { ko: "서울시 공식 교통 안내의 공항·대중교통 메뉴에서 현재 노선과 요금을 확인하세요.", en: "Seoul official transport information → airport/public transport menu: confirm the current route and fare.", ja: "ソウル市公式交通情報 → 空港・公共交通メニューで最新経路と運賃を確認します。", "zh-CN": "首尔市官方交通信息 → 机场/公共交通菜单：确认当前路线和票价。" },
+    "airport-to-ku": { ko: "인천공항 → 교통·대중교통 메뉴에서 도착 터미널별 버스·철도·택시 안내를 확인하고, 목적지까지의 마지막 이동을 별도로 확인하세요.", en: "Incheon Airport → Traffic Guide → Public Transportation: check bus, rail, and taxi options for your arrival terminal, then confirm the last-mile route.", ja: "仁川空港 → 交通ガイド → 公共交通で到着ターミナル別のバス・鉄道・タクシーを確認し、最後の徒歩経路も確認します。", "zh-CN": "仁川机场 → 交通指南 → 公共交通：按到达航站楼确认公交、铁路和出租车，并确认最后一段路线。" },
     "sim-esim-options": { ko: "선택한 통신사 공식 사이트의 외국인·선불·eSIM 요금제 메뉴에서 현재 조건을 확인하세요.", en: "Selected carrier's official foreigner, prepaid, or eSIM plan menu: confirm current terms.", ja: "選択した通信会社の外国人・プリペイド・eSIM料金メニューで最新条件を確認します。", "zh-CN": "在所选运营商官网的外国人、预付费或 eSIM 套餐菜单确认当前条件。" }
   };
   return hints[id]?.[locale] ?? hints[id]?.en ?? "";
@@ -427,6 +427,12 @@ export default function Home() {
   const currentProfile = profile ?? { ...demoProfile, name: tr(t, "profile:guestName"), mode: "personalized" as const };
   const openProduct = (product: MarketProduct) => { setSelectedProductMode(isOwnedMarketplaceProduct(product, appMode) ? "seller" : "buyer"); setSelectedProduct(product); const url = new URL(window.location.href); url.searchParams.set("page", "marketplace"); url.searchParams.set("listing", String(product.id)); window.history.pushState({ page: "marketplace", listing: String(product.id) }, "", `${url.pathname}${url.search}${url.hash}`); };
   const openSellerProduct = (product: MarketProduct) => { setSelectedProductMode("seller"); setSelectedProduct(product); const url = new URL(window.location.href); url.searchParams.set("page", "marketplace"); url.searchParams.set("listing", String(product.id)); window.history.pushState({ page: "marketplace", listing: String(product.id) }, "", `${url.pathname}${url.search}${url.hash}`); };
+  const closeProduct = () => {
+    setSelectedProduct(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("listing");
+    window.history.replaceState({ ...(window.history.state ?? {}), page: "marketplace" }, "", `${url.pathname}${url.search}${url.hash}`);
+  };
   const actualVerified = Boolean(authUser?.email_confirmed_at && authUser.email && isKuEmail(authUser.email));
   const showVerifiedBadge = shouldShowVerifiedBadge(appMode, actualVerified, verified);
   const activeTasks = useMemo(() => getActiveTasks(currentProfile.housing, currentProfile), [currentProfile]);
@@ -532,7 +538,7 @@ export default function Home() {
         : current.map((item) => item.id === product.id ? { ...item, serviceStatus: status, status: status === "sold" ? "Reserved" : "Available" } : item));
       if (status === "sold") setLocalPreferences((current) => ({ ...current, reservedProductIds: current.reservedProductIds.filter((id) => id !== String(product.id)), reservations: current.reservations.map((item) => item.productId === String(product.id) && item.status === "active" ? { ...item, status: "completed", completedAt: new Date().toISOString(), updatedAt: new Date().toISOString() } : item) }));
       if (status === "deleted") setLocalPreferences((current) => ({ ...current, reservedProductIds: current.reservedProductIds.filter((id) => id !== String(product.id)), reservations: current.reservations.filter((item) => item.productId !== String(product.id)), reportDrafts: current.reportDrafts.filter((item) => item.productId !== String(product.id)), serviceRequests: current.serviceRequests.filter((item) => item.productId !== String(product.id)) }));
-      if (status === "deleted") setSelectedProduct(null);
+      if (status === "deleted") closeProduct();
       else setSelectedProduct((current) => current?.id === product.id ? { ...current, serviceStatus: status, status: status === "sold" ? "Reserved" : "Available" } : current);
       if (remoteReady && typeof product.id === "string" && product.id.includes("-")) {
         const sync = status === "deleted" ? deleteRemoteListing(product.id) : updateRemoteListing({ ...product, serviceStatus: status }, status);
@@ -546,7 +552,7 @@ export default function Home() {
     try {
       const updated = await updateMarketplaceItemStatus(String(product.id), status, authUser.id);
       setUserProducts((current) => status === "deleted" ? current.filter((item) => item.id !== product.id) : current.map((item) => item.id === product.id ? updated : item));
-      if (status === "deleted") setSelectedProduct(null);
+      if (status === "deleted") closeProduct();
       else setSelectedProduct((current) => current?.id === product.id ? { ...current, ...updated } : current);
       setServiceMessage("common:saved");
     } catch (error) { setServiceMessage(mapServiceError(error)); }
@@ -717,7 +723,7 @@ export default function Home() {
       {importOpen && guestCandidate && (
         <GuestImportModal t={t} candidate={guestCandidate} close={() => setImportOpen(false)} confirm={() => void completeGuestImport()}/>
       )}
-      {selectedProduct && <><ProductModal locale={locale} t={t} profile={currentProfile} mode={selectedProductMode} product={selectedProduct} reservation={localPreferences.reservations.find((item) => item.productId === String(selectedProduct.id) && item.status === "active")} serviceRequests={localPreferences.serviceRequests.filter((item) => item.productId === String(selectedProduct.id))} updateService={(serviceMode, updates) => updateServiceRequest({ productId: String(selectedProduct.id) }, serviceMode, updates)} close={() => setSelectedProduct(null)} contact={() => { setSelectedProduct(null); setContactOpen(true); }} reserve={() => reserveMarketplaceProduct(selectedProduct)} cancelReservation={() => cancelMarketplaceReservation(selectedProduct)} edit={() => { setEditingProduct(selectedProduct); setSelectedProduct(null); }} changeStatus={(status) => void changeMarketplaceStatus(selectedProduct, status)}/><div className="product-share-floating"><ShareLink locale={locale} page="marketplace" id={String(selectedProduct.id)}/></div></>}
+      {selectedProduct && <><ProductModal locale={locale} t={t} profile={currentProfile} mode={selectedProductMode} product={selectedProduct} reservation={localPreferences.reservations.find((item) => item.productId === String(selectedProduct.id) && item.status === "active")} serviceRequests={localPreferences.serviceRequests.filter((item) => item.productId === String(selectedProduct.id))} updateService={(serviceMode, updates) => updateServiceRequest({ productId: String(selectedProduct.id) }, serviceMode, updates)} close={closeProduct} contact={() => { closeProduct(); setContactOpen(true); }} reserve={() => reserveMarketplaceProduct(selectedProduct)} cancelReservation={() => cancelMarketplaceReservation(selectedProduct)} edit={() => { setEditingProduct(selectedProduct); closeProduct(); }} changeStatus={(status) => void changeMarketplaceStatus(selectedProduct, status)}/><div className="product-share-floating"><ShareLink locale={locale} page="marketplace" id={String(selectedProduct.id)}/></div></>}
       {pendingReservation && <PickupScheduleModal t={t} product={pendingReservation.product} initial={pendingReservation.reservation} close={() => setPendingReservation(null)} reserve={(pickup) => completeMarketplaceReservation(pendingReservation.product, pickup, pendingReservation.reservation?.id)}/>}
       {reportProduct && <ReportModal t={t} product={reportProduct} reports={localPreferences.reportDrafts} close={() => setReportProduct(null)} submit={(report) => submitReport(reportProduct, report)}/>}
       {selectedProduct && productPickup(selectedProduct, t) && <MapActionBar t={t} place={productPickup(selectedProduct, t)}/>}
@@ -1027,6 +1033,11 @@ function LocalGuide({ locale, t, category, setCategory, search, setSearch, place
 
 function GuideCard({ article, locale, labels, preferences, done, go }: { article: (typeof lifeGuideArticles)[number]; locale: Locale; labels: Record<string, string>; preferences: LocalPreferences; done: string[]; go: (page: Page, intent?: NavigationIntent) => void }) {
   const copy = getGuideLocaleCopy(article, locale);
+  const detailsRef = useRef<HTMLDetailsElement | null>(null);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("guide") === article.id) detailsRef.current?.setAttribute("open", "");
+  }, [article.id]);
   const metadata = preferences.guideMetadata[article.id];
   const checked = metadata?.contentCheckedAt ?? article.contentCheckedAt ?? article.lastVerifiedAt;
   const checkedDate = checked ? (() => { try { return formatDate(locale, checked); } catch { return checked; } })() : "";
@@ -1043,7 +1054,7 @@ function GuideCard({ article, locale, labels, preferences, done, go }: { article
     <h2>{copy.title}</h2><p className="guide-summary">{copy.summary}</p><ShareLink locale={locale} page="life-guide" id={article.id}/>
     <div className="guide-summary-badges"><span className="guide-badge guide-badge-time"><Clock3 size={13}/>{article.estimatedMinutes ? `${guideUi(locale, "duration")}: ${guideDuration(locale, article.estimatedMinutes[0], article.estimatedMinutes[1])}` : guideUi(locale, "status")}</span><span className="guide-badge guide-badge-check"><CheckCircle2 size={13}/>{checkedDate ? `${guideUi(locale, "checked")}: ${checkedDate}` : guideUi(locale, "sourceNeedsConfirmation")}</span><span className={`guide-badge guide-badge-progress ${taskDone ? "is-done" : relatedTaskId ? "is-active" : "is-pending"}`}><span aria-hidden="true">{taskDone ? "✓" : relatedTaskId ? "•" : "○"}</span>{guideProgressUi(locale, taskDone, Boolean(relatedTaskId))}</span></div>
     {relatedTaskId && <button className="task-action guide-primary-cta" onClick={() => go("onboarding", { taskId: relatedTaskId, highlight: true })}>{locale === "ko" ? "관련 라이프사이클 작업 보기" : locale === "ja" ? "関連するライフサイクルを見る" : locale === "zh-CN" ? "查看相关留学周期任务" : legacyCopy(locale, "View related lifecycle task")}<ArrowRight size={15} /></button>}
-    <details className="guide-details"><summary className="guide-details-toggle" role="button" aria-label={guideViewUi(locale, "details")}><span>{guideViewUi(locale, "details")}</span><span className="guide-details-hint"><span>{guideViewUi(locale, "status")}</span><ChevronDown size={16} /></span></summary><div className="guide-details-content">
+    <details ref={detailsRef} className="guide-details"><summary className="guide-details-toggle" role="button" aria-label={guideViewUi(locale, "details")}><span>{guideViewUi(locale, "details")}</span><span className="guide-details-hint"><span>{guideViewUi(locale, "status")}</span><ChevronDown size={16} /></span></summary><div className="guide-details-content">
       <div className="article-meta"><span>{sourceName ?? guideUi(locale, sourceStatus === "unavailable" ? "sourceUnavailable" : "sourceNeedsConfirmation")}</span><span>{checkedDate ? `${guideUi(locale, "checked")}: ${checkedDate}` : ""}</span></div>
       {(operational.appliesTo || operational.contact || operational.completionCriteria) && <dl className="guide-operational-meta">{operational.appliesTo && <><dt>{guideUi(locale, "applies")}</dt><dd>{operational.appliesTo}</dd></>}{operational.contact && <><dt>{guideUi(locale, "contact")}</dt><dd>{operational.contact}</dd></>}{operational.completionCriteria && <><dt>{guideUi(locale, "completion")}</dt><dd>{operational.completionCriteria}</dd></>}</dl>}
       {checkedDate && <small className="article-note">{guideUi(locale, "checkedNote")}</small>}<p>{copy.content}</p>{guideMenuHint(locale, article.id) && <p className="article-note">{guideMenuHint(locale, article.id)}</p>}
@@ -1207,6 +1218,10 @@ function PublicInfoModal({ locale, page, close }: { locale: Locale; page: "about
       disclaimer: ["服务说明", "当前提供匿名会话、商品发布与预约、人工配送和寄存申请。支付、服务商对接和外部消息为后续计划。"]
     }
   };
+  contents.ko.privacy = ["개인정보 처리 안내 초안", "게스트 계획·체크리스트·즐겨찾기·상품·예약·문의 상태는 이 브라우저의 localStorage와 익명 세션에 저장됩니다. 내보내기로 파일을 보관하고 가져오기로 같은 형식의 게스트 데이터를 복구할 수 있지만, 브라우저 데이터를 지우거나 다른 기기에서 자동 복구되지는 않습니다. 계정 연결 후 프로필·완료 작업·상품·예약·문의 상태는 Supabase 계정에 저장되며, 계정 삭제 요청 시 연결 데이터 삭제 절차가 실행됩니다. 금융·신원·민감정보는 입력하지 마세요. 운영자와 보관 기간은 정식 검토가 필요합니다."];
+  contents.en.privacy = ["Privacy notice — policy draft", "Guest plans, checklists, favorites, listings, reservations, and support status are stored in this browser's localStorage and an anonymous session. Export a file before clearing browser data; Import can restore that guest file, but data is not automatically recovered on another device. After account connection, profile, progress, listings, reservations, and support status are stored with the Supabase account; account deletion runs the connected-data deletion procedure. Do not submit financial, identity, or sensitive information. Operator identity and retention periods require formal review."];
+  contents.ja.privacy = ["プライバシー案内（草案）", "ゲストの計画・チェックリスト・お気に入り・出品・予約・問い合わせ状態はこのブラウザのlocalStorageと匿名セッションに保存されます。ブラウザデータを削除する前にエクスポートし、インポートで復元できますが、別の端末へ自動復元はされません。アカウント接続後はSupabaseアカウントに保存され、削除時に連携データの削除手続きが実行されます。金融・本人確認・機微情報は入力しないでください。運営者と保存期間は正式な確認が必要です。"];
+  contents["zh-CN"].privacy = ["隐私说明（草案）", "访客计划、清单、收藏、商品、预约和咨询状态会保存在此浏览器的 localStorage 与匿名会话中。清除浏览器数据前请先导出文件，可通过导入恢复访客文件，但不会在其他设备自动恢复。连接账户后，资料、进度、商品、预约和咨询状态会与 Supabase 账户关联保存；删除账户时会执行关联数据删除流程。请勿提交金融、身份或敏感信息。运营者身份和保存期限仍需正式审核。"];
   const content = contents[locale][page];
   return <Modal close={close} label={content[0]}><button className="modal-close" onClick={close} aria-label={locale === "ko" ? "닫기" : locale === "ja" ? "閉じる" : locale === "zh-CN" ? "关闭" : legacyCopy(locale, "Close")}><X/></button><h2>{content[0]}</h2><p>{content[1]}</p></Modal>;
 }
