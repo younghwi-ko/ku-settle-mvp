@@ -12,6 +12,7 @@ const marketplaceListRoute = readFileSync(new URL("../app/api/marketplace/listin
 const supportTicketRoute = readFileSync(new URL("../app/api/support-tickets/route.ts", import.meta.url), "utf8");
 const adminOverviewRoute = readFileSync(new URL("../app/api/admin/overview/route.ts", import.meta.url), "utf8");
 const adminTicketsRoute = readFileSync(new URL("../app/api/admin/tickets/[id]/route.ts", import.meta.url), "utf8");
+const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
 
 describe("anonymous server input validation", () => {
   it("accepts only bounded image data URLs", () => {
@@ -71,5 +72,12 @@ describe("anonymous server input validation", () => {
     expect(supportTicketRoute).toContain('.eq("session_id", session.id)');
     expect(adminTicketsRoute).toContain("requireAdmin(request, true)");
     expect(adminTicketsRoute).toContain("version_conflict");
+  });
+
+  it("distinguishes support loading, empty, and failed states", () => {
+    expect(pageSource).toContain("Loading support tickets…");
+    expect(pageSource).toContain("No support tickets yet.");
+    expect(pageSource).toContain('errorAction === "load" && error');
+    expect(pageSource).toContain("Try again");
   });
 });

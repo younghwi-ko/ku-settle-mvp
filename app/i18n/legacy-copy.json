@@ -1779,6 +1779,16 @@
     "mn": "Дэмжлэгийн тасалбарыг ачаалж чадсангүй.",
     "ms": "Tidak dapat memuatkan tiket sokongan."
   },
+  "No support tickets yet.": {
+    "en": "You have not submitted a support ticket yet.",
+    "ko": "아직 접수한 문의가 없습니다.",
+    "ja": "まだ問い合わせを送信していません。",
+    "zh-CN": "您还没有提交咨询。",
+    "uz": "Hali qoʻllab-quvvatlash chiptasi yuborilmadi.",
+    "vi": "Bạn chưa gửi yêu cầu hỗ trợ nào.",
+    "mn": "Та одоогоор дэмжлэгийн хүсэлт илгээгээгүй байна.",
+    "ms": "Anda belum menghantar tiket sokongan."
+  },
   "Could not mark the notification as read.": {
     "en": "Could not mark the notification as read.",
     "ko": "알림을 읽음으로 표시할 수 없습니다.",
