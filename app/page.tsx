@@ -267,7 +267,7 @@ export default function Home() {
     try {
       const account = await loadAccount(user);
       setAuthUser(user); setServerProfile(account.profile); setProfile(profileRowToStored(account.profile)); setDone(account.done); setUserProducts(account.products); setAppMode("authenticated");
-      setSetupOpen(!account.profile.onboarding_completed);
+      setSetupOpen(!account.profile.onboarding_completed && localStorage.getItem(`ku-settle-setup-skipped:${user.id}`) !== "1");
       if (candidate?.profile.mode === "personalized" && !account.profile.guest_data_imported_at && (candidate.done.length || candidate.products.length || !account.profile.onboarding_completed)) {
         setGuestCandidate(candidate); guestCandidateRef.current = candidate; setImportOpen(true);
       }
@@ -431,11 +431,11 @@ export default function Home() {
   };
   const startPersonalizedPlan = (nextProfile: UserProfile) => {
     if (appMode === "authenticated" && authUser) {
-      setServerBusy(true); void saveProfile(authUser.id, nextProfile, locale).then((row) => { setServerProfile(row); setProfile(profileRowToStored(row)); setSetupOpen(false); }).catch((error) => setServiceMessage(mapServiceError(error))).finally(() => setServerBusy(false)); return;
+      setServerBusy(true); void saveProfile(authUser.id, nextProfile, locale).then((row) => { localStorage.removeItem(`ku-settle-setup-skipped:${authUser.id}`); setServerProfile(row); setProfile(profileRowToStored(row)); setSetupOpen(false); }).catch((error) => setServiceMessage(mapServiceError(error))).finally(() => setServerBusy(false)); return;
     }
     setProfile(nextProfile); setAppMode("guest"); setDone([]); setVerified(false); setSelectedStage("before-arrival"); setFocusTaskId(null); setHighlightTaskId(null); setSetupOpen(false);
   };
-  const skipSetup = () => { setProfile(null); setAppMode("guest"); setDone([]); setUserProducts([]); setVerified(false); setSelectedStage("before-arrival"); setFocusTaskId(null); setHighlightTaskId(null); setSetupOpen(false); };
+  const skipSetup = () => { if (authUser) localStorage.setItem(`ku-settle-setup-skipped:${authUser.id}`, "1"); setProfile(null); setAppMode("guest"); setDone([]); setUserProducts([]); setVerified(false); setSelectedStage("before-arrival"); setFocusTaskId(null); setHighlightTaskId(null); setSetupOpen(false); };
   const resetDemo = () => {
     [storageKeys.profile, storageKeys.checklist, storageKeys.verified, storageKeys.userProducts, storageKeys.data].forEach((key) => localStorage.removeItem(key));
     setProfile(demoProfile); setDone(demoDone); setVerified(false); setUserProducts([]); setLocalPreferences(emptyPreferences()); setGuestCandidate(null); guestCandidateRef.current = null; setAppMode("demo"); setMarketSearch(""); setMarketCategory("All"); setMarketMode("incoming");
