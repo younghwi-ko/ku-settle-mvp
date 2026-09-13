@@ -1064,3 +1064,8 @@ body { background: linear-gradient(180deg, #f7f9fd 0%, #f3f6fb 42%, #f8fafc 100%
   .guide-status { white-space: nowrap; }
   .admin-grid > section:nth-child(5), .admin-grid > section:nth-child(6) { max-height: 620px; }
 }
+
+/* Keep the guide feed readable on phones; this override follows the wider breakpoint rules above. */
+@media (max-width: 760px) {
+  .guide-article-grid { grid-template-columns: 1fr; }
+}
