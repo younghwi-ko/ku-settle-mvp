@@ -9,6 +9,9 @@ const adminServiceRoute = readFileSync(new URL("../app/api/admin/service-request
 const remoteStateClient = readFileSync(new URL("../app/lib/remote-state.ts", import.meta.url), "utf8");
 const adminSession = readFileSync(new URL("../app/lib/server-session.ts", import.meta.url), "utf8");
 const marketplaceListRoute = readFileSync(new URL("../app/api/marketplace/listings/route.ts", import.meta.url), "utf8");
+const supportTicketRoute = readFileSync(new URL("../app/api/support-tickets/route.ts", import.meta.url), "utf8");
+const adminOverviewRoute = readFileSync(new URL("../app/api/admin/overview/route.ts", import.meta.url), "utf8");
+const adminTicketsRoute = readFileSync(new URL("../app/api/admin/tickets/[id]/route.ts", import.meta.url), "utf8");
 
 describe("anonymous server input validation", () => {
   it("accepts only bounded image data URLs", () => {
@@ -56,5 +59,17 @@ describe("anonymous server input validation", () => {
     expect(marketplaceListRoute).toContain('searchParams.get("category")');
     expect(marketplaceListRoute).toContain('count: "exact"');
     expect(marketplaceListRoute).toContain("pagination:");
+  });
+
+  it("does not promise an unconfigured support response deadline", () => {
+    expect(supportTicketRoute).not.toContain("firstResponseDueAt");
+    expect(supportTicketRoute).toContain("처리 상태와 운영자 답변은 앱에서 확인하세요.");
+    expect(adminOverviewRoute).not.toContain("isTicketOverdue");
+  });
+
+  it("scopes support data to the session and protects operator edits", () => {
+    expect(supportTicketRoute).toContain('.eq("session_id", session.id)');
+    expect(adminTicketsRoute).toContain("requireAdmin(request, true)");
+    expect(adminTicketsRoute).toContain("version_conflict");
   });
 });

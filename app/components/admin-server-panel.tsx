@@ -10,7 +10,7 @@ type Reservation = { id: string; listing_id: string; status: string; version: nu
 type Service = { id: string; reference_code?: string; service_type: string; status: string; version: number; listing_id?: string; task_id?: string; storage_duration?: string; storage_location?: string; delivery_method?: string; origin?: string; destination?: string; estimated_cost_label?: string | null; admin_note?: string | null; admin_cancel_reason?: string | null; admin_updated_at?: string | null; admin_updated_by?: string | null; created_at?: string };
 type Override = { id?: string; place_key?: string; guide_key?: string; status: string; version: number; payload?: Record<string, unknown>; updated_at?: string };
 type Report = { id: string; status: string; version: number; reason: string; detail?: string };
-type Ticket = { id: string; reference_code?: string | null; status: string; version: number; subject: string; body: string; operator_response?: string | null; handled_by?: string | null; handled_at?: string | null; first_response_due_at?: string | null; first_response_at?: string | null; created_at?: string };
+type Ticket = { id: string; reference_code?: string | null; status: string; version: number; subject: string; body: string; operator_response?: string | null; handled_by?: string | null; handled_at?: string | null; created_at?: string };
 type OperationRule = { id: string; operation_type: "delivery" | "storage"; title: string; address: string; cost_label: string; rules: string; duration_days: number[]; source_url?: string | null; checked_at: string; status: string; version: number; updated_at?: string };
 type AuditEntry = { id: string; actor?: string | null; resource_type: string; resource_key: string; action: string; reason?: string | null; created_at: string };
 type AdminData = { auditLog: AuditEntry[]; catalogCounts?: { places?: number; guides?: number }; counts: Record<string, number> };
@@ -44,8 +44,7 @@ function ServiceOperationCard({ item, locale, l, save, remove }: { item: Service
 
 function TicketCard({ item, locale, l, save }: { item: Ticket; locale: Locale; l: ReturnType<typeof label>; save: (body: Record<string, unknown>) => void }) {
   const [status, setStatus] = useState(item.status); const [response, setResponse] = useState(item.operator_response ?? "");
-  const overdue = Boolean(item.first_response_due_at && !item.first_response_at && !["closed", "deleted"].includes(item.status) && new Date(item.first_response_due_at) < new Date());
-  return <article className="admin-data-card"><div><strong>{item.subject}</strong><span>{item.reference_code ?? item.id} · {statusText(locale, item.status)} · {item.handled_by ?? "—"}</span><small>{item.created_at ? `${new Date(item.created_at).toLocaleString(locale)}` : ""}{item.first_response_due_at ? ` · ${new Date(item.first_response_due_at).toLocaleString(locale)}` : ""}{overdue ? ` · ${adminText(locale, "Overdue")}` : ""}</small></div><p>{item.body}</p><label className="admin-service-field"><span>{l.status}</span><select value={status} onChange={(event) => setStatus(event.target.value)}>{["open", "reviewing", "resolved", "closed", "deleted"].map((value) => <option key={value} value={value}>{statusText(locale, value)}</option>)}</select></label><label className="admin-service-field"><span>{l.note}</span><textarea value={response} maxLength={3000} onChange={(event) => setResponse(event.target.value)}/></label><button className="secondary" onClick={() => save({ status, operatorResponse: response, version: item.version })}>{l.save}</button></article>;
+  return <article className="admin-data-card"><div><strong>{item.subject}</strong><span>{item.reference_code ?? item.id} · {statusText(locale, item.status)} · {item.handled_by ?? "—"}</span><small>{item.created_at ? `${new Date(item.created_at).toLocaleString(locale)}` : ""}</small></div><p>{item.body}</p><label className="admin-service-field"><span>{l.status}</span><select value={status} onChange={(event) => setStatus(event.target.value)}>{["open", "reviewing", "resolved", "closed", "deleted"].map((value) => <option key={value} value={value}>{statusText(locale, value)}</option>)}</select></label><label className="admin-service-field"><span>{l.note}</span><textarea value={response} maxLength={3000} onChange={(event) => setResponse(event.target.value)}/></label><button className="secondary" onClick={() => save({ status, operatorResponse: response, version: item.version })}>{l.save}</button></article>;
 }
 
 export default function AdminServerPanel({ locale, onAuthChange }: { locale: Locale; onAuthChange?: (authenticated: boolean) => void }) {
@@ -75,15 +74,15 @@ export default function AdminServerPanel({ locale, onAuthChange }: { locale: Loc
     return body;
   }, []);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (): Promise<boolean> => {
     setLoading(true); setError("");
-    try { const body = await request("/api/admin/overview"); setData(body as unknown as AdminData); setAuthenticated(true); onAuthChange?.(true); }
-    catch (cause) { const code = cause instanceof Error ? cause.message : "network"; setAuthenticated(false); setData(null); onAuthChange?.(false); setError(code === "admin_required" ? l.required : code === "rate_limited" ? l.rate : l.network); }
+    try { const body = await request("/api/admin/overview"); const overview = body as unknown as AdminData; setData({ ...overview, counts: { ...overview.counts, overdueTickets: overview.counts.tickets ?? 0 } }); setAuthenticated(true); onAuthChange?.(true); return true; }
+    catch (cause) { const code = cause instanceof Error ? cause.message : "network"; setAuthenticated(false); setData(null); onAuthChange?.(false); setError(code === "admin_required" ? l.required : code === "rate_limited" ? l.rate : l.network); return false; }
     finally { setLoading(false); }
   }, [l.network, l.rate, l.required, onAuthChange, request]);
 
-  const loadTab = useCallback(async (selectedTab: Tab, selectedPage = page) => {
-    if (selectedTab === "overview") return;
+  const loadTab = useCallback(async (selectedTab: Tab, selectedPage = page): Promise<boolean> => {
+    if (selectedTab === "overview") return true;
     const routes: Record<Exclude<Tab, "overview">, { path: string; key: keyof AdminLists }> = {
       listings: { path: "/api/admin/listings", key: "listings" }, reservations: { path: "/api/admin/reservations", key: "reservations" },
       delivery: { path: "/api/admin/service-requests?type=delivery", key: "serviceRequests" }, storage: { path: "/api/admin/service-requests?type=storage", key: "serviceRequests" },
@@ -102,11 +101,12 @@ export default function AdminServerPanel({ locale, onAuthChange }: { locale: Loc
       const rows = Array.isArray(body[route.key]) ? body[route.key] as AdminLists[typeof route.key] : [];
       setLists((current) => ({ ...current, [route.key]: rows }));
       setPagination((body.pagination as Pagination | undefined) ?? { page: selectedPage, pageSize: 20, total: rows.length, totalPages: 1 });
-      setAuthenticated(true); onAuthChange?.(true);
+      setAuthenticated(true); onAuthChange?.(true); return true;
     } catch (cause) {
       const code = cause instanceof Error ? cause.message : "network";
       if (code === "admin_required") { setAuthenticated(false); setData(null); onAuthChange?.(false); }
       setError(code === "admin_required" ? l.required : code === "rate_limited" ? l.rate : l.network);
+      return false;
     } finally { setLoading(false); }
   }, [l.network, l.rate, l.required, onAuthChange, page, request, search, showDeleted, statusFilter]);
 
@@ -124,7 +124,7 @@ export default function AdminServerPanel({ locale, onAuthChange }: { locale: Loc
     catch (cause) { const code = cause instanceof Error ? cause.message : "network"; setError(code === "rate_limited" ? l.rate : code === "invalid_admin_token" ? l.required : l.network); setLoading(false); }
   };
   const signOut = async () => { try { await request("/api/admin/logout", { method: "POST" }); } finally { setAuthenticated(false); onAuthChange?.(false); setData(null); setNotice(""); } };
-  const mutate = async (path: string, body: Record<string, unknown>, method = "PATCH") => { setLoading(true); setError(""); setNotice(""); try { await request(path, { method, body: JSON.stringify(body) }); setNotice(l.saved); await Promise.all([load(), loadTab(tab, page)]); } catch (cause) { const code = cause instanceof Error ? cause.message : "network"; setError(code === "rate_limited" ? l.rate : code === "version_conflict" ? adminText(locale, "Conflict: refresh and retry.") : l.network); setLoading(false); } };
+  const mutate = async (path: string, body: Record<string, unknown>, method = "PATCH") => { setLoading(true); setError(""); setNotice(""); try { await request(path, { method, body: JSON.stringify(body) }); const refreshed = await Promise.all([load(), loadTab(tab, page)]); if (refreshed.some((result) => !result)) { setNotice(""); return; } setNotice(l.saved); } catch (cause) { const code = cause instanceof Error ? cause.message : "network"; setNotice(""); setError(code === "rate_limited" ? l.rate : code === "version_conflict" ? adminText(locale, "Conflict: refresh and retry.") : l.network); setLoading(false); } };
 
   const create = async () => {
     const price = Number(newListing.priceKrw);

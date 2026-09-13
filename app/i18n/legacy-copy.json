@@ -5500,14 +5500,14 @@
     "ms": "Gunakan HiKorea untuk mengesahkan dokumen dan peraturan temu janji yang digunakan pada status anda."
   },
   "Use this in-app ticket instead of external messaging. Our first-response target is within two business days.": {
-    "en": "Use this in-app ticket instead of external messaging. Our first-response target is within two business days.",
-    "ko": "외부 메시지 대신 이 인앱 티켓을 사용하세요. 첫 번째 응답 목표는 영업일 기준 2일 이내입니다.",
-    "ja": "外部メッセージの代わりにこのアプリ内チケットを使用してください。最初の対応は 2 営業日以内を目標としています。",
-    "zh-CN": "使用此应用内票证而不是外部消息传递。我们的第一响应目标是在两个工作日内。",
-    "uz": "Tashqi xabarlar oʻrniga ushbu ilova ichidagi chiptadan foydalaning. Bizning birinchi javob maqsadimiz ikki ish kuni ichida.",
-    "vi": "Sử dụng vé trong ứng dụng này thay vì nhắn tin bên ngoài. Mục tiêu phản hồi đầu tiên của chúng tôi là trong vòng hai ngày làm việc.",
-    "mn": "Гадны мессежийн оронд энэ апп доторх тасалбарыг ашиглаарай. Бидний эхний зорилт бол ажлын хоёр өдрийн дотор.",
-    "ms": "Gunakan tiket dalam apl ini dan bukannya pemesejan luaran. Sasaran respons pertama kami adalah dalam masa dua hari perniagaan."
+    "en": "Use this in-app ticket instead of external messaging. Check the ticket here for status and operator replies.",
+    "ko": "외부 메시지 대신 이 인앱 티켓을 사용하세요. 상태와 운영자 답변은 여기에서 확인할 수 있습니다.",
+    "ja": "外部メッセージの代わりにこのアプリ内チケットを使用してください。状態と運営者の返信はここで確認できます。",
+    "zh-CN": "请使用此应用内工单，而不是外部消息。在此查看状态和运营者回复。",
+    "uz": "Tashqi xabarlar oʻrniga ushbu ilova ichidagi chiptadan foydalaning. Holat va operator javoblarini shu yerda tekshiring.",
+    "vi": "Sử dụng vé trong ứng dụng này thay vì nhắn tin bên ngoài. Kiểm tra trạng thái và phản hồi của người vận hành tại đây.",
+    "mn": "Гадны мессежийн оронд энэ апп доторх тасалбарыг ашиглаарай. Төлөв болон операторын хариуг энд шалгана уу.",
+    "ms": "Gunakan tiket dalam apl ini dan bukannya pemesejan luaran. Semak status dan balasan pengendali di sini."
   },
   "Vegan menu available": {
     "en": "Vegan menu available",
