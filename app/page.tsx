@@ -26,7 +26,7 @@ import { accountFetch } from "./lib/account-api";
 import { createMarketplaceItem, deleteAccount, importGuestData, loadAccount, saveProfile, saveProgress, sendEmailOtp, signOut, updateMarketplaceItemStatus, verifyEmailOtp } from "./lib/repository";
 import { googleMapsDirectionsUrl, googleMapsSearchUrl, isKuEmail, isOwnedMarketplaceProduct, isPickupPast, isValidImageDataUrl, isValidPickupSchedule, mapServiceError, profileRowToStored, validateMarketplaceInput, type AppMode, type ProfileRow, type StoredProfile } from "./lib/domain";
 import { shouldShowVerifiedBadge } from "./lib/verification";
-import { emptyPreferences, isRetiredQaListing, migrateLocalData, readLocalData, writeLocalData, type LocalPreferences, type LocalReservation, type ReportDraft, type LocalServiceRequest, type ServiceRequestMode } from "./lib/local-data";
+import { emptyPreferences, isRetiredQaListing, migrateLocalData, readLocalData, writeLocalData, type GuideProgress, type LocalPreferences, type LocalReservation, type ReportDraft, type LocalServiceRequest, type ServiceRequestMode } from "./lib/local-data";
 import KakaoMap from "./components/kakao-map";
 import AdminServerPanel from "./components/admin-server-panel";
 import { dedupePlaces, isValidCoordinates, KU_CENTER, KU_SCIENCE_CENTER, matchesPlaceCategory, type KakaoSearchResponse, type CampusFilter } from "./lib/kakao";
@@ -308,9 +308,17 @@ export default function Home() {
 
   useEffect(() => {
     const validPages = new Set<Page>(["home", "onboarding", "marketplace", "guide", "life-guide"]);
+    const validStages = new Set<LifecycleStage>(lifecycleStages.map((stage) => stage.id));
     const readUrl = () => {
-      const value = new URLSearchParams(window.location.search).get("page");
+      const params = new URLSearchParams(window.location.search);
+      const value = params.get("page");
       if (value && validPages.has(value as Page)) setPage(value as Page);
+      const stage = params.get("stage");
+      if (stage && validStages.has(stage as LifecycleStage)) setSelectedStage(stage as LifecycleStage);
+      const taskId = params.get("taskId") ?? params.get("task");
+      if (taskId) { setFocusTaskId(taskId); setHighlightTaskId(params.get("highlight") === "1" ? taskId : null); }
+      const guide = params.get("guide");
+      if (guide && expandedLifeGuideArticles.some((article) => article.id === guide)) requestAnimationFrame(() => document.getElementById(`guide-${guide}`)?.scrollIntoView({ block: "start" }));
     };
     readUrl();
     window.addEventListener("popstate", readUrl);
@@ -488,7 +496,8 @@ export default function Home() {
   const go = (target: Page, intent: NavigationIntent = {}) => {
     if (target !== "admin") setAdminAuthenticated(false);
     if (target === "onboarding") {
-      const targetStage = intent.stage ?? recommendedTask?.stage ?? selectedStage;
+      const taskStage = intent.taskId ? activeTasks.find((task) => task.id === intent.taskId)?.stage : undefined;
+      const targetStage = taskStage ?? intent.stage ?? recommendedTask?.stage ?? selectedStage;
       setSelectedStage(targetStage);
       setFocusTaskId(intent.taskId ?? null);
       setHighlightTaskId(intent.highlight ? intent.taskId ?? null : null);
@@ -502,6 +511,14 @@ export default function Home() {
     setPage(target);
     const url = new URL(window.location.href);
     if (target === "home") url.searchParams.delete("page"); else url.searchParams.set("page", target);
+    if (target === "onboarding") {
+      url.searchParams.set("stage", intent.stage ?? (intent.taskId ? activeTasks.find((task) => task.id === intent.taskId)?.stage : undefined) ?? selectedStage);
+      if (intent.taskId) url.searchParams.set("taskId", intent.taskId); else url.searchParams.delete("taskId");
+      if (intent.highlight && intent.taskId) url.searchParams.set("highlight", "1"); else url.searchParams.delete("highlight");
+    } else {
+      url.searchParams.delete("stage"); url.searchParams.delete("taskId"); url.searchParams.delete("task"); url.searchParams.delete("highlight");
+    }
+    if (target !== "life-guide") url.searchParams.delete("guide");
     window.history.pushState({ page: target }, "", `${url.pathname}${url.search}${url.hash}`);
     setMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -690,7 +707,7 @@ export default function Home() {
         {page === "home" && <Dashboard locale={locale} t={t} profile={currentProfile} activeTasks={activeTasks} done={done} stageStats={stageStats} progress={progress} completedCount={completedCount} recommendedTask={recommendedTask} go={go}/>}
         {page === "onboarding" && <Onboarding locale={locale} t={t} activeTasks={activeTasks} stageStats={stageStats} progress={progress} done={done} recommendedTask={recommendedTask} selectedStage={selectedStage} setSelectedStage={setSelectedStage} focusTaskId={focusTaskId} highlightTaskId={highlightTaskId} go={go} openTaskAction={openTaskAction} toggleTask={toggleTask} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
         {page === "marketplace" && <Marketplace locale={locale} t={t} profile={currentProfile} appMode={appMode} products={marketplaceProducts} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} addProduct={addMarketplaceProduct} selectProduct={openProduct} selectSellerProduct={openSellerProduct} changeStatus={changeMarketplaceStatus} preferences={localPreferences} setPreferences={setLocalPreferences} toggleFavorite={toggleProductFavorite} loadMoreLive={loadMoreMarketplace} liveHasMore={remoteListingPage < remoteListingTotalPages} liveLoading={remoteListingsLoading}/>}
-        {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go} preferences={localPreferences} done={done}/>}
+        {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go} preferences={localPreferences} setPreferences={setLocalPreferences} done={done}/>}
         {page === "guide" && <LocalGuide locale={locale} t={t} category={guideCategory} setCategory={setGuideCategory} search={guideSearch} setSearch={setGuideSearch} places={localPlaces} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
         {page === "operation-model" && <OperationModel locale={locale} />}
         {page === "admin" && appMode === "demo" && <><AdminServerPanel locale={locale} onAuthChange={setAdminAuthenticated}/>{adminAuthenticated && <OperationModel locale={locale} />}</>}
@@ -837,7 +854,7 @@ function Onboarding({ locale, t, activeTasks, stageStats, progress, done, recomm
 
   return <section className="page section-pad">
     <div className="page-hero lifecycle-hero"><div><span className="eyebrow"><FileCheck2 size={14}/>{tr(t, "onboarding:eyebrow")}</span><h1>{tr(t, "onboarding:title")}</h1><p>{tr(t, "onboarding:body")}</p></div><div className="progress-panels"><div className="progress-summary"><div><span>{tr(t, "onboarding:overallProgress")}</span><strong>{formatPercent(locale, progress)}</strong></div><div className="progress-track"><i style={{ width: `${progress}%` }}/></div><small><CheckCircle2 size={14}/>{tr(t, "onboarding:taskCount", { count: overallCompleted })}</small></div><div className="progress-summary selected"><div><span>{tr(t, "onboarding:selectedStage")}</span><strong>{formatPercent(locale, selectedStat.progress)}</strong></div><div className="progress-track"><i style={{ width: `${selectedStat.progress}%` }}/></div><small>{tr(t, selectedStat.stage.labelKey)} · {tr(t, "common:countOfTotal", { completed: formatNumber(locale, selectedStat.completed), total: formatNumber(locale, selectedStat.total) })}</small></div></div></div>
-    <div className="lifecycle-tabs" role="tablist" aria-label={tr(t, "accessibility:lifecycleTabs")}>{stageStats.map(({ stage, completed, total, progress: stageProgress }) => <button role="tab" aria-selected={selectedStage === stage.id} className={selectedStage === stage.id ? "active" : ""} key={stage.id} onClick={() => setSelectedStage(stage.id)}><span>{stage.number}</span><strong>{tr(t, stage.labelKey)}</strong><small>{tr(t, "common:countOfTotal", { completed: formatNumber(locale, completed), total: formatNumber(locale, total) })} · {formatPercent(locale, stageProgress)}</small><i><b style={{ width: `${stageProgress}%` }}/></i></button>)}</div>
+    <div className="lifecycle-tabs" role="tablist" aria-label={tr(t, "accessibility:lifecycleTabs")}>{stageStats.map(({ stage, completed, total, progress: stageProgress }) => <button role="tab" aria-selected={selectedStage === stage.id} className={selectedStage === stage.id ? "active" : ""} key={stage.id} onClick={() => go("onboarding", { stage: stage.id })}><span>{stage.number}</span><strong>{tr(t, stage.labelKey)}</strong><small>{tr(t, "common:countOfTotal", { completed: formatNumber(locale, completed), total: formatNumber(locale, total) })} · {formatPercent(locale, stageProgress)}</small><i><b style={{ width: `${stageProgress}%` }}/></i></button>)}</div>
     <div className="filters"><label className="search-field"><Search size={17}/><input aria-label={locale === "ko" ? "작업 검색" : legacyCopy(locale, "Search tasks")} value={taskSearch} onChange={(e) => setTaskSearch(e.target.value)} placeholder={locale === "ko" ? "작업 검색" : legacyCopy(locale, "Search tasks")}/></label><label className="sort-control"><span>{locale === "ko" ? "정렬" : legacyCopy(locale, "Sort")}</span><select value={taskSort} onChange={(e) => setTaskSort(e.target.value as "default" | "due" | "status")}><option value="default">{locale === "ko" ? "기본" : legacyCopy(locale, "Default")}</option><option value="due">{locale === "ko" ? "예정일순" : legacyCopy(locale, "Due date")}</option><option value="status">{locale === "ko" ? "미완료 우선" : legacyCopy(locale, "Incomplete first")}</option></select></label></div><div className="chips"><button aria-pressed={preferences.hiddenCompleted} onClick={() => setPreferences((p) => ({ ...p, hiddenCompleted: !p.hiddenCompleted }))}>{preferences.hiddenCompleted ? ui(locale, "show") : ui(locale, "hide")}</button>{(["all", "today", "week", "none"] as const).map((item) => <button key={item} aria-pressed={dateFilter === item} onClick={() => setDateFilter(item)}>{ui(locale, item === "all" ? "allDates" : item)}</button>)}</div>
     <div className="timeline-note"><Lightbulb size={20}/><span>{tr(t, "onboarding:recommendationHint")}</span>{recommendedTask && recommendedTask.stage !== selectedStage && <button onClick={() => go("onboarding", { stage: recommendedTask.stage, taskId: recommendedTask.id, highlight: true })}>{tr(t, "onboarding:viewNext")}<ArrowRight size={15}/></button>}</div>
     <div className="task-list">{visibleTasks.map((task, index) => {
@@ -1031,7 +1048,7 @@ function LocalGuide({ locale, t, category, setCategory, search, setSearch, place
   </section>;
 }
 
-function GuideCard({ article, locale, labels, preferences, done, go }: { article: (typeof lifeGuideArticles)[number]; locale: Locale; labels: Record<string, string>; preferences: LocalPreferences; done: string[]; go: (page: Page, intent?: NavigationIntent) => void }) {
+function GuideCard({ article, locale, labels, preferences, setPreferences, done, go }: { article: (typeof lifeGuideArticles)[number]; locale: Locale; labels: Record<string, string>; preferences: LocalPreferences; setPreferences: Dispatch<SetStateAction<LocalPreferences>>; done: string[]; go: (page: Page, intent?: NavigationIntent) => void }) {
   const copy = getGuideLocaleCopy(article, locale);
   const detailsRef = useRef<HTMLDetailsElement | null>(null);
   useEffect(() => {
@@ -1048,6 +1065,12 @@ function GuideCard({ article, locale, labels, preferences, done, go }: { article
   const operational = guideOperationalCopy(locale, article);
   const relatedTaskId = article.relatedTaskIds[0];
   const taskDone = Boolean(relatedTaskId && done.includes(relatedTaskId));
+  const isArcGuide = article.id === "arc-current-check" || article.id === "hikorea-residence";
+  const guideProgress: GuideProgress = metadata?.progress ?? { guidanceChecked: false, appointmentStatus: "pending", applicationSubmitted: false };
+  const updateGuideProgress = (change: Partial<GuideProgress>) => setPreferences((current) => {
+    const currentMeta = current.guideMetadata[article.id] ?? { contentCheckedAt: article.contentCheckedAt ?? article.lastVerifiedAt ?? "", contentOrigin: article.contentOrigin ?? "official-guide", sourceStatus: article.sourceStatus ?? (article.officialUrl ? "verified" : "needs_confirmation"), officialUrl: article.officialUrl, officialUrls: article.officialUrls, sourceName: article.sourceName };
+    return { ...current, guideMetadata: { ...current.guideMetadata, [article.id]: { ...currentMeta, progress: { ...guideProgress, ...change } } } };
+  });
   const Icon = guideCategoryIcons[article.category] ?? BookOpen;
   return <article className="guide-article" id={`guide-${article.id}`}>
     <div className="guide-card-top"><span className="guide-category-icon" aria-hidden="true"><Icon size={18} /></span><span className="place-category">{labels[article.category]}</span><span className={`guide-status ${contentOrigin === "demo" ? "is-demo" : "is-verified"}`}>{contentOrigin === "demo" ? guideUi(locale, "demoOrigin") : guideUi(locale, "officialOrigin")}</span></div>
@@ -1059,6 +1082,7 @@ function GuideCard({ article, locale, labels, preferences, done, go }: { article
       {(operational.appliesTo || operational.contact || operational.completionCriteria) && <dl className="guide-operational-meta">{operational.appliesTo && <><dt>{guideUi(locale, "applies")}</dt><dd>{operational.appliesTo}</dd></>}{operational.contact && <><dt>{guideUi(locale, "contact")}</dt><dd>{operational.contact}</dd></>}{operational.completionCriteria && <><dt>{guideUi(locale, "completion")}</dt><dd>{operational.completionCriteria}</dd></>}</dl>}
       {checkedDate && <small className="article-note">{guideUi(locale, "checkedNote")}</small>}<p>{copy.content}</p>{guideMenuHint(locale, article.id) && <p className="article-note">{guideMenuHint(locale, article.id)}</p>}
       {(article.category === "immigration" || article.category === "healthcare" || article.category === "mobile-banking") && <p className="student-tip"><AlertTriangle size={15} />{guideUi(locale, "changing")}</p>}
+      {isArcGuide && <fieldset className="guide-progress"><legend>{locale === "ko" ? "체류 등록 진행 상태" : locale === "ja" ? "在留手続きの進捗" : locale === "zh-CN" ? "居留手续进度" : legacyCopy(locale, "Residence process status")}</legend><label><input type="checkbox" checked={guideProgress.guidanceChecked} onChange={(event) => updateGuideProgress({ guidanceChecked: event.target.checked })}/>{locale === "ko" ? "안내 확인 완료 — 현재 공식 공지를 읽고 내 체류 자격에 적용되는 항목을 기록함" : locale === "ja" ? "案内確認済み — 現在の公式案内を読み、適用項目を記録" : locale === "zh-CN" ? "指南已确认 — 已阅读当前官方通知并记录适用项目" : legacyCopy(locale, "Guidance checked — current official notice reviewed and applicable item recorded")}</label><label><span>{locale === "ko" ? "예약 상태" : locale === "ja" ? "予約状況" : locale === "zh-CN" ? "预约状态" : legacyCopy(locale, "Appointment status")}</span><select value={guideProgress.appointmentStatus} onChange={(event) => updateGuideProgress({ appointmentStatus: event.target.value as GuideProgress["appointmentStatus"] })}><option value="pending">{locale === "ko" ? "확인 전" : locale === "ja" ? "未確認" : locale === "zh-CN" ? "未确认" : legacyCopy(locale, "Not confirmed")}</option><option value="completed">{locale === "ko" ? "예약 완료(예약번호 발급)" : locale === "ja" ? "予約完了（予約番号発行）" : locale === "zh-CN" ? "预约完成（已获得预约号）" : legacyCopy(locale, "Completed (confirmation issued)")}</option><option value="not_required">{locale === "ko" ? "예약 불필요" : locale === "ja" ? "予約不要" : locale === "zh-CN" ? "无需预约" : legacyCopy(locale, "Not required")}</option></select></label><label><input type="checkbox" checked={guideProgress.applicationSubmitted} onChange={(event) => updateGuideProgress({ applicationSubmitted: event.target.checked })}/>{locale === "ko" ? "신청 접수 완료 — 방문·온라인 제출 후 접수 확인을 받음(승인 완료와 다름)" : locale === "ja" ? "申請受付済み — 提出後に受付確認を取得（承認とは別）" : locale === "zh-CN" ? "申请已受理 — 提交后取得受理确认（不等于批准）" : legacyCopy(locale, "Application received — submission confirmation obtained (not approval)")}</label><p className="article-note">{locale === "ko" ? "체크리스트는 개인 기록입니다. 안내 확인·예약 완료·신청 접수는 각각 다른 상태이며, 어느 것도 정부의 승인 완료를 의미하지 않습니다." : locale === "ja" ? "これは個人記録です。案内確認・予約完了・申請受付は別の状態で、政府の承認を意味しません。" : locale === "zh-CN" ? "这是个人记录。指南确认、预约完成和申请受理是不同状态，均不代表政府批准。" : legacyCopy(locale, "This is a personal record. Guidance, appointment, and receipt are separate states; none means government approval.")}</p></fieldset>}
       {copy.steps?.length ? <><h3>{guideUi(locale, "steps")}</h3><ol>{copy.steps.map((step) => <li key={step}>{step}</li>)}</ol></> : null}
       {copy.checklist?.length ? <><h3>{guideUi(locale, "checklist")}</h3><ul>{copy.checklist.map((item) => <li key={item}>{item}</li>)}</ul></> : null}
       {copy.cautions?.map((caution) => <p className="student-tip" key={caution}><AlertTriangle size={15} />{caution}</p>)}
@@ -1067,7 +1091,7 @@ function GuideCard({ article, locale, labels, preferences, done, go }: { article
   </article>;
 }
 
-function LifeGuide({ locale, search, setSearch, category, setCategory, go, preferences, done }: { locale: Locale; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; go: (page: Page, intent?: NavigationIntent) => void; preferences: LocalPreferences; done: string[] }) {
+function LifeGuide({ locale, search, setSearch, category, setCategory, go, preferences, setPreferences, done }: { locale: Locale; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; go: (page: Page, intent?: NavigationIntent) => void; preferences: LocalPreferences; setPreferences: Dispatch<SetStateAction<LocalPreferences>>; done: string[] }) {
   const labels: Record<string, string> = locale === "ko" ? { All: "전체", housing: "주거", arrival: "입국·교통", immigration: "체류·행정", "mobile-banking": "통신·은행", academic: "학사생활", healthcare: "의료·응급", daily: "일상생활", departure: "귀국 준비" } : locale === "ja" ? { All: "すべて", housing: "住居", arrival: "入国・交通", immigration: "在留・行政", "mobile-banking": "通信・銀行", academic: "学業生活", healthcare: "医療・緊急", daily: "日常生活", departure: "帰国準備" } : locale === "zh-CN" ? { All: "全部", housing: "住房", arrival: "入境·交通", immigration: "居留·行政", "mobile-banking": "通信·银行", academic: "学业生活", healthcare: "医疗·紧急", daily: "日常生活", departure: "回国准备" } : legacyCopy(locale, { All: "All", housing: "Housing", arrival: "Arrival & Transportation", immigration: "Immigration", "mobile-banking": "Mobile & Banking", academic: "Academic Life", healthcare: "Healthcare & Emergency", daily: "Daily Life", departure: "Departure" });
   const articles = [...lifeGuideArticles, ...expandedLifeGuideArticles];
   const filtered = articles.filter((article) => { const copy = getGuideLocaleCopy(article, locale); const searchable = [copy.title, copy.summary, copy.content, ...(copy.checklist ?? []), ...(copy.steps ?? []), ...(copy.cautions ?? [])].join(" "); return (category === "All" || article.category === category) && searchable.toLocaleLowerCase(locale).includes(search.toLocaleLowerCase(locale)); });
@@ -1076,7 +1100,7 @@ function LifeGuide({ locale, search, setSearch, category, setCategory, go, prefe
     {recommended && <aside className="guide-recommendation"><span className="eyebrow"><Zap size={14} /> {guideViewUi(locale, "recommendation")}</span><h2>{getGuideLocaleCopy(recommended, locale).title}</h2><p>{getGuideLocaleCopy(recommended, locale).summary}</p><span className="guide-recommendation-status"><CheckCircle2 size={15} /> {guideViewUi(locale, "status")}</span></aside>}
     <label className="search-field"><Search size={17} /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={locale === "ko" ? "제목 또는 본문 검색" : locale === "ja" ? "タイトルまたは本文を検索" : locale === "zh-CN" ? "搜索标题或正文" : legacyCopy(locale, "Search title or content")} /></label>
     <div className="chips">{["All", ...Object.keys(labels).filter((key) => key !== "All")].map((key) => <button key={key} aria-pressed={category === key} className={category === key ? "active" : ""} onClick={() => setCategory(key)}>{labels[key]}</button>)}</div>
-    {filtered.length ? <div className="guide-article-grid">{filtered.map((article) => <GuideCard key={article.id} article={article} locale={locale} labels={labels} preferences={preferences} done={done} go={go} />)}</div> : <EmptyState icon={BookOpen} text={locale === "ko" ? "검색 결과가 없습니다." : locale === "ja" ? "検索結果がありません." : locale === "zh-CN" ? "没有找到指南。" : legacyCopy(locale, "No guides found.")} />}
+    {filtered.length ? <div className="guide-article-grid">{filtered.map((article) => <GuideCard key={article.id} article={article} locale={locale} labels={labels} preferences={preferences} setPreferences={setPreferences} done={done} go={go} />)}</div> : <EmptyState icon={BookOpen} text={locale === "ko" ? "검색 결과가 없습니다." : locale === "ja" ? "検索結果がありません." : locale === "zh-CN" ? "没有找到指南。" : legacyCopy(locale, "No guides found.")} />}
   </section>;
 }
 
