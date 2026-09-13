@@ -95,7 +95,7 @@
       "campus-dining": { "title": "캠퍼스 식당 정보 확인", "description": "로컬 가이드에서 캠퍼스 주변 데모 식당 정보를 살펴보세요.", "category": "식사", "preparation": ["식단 선호", "로컬 가이드"], "practicalNote": "방문 전에 현재 메뉴와 식재료를 직접 확인하세요." },
       "household-essentials": { "title": "생활용품 구매처 확인", "description": "학생 주거생활에 필요한 물품을 데모 마켓에서 찾아보세요.", "category": "생활", "preparation": ["구매 목록", "픽업 계획"], "practicalNote": "이 프로토타입의 상품과 거래는 데모용입니다." },
       "student-marketplace": { "title": "학생 인증 중고거래 이용", "description": "입국 학생과 출국 학생을 연결하는 고려대 학생 마켓의 데모 흐름을 확인하세요.", "category": "학생 마켓", "preparation": ["데모 인증", "마켓 이용 조건"], "practicalNote": "현재 프로토타입은 데모 인증을 사용하며 실제 서비스에서는 대학 이메일 인증이 필요합니다." },
-      "sell-items": { "title": "생활용품 판매 등록", "description": "더 이상 필요하지 않은 물품을 입국 학생이 찾을 수 있도록 데모 상품을 등록하세요.", "category": "마켓", "preparation": ["상품 정보", "픽업 가능 시간"], "practicalNote": "이 프로토타입은 결제나 메시지 전송을 처리하지 않습니다." },
+      "sell-items": { "title": "생활용품 판매 등록", "description": "더 이상 필요하지 않은 물품의 실제 등록 정보를 작성해 입국 학생에게 공개하세요.", "category": "마켓", "preparation": ["상품 정보", "픽업 가능 시간"], "practicalNote": "상품 정보와 픽업 요청을 저장할 수 있지만 결제·외부 메시지·배송은 지원하지 않습니다." },
       "luggage": { "title": "짐 보관·배송 준비", "description": "일반적인 보관·배송 옵션을 비교하고 선택한 예약 정보를 정리하세요.", "category": "짐", "preparation": ["짐 목록", "도착지 정보"], "practicalNote": "선택한 업체에 최신 조건, 가격과 제한사항을 직접 확인하세요." },
       "departure-checklist": { "title": "귀국 체크리스트", "description": "출국 전에 주거, 학교, 소지품과 이동 관련 작업을 확인하세요.", "category": "귀국", "preparation": ["개인 할 일 목록", "주요 연락처", "여행 서류"], "practicalNote": "일반적인 기한에 의존하지 말고 확인한 날짜를 직접 추가하세요." },
       "dorm-checkout": { "title": "기숙사 퇴실", "description": "최신 기숙사 퇴실 안내에 따라 방 인계 절차를 확인하세요.", "category": "주거", "preparation": ["기숙사 퇴실 안내", "방 인계 메모"], "practicalNote": "기숙사의 최신 안내를 따르세요. 이 데모는 기한을 제시하지 않습니다." },

@@ -223,6 +223,16 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .task-details ul { display: flex; flex-wrap: wrap; gap: 5px; list-style: none; margin: 0; padding: 0; }
 .task-details li { background: #f3f6fa; padding: 5px 7px; border-radius: 6px; color: #536179; font-size: 9px; }
 .task-details strong { font-size: 12px; }
+.task-progress-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 0 0; padding: 11px 13px; border: 1px solid #d8e4f6; border-radius: 12px; background: #f7faff; }
+.task-progress-summary strong { color: var(--navy); font-size: 12px; }
+.task-progress-summary .status { flex: 0 0 auto; }
+.guide-progress { display: grid; gap: 10px; margin: 16px 0; padding: 14px; border: 1px solid #d8e4f6; border-radius: 12px; background: #f7faff; }
+.guide-progress legend { padding: 0 5px; color: var(--navy); font-size: 12px; font-weight: 800; }
+.guide-progress label { display: flex; align-items: flex-start; gap: 8px; color: var(--ink); font-size: 12px; line-height: 1.45; }
+.guide-progress label span { min-width: 92px; font-weight: 700; }
+.guide-progress input[type="checkbox"] { margin-top: 3px; accent-color: var(--blue); }
+.guide-progress select { min-width: 0; flex: 1; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: white; color: var(--ink); }
+.guide-progress .article-note { margin: 0; }
 .tip { background: #f6f9ff; padding: 10px 12px; border-radius: 10px; }
 .tip p { margin: 0; color: #55647b; font-size: 10px; line-height: 1.45; }
 .task-action { width: fit-content; margin-top: 13px; padding: 9px 12px; border: 1px solid #cad9f0; border-radius: 9px; background: #f7faff; color: var(--blue); display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 10px; font-weight: 800; text-decoration: none; cursor: pointer; }
