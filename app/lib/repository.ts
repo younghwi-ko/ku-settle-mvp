@@ -49,10 +49,10 @@ export async function saveProfile(userId: string, profile: StoredProfile, locale
   const { data: sessionData } = await client.auth.getSession();
   const token = sessionData.session?.access_token;
   if (!token) throw new Error("session_expired");
-  const values = { display_name: profile.name.trim(), preferred_language: locale, expected_arrival_date: profile.arrivalDate || null, housing_type: profile.housing === "dorm" ? "dormitory" : "off_campus", onboarding_completed: true };
+  const values = { display_name: profile.name.trim(), preferred_language: locale, expected_arrival_date: profile.arrivalDate || null, housing_type: profile.housing === "dorm" ? "dormitory" : "off_campus", arrival_phase: profile.arrivalPhase ?? "before-arrival", study_track: profile.studyTrack ?? "exchange", departure_date: profile.departureDate || null, onboarding_completed: true };
   let saved: ProfileRow | null = null;
   try {
-    const response = await fetch("/api/account/profile", { method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${token}` }, credentials: "include", body: JSON.stringify({ name: profile.name.trim(), arrivalDate: profile.arrivalDate || null, housing: profile.housing, locale }) });
+    const response = await fetch("/api/account/profile", { method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${token}` }, credentials: "include", body: JSON.stringify({ name: profile.name.trim(), arrivalDate: profile.arrivalDate || null, housing: profile.housing, arrivalPhase: profile.arrivalPhase, studyTrack: profile.studyTrack, departureDate: profile.departureDate || null, locale }) });
     if (response.ok) saved = ((await response.json()) as { profile: ProfileRow }).profile;
   } catch { /* fall through to the authenticated client update */ }
   if (!saved) {

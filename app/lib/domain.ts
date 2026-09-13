@@ -10,6 +10,9 @@ export type StoredProfile = {
   arrivalDate: string;
   housing: Housing;
   mode: "personalized" | "demo";
+  arrivalPhase?: "before-arrival" | "already-arrived";
+  studyTrack?: "exchange" | "degree";
+  departureDate?: string;
 };
 
 export type ProfileRow = {
@@ -18,6 +21,9 @@ export type ProfileRow = {
   preferred_language: Locale;
   expected_arrival_date: string | null;
   housing_type: DbHousing | null;
+  arrival_phase?: "before-arrival" | "already-arrived" | null;
+  study_track?: "exchange" | "degree" | null;
+  departure_date?: string | null;
   onboarding_completed: boolean;
   guest_data_imported_at: string | null;
   created_at: string;
@@ -92,7 +98,7 @@ export function mergeCompletedTaskIds(server: string[], guest: string[], allowed
 }
 
 export function profileRowToStored(row: ProfileRow): StoredProfile {
-  return { name: row.display_name ?? "", arrivalDate: row.expected_arrival_date ?? "", housing: fromDbHousing(row.housing_type), mode: "personalized" };
+  return { name: row.display_name ?? "", arrivalDate: row.expected_arrival_date ?? "", housing: fromDbHousing(row.housing_type), mode: "personalized", arrivalPhase: row.arrival_phase ?? undefined, studyTrack: row.study_track ?? undefined, departureDate: row.departure_date ?? undefined };
 }
 
 export function marketplaceRowToProduct(row: MarketplaceRow, currentUserId?: string): MarketProduct {

@@ -12,11 +12,14 @@ export async function PUT(request: Request) {
   const name = text(body.name, 80);
   const arrivalDate = typeof body.arrivalDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.arrivalDate) ? body.arrivalDate : null;
   const housing = body.housing === "off-campus" ? "off_campus" : body.housing === "dorm" ? "dormitory" : null;
+  const arrivalPhase = body.arrivalPhase === "already-arrived" ? "already-arrived" : "before-arrival";
+  const studyTrack = body.studyTrack === "degree" ? "degree" : "exchange";
+  const departureDate = typeof body.departureDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.departureDate) ? body.departureDate : null;
   const locale = typeof body.locale === "string" && locales.has(body.locale) ? body.locale : "en";
   if (!name || !arrivalDate || !housing) return apiError("invalid_profile", 422);
   const client = serverClient();
   if (!client) return apiError("server_storage_not_configured", 503);
-  const { data, error } = await client.from("profiles").update({ display_name: name, preferred_language: locale, expected_arrival_date: arrivalDate, housing_type: housing, onboarding_completed: true }).eq("user_id", principal.userId).select("*").single();
+  const { data, error } = await client.from("profiles").update({ display_name: name, preferred_language: locale, expected_arrival_date: arrivalDate, housing_type: housing, arrival_phase: arrivalPhase, study_track: studyTrack, departure_date: departureDate, onboarding_completed: true }).eq("user_id", principal.userId).select("*").single();
   if (error) return apiError("profile_save_failed", 502);
   return NextResponse.json({ profile: data }, { headers: { "Cache-Control": "no-store" } });
 }
