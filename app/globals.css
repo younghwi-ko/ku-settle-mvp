@@ -137,6 +137,11 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .next-card { padding: 24px; display: grid; grid-template-columns: auto 1fr; gap: 17px; position: relative; overflow: hidden; }
 .next-card-button { width: 100%; text-align: left; color: inherit; cursor: pointer; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
 .next-card-button:hover { transform: translateY(-2px); border-color: #bfd0ea; box-shadow: var(--shadow); }
+.next-task-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.next-task-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; padding: 17px; text-align: left; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 15px; cursor: pointer; }
+.next-task-card:hover { border-color: #9eb9e8; box-shadow: var(--shadow-sm); }
+.next-task-card strong, .next-task-card small { display: block; }
+.next-task-card small { margin-top: 5px; color: var(--muted); line-height: 1.45; }
 .next-icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: #fff0e8; color: #d8682d; }
 .next-content { display: grid; justify-items: start; }
 .next-title, .checklist-preview h2 { font-size: 19px; margin: 7px 0; letter-spacing: -.025em; }
@@ -485,6 +490,7 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
   .next-icon { width: 42px; height: 42px; }
   .preview-tasks { grid-template-columns: 1fr; }
   .feature-grid, .product-grid, .place-grid { grid-template-columns: 1fr; }
+  .next-task-grid { grid-template-columns: 1fr; }
   .feature-card { min-height: 220px; }
   .page { padding-top: 38px; }
   .page-hero { grid-template-columns: 1fr; gap: 20px; align-items: stretch; }
