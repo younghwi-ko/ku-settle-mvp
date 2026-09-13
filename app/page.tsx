@@ -395,6 +395,16 @@ export default function Home() {
     for (const product of [...products, ...remotePublicProducts, ...userProducts]) if (!isRetiredQaListing(product)) merged.set(String(product.id), product);
     return [...merged.values()].map((product) => localPreferences.reservedProductIds.includes(String(product.id)) && product.serviceStatus !== "sold" ? { ...product, status: "Reserved" as const } : product);
   }, [userProducts, remotePublicProducts, localPreferences.reservedProductIds]);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const listing = params.get("listing");
+    if (listing) {
+      const product = marketplaceProducts.find((item) => String(item.id) === listing);
+      if (product) { setPage("marketplace"); setSelectedProduct(product); setSelectedProductMode("buyer"); }
+    }
+    const guide = params.get("guide");
+    if (guide && expandedLifeGuideArticles.some((article) => article.id === guide)) { setPage("life-guide"); requestAnimationFrame(() => document.getElementById(`guide-${guide}`)?.scrollIntoView({ block: "start" })); }
+  }, [marketplaceProducts]);
   const loadMoreMarketplace = useCallback(async () => {
     if (remoteListingsLoading || remoteListingPage >= remoteListingTotalPages) return;
     const page = remoteListingPage + 1; setRemoteListingsLoading(true);
@@ -972,7 +982,7 @@ function GuideCard({ article, locale, labels, preferences, done, go }: { article
   const Icon = guideCategoryIcons[article.category] ?? BookOpen;
   return <article className="guide-article" id={`guide-${article.id}`}>
     <div className="guide-card-top"><span className="guide-category-icon" aria-hidden="true"><Icon size={18} /></span><span className="place-category">{labels[article.category]}</span><span className={`guide-status ${contentOrigin === "demo" ? "is-demo" : "is-verified"}`}>{contentOrigin === "demo" ? guideUi(locale, "demoOrigin") : guideUi(locale, "officialOrigin")}</span></div>
-    <h2>{copy.title}</h2><p className="guide-summary">{copy.summary}</p>
+    <h2>{copy.title}</h2><p className="guide-summary">{copy.summary}</p><button className="secondary guide-share" onClick={() => { const url = new URL(window.location.href); url.searchParams.set("page", "life-guide"); url.searchParams.set("guide", article.id); void navigator.clipboard?.writeText(url.toString()); }}>{locale === "ko" ? "이 가이드 공유" : locale === "ja" ? "このガイドを共有" : locale === "zh-CN" ? "分享此指南" : legacyCopy(locale, "Share this guide")}</button>
     <div className="guide-summary-badges"><span className="guide-badge guide-badge-time"><Clock3 size={13}/>{article.estimatedMinutes ? `${guideUi(locale, "duration")}: ${guideDuration(locale, article.estimatedMinutes[0], article.estimatedMinutes[1])}` : guideUi(locale, "status")}</span><span className="guide-badge guide-badge-check"><CheckCircle2 size={13}/>{checkedDate ? `${guideUi(locale, "checked")}: ${checkedDate}` : guideUi(locale, "sourceNeedsConfirmation")}</span><span className={`guide-badge guide-badge-progress ${taskDone ? "is-done" : relatedTaskId ? "is-active" : "is-pending"}`}><span aria-hidden="true">{taskDone ? "✓" : relatedTaskId ? "•" : "○"}</span>{guideProgressUi(locale, taskDone, Boolean(relatedTaskId))}</span></div>
     {relatedTaskId && <button className="task-action guide-primary-cta" onClick={() => go("onboarding", { taskId: relatedTaskId, highlight: true })}>{locale === "ko" ? "관련 라이프사이클 작업 보기" : locale === "ja" ? "関連するライフサイクルを見る" : locale === "zh-CN" ? "查看相关留学周期任务" : legacyCopy(locale, "View related lifecycle task")}<ArrowRight size={15} /></button>}
     <details className="guide-details"><summary className="guide-details-toggle" role="button" aria-label={guideViewUi(locale, "details")}><span>{guideViewUi(locale, "details")}</span><span className="guide-details-hint"><span>{guideViewUi(locale, "status")}</span><ChevronDown size={16} /></span></summary><div className="guide-details-content">
@@ -1087,7 +1097,7 @@ function PublicInfoModal({ locale, page, close }: { locale: Locale; page: "about
     ko: {
       about: ["KU Settle 소개", "KU Settle은 익명 세션 기반의 정착 준비, 상품 등록·예약, 수동 배송·보관 신청 현황을 제공합니다. 고려대학교 공식 서비스가 아닙니다."],
       terms: ["이용약관 초안", "배송·보관 신청은 운영자가 수동으로 검토합니다. 비용은 운영자 확인 후 안내하며, 서비스 내 결제는 지원하지 않습니다. 이 문서는 법률 자문이 아닌 정책 초안입니다."],
-      privacy: ["개인정보 처리 안내 초안", "익명 세션 데이터는 이 브라우저와 서비스 운영을 위해 저장됩니다. 금융·신원·민감정보를 입력하지 마세요. 이 문서는 정식 검토 전 정책 초안입니다."],
+      privacy: ["개인정보 처리 안내 초안", "게스트 이용 데이터는 브라우저와 익명 세션에 저장되며, 계정 연결 시 프로필·완료 작업·등록 상품·예약·문의 상태가 Supabase에 저장됩니다. 계정 삭제 시 계정 데이터와 연결된 등록·진행 데이터 삭제를 요청할 수 있습니다. 금융·신원·민감정보는 입력하지 마세요. 정식 검토 전 정책 초안입니다."],
       safety: ["마켓·배송·보관 안전 안내", "안전한 공개 장소에서 거래하고 물품 상태와 인계 기록을 확인하세요. 진행 중 이전에는 취소할 수 있고, 이후 취소는 운영자 검토가 필요합니다. 분실·파손 기준은 운영 정책 초안입니다."],
       sources: ["정보 출처와 정정 기준", "생활 가이드에는 공식 출처를 표시합니다. 내부 검증 장소와 카카오 검색 후보는 구분해 표시합니다. 운영자 문의는 준비 중이며, 현재 신청 진행은 상태 업데이트에서 확인하세요."],
       disclaimer: ["서비스 안내", "현재 익명 세션, 상품 등록·예약, 수동 배송·보관 신청을 제공합니다. 결제, 업체 연동, 외부 메시지는 향후 연동 예정입니다. 중요한 결정은 담당 기관의 최신 안내를 확인하세요."]
@@ -1095,7 +1105,7 @@ function PublicInfoModal({ locale, page, close }: { locale: Locale; page: "about
     en: {
       about: ["About KU Settle", "KU Settle provides anonymous planning, listing and reservation flows, and manual delivery or storage request tracking. It is not an official Korea University service."],
       terms: ["Terms of use — policy draft", "Delivery and storage requests are reviewed manually. Costs are confirmed by an operator; payment is not processed in this service. This is a policy draft, not legal advice."],
-      privacy: ["Privacy notice — policy draft", "Anonymous session data is stored for this browser and service operations. Do not submit financial, identity, or sensitive information. This draft awaits formal review."],
+      privacy: ["Privacy notice — policy draft", "Guest data is stored in this browser and an anonymous session. When an account is connected, the profile, completed tasks, listings, reservations, and support status are stored in Supabase. Account deletion can request removal of connected account data. Do not submit financial, identity, or sensitive information. This draft awaits formal review."],
       safety: ["Marketplace and fulfillment safety", "Meet in a safe public place, inspect items, and keep handover records. Cancellation is available before work is in progress; later cancellation requires operator review. Loss and damage handling is an operational policy draft."],
       sources: ["Information sources and correction policy", "Life Guide articles identify official sources. Internal verified places and Kakao search candidates are shown separately. Operator contact is being prepared; check request status updates for progress."],
       disclaimer: ["Service notice", "Current features include anonymous sessions, listings, reservations, and manually processed delivery or storage requests. Payment, providers, and external messaging are planned integrations. Confirm important decisions with the responsible organization."]
