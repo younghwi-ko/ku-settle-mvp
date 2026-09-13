@@ -262,6 +262,17 @@ export default function Home() {
   const [remoteListingsLoading, setRemoteListingsLoading] = useState(false);
   const [adminAuthenticated, setAdminAuthenticated] = useState(false);
 
+  useEffect(() => {
+    const validPages = new Set<Page>(["home", "onboarding", "marketplace", "guide", "life-guide"]);
+    const readUrl = () => {
+      const value = new URLSearchParams(window.location.search).get("page");
+      if (value && validPages.has(value as Page)) setPage(value as Page);
+    };
+    readUrl();
+    window.addEventListener("popstate", readUrl);
+    return () => window.removeEventListener("popstate", readUrl);
+  }, []);
+
   const applyAuthenticatedAccount = useCallback(async (user: User, candidate?: { profile: UserProfile; done: string[]; products: MarketProduct[] } | null) => {
     setServerBusy(true);
     try {
@@ -415,6 +426,9 @@ export default function Home() {
     }
     if (target === "guide" && intent.guideCategory) setGuideCategory(intent.guideCategory);
     setPage(target);
+    const url = new URL(window.location.href);
+    if (target === "home") url.searchParams.delete("page"); else url.searchParams.set("page", target);
+    window.history.pushState({ page: target }, "", `${url.pathname}${url.search}${url.hash}`);
     setMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
