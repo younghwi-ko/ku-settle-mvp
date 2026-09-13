@@ -335,7 +335,7 @@ export default function Home() {
   const [adminAuthenticated, setAdminAuthenticated] = useState(false);
 
   useEffect(() => {
-    const validPages = new Set<Page>(["home", "onboarding", "marketplace", "guide", "life-guide"]);
+    const validPages = new Set<Page>(["home", "onboarding", "marketplace", "guide", "life-guide", "operation-model"]);
     const validStages = new Set<LifecycleStage>(lifecycleStages.map((stage) => stage.id));
     const readUrl = () => {
       const params = new URLSearchParams(window.location.search);
