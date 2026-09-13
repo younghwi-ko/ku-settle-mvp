@@ -396,6 +396,13 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .empty-state p { font-size: 11px; }
 
 .modal-backdrop { position: fixed; inset: 0; z-index: 100; background: rgba(9,22,43,.62); display: grid; place-items: center; padding: 18px; backdrop-filter: blur(5px); animation: fade .18s ease; }
+.product-share-floating { position: fixed; z-index: 120; top: max(26px, calc(50% - 330px)); left: 50%; transform: translateX(170px); }
+.share-link { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; }
+.share-feedback { font-size: .82rem; color: #167c62; }
+.share-url-fallback { width: min(100%, 420px); min-height: 36px; border: 1px solid #ccd8e8; border-radius: 8px; padding: 7px 9px; font-size: .78rem; color: #203a62; background: #f7faff; }
+.guide-operational-meta { display: grid; grid-template-columns: max-content 1fr; gap: 7px 12px; margin: 16px 0; padding: 13px 15px; border-radius: 12px; background: #f6f9ff; font-size: .88rem; }
+.guide-operational-meta dt { color: #526987; font-weight: 700; }
+.guide-operational-meta dd { margin: 0; color: #243c61; }
 .modal { background: white; width: min(100%, 480px); max-height: calc(100vh - 36px); overflow: auto; border-radius: 22px; padding: 28px; position: relative; box-shadow: 0 35px 90px rgba(5,18,42,.28); animation: rise .22s ease; }
 .modal-close { position: absolute; right: 17px; top: 17px; width: 34px; height: 34px; border: 0; border-radius: 10px; background: #f1f4f8; display: grid; place-items: center; cursor: pointer; z-index: 2; }
 .modal-close svg { width: 18px; }
@@ -471,6 +478,7 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
 }
 
 @media (max-width: 700px) {
+  .product-share-floating { top: auto; bottom: 18px; left: 18px; transform: none; }
   .import-summary { grid-template-columns: 1fr; }
   .service-status { right: 12px; bottom: 12px; max-width: calc(100vw - 24px); }
   .topbar { height: 68px; padding: 0 15px; }

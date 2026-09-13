@@ -22,6 +22,14 @@ const expandedLifeGuideArticlesBase: LifeGuideArticle[] = [
   article({ id: "departure-shipping", category: "departure", title: "Plan shipping and move-out", summary: "Organize sales, storage, shipping, and housing handover before departure.", content: "Provider prices and customs rules can change. Compare current terms and keep receipts for important shipments.", checklist: ["List items to sell or ship", "Confirm housing handover date", "Check airline baggage limits"], steps: ["Choose keep, sell, donate, or ship", "Measure and pack items", "Record tracking and handover details"], cautions: ["Confirm international shipping restrictions before payment"], estimatedMinutes: [30, 60], verificationStatus: "demo", relatedTaskIds: ["sell-items", "luggage", "departure-checklist"], locales: { ko: { title: "귀국 전 배송과 퇴실 계획", summary: "판매·보관·배송과 주거 인계를 귀국 전에 정리하세요.", content: "배송 요금과 통관 규정은 바뀔 수 있으므로 현재 조건을 비교하고 중요한 발송 영수증을 보관하세요." }, ja: { title: "帰国前の配送と退去を計画する", summary: "販売、保管、配送、住居の引き渡しを整理します。", content: "料金や通関規則は変わるため、最新条件を確認してください。" }, "zh-CN": { title: "规划回国前的寄送与退房", summary: "在回国前整理出售、寄存、寄送和住房交接。", content: "运费和海关规则可能变化，请确认当前条件并保存重要收据。" } } })
 ];
 
+const operationalGuidance: Record<string, Pick<LifeGuideArticle, "appliesTo" | "contact" | "completionCriteria">> = {
+  "dorm-checkin-steps": { appliesTo: "Students assigned to a Korea University dormitory", contact: "The dormitory office and contact details listed in the current 입사/공지 notice", completionCriteria: "Building, check-in window, required documents, and room-condition reporting path are saved" },
+  "airport-to-ku": { appliesTo: "Students travelling from an airport to Korea University", contact: "Airport information desk or the transport operator customer centre shown on the official notice", completionCriteria: "Offline destination, route, fare, transfer points, and backup route are saved" },
+  "arc-current-check": { appliesTo: "International students who need foreigner registration or a status-specific residence service", contact: "HiKorea help desk or the immigration office listed for your jurisdiction in the current notice", completionCriteria: "Applicable service, jurisdiction, appointment method, current document list, and official contact are recorded" },
+  "sim-esim-options": { appliesTo: "Students who need a Korean mobile connection", contact: "The selected carrier's official customer centre or store shown on its current plan page", completionCriteria: "Device compatibility, identity documents, plan terms, activation steps, and support contact are confirmed" },
+  "ku-portal-basics": { appliesTo: "Korea University degree and exchange students with a KU account", contact: "The International Affairs/academic office contact shown in the relevant KU notice", completionCriteria: "Portal login works and the current academic schedule, registration menu, notices, and support contact are saved" }
+};
+
 export const expandedLifeGuideArticles: LifeGuideArticle[] = expandedLifeGuideArticlesBase.map((item) => {
   const overrides: Partial<LifeGuideArticle> = {
     contentCheckedAt: "2026-08-29",
@@ -32,7 +40,7 @@ export const expandedLifeGuideArticles: LifeGuideArticle[] = expandedLifeGuideAr
   if (item.id === "recycling-basics") Object.assign(overrides, { officialUrl: "https://news.seoul.go.kr/env/archives/507225", sourceName: "Seoul Metropolitan Government", contentOrigin: "official-guide" as const, sourceStatus: "verified" as const, verificationStatus: "verified" as const });
   if (item.id === "departure-shipping") Object.assign(overrides, { officialUrl: "https://www.koreapost.go.kr/eng/subIndex/4418.do", sourceName: "Korea Post", contentOrigin: "official-guide" as const, sourceStatus: "verified" as const, verificationStatus: "verified" as const });
   if (item.id === "emergency-119") Object.assign(overrides, { sourceStatus: "verified" as const, verificationStatus: "verified" as const });
-  return { ...item, ...overrides };
+  return { ...item, ...operationalGuidance[item.id], ...overrides };
 });
 
 type GuideSections = { checklist: string[]; steps?: string[]; cautions?: string[] };
