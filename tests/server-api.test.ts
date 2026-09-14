@@ -87,8 +87,12 @@ describe("anonymous server input validation", () => {
   it("gates integration-only endpoints and blocks unsafe runner targets", () => {
     expect(integrationEnvironmentRoute).toContain('integrationModeEnabled()');
     expect(integrationEnvironmentRoute).toContain('INTEGRATION_SUPABASE_PROJECT_REF');
+    expect(integrationEnvironmentRoute).toContain('isAllowedLocalUrl');
+    expect(integrationEnvironmentRoute).toContain('integration_environment_unverified');
     expect(integrationFaultRoute).toContain('x-integration-test-secret');
     expect(integrationRunner).toContain('parsed.origin !== this.origin');
+    expect(integrationRunner).toContain('isHttpOnly("ku_settle_admin")');
+    expect(integrationRunner).toContain('version_conflict');
     expect(integrationRunner).toContain('Production/temporary Vercel hosts are blocked');
     expect(integrationRunner).toContain('no write requests were sent');
   });

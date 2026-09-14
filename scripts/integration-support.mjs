@@ -35,15 +35,22 @@ if (configuredRefetchFailureUrl) {
 }
 
 class CookieClient {
-  constructor(origin) { this.origin = origin; this.cookies = new Map(); }
+  constructor(origin) { this.origin = origin; this.cookies = new Map(); this.cookieHttpOnly = new Map(); }
   hasCookie(name) { return this.cookies.has(name); }
+  isHttpOnly(name) { return this.cookieHttpOnly.get(name) === true; }
   cookieHeader() { return [...this.cookies].map(([name, value]) => `${name}=${value}`).join("; "); }
   saveCookies(response) {
     const values = typeof response.headers.getSetCookie === "function" ? response.headers.getSetCookie() : [];
     for (const value of values) {
       const pair = value.split(";", 1)[0];
       const index = pair.indexOf("=");
-      if (index > 0) this.cookies.set(pair.slice(0, index), pair.slice(index + 1));
+      if (index > 0) {
+        const name = pair.slice(0, index);
+        const cookieValue = pair.slice(index + 1);
+        if (!cookieValue) this.cookies.delete(name);
+        else this.cookies.set(name, cookieValue);
+        this.cookieHttpOnly.set(name, value.split(";").slice(1).some((attribute) => attribute.trim().toLowerCase() === "httponly"));
+      }
     }
   }
   async request(path, options = {}) {
@@ -95,12 +102,14 @@ try {
   let result = await admin.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: adminToken, operatorName }) });
   expectStatus(result, 200, "valid admin authentication");
   assert.equal(admin.hasCookie("ku_settle_admin"), true, "valid admin authentication did not set a session cookie");
+  assert.equal(admin.isHttpOnly("ku_settle_admin"), true, "valid admin authentication cookie is not HttpOnly");
   report("valid admin authentication", result);
 
   const invalid = new CookieClient(baseUrl);
   result = await invalid.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: `${adminToken}invalid`, operatorName }) });
   expectStatus(result, 403, "invalid admin authentication");
   assert.equal(invalid.hasCookie("ku_settle_admin"), false, "invalid admin authentication set a session cookie");
+  assert.equal(invalid.isHttpOnly("ku_settle_admin"), false, "invalid admin authentication returned an administrator cookie");
   report("invalid admin authentication", result);
 
   result = await anonymousA.request("/api/session/bootstrap", { method: "POST" });
@@ -158,6 +167,7 @@ try {
   const concurrentAuth = await adminConcurrent.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: adminToken, operatorName: `${operatorName}-concurrent` }) });
   expectStatus(concurrentAuth, 200, "second admin authentication");
   assert.equal(adminConcurrent.hasCookie("ku_settle_admin"), true, "second admin authentication did not set a session cookie");
+  assert.equal(adminConcurrent.isHttpOnly("ku_settle_admin"), true, "second admin authentication cookie is not HttpOnly");
   report("second admin authentication", concurrentAuth);
   const conflictBody = { version: ticketVersion, status: "reviewing", operatorResponse: "Concurrent test." };
   const [first, second] = await Promise.all([
