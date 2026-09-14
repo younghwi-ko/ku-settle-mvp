@@ -1,0 +1,165 @@
+import assert from "node:assert/strict";
+import { URL } from "node:url";
+
+const productionHost = "temporary-fleet-maroon-2opm8kt.vercel.app";
+const configuredBaseUrl = String(process.env.TEST_BASE_URL ?? "").trim();
+const adminToken = String(process.env.TEST_ADMIN_API_TOKEN ?? "");
+const operatorName = String(process.env.TEST_OPERATOR_NAME ?? "integration-test").trim();
+const remoteAllowed = process.env.TEST_ALLOW_REMOTE === "true" && process.env.TEST_CONFIRM_ISOLATED === "true";
+
+function fail(message) {
+  console.error(`integration setup failed: ${message}`);
+  process.exit(2);
+}
+
+const missing = [];
+if (!configuredBaseUrl) missing.push("TEST_BASE_URL");
+if (!adminToken) missing.push("TEST_ADMIN_API_TOKEN");
+if (missing.length) fail(`Set ${missing.join(" and ")} in the current shell only (never commit or print secrets).`);
+const baseUrl = configuredBaseUrl.replace(/\/$/, "");
+if (!operatorName || operatorName.length > 80) fail("TEST_OPERATOR_NAME must be 1-80 characters.");
+let target;
+try { target = new URL(baseUrl); } catch { fail("TEST_BASE_URL must be an absolute http(s) URL."); }
+if (!/^https?:$/.test(target.protocol)) fail("TEST_BASE_URL must use http or https.");
+if (target.hostname === productionHost || target.hostname.endsWith(".vercel.app")) fail("Production/temporary Vercel hosts are blocked.");
+const loopback = ["localhost", "127.0.0.1", "::1"].includes(target.hostname);
+if (!loopback && !remoteAllowed) fail("Remote targets require TEST_ALLOW_REMOTE=true and TEST_CONFIRM_ISOLATED=true.");
+
+class CookieClient {
+  constructor(origin) { this.origin = origin; this.cookies = new Map(); }
+  cookieHeader() { return [...this.cookies].map(([name, value]) => `${name}=${value}`).join("; "); }
+  saveCookies(response) {
+    const values = typeof response.headers.getSetCookie === "function" ? response.headers.getSetCookie() : [];
+    for (const value of values) {
+      const pair = value.split(";", 1)[0];
+      const index = pair.indexOf("=");
+      if (index > 0) this.cookies.set(pair.slice(0, index), pair.slice(index + 1));
+    }
+  }
+  async request(path, options = {}) {
+    const headers = new Headers(options.headers ?? {});
+    if (!headers.has("origin")) headers.set("origin", this.origin);
+    const cookie = this.cookieHeader();
+    if (cookie) headers.set("cookie", cookie);
+    const requestUrl = /^https?:\/\//.test(path) ? path : `${this.origin}${path}`;
+    const response = await fetch(requestUrl, { ...options, headers, redirect: "manual" });
+    this.saveCookies(response);
+    let body = null;
+    try { body = await response.json(); } catch { /* non-JSON response */ }
+    return { status: response.status, body };
+  }
+}
+
+function expectStatus(result, expected, label) {
+  assert.equal(result.status, expected, `${label}: expected ${expected}, received ${result.status}`);
+}
+function codeOf(result) { return typeof result.body?.error === "string" ? result.body.error : ""; }
+function report(label, result) { console.log(`${label}: ${result.status}${codeOf(result) ? ` (${codeOf(result)})` : ""}`); }
+function jsonHeaders() { return { "content-type": "application/json" }; }
+
+const anonymousA = new CookieClient(baseUrl);
+const anonymousB = new CookieClient(baseUrl);
+const admin = new CookieClient(baseUrl);
+const adminConcurrent = new CookieClient(baseUrl);
+let ticketId = "";
+let ticketVersion = 0;
+let ticketMarker = "";
+let cleanupNeeded = false;
+
+try {
+  let result = await admin.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: adminToken, operatorName }) });
+  expectStatus(result, 200, "valid admin authentication");
+  report("valid admin authentication", result);
+
+  const invalid = new CookieClient(baseUrl);
+  result = await invalid.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: `${adminToken}invalid`, operatorName }) });
+  expectStatus(result, 403, "invalid admin authentication");
+  report("invalid admin authentication", result);
+
+  result = await anonymousA.request("/api/session/bootstrap", { method: "POST" });
+  expectStatus(result, 200, "session A bootstrap");
+  result = await anonymousB.request("/api/session/bootstrap", { method: "POST" });
+  expectStatus(result, 200, "session B bootstrap");
+
+  ticketMarker = `integration-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  result = await anonymousA.request("/api/support-tickets", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ subject: ticketMarker, body: "Automated isolated integration test ticket." }) });
+  expectStatus(result, 201, "support ticket creation");
+  ticketId = String(result.body?.ticket?.id ?? "");
+  assert.match(ticketId, /^[0-9a-f-]{36}$/i, "support ticket id missing");
+  cleanupNeeded = true;
+  report("support ticket creation", result);
+
+  result = await anonymousA.request("/api/support-tickets");
+  expectStatus(result, 200, "session A ticket read");
+  assert.ok(result.body?.tickets?.some((ticket) => ticket.id === ticketId), "session A cannot read its own ticket");
+  report("session A ticket read", result);
+
+  result = await anonymousB.request("/api/support-tickets");
+  expectStatus(result, 200, "session B isolated ticket read");
+  assert.ok(!result.body?.tickets?.some((ticket) => ticket.id === ticketId), "session B accessed session A ticket");
+  report("session B isolation", result);
+
+  result = await admin.request(`/api/admin/tickets?search=${encodeURIComponent(ticketMarker)}`);
+  expectStatus(result, 200, "admin ticket read");
+  const adminTicket = result.body?.tickets?.find((ticket) => ticket.id === ticketId);
+  assert.ok(adminTicket, "admin cannot read test ticket");
+  ticketVersion = Number(adminTicket.version);
+  assert.ok(Number.isInteger(ticketVersion) && ticketVersion > 0, "ticket version missing");
+
+  const answer = "Automated test response.";
+  result = await admin.request(`/api/admin/tickets/${ticketId}`, { method: "PATCH", headers: jsonHeaders(), body: JSON.stringify({ version: ticketVersion, status: "resolved", operatorResponse: answer }) });
+  expectStatus(result, 200, "admin ticket update");
+  ticketVersion = Number(result.body?.ticket?.version);
+  report("admin ticket update", result);
+
+  result = await anonymousA.request("/api/support-tickets");
+  expectStatus(result, 200, "user ticket read after admin update");
+  const updated = result.body?.tickets?.find((ticket) => ticket.id === ticketId);
+  assert.equal(updated?.status, "resolved", "user status did not update");
+  assert.equal(updated?.operator_response, answer, "user response did not update");
+  report("user sees admin update", result);
+  result = await anonymousA.request("/api/support-tickets");
+  expectStatus(result, 200, "user ticket reload");
+  assert.equal(result.body?.tickets?.find((ticket) => ticket.id === ticketId)?.operator_response, answer, "response did not survive reload");
+  report("user reload persistence", result);
+
+  result = await anonymousA.request(`/api/admin/tickets/${ticketId}`, { method: "PATCH", headers: jsonHeaders(), body: JSON.stringify({ version: ticketVersion, status: "closed", operatorResponse: "unauthorized" }) });
+  expectStatus(result, 401, "normal user admin mutation rejection");
+  assert.equal(codeOf(result), "admin_required");
+  report("normal user admin mutation rejection", result);
+
+  await adminConcurrent.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: adminToken, operatorName: `${operatorName}-concurrent` }) });
+  const conflictBody = { version: ticketVersion, status: "reviewing", operatorResponse: "Concurrent test." };
+  const [first, second] = await Promise.all([
+    admin.request(`/api/admin/tickets/${ticketId}`, { method: "PATCH", headers: jsonHeaders(), body: JSON.stringify(conflictBody) }),
+    adminConcurrent.request(`/api/admin/tickets/${ticketId}`, { method: "PATCH", headers: jsonHeaders(), body: JSON.stringify(conflictBody) })
+  ]);
+  const statuses = [first.status, second.status].sort((a, b) => a - b);
+  assert.deepEqual(statuses, [200, 409], "concurrent updates did not produce one success and one conflict");
+  report("concurrent update A", first);
+  report("concurrent update B", second);
+
+  result = await admin.request(`/api/admin/tickets/${ticketId}`, { method: "PATCH", headers: jsonHeaders(), body: JSON.stringify({ version: ticketVersion, status: "not-a-status" }) });
+  expectStatus(result, 422, "save validation failure");
+  report("save validation failure", result);
+
+  if (process.env.TEST_REFETCH_FAILURE_URL) {
+    const failure = await anonymousA.request(process.env.TEST_REFETCH_FAILURE_URL);
+    assert.ok(failure.status >= 500, "refetch failure endpoint did not return a server error");
+    report("configured refetch failure", failure);
+  } else {
+    console.log("refetch failure: SKIPPED (set TEST_REFETCH_FAILURE_URL to an isolated fault-injection endpoint; no false pass reported)");
+  }
+
+  console.log("integration result: PASS (HTTP auth, ticket lifecycle, session isolation, admin protection, and version conflict)");
+} finally {
+  if (cleanupNeeded && ticketId) {
+    try {
+      const current = await admin.request(`/api/admin/tickets?search=${encodeURIComponent(ticketMarker)}`);
+      const ticket = current.body?.tickets?.find((entry) => entry.id === ticketId);
+      if (ticket) await admin.request(`/api/admin/tickets/${ticketId}`, { method: "PATCH", headers: jsonHeaders(), body: JSON.stringify({ version: ticket.version, status: "deleted", operatorResponse: "" }) });
+    } catch {
+      console.error("cleanup warning: test ticket could not be soft-deleted; inspect only the isolated test project.");
+    }
+  }
+}
