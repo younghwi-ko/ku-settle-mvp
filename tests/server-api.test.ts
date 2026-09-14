@@ -12,6 +12,9 @@ const marketplaceListRoute = readFileSync(new URL("../app/api/marketplace/listin
 const supportTicketRoute = readFileSync(new URL("../app/api/support-tickets/route.ts", import.meta.url), "utf8");
 const adminOverviewRoute = readFileSync(new URL("../app/api/admin/overview/route.ts", import.meta.url), "utf8");
 const adminTicketsRoute = readFileSync(new URL("../app/api/admin/tickets/[id]/route.ts", import.meta.url), "utf8");
+const integrationEnvironmentRoute = readFileSync(new URL("../app/api/integration/environment/route.ts", import.meta.url), "utf8");
+const integrationFaultRoute = readFileSync(new URL("../app/api/integration/faults/route.ts", import.meta.url), "utf8");
+const integrationRunner = readFileSync(new URL("../scripts/integration-support.mjs", import.meta.url), "utf8");
 const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
 
 describe("anonymous server input validation", () => {
@@ -79,5 +82,14 @@ describe("anonymous server input validation", () => {
     expect(pageSource).toContain("No support tickets yet.");
     expect(pageSource).toContain('errorAction === "load" && error');
     expect(pageSource).toContain("Try again");
+  });
+
+  it("gates integration-only endpoints and blocks unsafe runner targets", () => {
+    expect(integrationEnvironmentRoute).toContain('integrationModeEnabled()');
+    expect(integrationEnvironmentRoute).toContain('INTEGRATION_SUPABASE_PROJECT_REF');
+    expect(integrationFaultRoute).toContain('x-integration-test-secret');
+    expect(integrationRunner).toContain('parsed.origin !== this.origin');
+    expect(integrationRunner).toContain('Production/temporary Vercel hosts are blocked');
+    expect(integrationRunner).toContain('no write requests were sent');
   });
 });

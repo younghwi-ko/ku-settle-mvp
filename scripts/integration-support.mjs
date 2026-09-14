@@ -27,9 +27,16 @@ if (!/^https?:$/.test(target.protocol)) fail("TEST_BASE_URL must use http or htt
 if (target.hostname === productionHost || target.hostname.endsWith(".vercel.app")) fail("Production/temporary Vercel hosts are blocked.");
 const loopback = ["localhost", "127.0.0.1", "::1", "[::1]"].includes(target.hostname);
 if (!loopback && !remoteAllowed) fail("Remote targets require TEST_ALLOW_REMOTE=true and TEST_CONFIRM_ISOLATED=true.");
+const configuredRefetchFailureUrl = String(process.env.TEST_REFETCH_FAILURE_URL ?? "").trim();
+if (configuredRefetchFailureUrl) {
+  try {
+    if (new URL(configuredRefetchFailureUrl, baseUrl).origin !== baseUrl) fail("TEST_REFETCH_FAILURE_URL must use the same origin as TEST_BASE_URL.");
+  } catch { fail("TEST_REFETCH_FAILURE_URL must be a valid same-origin URL or path."); }
+}
 
 class CookieClient {
   constructor(origin) { this.origin = origin; this.cookies = new Map(); }
+  hasCookie(name) { return this.cookies.has(name); }
   cookieHeader() { return [...this.cookies].map(([name, value]) => `${name}=${value}`).join("; "); }
   saveCookies(response) {
     const values = typeof response.headers.getSetCookie === "function" ? response.headers.getSetCookie() : [];
@@ -87,11 +94,13 @@ try {
 
   let result = await admin.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: adminToken, operatorName }) });
   expectStatus(result, 200, "valid admin authentication");
+  assert.equal(admin.hasCookie("ku_settle_admin"), true, "valid admin authentication did not set a session cookie");
   report("valid admin authentication", result);
 
   const invalid = new CookieClient(baseUrl);
   result = await invalid.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: `${adminToken}invalid`, operatorName }) });
   expectStatus(result, 403, "invalid admin authentication");
+  assert.equal(invalid.hasCookie("ku_settle_admin"), false, "invalid admin authentication set a session cookie");
   report("invalid admin authentication", result);
 
   result = await anonymousA.request("/api/session/bootstrap", { method: "POST" });
@@ -148,6 +157,7 @@ try {
 
   const concurrentAuth = await adminConcurrent.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: adminToken, operatorName: `${operatorName}-concurrent` }) });
   expectStatus(concurrentAuth, 200, "second admin authentication");
+  assert.equal(adminConcurrent.hasCookie("ku_settle_admin"), true, "second admin authentication did not set a session cookie");
   report("second admin authentication", concurrentAuth);
   const conflictBody = { version: ticketVersion, status: "reviewing", operatorResponse: "Concurrent test." };
   const [first, second] = await Promise.all([
@@ -165,8 +175,8 @@ try {
   expectStatus(result, 422, "save validation failure");
   report("save validation failure", result);
 
-  if (process.env.TEST_REFETCH_FAILURE_URL) {
-    const failure = await anonymousA.request(process.env.TEST_REFETCH_FAILURE_URL);
+  if (configuredRefetchFailureUrl) {
+    const failure = await anonymousA.request(configuredRefetchFailureUrl);
     assert.ok(failure.status >= 500, "refetch failure endpoint did not return a server error");
     report("configured refetch failure", failure);
   } else {
