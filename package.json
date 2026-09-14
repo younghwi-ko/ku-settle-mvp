@@ -40,6 +40,7 @@
     "@types/react-dom": "^19.0.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.2",
+    "playwright": "^1.63.0",
     "standardwebhooks": "1.0.0",
     "supabase": "^2.116.0",
     "tailwindcss": "^4.0.0",
