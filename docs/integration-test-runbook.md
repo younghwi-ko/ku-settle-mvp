@@ -6,13 +6,16 @@
 
 1. Supabase에서 별도 테스트 프로젝트를 만들거나, Docker가 설치된 개발 컴퓨터에서 이 저장소의 `supabase/` 프로젝트를 사용합니다.
 2. 로컬 실행 시 `supabase start` 후 `supabase db reset`으로 마이그레이션과 `supabase/seed.sql`을 적용합니다. `seed.sql`의 `local-a@korea.ac.kr`와 `local-b@korea.ac.kr`는 테스트 전용 예시입니다.
-3. 저장소 루트의 `.env.example`을 `.env.local`로 복사하고 테스트 프로젝트 값만 입력합니다. 이 파일은 커밋하지 않습니다.
+3. 저장소 루트의 `.env.integration.example`을 참고해 `.env.local` 또는 현재 셸에 테스트 프로젝트 값만 입력합니다. 이 파일은 커밋하지 않습니다.
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 ADMIN_API_TOKEN=
+INTEGRATION_TEST_MODE=true
+INTEGRATION_SUPABASE_PROJECT_REF=<isolated-project-ref>
+INTEGRATION_TEST_SECRET=<test-only-secret>
 ACCOUNT_SIGNUP_ENABLED=true
 ```
 
@@ -22,12 +25,14 @@ ACCOUNT_SIGNUP_ENABLED=true
 
 Preview에서 통합 테스트를 실행하려면 Vercel 프로젝트의 **Settings → Environment Variables**에서 Preview 범위의 `NEXT_PUBLIC_SUPABASE_URL`이 Production과 다른 테스트 프로젝트를 가리키는지 먼저 확인합니다. Preview에 Production URL 또는 동일한 프로젝트 ref가 보이면 테스트를 중단합니다. Vercel 대시보드에 로그인할 수 없거나 범위가 확인되지 않으면 Preview는 검증 대상에서 제외하고 로컬 환경만 사용합니다. 테스트 URL·키·토큰을 Production 범위에 추가하거나 기존 값을 교체하지 않습니다.
 
-자동 러너는 `pnpm run test:integration`으로 실행합니다. 시작 전에 필수 값이 없으면 네트워크 요청 없이 필요한 변수 이름만 출력하고 종료합니다. 원격으로 격리된 테스트 배포를 사용할 때만 다음 값을 현재 셸에 임시로 지정할 수 있습니다(파일에 저장하지 않음).
+자동 러너는 `pnpm run test:integration`으로 실행합니다. 시작 전에 필수 값이 없으면 네트워크 요청 없이 필요한 변수 이름만 출력하고 종료합니다. 첫 쓰기 요청(`/api/session/bootstrap`) 전에 `/api/integration/environment`를 호출해 앱이 `INTEGRATION_TEST_MODE=true`이고 기대한 Supabase 프로젝트 ref를 사용한다고 증명했는지 확인합니다. 확인에 실패하면 쓰기 요청을 중단합니다. 원격으로 격리된 테스트 배포를 사용할 때만 다음 값을 현재 셸에 임시로 지정할 수 있습니다(파일에 저장하지 않음).
 
 ```text
 TEST_BASE_URL=https://<isolated-preview-or-local-host>
+TEST_SUPABASE_PROJECT_REF=<same-isolated-project-ref>
 TEST_ADMIN_API_TOKEN=
 TEST_OPERATOR_NAME=integration-test
+TEST_INTEGRATION_SECRET=<same-test-only-secret>
 ```
 
 러너는 테스트 전용 문의를 생성한 뒤 검증이 끝나면 관리자 API로 soft-delete하여 격리 DB를 정리합니다. 제목·본문·쿠키·토큰은 로그에 출력하지 않습니다. `temporary-fleet-maroon-2opm8kt.vercel.app`과 모든 `*.vercel.app` 주소는 운영 오접속 방지를 위해 차단하며, 원격 격리 호스트는 `TEST_ALLOW_REMOTE=true TEST_CONFIRM_ISOLATED=true`를 함께 지정해야 합니다.
@@ -40,10 +45,10 @@ TEST_OPERATOR_NAME=integration-test
 - 동시성: 같은 문의의 이전 `version`으로 두 PATCH를 보내 하나는 성공하고 다른 하나는 `version_conflict`가 되는지 확인합니다.
 - 오류: 테스트 서버에서 저장 요청 또는 후속 GET을 차단해 저장 실패와 재조회 실패가 서로 다른 오류로 표시되고, 실패 뒤 성공 배너가 남지 않는지 확인합니다.
 
-자동 러너는 잘못된 상태 값(422)을 저장 검증 실패로 확인합니다. 후속 재조회 실패는 임의로 성공 처리하지 않도록 기본적으로 **SKIPPED**이며, 격리된 fault-injection 프록시를 준비한 경우에만 `TEST_REFETCH_FAILURE_URL=/api/...`를 지정해 5xx 응답을 실제 요청으로 확인합니다.
+자동 러너는 잘못된 상태 값(422)을 저장 검증 실패로 확인합니다. 후속 재조회 실패는 임의로 성공 처리하지 않도록 기본적으로 **SKIPPED**이며, 격리된 fault-injection 프록시를 준비한 경우에만 `TEST_REFETCH_FAILURE_URL=/api/...`를 지정해 동일 origin의 5xx 응답을 실제 요청으로 확인합니다. 브라우저 검증은 `pnpm run test:integration:browser`로 실행하며, 저장 성공 직후 재조회만 실패하도록 테스트 전용 fault endpoint를 arm한 뒤 화면의 오류·재시도·성공 배너 부재를 확인합니다.
 
 실제 운영 문의·상품·예약 데이터에는 위 절차를 적용하지 않습니다. 테스트 결과와 쿠키/토큰 값은 로그에 남기지 않습니다.
 
 ## 3. 현재 실행 가능 범위
 
-이 작업 환경에는 Docker와 실행 가능한 Supabase CLI가 없어 로컬 데이터베이스를 시작할 수 없고, 테스트 프로젝트 URL·서비스 키·관리자 토큰도 제공되지 않았습니다. 따라서 이 환경에서 `pnpm run test:integration`은 필수 변수 안내 후 종료됩니다. 위 환경변수를 격리 테스트 프로젝트에 설정하고 `pnpm dev`를 실행하면 동일한 러너로 실제 통합 테스트를 수행할 수 있습니다.
+이 작업 환경에는 Docker와 실행 가능한 Supabase CLI가 없어 로컬 데이터베이스를 시작할 수 없고, 테스트 프로젝트 URL·서비스 키·관리자 토큰도 제공되지 않았습니다. 따라서 이 환경에서 `pnpm run test:integration`과 `pnpm run test:integration:browser`는 필수 변수 또는 브라우저 의존성 안내 후 종료됩니다. 위 환경변수를 격리 테스트 프로젝트에 설정하고 `pnpm dev`를 실행하면 동일한 러너로 실제 통합 테스트를 수행할 수 있습니다.

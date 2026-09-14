@@ -4,6 +4,7 @@ import { URL } from "node:url";
 const productionHost = "temporary-fleet-maroon-2opm8kt.vercel.app";
 const configuredBaseUrl = String(process.env.TEST_BASE_URL ?? "").trim();
 const adminToken = String(process.env.TEST_ADMIN_API_TOKEN ?? "");
+const expectedProjectRef = String(process.env.TEST_SUPABASE_PROJECT_REF ?? "").trim();
 const operatorName = String(process.env.TEST_OPERATOR_NAME ?? "integration-test").trim();
 const remoteAllowed = process.env.TEST_ALLOW_REMOTE === "true" && process.env.TEST_CONFIRM_ISOLATED === "true";
 
@@ -15,14 +16,16 @@ function fail(message) {
 const missing = [];
 if (!configuredBaseUrl) missing.push("TEST_BASE_URL");
 if (!adminToken) missing.push("TEST_ADMIN_API_TOKEN");
+if (!expectedProjectRef) missing.push("TEST_SUPABASE_PROJECT_REF");
 if (missing.length) fail(`Set ${missing.join(" and ")} in the current shell only (never commit or print secrets).`);
-const baseUrl = configuredBaseUrl.replace(/\/$/, "");
+let parsedBase;
+try { parsedBase = new URL(configuredBaseUrl); } catch { fail("TEST_BASE_URL must be an absolute http(s) URL."); }
+const baseUrl = parsedBase.origin;
 if (!operatorName || operatorName.length > 80) fail("TEST_OPERATOR_NAME must be 1-80 characters.");
-let target;
-try { target = new URL(baseUrl); } catch { fail("TEST_BASE_URL must be an absolute http(s) URL."); }
+const target = parsedBase;
 if (!/^https?:$/.test(target.protocol)) fail("TEST_BASE_URL must use http or https.");
 if (target.hostname === productionHost || target.hostname.endsWith(".vercel.app")) fail("Production/temporary Vercel hosts are blocked.");
-const loopback = ["localhost", "127.0.0.1", "::1"].includes(target.hostname);
+const loopback = ["localhost", "127.0.0.1", "::1", "[::1]"].includes(target.hostname);
 if (!loopback && !remoteAllowed) fail("Remote targets require TEST_ALLOW_REMOTE=true and TEST_CONFIRM_ISOLATED=true.");
 
 class CookieClient {
@@ -41,7 +44,14 @@ class CookieClient {
     if (!headers.has("origin")) headers.set("origin", this.origin);
     const cookie = this.cookieHeader();
     if (cookie) headers.set("cookie", cookie);
-    const requestUrl = /^https?:\/\//.test(path) ? path : `${this.origin}${path}`;
+    let requestUrl;
+    try {
+      const parsed = new URL(path, this.origin);
+      if (parsed.origin !== this.origin) throw new Error("cross-origin request blocked");
+      requestUrl = parsed.href;
+    } catch (error) {
+      throw new Error(`same-origin request check failed: ${error instanceof Error ? error.message : "invalid URL"}`);
+    }
     const response = await fetch(requestUrl, { ...options, headers, redirect: "manual" });
     this.saveCookies(response);
     let body = null;
@@ -65,8 +75,16 @@ let ticketId = "";
 let ticketVersion = 0;
 let ticketMarker = "";
 let cleanupNeeded = false;
+let cleanupFailure = false;
+let testFailure = null;
 
 try {
+  const environment = await fetch(`${baseUrl}/api/integration/environment`, { headers: { origin: baseUrl }, redirect: "manual" });
+  let environmentBody = null;
+  try { environmentBody = await environment.json(); } catch { /* non-JSON response */ }
+  if (environment.status !== 200 || environmentBody?.isolated !== true || environmentBody?.projectRef !== expectedProjectRef) fail("The app did not prove it is connected to the expected isolated Supabase project; no write requests were sent.");
+  console.log("isolated environment check: PASS");
+
   let result = await admin.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: adminToken, operatorName }) });
   expectStatus(result, 200, "valid admin authentication");
   report("valid admin authentication", result);
@@ -128,7 +146,9 @@ try {
   assert.equal(codeOf(result), "admin_required");
   report("normal user admin mutation rejection", result);
 
-  await adminConcurrent.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: adminToken, operatorName: `${operatorName}-concurrent` }) });
+  const concurrentAuth = await adminConcurrent.request("/api/admin/session", { method: "POST", headers: jsonHeaders(), body: JSON.stringify({ token: adminToken, operatorName: `${operatorName}-concurrent` }) });
+  expectStatus(concurrentAuth, 200, "second admin authentication");
+  report("second admin authentication", concurrentAuth);
   const conflictBody = { version: ticketVersion, status: "reviewing", operatorResponse: "Concurrent test." };
   const [first, second] = await Promise.all([
     admin.request(`/api/admin/tickets/${ticketId}`, { method: "PATCH", headers: jsonHeaders(), body: JSON.stringify(conflictBody) }),
@@ -136,6 +156,8 @@ try {
   ]);
   const statuses = [first.status, second.status].sort((a, b) => a - b);
   assert.deepEqual(statuses, [200, 409], "concurrent updates did not produce one success and one conflict");
+  const conflict = first.status === 409 ? first : second;
+  assert.equal(codeOf(conflict), "version_conflict", "concurrent conflict did not return version_conflict");
   report("concurrent update A", first);
   report("concurrent update B", second);
 
@@ -151,15 +173,32 @@ try {
     console.log("refetch failure: SKIPPED (set TEST_REFETCH_FAILURE_URL to an isolated fault-injection endpoint; no false pass reported)");
   }
 
-  console.log("integration result: PASS (HTTP auth, ticket lifecycle, session isolation, admin protection, and version conflict)");
+  console.log("integration checks complete; awaiting cleanup confirmation");
+} catch (error) {
+  testFailure = error;
 } finally {
   if (cleanupNeeded && ticketId) {
     try {
       const current = await admin.request(`/api/admin/tickets?search=${encodeURIComponent(ticketMarker)}`);
       const ticket = current.body?.tickets?.find((entry) => entry.id === ticketId);
-      if (ticket) await admin.request(`/api/admin/tickets/${ticketId}`, { method: "PATCH", headers: jsonHeaders(), body: JSON.stringify({ version: ticket.version, status: "deleted", operatorResponse: "" }) });
-    } catch {
-      console.error("cleanup warning: test ticket could not be soft-deleted; inspect only the isolated test project.");
+      if (!ticket) throw new Error("test ticket not found during cleanup");
+      const removed = await admin.request(`/api/admin/tickets/${ticketId}`, { method: "PATCH", headers: jsonHeaders(), body: JSON.stringify({ version: ticket.version, status: "deleted", operatorResponse: "" }) });
+      expectStatus(removed, 200, "test ticket soft-delete");
+      if (removed.body?.ticket?.status !== "deleted") throw new Error("soft-delete response did not confirm deleted status");
+      console.log("test ticket cleanup: PASS (soft-delete confirmed)");
+    } catch (error) {
+      console.error(`cleanup failed: ${error instanceof Error ? error.message : "unknown error"}`);
+      cleanupFailure = true;
     }
   }
+}
+
+if (testFailure) {
+  console.error(`integration result: FAIL (${testFailure instanceof Error ? testFailure.message : "unknown error"})`);
+  process.exitCode = 1;
+} else if (cleanupFailure) {
+  console.error("integration result: FAIL (test data cleanup was not confirmed)");
+  process.exitCode = 1;
+} else {
+  console.log("integration result: PASS (HTTP auth, ticket lifecycle, session isolation, admin protection, version conflict, and cleanup)");
 }
