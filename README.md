@@ -177,7 +177,9 @@ pnpm test:db
 5. Resend에서 발신 도메인을 검증한 뒤 Edge Function secret `RESEND_API_KEY`, `SEND_EMAIL_HOOK_SECRET`, `AUTH_EMAIL_FROM`, `AUTH_EMAIL_REPLY_TO`, `APP_URL`을 설정합니다.
 6. `send-email`을 배포하고 Standard Webhooks secret과 일치하는 Send Email Hook을 활성화합니다.
 7. `delete-account`를 JWT 검증이 켜진 상태로 배포합니다.
-8. 마지막으로 Vercel에 공개 변수 두 개만 설정합니다. service-role key와 Edge Function secret은 Vercel 클라이언트 환경에 넣지 않습니다.
+8. Vercel **Production**에는 `EMAIL_DELIVERY_ENABLED`, `EMAIL_PROVIDER_VERIFIED`, `AUTH_EMAIL_DOMAIN_VERIFIED`를 처음에는 `false`로 둡니다. Resend 대시보드에서 도메인 상태가 verified이고 Supabase Auth Hooks에서 `send-email`이 성공하는 것을 운영자가 확인한 뒤에만 처음 두 검증 플래그와 delivery 플래그를 `true`로 변경합니다. 신규 가입을 열 때는 그 다음 `ACCOUNT_SIGNUP_ENABLED=true`를 별도로 설정합니다. `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `SEND_EMAIL_HOOK_SECRET`와 기타 Edge Function secret은 브라우저나 저장소에 넣지 않습니다.
+
+9. Supabase Dashboard의 **Authentication → Hooks → Send Email**에서 배포한 `send-email` HTTPS URL과 생성한 secret을 연결하고, **Authentication → Providers → Email**에서 이메일 제공자 설정과 신규 가입 허용 여부를 확인합니다. Resend의 **Domains** 화면에서 DNS 레코드가 모두 verified인지 확인한 뒤에만 위 플래그를 켭니다. 이 저장소의 플래그는 그 확인을 명시적으로 기록하는 안전장치이며, DNS·대시보드 상태를 자동으로 증명하지는 않습니다.
 
 실제 원격 적용 전에는 pgTAP, Auth OTP, 네 언어 이메일, 계정 삭제 cascade를 별도 staging 프로젝트에서 확인하세요. `.env.example`은 변수명만 제공하며 실제 secret은 커밋하지 않습니다.
 
