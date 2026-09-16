@@ -17,6 +17,7 @@ const integrationFaultRoute = readFileSync(new URL("../app/api/integration/fault
 const integrationRunner = readFileSync(new URL("../scripts/integration-support.mjs", import.meta.url), "utf8");
 const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
 const accountConfigRoute = readFileSync(new URL("../app/api/account/config/route.ts", import.meta.url), "utf8");
+const repositorySource = readFileSync(new URL("../app/lib/repository.ts", import.meta.url), "utf8");
 
 describe("anonymous server input validation", () => {
   it("accepts only bounded image data URLs", () => {
@@ -107,5 +108,6 @@ describe("anonymous server input validation", () => {
     expect(pageSource).toContain("errors:emailProviderUnverified");
     expect(pageSource).toContain("allowSignup: authConfig.signupEnabled");
     expect(pageSource).toContain("emailDeliveryEnabled");
+    expect(repositorySource).toContain("shouldCreateUser: options.allowSignup ?? false");
   });
 });

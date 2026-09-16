@@ -8,7 +8,7 @@ function requiredClient() { const client = getSupabaseClient(); if (!client) thr
 
 export async function sendEmailOtp(email: string, locale: Locale, options: { allowSignup?: boolean } = {}) {
   const normalized = normalizeKuEmail(email);
-  const { error } = await requiredClient().auth.signInWithOtp({ email: normalized, options: { shouldCreateUser: options.allowSignup ?? true, data: { preferred_language: locale }, emailRedirectTo: `${location.origin}/?lang=${encodeURIComponent(locale)}` } });
+  const { error } = await requiredClient().auth.signInWithOtp({ email: normalized, options: { shouldCreateUser: options.allowSignup ?? false, data: { preferred_language: locale }, emailRedirectTo: `${location.origin}/?lang=${encodeURIComponent(locale)}` } });
   if (error) throw error;
   return normalized;
 }
