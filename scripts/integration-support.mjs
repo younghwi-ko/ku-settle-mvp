@@ -66,7 +66,19 @@ class CookieClient {
     } catch (error) {
       throw new Error(`same-origin request check failed: ${error instanceof Error ? error.message : "invalid URL"}`);
     }
-    const response = await fetch(requestUrl, { ...options, headers, redirect: "manual" });
+    // Next may normalize API paths with a same-origin 308. Follow only
+    // redirects that resolve back to this exact origin so the explicit cookie
+    // header can never be sent to an external host.
+    let response = await fetch(requestUrl, { ...options, headers, redirect: "manual" });
+    for (let redirectCount = 0; redirectCount < 3 && response.status >= 300 && response.status < 400; redirectCount += 1) {
+      const location = response.headers.get("location");
+      if (!location) break;
+      let redirectedUrl;
+      try { redirectedUrl = new URL(location, requestUrl); } catch { throw new Error("redirect location is invalid"); }
+      if (redirectedUrl.origin !== this.origin) throw new Error("cross-origin redirect blocked");
+      requestUrl = redirectedUrl.href;
+      response = await fetch(requestUrl, { ...options, headers, redirect: "manual" });
+    }
     this.saveCookies(response);
     let body = null;
     try { body = await response.json(); } catch { /* non-JSON response */ }
@@ -93,7 +105,10 @@ let cleanupFailure = false;
 let testFailure = null;
 
 try {
-  const environment = await fetch(`${baseUrl}/api/integration/environment`, { headers: { origin: baseUrl }, redirect: "manual" });
+  // Next's route normalization redirects the slashless path (308). Request the
+  // canonical trailing-slash URL so the isolation proof is evaluated directly
+  // instead of being mistaken for an unverified environment.
+  const environment = await fetch(`${baseUrl}/api/integration/environment/`, { headers: { origin: baseUrl }, redirect: "manual" });
   let environmentBody = null;
   try { environmentBody = await environment.json(); } catch { /* non-JSON response */ }
   if (environment.status !== 200 || environmentBody?.isolated !== true || environmentBody?.projectRef !== expectedProjectRef) fail("The app did not prove it is connected to the expected isolated Supabase project; no write requests were sent.");
@@ -180,6 +195,9 @@ try {
   assert.equal(codeOf(conflict), "version_conflict", "concurrent conflict did not return version_conflict");
   report("concurrent update A", first);
   report("concurrent update B", second);
+  const concurrentWinner = first.status === 200 ? first : second;
+  ticketVersion = Number(concurrentWinner.body?.ticket?.version);
+  assert.ok(Number.isInteger(ticketVersion) && ticketVersion > 0, "concurrent update did not return a current version");
 
   result = await admin.request(`/api/admin/tickets/${ticketId}`, { method: "PATCH", headers: jsonHeaders(), body: JSON.stringify({ version: ticketVersion, status: "not-a-status" }) });
   expectStatus(result, 422, "save validation failure");

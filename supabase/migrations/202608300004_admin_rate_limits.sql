@@ -10,8 +10,6 @@ create index if not exists admin_rate_limit_window_idx
 alter table public.admin_rate_limit_buckets enable row level security;
 revoke all on public.admin_rate_limit_buckets from anon, authenticated;
 grant all on public.admin_rate_limit_buckets to service_role;
-revoke all on function public.consume_admin_rate_limit(text, integer, integer) from public;
-grant execute on function public.consume_admin_rate_limit(text, integer, integer) to service_role;
 
 -- Keep the bucket table bounded without requiring a scheduled job.
 create or replace function public.consume_admin_rate_limit(
@@ -59,3 +57,7 @@ begin
   return query select true, 0;
 end;
 $$;
+
+-- Apply function privileges after creation so fresh databases can run this migration.
+revoke all on function public.consume_admin_rate_limit(text, integer, integer) from public;
+grant execute on function public.consume_admin_rate_limit(text, integer, integer) to service_role;

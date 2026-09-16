@@ -33,7 +33,9 @@ let cleanupFailure = null;
 page.on("response", (response) => {
   try {
     const url = new URL(response.url());
-    if (url.origin === baseUrl && url.pathname === "/api/support-tickets") supportResponses.push({ method: response.request().method(), status: response.status() });
+    if (url.origin === baseUrl && url.pathname.replace(/\/$/, "") === "/api/support-tickets" && (response.status() < 300 || response.status() >= 400)) {
+      supportResponses.push({ method: response.request().method(), status: response.status() });
+    }
   } catch { /* ignore non-HTTP response URLs */ }
 });
 
@@ -57,6 +59,13 @@ async function cleanupTicket() {
 
 try {
   await page.goto(`${baseUrl}/?lang=ko`, { waitUntil: "networkidle" });
+  // A fresh test profile has no persisted setup decision. Dismiss the
+  // first-visit modal so the support flow can be exercised deterministically.
+  const setupSkip = page.getByRole("button", { name: "나중에 설정" });
+  if (await setupSkip.count()) {
+    await setupSkip.click();
+    await setupSkip.waitFor({ state: "hidden" });
+  }
   const environment = await page.evaluate(async () => { const response = await fetch("/api/integration/environment", { cache: "no-store" }); return { status: response.status, body: await response.json().catch(() => null) }; });
   assert.equal(environment.status, 200, "isolated environment check failed");
   assert.equal(environment.body?.isolated, true, "app did not prove isolated mode");
