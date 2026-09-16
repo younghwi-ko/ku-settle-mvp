@@ -1,4 +1,12 @@
 import { NextResponse } from "next/server";
-import { accountSignupEnabled } from "@/app/lib/server-session";
+import { accountSignupEnabled, emailDeliveryStatus } from "@/app/lib/server-session";
 
-export async function GET() { return NextResponse.json({ signupEnabled: accountSignupEnabled(), passwordAuthEnabled: false, emailDeliveryEnabled: process.env.EMAIL_DELIVERY_ENABLED === "true" }, { headers: { "Cache-Control": "no-store" } }); }
+export async function GET() {
+  const email = emailDeliveryStatus();
+  return NextResponse.json({
+    signupEnabled: accountSignupEnabled(),
+    passwordAuthEnabled: false,
+    emailDeliveryEnabled: email.enabled,
+    emailDeliveryReason: email.reason
+  }, { headers: { "Cache-Control": "no-store" } });
+}

@@ -160,7 +160,7 @@
     }
   },
   "verification": {
-    "signIn": "ログイン", "continue": "高麗大学メールで続ける", "authTitle": "高麗大学メールで続ける", "authBody": "末尾が正確に@korea.ac.krのメールへログインリンクを送信します。", "sendCode": "ログインリンクを送信", "sending": "送信中…", "linkSent": "ログインリンクをメールに送信しました。", "openLink": "メールのログインリンクを開いて続行してください。", "code": "認証コード", "verifyCode": "コードを確認", "verifying": "確認中…", "resend": "リンクを再送信", "resendCooldown": "{{seconds}}秒後に再送信", "changeEmail": "メールを変更", "signOut": "ログアウト", "verifiedKu": "高麗大学メール認証済み", "securityNote": "KU Settleがパスワードを求めることはありません。心当たりのないコードは無視してください。",
+    "signIn": "ログイン", "continue": "高麗大学メールで続ける", "authTitle": "高麗大学メールで続ける", "authBody": "末尾が正確に@korea.ac.krのメールへログインリンクを送信します。", "sendCode": "ログインリンクを送信", "sending": "送信中…", "loading": "メールログインの利用可否を確認中…", "linkSent": "ログインリンクをメールに送信しました。", "openLink": "メールのログインリンクを開いて続行してください。", "code": "認証コード", "verifyCode": "コードを確認", "verifying": "確認中…", "resend": "リンクを再送信", "resendCooldown": "{{seconds}}秒後に再送信", "changeEmail": "メールを変更", "signOut": "ログアウト", "verifiedKu": "高麗大学メール認証済み", "securityNote": "KU Settleがパスワードを求めることはありません。心当たりのないコードは無視してください。",
     "title": "学生認証デモ",
     "body": "このプロトタイプではKUメールの形式のみを確認し、実際のメールは送信しません。実際のサービスでは、高麗大学のメールによる認証が必要です。",
     "email": "大学メール",
@@ -202,7 +202,7 @@
   "errors": {
     "generic": "問題が発生しました。もう一度お試しください。", "imageInvalid": "有効な画像ファイルを選択してください。", "storageQuota": "ブラウザの保存容量が不足しています。大きな画像を削除して再試行してください。",
     "storage": "保存データを読み込めなかったため、安全な初期値に戻しました。",
-    "missingTranslation": "この内容は一時的に英語で表示されています。", "supabaseNotConfigured": "アカウントサービスはまだ接続されていません。ログインにはSupabaseの公開URLとpublishable keyが必要です。", "rateLimit": "試行回数が多すぎます。しばらく待ってから再度お試しください。", "sessionExpired": "セッションの有効期限が切れました。再度ログインしてください。", "permissionDenied": "この操作を行う権限がありません。", "offline": "オフラインのようです。変更は保存されませんでした。", "supabaseUnavailable": "アカウントサービスを一時的に利用できません。", "invalidOtp": "コードが正しくないか期限切れです。新しいコードを取得してください。", "saveFailed": "商品を保存できませんでした。もう一度お試しください。", "imageTooLarge": "2MB未満の画像を選択してください。"
+    "missingTranslation": "この内容は一時的に英語で表示されています。", "supabaseNotConfigured": "アカウントサービスはまだ接続されていません。ログインにはSupabaseの公開URLとpublishable keyが必要です。", "emailDeliveryDisabled": "メール認証は一時的に利用できません。運営者がメールプロバイダーとAuth Hookを設定するまでログインは無効です。", "emailProviderUnverified": "メールプロバイダーの設定がまだ確認されていません。確認が完了するまでログインは無効です。", "emailDomainUnverified": "送信ドメインがまだ確認されていません。DNSとプロバイダーの確認が完了するまでログインは無効です。", "signupDisabled": "新規アカウント登録は現在停止中です。メール配信が有効になると既存アカウントでログインできます。", "rateLimit": "試行回数が多すぎます。しばらく待ってから再度お試しください。", "sessionExpired": "セッションの有効期限が切れました。再度ログインしてください。", "permissionDenied": "この操作を行う権限がありません。", "offline": "オフラインのようです。変更は保存されませんでした。", "supabaseUnavailable": "アカウントサービスを一時的に利用できません。", "invalidOtp": "コードが正しくないか期限切れです。新しいコードを取得してください。", "saveFailed": "商品を保存できませんでした。もう一度お試しください。", "imageTooLarge": "2MB未満の画像を選択してください。"
   },
   "accessibility": {
     "brandHome": "KU Settle ホーム",

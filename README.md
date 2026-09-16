@@ -94,6 +94,9 @@ NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 SUPABASE_SERVICE_ROLE_KEY
 ACCOUNT_SIGNUP_ENABLED
+EMAIL_DELIVERY_ENABLED
+EMAIL_PROVIDER_VERIFIED
+AUTH_EMAIL_DOMAIN_VERIFIED
 ADMIN_API_TOKEN
 KAKAO_REST_API_KEY
 NEXT_PUBLIC_KAKAO_JS_KEY
@@ -101,7 +104,7 @@ KAKAO_MONTHLY_CALL_LIMIT
 PILOT_CLOSED_DATES
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_API_TOKEN`, `KAKAO_REST_API_KEY`는 서버 전용입니다. 브라우저에 노출되는 `NEXT_PUBLIC_*` 값과 섞어 공개하지 않습니다. `ACCOUNT_SIGNUP_ENABLED=false`이면 신규 가입은 닫히고 기존 인증 흐름만 유지됩니다. `main`에 push하면 연결된 Vercel Production 배포가 자동으로 생성됩니다.
+`SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_API_TOKEN`, `KAKAO_REST_API_KEY`는 서버 전용입니다. 브라우저에 노출되는 `NEXT_PUBLIC_*` 값과 섞어 공개하지 않습니다. 이메일 인증은 `EMAIL_DELIVERY_ENABLED=true`만으로 켜지지 않습니다. Resend 도메인과 Auth Hook을 실제로 확인한 뒤 운영자가 `EMAIL_PROVIDER_VERIFIED=true`, `AUTH_EMAIL_DOMAIN_VERIFIED=true`를 설정해야 OTP 요청이 활성화됩니다. `ACCOUNT_SIGNUP_ENABLED=false`이면 신규 계정 생성은 닫히고, 이메일 발송이 준비된 경우에만 기존 계정 로그인을 허용합니다. `main`에 push하면 연결된 Vercel Production 배포가 자동으로 생성됩니다.
 
 현재 저장소가 Vercel 프로젝트와 연결되어 있다면 `main` push 뒤 자동으로 새 Production Deployment가 생성됩니다. `next.config.ts`에는 보안 헤더가 포함되어 있으며, `/api/*` 서버 라우트가 동작하므로 Vercel의 Next.js preset을 사용합니다.
 

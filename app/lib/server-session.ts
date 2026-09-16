@@ -34,7 +34,32 @@ function serverClient(): SupabaseClient | null {
 function cookieOptions(maxAge: number) { return { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/", maxAge }; }
 
 export function configurationReady() { return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY); }
-export function accountSignupEnabled() { return process.env.ACCOUNT_SIGNUP_ENABLED === "true"; }
+
+/**
+ * Email delivery is enabled only after the operator has verified both sides of
+ * the delivery chain. The two *_VERIFIED flags are explicit attestations made
+ * after checking the provider dashboard and DNS/Auth Hook configuration; their
+ * mere presence is not enough. Keeping this check on the server prevents a
+ * client-side feature flag from opening signup when the hook cannot actually
+ * deliver an email.
+ */
+export function emailDeliveryStatus() {
+  const deliveryEnabled = process.env.EMAIL_DELIVERY_ENABLED === "true";
+  const providerVerified = process.env.EMAIL_PROVIDER_VERIFIED === "true";
+  const domainVerified = process.env.AUTH_EMAIL_DOMAIN_VERIFIED === "true";
+  if (!deliveryEnabled) return { enabled: false, reason: "email_delivery_disabled" as const };
+  if (!providerVerified) return { enabled: false, reason: "email_provider_unverified" as const };
+  if (!domainVerified) return { enabled: false, reason: "email_domain_unverified" as const };
+  return { enabled: true, reason: null } as const;
+}
+
+export function emailDeliveryReady() { return emailDeliveryStatus().enabled; }
+
+// ACCOUNT_SIGNUP_ENABLED controls creation of new users. Existing users may
+// still request an OTP when delivery is ready, with shouldCreateUser=false.
+export function accountSignupEnabled() {
+  return process.env.ACCOUNT_SIGNUP_ENABLED === "true" && emailDeliveryReady();
+}
 
 export async function getOrCreateServerSession() {
   const client = serverClient();

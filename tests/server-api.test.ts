@@ -16,6 +16,7 @@ const integrationEnvironmentRoute = readFileSync(new URL("../app/api/integration
 const integrationFaultRoute = readFileSync(new URL("../app/api/integration/faults/route.ts", import.meta.url), "utf8");
 const integrationRunner = readFileSync(new URL("../scripts/integration-support.mjs", import.meta.url), "utf8");
 const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+const accountConfigRoute = readFileSync(new URL("../app/api/account/config/route.ts", import.meta.url), "utf8");
 
 describe("anonymous server input validation", () => {
   it("accepts only bounded image data URLs", () => {
@@ -95,5 +96,16 @@ describe("anonymous server input validation", () => {
     expect(integrationRunner).toContain('version_conflict');
     expect(integrationRunner).toContain('Production/temporary Vercel hosts are blocked');
     expect(integrationRunner).toContain('no write requests were sent');
+  });
+
+  it("keeps email sign-in closed until provider and domain verification are attested", () => {
+    expect(adminSession).toContain("EMAIL_PROVIDER_VERIFIED");
+    expect(adminSession).toContain("AUTH_EMAIL_DOMAIN_VERIFIED");
+    expect(adminSession).toContain("emailDeliveryReady");
+    expect(accountConfigRoute).toContain("emailDeliveryReason");
+    expect(pageSource).toContain("/api/account/config");
+    expect(pageSource).toContain("errors:emailProviderUnverified");
+    expect(pageSource).toContain("allowSignup: authConfig.signupEnabled");
+    expect(pageSource).toContain("emailDeliveryEnabled");
   });
 });

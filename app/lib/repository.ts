@@ -6,9 +6,9 @@ import { marketplaceRowToProduct, normalizeKuEmail, productToMarketplaceInsert, 
 
 function requiredClient() { const client = getSupabaseClient(); if (!client) throw new Error("Supabase is not configured"); return client; }
 
-export async function sendEmailOtp(email: string, locale: Locale) {
+export async function sendEmailOtp(email: string, locale: Locale, options: { allowSignup?: boolean } = {}) {
   const normalized = normalizeKuEmail(email);
-  const { error } = await requiredClient().auth.signInWithOtp({ email: normalized, options: { shouldCreateUser: true, data: { preferred_language: locale }, emailRedirectTo: `${location.origin}/?lang=${encodeURIComponent(locale)}` } });
+  const { error } = await requiredClient().auth.signInWithOtp({ email: normalized, options: { shouldCreateUser: options.allowSignup ?? true, data: { preferred_language: locale }, emailRedirectTo: `${location.origin}/?lang=${encodeURIComponent(locale)}` } });
   if (error) throw error;
   return normalized;
 }

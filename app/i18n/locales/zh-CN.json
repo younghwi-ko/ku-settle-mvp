@@ -160,7 +160,7 @@
     }
   },
   "verification": {
-    "signIn": "登录", "continue": "使用高丽大学邮箱继续", "authTitle": "使用高丽大学邮箱继续", "authBody": "我们会向严格以 @korea.ac.kr 结尾的邮箱发送登录链接。", "sendCode": "发送登录链接", "sending": "正在发送…", "linkSent": "登录链接已发送到您的邮箱。", "openLink": "请打开邮件中的登录链接以继续。", "code": "验证码", "verifyCode": "验证代码", "verifying": "正在验证…", "resend": "重新发送链接", "resendCooldown": "{{seconds}}秒后可重新发送", "changeEmail": "更换邮箱", "signOut": "退出登录", "verifiedKu": "高丽大学邮箱已验证", "securityNote": "KU Settle不会要求您提供密码。如非本人请求，请忽略该验证码。",
+    "signIn": "登录", "continue": "使用高丽大学邮箱继续", "authTitle": "使用高丽大学邮箱继续", "authBody": "我们会向严格以 @korea.ac.kr 结尾的邮箱发送登录链接。", "sendCode": "发送登录链接", "sending": "正在发送…", "loading": "正在检查邮箱登录是否可用…", "linkSent": "登录链接已发送到您的邮箱。", "openLink": "请打开邮件中的登录链接以继续。", "code": "验证码", "verifyCode": "验证代码", "verifying": "正在验证…", "resend": "重新发送链接", "resendCooldown": "{{seconds}}秒后可重新发送", "changeEmail": "更换邮箱", "signOut": "退出登录", "verifiedKu": "高丽大学邮箱已验证", "securityNote": "KU Settle不会要求您提供密码。如非本人请求，请忽略该验证码。",
     "title": "学生身份演示认证",
     "body": "本原型只检查 KU 邮箱格式，不会实际发送邮件。正式服务需要通过高丽大学邮箱完成认证。",
     "email": "大学邮箱",
@@ -202,7 +202,7 @@
   "errors": {
     "generic": "出现问题，请重试。", "imageInvalid": "请选择有效的图片文件。", "storageQuota": "浏览器存储空间不足。请删除较大的图片后重试。",
     "storage": "无法读取已保存的数据，已恢复为安全的默认值。",
-    "missingTranslation": "该内容暂时以英语显示。", "supabaseNotConfigured": "账号服务尚未连接。需要配置Supabase公开URL和publishable key后才能登录。", "rateLimit": "尝试次数过多，请稍后再试。", "sessionExpired": "登录会话已过期，请重新登录。", "permissionDenied": "您无权执行此操作。", "offline": "网络似乎已断开，修改未保存。", "supabaseUnavailable": "账号服务暂时不可用。", "invalidOtp": "验证码错误或已过期，请获取新验证码。", "saveFailed": "商品未保存，请重试。", "imageTooLarge": "请选择小于2MB的图片。"
+    "missingTranslation": "该内容暂时以英语显示。", "supabaseNotConfigured": "账号服务尚未连接。需要配置Supabase公开URL和publishable key后才能登录。", "emailDeliveryDisabled": "邮箱验证暂时不可用。运营人员完成邮件提供商和Auth Hook设置后才能登录。", "emailProviderUnverified": "邮件提供商设置尚未验证。运营人员确认前将保持禁用。", "emailDomainUnverified": "发送域名尚未验证。完成DNS和提供商检查前将保持禁用。", "signupDisabled": "新账号注册目前关闭。启用邮件发送后，现有账号可以登录。", "rateLimit": "尝试次数过多，请稍后再试。", "sessionExpired": "登录会话已过期，请重新登录。", "permissionDenied": "您无权执行此操作。", "offline": "网络似乎已断开，修改未保存。", "supabaseUnavailable": "账号服务暂时不可用。", "invalidOtp": "验证码错误或已过期，请获取新验证码。", "saveFailed": "商品未保存，请重试。", "imageTooLarge": "请选择小于2MB的图片。"
   },
   "accessibility": {
     "brandHome": "KU Settle 首页",
