@@ -16,6 +16,7 @@
     "test:api": "vitest run tests/server-api.test.ts",
     "test:integration": "node scripts/integration-support.mjs",
     "test:integration:browser": "node scripts/integration-support-browser.mjs",
+    "check:auth-signup": "node scripts/check-auth-signup-config.mjs",
     "test:migration": "vitest run tests/migration.test.ts",
     "audit:anon": "node scripts/audit-anon-supabase.mjs",
     "audit:edge-negative": "node scripts/audit-edge-negative.mjs",

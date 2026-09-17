@@ -106,6 +106,17 @@ PILOT_CLOSED_DATES
 
 `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_API_TOKEN`, `KAKAO_REST_API_KEY`는 서버 전용입니다. 브라우저에 노출되는 `NEXT_PUBLIC_*` 값과 섞어 공개하지 않습니다. 이메일 인증은 `EMAIL_DELIVERY_ENABLED=true`만으로 켜지지 않습니다. Resend 도메인과 Auth Hook을 실제로 확인한 뒤 운영자가 `EMAIL_PROVIDER_VERIFIED=true`, `AUTH_EMAIL_DOMAIN_VERIFIED=true`를 설정해야 OTP 요청이 활성화됩니다. `ACCOUNT_SIGNUP_ENABLED=false`이면 신규 계정 생성은 닫히고, 이메일 발송이 준비된 경우에만 기존 계정 로그인을 허용합니다. `main`에 push하면 연결된 Vercel Production 배포가 자동으로 생성됩니다.
 
+Production 배포 전에는 운영 셸 또는 CI에서 실제 운영 Supabase의 공개 URL·publishable key와 예상 프로젝트 ref를 주입한 뒤 가입 사전 점검을 실행합니다. 이 점검은 Auth 설정 API를 실제로 호출해 `disable_signup=true`를 확인하며, 키·응답 본문은 출력하지 않습니다.
+
+```bash
+$env:NEXT_PUBLIC_SUPABASE_URL="https://<production-ref>.supabase.co"
+$env:NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="<publishable-key>"
+$env:EXPECTED_SUPABASE_PROJECT_REF="<production-ref>"
+pnpm run check:auth-signup
+```
+
+로컬 Supabase를 점검할 때만 `ALLOW_LOCAL_SUPABASE=true`를 현재 셸에 추가합니다. URL 호스트와 ref를 확인할 수 없거나 `disable_signup`이 false이면 점검은 실패하며, 운영 DB에 쓰기 요청을 보내지 않습니다.
+
 현재 저장소가 Vercel 프로젝트와 연결되어 있다면 `main` push 뒤 자동으로 새 Production Deployment가 생성됩니다. `next.config.ts`에는 보안 헤더가 포함되어 있으며, `/api/*` 서버 라우트가 동작하므로 Vercel의 Next.js preset을 사용합니다.
 
 ## 다른 컴퓨터에서 접속하는 방법

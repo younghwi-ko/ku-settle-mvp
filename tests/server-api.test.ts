@@ -18,6 +18,7 @@ const integrationRunner = readFileSync(new URL("../scripts/integration-support.m
 const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
 const accountConfigRoute = readFileSync(new URL("../app/api/account/config/route.ts", import.meta.url), "utf8");
 const repositorySource = readFileSync(new URL("../app/lib/repository.ts", import.meta.url), "utf8");
+const authSignupPreflight = readFileSync(new URL("../scripts/check-auth-signup-config.mjs", import.meta.url), "utf8");
 
 describe("anonymous server input validation", () => {
   it("accepts only bounded image data URLs", () => {
@@ -109,5 +110,13 @@ describe("anonymous server input validation", () => {
     expect(pageSource).toContain("allowSignup: authConfig.signupEnabled");
     expect(pageSource).toContain("emailDeliveryEnabled");
     expect(repositorySource).toContain("shouldCreateUser: options.allowSignup ?? false");
+  });
+
+  it("requires a verified Supabase signup setting before production rollout", () => {
+    expect(authSignupPreflight).toContain("disable_signup");
+    expect(authSignupPreflight).toContain("EXPECTED_SUPABASE_PROJECT_REF");
+    expect(authSignupPreflight).toContain("ALLOW_LOCAL_SUPABASE");
+    expect(authSignupPreflight).toContain("host is not an explicitly allowed project");
+    expect(authSignupPreflight).toContain("response.ok");
   });
 });
