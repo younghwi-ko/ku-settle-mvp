@@ -104,7 +104,7 @@ KAKAO_MONTHLY_CALL_LIMIT
 PILOT_CLOSED_DATES
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_API_TOKEN`, `KAKAO_REST_API_KEY`는 서버 전용입니다. 브라우저에 노출되는 `NEXT_PUBLIC_*` 값과 섞어 공개하지 않습니다. 이메일 인증은 `EMAIL_DELIVERY_ENABLED=true`만으로 켜지지 않습니다. Resend 도메인과 Auth Hook을 실제로 확인한 뒤 운영자가 `EMAIL_PROVIDER_VERIFIED=true`, `AUTH_EMAIL_DOMAIN_VERIFIED=true`를 설정해야 OTP 요청이 활성화됩니다. `ACCOUNT_SIGNUP_ENABLED=false`이면 신규 계정 생성은 닫히고, 이메일 발송이 준비된 경우에만 기존 계정 로그인을 허용합니다. `main`에 push하면 연결된 Vercel Production 배포가 자동으로 생성됩니다.
+`SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_API_TOKEN`, `KAKAO_REST_API_KEY`는 서버 전용입니다. 브라우저에 노출되는 `NEXT_PUBLIC_*` 값과 섞어 공개하지 않습니다. 이메일 인증은 `EMAIL_DELIVERY_ENABLED=true`만으로 켜지지 않습니다. Resend 도메인과 Auth Hook을 실제로 확인한 뒤 운영자가 `EMAIL_PROVIDER_VERIFIED=true`, `AUTH_EMAIL_DOMAIN_VERIFIED=true`를 설정해야 OTP 요청이 활성화됩니다. `ACCOUNT_SIGNUP_ENABLED=false`는 KU Settle 앱의 UI·API 가입 경로를 닫는 플래그일 뿐이며, Supabase의 직접 가입까지 차단하지 않습니다. 실제 가입 차단은 운영 Supabase Auth 설정의 `disable_signup=true`가 담당하고, 배포 전 사전 점검으로 두 설정을 각각 확인해야 합니다. 이메일 발송이 준비된 경우에만 기존 계정 로그인을 허용합니다. `main`에 push하면 연결된 Vercel Production 배포가 자동으로 생성됩니다.
 
 Production 배포 전에는 운영 셸 또는 CI에서 실제 운영 Supabase의 공개 URL·publishable key와 예상 프로젝트 ref를 주입한 뒤 가입 사전 점검을 실행합니다. 이 점검은 Auth 설정 API를 실제로 호출해 `disable_signup=true`를 확인하며, 키·응답 본문은 출력하지 않습니다.
 
