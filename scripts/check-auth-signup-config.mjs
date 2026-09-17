@@ -30,7 +30,9 @@ if (!urlValue || !keyValue) {
       fail("Supabase URL host is not an explicitly allowed project or local test host");
     } else {
       const ref = isRemote ? url.hostname.split(".")[0] : "local";
-      if (expectedRef && expectedRef !== ref) {
+      if (isRemote && !expectedRef) {
+        fail("EXPECTED_SUPABASE_PROJECT_REF is required for a remote project");
+      } else if (expectedRef && expectedRef !== ref) {
         fail("configured Supabase project ref does not match the URL");
       } else {
         const endpoint = new URL("/auth/v1/settings", url);
@@ -64,4 +66,3 @@ if (!urlValue || !keyValue) {
     }
   }
 }
-

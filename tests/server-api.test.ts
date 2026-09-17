@@ -116,6 +116,7 @@ describe("anonymous server input validation", () => {
     expect(authSignupPreflight).toContain("disable_signup");
     expect(authSignupPreflight).toContain("EXPECTED_SUPABASE_PROJECT_REF");
     expect(authSignupPreflight).toContain("ALLOW_LOCAL_SUPABASE");
+    expect(authSignupPreflight).toContain("required for a remote project");
     expect(authSignupPreflight).toContain("host is not an explicitly allowed project");
     expect(authSignupPreflight).toContain("response.ok");
   });
