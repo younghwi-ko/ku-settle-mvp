@@ -102,6 +102,16 @@ The ARC screenshot shows the expanded detail card, including progress controls, 
 
 ## Verification
 
+### Demo layout and URL regression — 2026-10-09
+
+- `pnpm test` — passed: 83 Vitest tests; i18n covered 8 locales, 13 namespaces, 504 leaf keys, and 572 inline phrases.
+- `pnpm run typecheck` and `pnpm run build` — passed. `pnpm run lint` — 0 errors, 2 pre-existing warnings.
+- `pnpm run test:demo:browser` against the local production build — passed all 6 combinations: Korean/English at 1440, 390, and 320 CSS pixels. This is an actual Chromium UI test, not a source-string or mocked-response test.
+- Checked home horizontal bounds; expanded ARC body/appointment controls; opening/closing guide URL state, direct access, refresh, keyboard activation, back/forward, and stable history length; related ARC stage/card targeting; matching browser-local progress after refresh; listing map/share/close hit targets and clicks, direct access, refresh, back/forward, Escape, and backdrop closing.
+- Reviewed captured Korean/English narrow-screen ARC, home, and sample listing screens. Overflow is fixed through grid/flex sizing and wrapping, not by hiding the guide's content.
+- The runner blocked 60 API/external/non-read requests across the six combinations, including session-bootstrap/state GETs. Only read-only account config and same-origin assets were allowed. No production listings, reservations, or tickets were created. This does **not** verify DB persistence, account authentication, external Maps page rendering, other browser engines, or physical mobile devices.
+- Reproduction and public-demo execution instructions: [read-only browser regression](docs/demo-browser-regression.md).
+
 ### Code checks from the preceding README revision — 2026-10-09
 
 - `pnpm test` — passed; i18n validation covered 8 locales, 13 namespaces, 504 leaf keys, followed by 83 Vitest tests.
@@ -138,7 +148,7 @@ The ARC screenshot shows the expanded detail card, including progress controls, 
 - **Problem:** opening a guide or listing detail needed to survive refresh, back/forward navigation, and closing the detail without leaving a stale query parameter.
 - **Choice:** synchronize page state with `history.pushState`/`replaceState`, keep `guide=` and `listing=` identifiers in the URL, and scroll/focus the selected guide/task on navigation.
 - **Verification:** source tests and the public browser flow cover the URL-driven pages; the captured guide and marketplace screenshots show the resulting screens.
-- **Remaining limit:** a dedicated automated cross-browser history suite still belongs in the isolated browser test environment.
+- **Remaining limit:** the read-only Chromium regression covers guide/listing history in Korean and English at three widths; Safari/Firefox and physical-device behavior remain unverified.
 
 ### 2. Fail-closed email activation
 

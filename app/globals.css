@@ -137,11 +137,13 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .next-card { padding: 24px; display: grid; grid-template-columns: auto 1fr; gap: 17px; position: relative; overflow: hidden; }
 .next-card-button { width: 100%; text-align: left; color: inherit; cursor: pointer; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
 .next-card-button:hover { transform: translateY(-2px); border-color: #bfd0ea; box-shadow: var(--shadow); }
-.next-task-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.next-task-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .next-task-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; padding: 17px; text-align: left; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 15px; cursor: pointer; }
 .next-task-card:hover { border-color: #9eb9e8; box-shadow: var(--shadow-sm); }
 .next-task-card strong, .next-task-card small { display: block; }
 .next-task-card small { margin-top: 5px; color: var(--muted); line-height: 1.45; }
+.next-task-card > span { min-width: 0; overflow-wrap: anywhere; }
+.next-task-card .step-badge { position: static; font-size: 24px; color: var(--blue); letter-spacing: 0; }
 .next-icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: #fff0e8; color: #d8682d; }
 .next-content { display: grid; justify-items: start; }
 .next-title, .checklist-preview h2 { font-size: 19px; margin: 7px 0; letter-spacing: -.025em; }
@@ -226,10 +228,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .task-progress-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 0 0; padding: 11px 13px; border: 1px solid #d8e4f6; border-radius: 12px; background: #f7faff; }
 .task-progress-summary strong { color: var(--navy); font-size: 12px; }
 .task-progress-summary .status { flex: 0 0 auto; }
-.guide-progress { display: grid; gap: 10px; margin: 16px 0; padding: 14px; border: 1px solid #d8e4f6; border-radius: 12px; background: #f7faff; }
+.guide-progress { display: grid; grid-template-columns: minmax(0, 1fr); min-inline-size: 0; gap: 10px; margin: 16px 0; padding: 14px; border: 1px solid #d8e4f6; border-radius: 12px; background: #f7faff; }
 .guide-progress legend { padding: 0 5px; color: var(--navy); font-size: 12px; font-weight: 800; }
 .guide-progress label { display: flex; align-items: flex-start; gap: 8px; color: var(--ink); font-size: 12px; line-height: 1.45; }
-.guide-progress label span { min-width: 92px; font-weight: 700; }
+.guide-progress label span { min-width: 0; font-weight: 700; overflow-wrap: anywhere; }
 .guide-progress input[type="checkbox"] { margin-top: 3px; accent-color: var(--blue); }
 .guide-progress select { min-width: 0; flex: 1; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: white; color: var(--ink); }
 .guide-progress .article-note { margin: 0; }
@@ -406,11 +408,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .empty-state p { font-size: 11px; }
 
 .modal-backdrop { position: fixed; inset: 0; z-index: 100; background: rgba(9,22,43,.62); display: grid; place-items: center; padding: 18px; backdrop-filter: blur(5px); animation: fade .18s ease; }
-.product-share-floating { position: fixed; z-index: 120; top: max(26px, calc(50% - 330px)); left: 50%; transform: translateX(170px); }
 .share-link { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; }
 .share-feedback { font-size: .82rem; color: #167c62; }
 .share-url-fallback { width: min(100%, 420px); min-height: 36px; border: 1px solid #ccd8e8; border-radius: 8px; padding: 7px 9px; font-size: .78rem; color: #203a62; background: #f7faff; }
-.guide-operational-meta { display: grid; grid-template-columns: max-content 1fr; gap: 7px 12px; margin: 16px 0; padding: 13px 15px; border-radius: 12px; background: #f6f9ff; font-size: .88rem; }
+.guide-operational-meta { display: grid; grid-template-columns: minmax(0, max-content) minmax(0, 1fr); gap: 7px 12px; margin: 16px 0; padding: 13px 15px; border-radius: 12px; background: #f6f9ff; font-size: .88rem; overflow-wrap: anywhere; }
 .guide-operational-meta dt { color: #526987; font-weight: 700; }
 .guide-operational-meta dd { margin: 0; color: #243c61; }
 .modal { background: white; width: min(100%, 480px); max-height: calc(100vh - 36px); overflow: auto; border-radius: 22px; padding: 28px; position: relative; box-shadow: 0 35px 90px rgba(5,18,42,.28); animation: rise .22s ease; }
@@ -488,7 +489,6 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
 }
 
 @media (max-width: 700px) {
-  .product-share-floating { top: auto; bottom: 18px; left: 18px; transform: none; }
   .import-summary { grid-template-columns: 1fr; }
   .service-status { right: 12px; bottom: 12px; max-width: calc(100vw - 24px); }
   .topbar { height: 68px; padding: 0 15px; }
@@ -986,7 +986,7 @@ body { background: linear-gradient(180deg, #f7f9fd 0%, #f3f6fb 42%, #f8fafc 100%
 .guide-recommendation h2 { margin: 0; color: var(--navy); font-size: clamp(20px, 2.2vw, 28px); letter-spacing: -.035em; }
 .guide-recommendation p { margin: 0; color: #52627a; line-height: 1.55; }
 .guide-recommendation-status { display: inline-flex; align-items: center; gap: 6px; color: #245fd1; font-size: 12px; font-weight: 800; }
-.guide-card-top { display: flex; align-items: center; gap: 8px; min-height: 30px; }
+.guide-card-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-height: 30px; }
 .guide-category-icon { display: inline-grid; width: 34px; height: 34px; place-items: center; color: #245fd1; border-radius: 11px; background: #eaf2ff; }
 .guide-status { margin-left: auto; padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; }
 .guide-status.is-verified { color: #176b4b; background: #e8f7ef; }
@@ -1007,7 +1007,17 @@ body { background: linear-gradient(180deg, #f7f9fd 0%, #f3f6fb 42%, #f8fafc 100%
 .guide-details summary::-webkit-details-marker { display: none; }
 .guide-details summary svg { transition: transform .18s ease; }
 .guide-details[open] summary svg { transform: rotate(180deg); }
-.guide-details-content { display: grid; gap: 12px; padding: 4px 0 2px; }
+.guide-details-content { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 4px 0 2px; overflow-wrap: anywhere; }
+.guide-article { grid-template-columns: minmax(0, 1fr); }
+.guide-details, .guide-details-content > *, .guide-progress > * { min-width: 0; }
+.guide-details-toggle > span { min-width: 0; overflow-wrap: anywhere; }
+.guide-details-hint svg, .guide-card-top svg { flex-shrink: 0; }
+.modal .map-action-inline { position: static; transform: none; width: 100%; margin: 12px 0; }
+@media (max-width: 390px) {
+  .guide-progress label:has(select) { flex-direction: column; }
+  .guide-progress select { width: 100%; max-width: 100%; flex: none; }
+  .guide-operational-meta { grid-template-columns: minmax(0, 1fr); }
+}
 .guide-details-content > p { margin: 0; line-height: 1.65; }
 
 /* Source/place management remains in the existing admin grid, but long lists are independently scrollable. */
