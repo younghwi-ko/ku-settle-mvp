@@ -1,230 +1,147 @@
 # KU Settle
 
-KU Settle은 고려대학교 외국인 학생이 입국 준비부터 귀국까지 해야 할 일을 단계별로 확인하고 실행 화면으로 이동할 수 있는 Next.js 서비스입니다. Guest/Demo 화면은 정적으로 동작하고, 계정·동기화·Marketplace·Kakao 검색은 서버 API와 Supabase를 사용합니다.
+KU Settle is a multilingual settlement companion for international students preparing for arrival, adapting to campus life, and planning departure from Korea University. It turns scattered information into a sequence of small, actionable decisions: check an official notice, save a route, prepare a document, or record a marketplace request.
 
-> **Information → Action: 입국부터 귀국까지 이어지는 유학생 lifecycle 온보딩**
+This project started from a presentation idea about the gap between “knowing what information exists” and “being able to act on it.” The web service format makes that idea testable: a student can choose a lifecycle stage, open the relevant guide, record progress, and follow a link to the next action.
 
-English, 한국어, 日本語, 简体中文을 지원합니다. Supabase가 설정되지 않은 환경에서는 기존 Guest/Demo 발표 시나리오가 그대로 동작하고, 설정된 환경에서는 고려대 이메일 OTP 계정과 기기 간 데이터 동기화를 사용합니다.
+## Project Overview
 
-## 주요 기능
+- **Problem observed:** international students must combine university notices, immigration guidance, transport information, housing instructions, and everyday decisions across different sites and languages. The difficult part is often the next action, not the existence of information.
+- **Product direction:** connect official-source guidance, a personalized checklist, local campus guidance, and a clearly labelled sample/live marketplace in one flow.
+- **Current scope:** a public Guest/Demo experience is available without an account. Supabase-backed account, marketplace, support, and operator flows exist in the codebase but remain subject to provider, environment, and operational verification.
+- **Languages:** 8 configured locales — English (`en`), 한국어 (`ko`), 日本語 (`ja`), 简体中文 (`zh-CN`), O‘zbekcha (`uz`), Tiếng Việt (`vi`), Монгол (`mn`), Bahasa Melayu (`ms`).
 
-- 4단계 lifecycle: Before Arrival, First Weeks, Campus Life, Departure
-- 사용자 이름·입국 예정일·기숙사/교외 거주 유형에 맞춘 18개 활성 작업
-- 전체·단계별 진행률과 첫 번째 미완료 작업 자동 추천
-- HiKorea·KU 공식 안내, Local Guide 필터, Marketplace 모드로 이어지는 action
-- 입국 학생 상품 탐색 및 출국 학생 상품 등록 데모
-- Guest/Demo의 명시적인 데모 인증과 실제 사용자의 Supabase 6자리 이메일 OTP 인증을 분리
-- 실제 사용자의 프로필·진행률·상품은 Postgres와 RLS로 보호하고 Guest/Demo 상태는 `localStorage`에 저장
-- 사용자가 확인한 경우에만 기존 개인화 Guest 데이터를 계정으로 가져오는 멱등 import
-- 실제 상품 등록·판매 완료·숨김·삭제와 본인 소유권 검증
-- Reset demo 실행 시 언어를 제외한 데모 상태만 초기화
-- 320px 모바일부터 데스크톱까지 대응하는 CJK 안전 반응형 UI
+## My Contribution
 
-## 다국어 구조
+The repository and Git history support the following description of the work represented here:
 
-`i18next`와 `react-i18next`를 사용하며 번역 리소스는 빌드 결과물에 정적으로 포함됩니다. 서버 요청이나 번역 API는 없습니다.
+- **Planning and product decisions visible in the implementation:** lifecycle-based onboarding; clear separation of Sample content and user-created listings; fail-closed email/account activation; explicit “implemented / operationally inactive / future” boundaries; and no unverified immigration dates, fees, or documents.
+- **Design and implementation:** responsive lifecycle cards, personalization fields, deep-linkable guide and listing detail views, multilingual resource structure, local-data migration, marketplace and support flows, Supabase API/RLS boundaries, and integration-test runners.
+- **Verification:** i18n key validation, unit/domain tests, API/source assertions, type checking, linting, production builds, public HTTP checks, and manual/browser review recorded in [Verification](#verification).
+- **AI-assisted workflow:** AI tools were used for code exploration, implementation drafts, test/documentation drafts, and verification assistance. The final scope decisions, safe defaults, claims in this README, and release boundaries are based on the source, configuration, test output, and deployment responses in this repository.
 
-지원 locale:
+Personal contribution percentage, team roles, and user outcome metrics are intentionally not inferred. Before submitting, replace or supplement this section with the role and contribution wording you personally want to claim.
 
-- `en` — English, 기본 fallback
-- `ko` — 한국어
-- `ja` — 日本語
-- `zh-CN` — 简体中文
+## Key Features
 
-언어 결정 우선순위는 URL `?lang=` → `ku-settle-language` 저장값 → 브라우저 언어 → 영어입니다. 기존 `en`·`ko` 저장값은 그대로 사용하며, `zh`, `zh-SG`, `zh-Hans`는 `zh-CN`으로 정규화합니다. 공유 URL 예시는 `/?lang=ja`입니다. 이후 `zh-TW` 리소스를 같은 구조로 추가할 수 있습니다.
+### Publicly usable without login
 
-번역 파일은 다음 12개 namespace의 동일한 키 구조를 가집니다.
+- Guest lifecycle home with four stages: Before Arrival, First Weeks, Campus Life, and Departure.
+- Personalized setup for name, arrival phase, study track, housing, arrival date, and optional departure date.
+- Checklist progress, important-task recommendations, due-date notes, and local browser persistence.
+- Life Guide cards with official-source links, applicability, steps, preparation items, contact guidance, completion criteria, and source status.
+- Campus/local guidance with curated records and optional Kakao search configuration; place cards can open external Google Maps search/directions links.
+- Marketplace browsing with explicitly marked Sample data, local listing/reservation flow, shareable listing URLs, and mobile-responsive screens.
 
-- `common`
-- `navigation`
-- `home`
-- `onboarding`
-- `marketplace`
-- `localGuide`
-- `verification`
-- `profile`
-- `reset`
-- `validation`
-- `errors`
-- `accessibility`
+### Implemented but operationally inactive or not fully verified
 
-Lifecycle, 상품, 장소 데이터에는 번역문 대신 `titleKey`, `descriptionKey`, `categoryKey`, `preparationKeys`, `practicalNoteKey`, `actionLabelKey` 같은 키와 언어 중립적인 숫자·상태 값만 저장합니다. 날짜, 숫자, 진행률, KRW 가격은 렌더링 시 표준 `Intl` API로 현지화합니다.
+- Supabase email OTP/login code and localized email templates are implemented. Production email delivery is intentionally disabled while the sender domain, Resend credentials, and Send Email Hook are not verified.
+- Production Supabase signup is disabled with `disable_signup=true`; the app-side `ACCOUNT_SIGNUP_ENABLED=false` flag is a separate UI/API gate, not a replacement for Supabase Auth enforcement.
+- Supabase-backed profiles, lifecycle progress, live listings, reservations, service requests, support tickets, operator updates, RLS policies, and Edge Function sources exist. A production-grade operator workflow and isolated end-to-end DB test environment still require explicit external setup.
+- `send-email` Edge Function source exists. The current production endpoint responds HTTP 500 with an email configuration error; the Send Email Hook is not enabled and no real email is sent.
+- Admin APIs and integration runners are present, but tests that require a dedicated test Supabase, admin token, browser runner, or fault-injection environment are not represented as passed by the unit suite.
 
-> 일본어와 중국어는 프로토타입 수준의 자연스러운 UI 번역을 완료했지만, 실제 출시 전에는 행정·의료 문맥을 포함해 원어민 검수를 진행해야 합니다. 이 메모는 개발 문서용이며 화면에는 표시되지 않습니다.
+### Future plans
 
-## 기술 스택
+- Verify an email sender domain and Resend/Auth Hook configuration before enabling delivery.
+- Complete an isolated remote or local Supabase integration environment and repeat HTTP/browser tests with disposable data.
+- Establish operator ownership, response policy, and review procedures before treating support or service-request handling as a live service.
+- Consider provider booking, payment, delivery/storage fulfillment, and external messaging only after policy, vendors, and data-protection requirements are decided.
 
-- Next.js 16 App Router + React 19 + TypeScript
-- i18next + react-i18next
-- Tailwind CSS 4 및 프로젝트 전용 CSS
-- lucide-react
-- Next.js Static Export (`output: "export"`)
-- Supabase Auth, Postgres RLS, Edge Functions
-- Vitest와 pgTAP
+## Tech Stack
 
-## 로컬 실행 방법
+- Next.js 16 App Router, React 19, TypeScript
+- i18next and react-i18next with 8 locale resources and English fallback
+- Tailwind CSS 4, project CSS, and lucide-react icons
+- Supabase Auth, Postgres, RLS, and Edge Functions
+- Kakao Local API integration code (server-side REST key, quota guard) and external Google Maps links
+- Vitest, Playwright runner support, pgTAP SQL tests, ESLint, TypeScript, pnpm
+- Vercel Next.js deployment using `pnpm install --frozen-lockfile` and `pnpm build`
 
-Node.js 22 이상과 pnpm 10 이상을 권장합니다.
+This is a server-backed Next.js deployment. `next.config.ts` does not enable `output: "export"`; there is no supported `out/` static-export workflow. API routes, Auth, RLS, and Edge Functions are part of the deployed architecture.
 
-```bash
-pnpm install
-pnpm dev
-```
+## Demo & Screenshots
 
-[http://localhost:3000](http://localhost:3000)을 엽니다. 프로덕션 정적 빌드는 다음 명령으로 확인합니다.
+- Public demo: [temporary-fleet-maroon-2opm8kt.vercel.app](https://temporary-fleet-maroon-2opm8kt.vercel.app/?lang=ko)
 
-```bash
-pnpm run lint
-pnpm run typecheck
-pnpm test
-pnpm run build
-```
+Login-free demo sequence:
 
-정적 결과물은 `out/`에 생성됩니다.
+1. Open the public link with `?lang=ko`.
+2. Choose **나중에 설정** if the setup dialog appears, or open **라이프사이클** to inspect the checklist.
+3. Open **생활 가이드** and select **ARC 최신 안내 확인** to view source status, steps, and progress fields.
+4. Open **캠퍼스 마켓** to distinguish Sample data from the local listing/reservation flow. Detail pages can be refreshed or shared with their `listing=` URL parameter.
 
-## Vercel 배포 방법
+Screenshots below were captured from the public demo on 2026-10-09. They contain no account credentials, tokens, or user records.
 
-1. GitHub 저장소에 변경사항을 push합니다.
-2. Vercel에서 **Add New → Project**를 선택하고 저장소를 Import합니다.
-3. Framework Preset이 **Next.js**인지 확인합니다.
-4. Guest/Demo만 배포하려면 환경 변수 없이 배포합니다. 계정·동기화·Marketplace를 켤 때는 아래 변수를 Vercel **Production** 환경에 설정합니다.
+![KU Settle home](docs/screenshots/home-ko.png)
 
-```text
-NEXT_PUBLIC_SUPABASE_URL
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-SUPABASE_SERVICE_ROLE_KEY
-ACCOUNT_SIGNUP_ENABLED
-EMAIL_DELIVERY_ENABLED
-EMAIL_PROVIDER_VERIFIED
-AUTH_EMAIL_DOMAIN_VERIFIED
-ADMIN_API_TOKEN
-KAKAO_REST_API_KEY
-NEXT_PUBLIC_KAKAO_JS_KEY
-KAKAO_MONTHLY_CALL_LIMIT
-PILOT_CLOSED_DATES
-```
+![Personalized lifecycle checklist](docs/screenshots/checklist-ko.png)
 
-`SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_API_TOKEN`, `KAKAO_REST_API_KEY`는 서버 전용입니다. 브라우저에 노출되는 `NEXT_PUBLIC_*` 값과 섞어 공개하지 않습니다. 이메일 인증은 `EMAIL_DELIVERY_ENABLED=true`만으로 켜지지 않습니다. Resend 도메인과 Auth Hook을 실제로 확인한 뒤 운영자가 `EMAIL_PROVIDER_VERIFIED=true`, `AUTH_EMAIL_DOMAIN_VERIFIED=true`를 설정해야 OTP 요청이 활성화됩니다. `ACCOUNT_SIGNUP_ENABLED=false`는 KU Settle 앱의 UI·API 가입 경로를 닫는 플래그일 뿐이며, Supabase의 직접 가입까지 차단하지 않습니다. 실제 가입 차단은 운영 Supabase Auth 설정의 `disable_signup=true`가 담당하고, 배포 전 사전 점검으로 두 설정을 각각 확인해야 합니다. 이메일 발송이 준비된 경우에만 기존 계정 로그인을 허용합니다. `main`에 push하면 연결된 Vercel Production 배포가 자동으로 생성됩니다.
+![ARC life guide](docs/screenshots/guide-arc-ko.png)
 
-Production 배포 전에는 운영 셸 또는 CI에서 실제 운영 Supabase의 공개 URL·publishable key와 예상 프로젝트 ref를 주입한 뒤 가입 사전 점검을 실행합니다. 이 점검은 Auth 설정 API를 실제로 호출해 `disable_signup=true`를 확인하며, 키·응답 본문은 출력하지 않습니다.
+![Campus marketplace](docs/screenshots/marketplace-ko.png)
 
-```bash
-$env:NEXT_PUBLIC_SUPABASE_URL="https://<production-ref>.supabase.co"
-$env:NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="<publishable-key>"
-$env:EXPECTED_SUPABASE_PROJECT_REF="<production-ref>"
-pnpm run check:auth-signup
-```
+## Verification
 
-로컬 Supabase를 점검할 때만 `ALLOW_LOCAL_SUPABASE=true`를 현재 셸에 추가합니다. URL 호스트와 ref를 확인할 수 없거나 `disable_signup`이 false이면 점검은 실패하며, 운영 DB에 쓰기 요청을 보내지 않습니다.
+### Current verification — 2026-10-09
 
-현재 저장소가 Vercel 프로젝트와 연결되어 있다면 `main` push 뒤 자동으로 새 Production Deployment가 생성됩니다. `next.config.ts`에는 보안 헤더가 포함되어 있으며, `/api/*` 서버 라우트가 동작하므로 Vercel의 Next.js preset을 사용합니다.
+- `pnpm test` — passed; i18n validation covered 8 locales, 13 namespaces, 504 leaf keys, followed by 83 Vitest tests.
+- `pnpm run typecheck` — passed.
+- `pnpm run lint` — completed with 0 errors and 2 existing warnings in `app/page.tsx`.
+- `pnpm run build` — passed with Next.js 16.3.2; dynamic `/api/*` routes were included in the server deployment output.
+- Public demo HTTP check — Vercel responded successfully; the screenshots above were captured from the deployed URL.
+- Screenshot/link check — all four relative image paths exist in `docs/screenshots/` and render as repository assets.
 
-## 다른 컴퓨터에서 접속하는 방법
+### Previous or environment-specific verification
 
-Vercel이 제공하는 `https://프로젝트명.vercel.app` URL을 공유하면 일반 Chrome, Edge, Safari에서 별도 설치 없이 열 수 있습니다. 선택 언어가 포함된 `?lang=ko`, `?lang=ja`, `?lang=zh-CN` URL도 공유할 수 있습니다.
+- Production Supabase Auth settings were checked through the public publishable key: HTTP 200 with `disable_signup=true`; `pnpm run check:auth-signup` returned exit 0 after the setting was changed.
+- Public `/api/account/config` returned HTTP 200 with signup and email delivery disabled. The public signup route returned HTTP 503 while delivery was not configured.
+- The `send-email` production endpoint was reachable (not 404) but returned HTTP 500 for missing email configuration. It was not activated as an Auth Hook.
+- Git history contains fixes for guide/listing URL synchronization, ARC progress synchronization, support loading/empty/error states, and fail-closed email activation. These are supported by source assertions and unit tests; they are not the same as a full isolated production DB test.
+- Real integration commands requiring a disposable Supabase project, admin token, browser fault injection, or Docker were not counted as passed unless their environment was explicitly available. See [the integration runbook](docs/integration-test-runbook.md).
 
-같은 Wi-Fi에서 개발 화면을 확인하려면 다음 명령을 사용하고 터미널의 Network 주소를 엽니다.
+### Evidence types
 
-```bash
-pnpm dev:network
-```
+- **String/source assertions:** `tests/server-api.test.ts` checks important route and safety invariants.
+- **Unit/domain/migration tests:** Vitest tests validate parsing, i18n, state migration, URL construction, RLS/migration assumptions, and email-template behavior without contacting production data.
+- **HTTP/deployment checks:** public Vercel and Supabase Auth responses were queried directly, without printing keys or response secrets.
+- **DB/browser integration:** requires an isolated test project and disposable credentials; UI presence alone is not reported as a completed integration test.
 
-## 프로젝트 구조
+## Technical Problem-Solving Cases
 
-```text
-app/
-├─ data.ts                  # 언어 중립 lifecycle·상품·장소 데이터
-├─ i18n/
-│  ├─ config.ts             # i18next 설정과 영어 fallback
-│  ├─ formatters.ts         # Intl 날짜·숫자·통화·거리 formatter
-│  ├─ types.ts              # locale 정규화·감지
-│  ├─ use-app-i18n.ts       # URL·localStorage·document 동기화
-│  └─ locales/              # en, ko, ja, zh-CN JSON 리소스
-├─ lib/                     # Supabase client, repository, validation·migration
-├─ page.tsx                 # Guest/Demo/Auth 화면과 접근 가능한 모달
-├─ globals.css              # 디자인 시스템과 CJK 반응형 스타일
-└─ layout.tsx               # 메타데이터와 루트 레이아웃
-scripts/
-└─ validate-i18n.mjs        # 키 일치·빈 값·fallback·locale 감지 검사
-supabase/
-├─ migrations/              # schema, trigger, constraints, RLS policies
-├─ functions/               # signed email hook, self-service account deletion
-├─ tests/                   # pgTAP tenant isolation and security tests
-├─ config.toml              # local Auth, 6-digit OTP, 10-minute expiry, Mailpit
-└─ seed.sql                 # local-only security test users; no Alex data
-tests/
-└─ domain.test.ts           # email, validation, migration, error and email-template tests
-```
+### 1. Deep links and state synchronization
 
-## Supabase 로컬 개발
+- **Problem:** opening a guide or listing detail needed to survive refresh, back/forward navigation, and closing the detail without leaving a stale query parameter.
+- **Choice:** synchronize page state with `history.pushState`/`replaceState`, keep `guide=` and `listing=` identifiers in the URL, and scroll/focus the selected guide/task on navigation.
+- **Verification:** source tests and the public browser flow cover the URL-driven pages; the captured guide and marketplace screenshots show the resulting screens.
+- **Remaining limit:** a dedicated automated cross-browser history suite still belongs in the isolated browser test environment.
 
-Docker Desktop이 실행 중이어야 합니다. CLI는 프로젝트 dev dependency이므로 전역 설치가 필요 없습니다.
+### 2. Fail-closed email activation
 
-```bash
-pnpm install
-pnpm supabase:start
-pnpm supabase:reset
-pnpm test:db
-```
+- **Problem:** an app flag alone cannot prevent direct Supabase signup, and an unverified sender could create a misleading login experience.
+- **Choice:** require delivery/provider/domain attestations in the app, keep signup disabled in Supabase Auth, and add `scripts/check-auth-signup-config.mjs` to verify the real Auth setting and expected project ref before release.
+- **Verification:** the production Auth endpoint returned `disable_signup=true`; the preflight returned exit 0; the public account config remained disabled.
+- **Remaining limit:** Resend DNS, sender identity, Hook secret, and actual disposable-email OTP tests remain operator setup items.
 
-`pnpm supabase:start`가 표시하는 API URL과 publishable/anon key를 `.env.local`의 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`에 넣습니다. 로컬 OTP 이메일은 Supabase가 제공하는 Mailpit UI에서 확인합니다. 실제 Resend 발송은 로컬 기본 흐름에 사용하지 않습니다.
+### 3. Guest/account data boundaries
 
-전체 로컬 검증:
+- **Problem:** Guest/Demo convenience must not silently become another user's server data.
+- **Choice:** keep Guest/Demo state in browser storage, require explicit account-claim confirmation, use session/user scoping and RLS for server state, and separate Sample listings from live/owned listings.
+- **Verification:** local-data, server API, migration, and security tests pass; the support runbook documents session isolation and admin-only updates.
+- **Remaining limit:** live operational review and a disposable remote DB test are still required before public account/operations claims.
 
-```bash
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
-pnpm test:db
-```
+## Limitations & Future Improvements
 
-## 원격 Supabase와 이메일 설정
+- No real payment, provider booking, delivery/storage fulfillment, external chat, or push-notification integration.
+- Sample marketplace records are not real transaction inventory. Live listings, reservations, service requests, and support records depend on Supabase configuration and policy.
+- Email OTP code exists but production delivery is disabled until domain, Resend, and Auth Hook settings are independently verified.
+- Immigration, housing, transport, health, and telecom conditions can change. Users must follow the linked official notice; the app does not invent unverified dates, fees, or documents.
+- Uzbek, Vietnamese, Mongolian, and Malay resources use the shared fallback/content structure and require native-speaker/domain review before treating them as final translations.
+- Operator identity, response targets, service responsibility, and data-retention decisions are intentionally not invented. See [support operations](docs/support-operations.md).
 
-1. Supabase 프로젝트를 만든 뒤 `supabase link --project-ref <ref>`로 연결합니다.
-2. `supabase db push`로 검증된 migration을 적용합니다.
-3. Dashboard의 Site URL과 Redirect allowlist에 실제 Vercel URL을 등록합니다.
-4. 이메일 OTP를 6자리, 만료 600초로 설정하고 `private.before_user_created`를 Before User Created Hook으로 활성화합니다.
-5. Resend에서 발신 도메인을 검증한 뒤 Edge Function secret `RESEND_API_KEY`, `SEND_EMAIL_HOOK_SECRET`, `AUTH_EMAIL_FROM`, `AUTH_EMAIL_REPLY_TO`, `APP_URL`을 설정합니다.
-6. `send-email`을 배포하고 Standard Webhooks secret과 일치하는 Send Email Hook을 활성화합니다.
-7. `delete-account`를 JWT 검증이 켜진 상태로 배포합니다.
-8. Vercel **Production**에는 `EMAIL_DELIVERY_ENABLED`, `EMAIL_PROVIDER_VERIFIED`, `AUTH_EMAIL_DOMAIN_VERIFIED`를 처음에는 `false`로 둡니다. Resend 대시보드에서 도메인 상태가 verified이고 Supabase Auth Hooks에서 `send-email`이 성공하는 것을 운영자가 확인한 뒤에만 처음 두 검증 플래그와 delivery 플래그를 `true`로 변경합니다. 신규 가입을 열 때는 그 다음 `ACCOUNT_SIGNUP_ENABLED=true`를 별도로 설정합니다. `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `SEND_EMAIL_HOOK_SECRET`와 기타 Edge Function secret은 브라우저나 저장소에 넣지 않습니다.
+## Further Documentation
 
-9. Supabase Dashboard의 **Authentication → Hooks → Send Email**에서 배포한 `send-email` HTTPS URL과 생성한 secret을 연결하고, **Authentication → Providers → Email**에서 이메일 제공자 설정과 신규 가입 허용 여부를 확인합니다. Resend의 **Domains** 화면에서 DNS 레코드가 모두 verified인지 확인한 뒤에만 위 플래그를 켭니다. 이 저장소의 플래그는 그 확인을 명시적으로 기록하는 안전장치이며, DNS·대시보드 상태를 자동으로 증명하지는 않습니다.
-
-실제 원격 적용 전에는 pgTAP, Auth OTP, 네 언어 이메일, 계정 삭제 cascade를 별도 staging 프로젝트에서 확인하세요. `.env.example`은 변수명만 제공하며 실제 secret은 커밋하지 않습니다.
-
-### 운영 전 체크
-
-- Dashboard에서 모든 `supabase/migrations/*.sql`을 순서대로 적용하고, 각 공개 테이블의 RLS가 켜져 있는지 확인합니다. 저장소의 정책 테스트(`supabase/tests/rls.test.sql`)는 원격 Dashboard 상태를 자동으로 보증하지 않습니다.
-- Supabase 프로젝트의 일일 백업과 PITR 보존 기간을 확인하고, 운영 배포 전 복구 리허설을 한 번 수행합니다.
-- 화면의 Sample 상품은 실제 거래 대상이 아니며, 실제 등록 상품과 별도 배지로 구분합니다. 행정·의료·법률 정보는 화면의 확인일보다 공식 출처를 최종 기준으로 안내합니다.
-- Kakao 검색은 서버에서만 REST 키를 사용하고 월간 호출 상한(`KAKAO_MONTHLY_CALL_LIMIT`, 기본 2,900,000)을 둡니다. 운영에서는 Kakao 개발자 콘솔의 실제 사용량·도메인 제한·쿼터 알림을 함께 확인합니다.
-- 문의·신고·운영 변경은 관리자 화면과 `support_tickets`/`guest_reports` 기록을 기준으로 처리하고, 배포 후 첫 주에는 오류 로그와 API 응답을 매일 확인합니다.
-
-## 앱 상태와 localStorage
-
-앱 상태는 다음처럼 분리됩니다.
-
-- `guest`: 계정 없이 기기 내 lifecycle을 체험합니다. 실제 Marketplace DB에는 쓸 수 없습니다.
-- `demo`: 사용자가 **Try demo**를 선택했을 때만 Alex preset을 사용하며 모든 변경은 로컬에만 남습니다.
-- `authenticated`: 유효한 Supabase 세션과 정확한 `@korea.ac.kr` 이메일을 사용하며 DB가 source of truth입니다.
-
-현재 저장 키:
-
-- `ku-settle-profile`: 이름, 입국 예정일, 주거 유형, 데모 여부
-- `ku-settle-checklist`: 완료 작업 ID 배열
-- `ku-settle-verified`: Demo 전용 legacy 인증 상태이며 실제 인증 판정에는 사용하지 않음
-- `ku-settle-user-products`: 사용자가 등록한 언어 중립 상품 데이터
-- `ku-settle-language`: 선택 locale
-
-인증 사용자는 언어와 안전한 UI 상태, Supabase SDK가 관리하는 세션 외의 서비스 데이터를 localStorage의 source of truth로 사용하지 않습니다. 기존 개인화 Guest 데이터는 로그인 직후 요약 모달에서 사용자가 확인한 경우에만 가져오며, Alex Demo 데이터는 가져오지 않습니다.
-
-## 데모 한계
-
-- Supabase를 설정하지 않으면 계정과 실제 이메일 발송은 비활성화되고 Guest/Demo만 동작합니다.
-- 학교 SSO, 결제, 예약, 실제 채팅, 배송, 지도, 푸시 알림은 없습니다.
-- Sample 상품과 장소는 계속 정적 데모 데이터이며 DB 실제 상품과 UI에서 구분됩니다.
-- 행정·비자·법률·의료 요건은 변경될 수 있으므로 화면에서도 공식 출처 확인을 안내합니다.
-- Marketplace 인증은 실제 인증이 아닌 발표용 형식 검증입니다.
-- 일본어·중국어는 출시 전 원어민 및 도메인 전문가 검수가 필요합니다.
+- [Setup, deployment, and email operations](docs/setup-and-operations.md)
+- [Isolated integration-test runbook](docs/integration-test-runbook.md)
+- [Support/operator workflow](docs/support-operations.md)
+- [Supabase integration checklist](docs/supabase-integration-test-checklist.md)
