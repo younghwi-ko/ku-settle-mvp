@@ -1,21 +1,29 @@
 # KU Settle
 
-고려대학교 유학생이 여러 공식 사이트에 흩어진 정착 정보를 찾고 실제 준비로 이어 가기 어렵다는 문제에서 출발한 개인 프로젝트입니다. 발표 아이디어를 웹 서비스로 발전시켜, 입국부터 귀국까지의 개인화 체크리스트와 공식 출처 기반 생활 가이드를 연결했습니다. 본인은 요구사항과 수정 우선순위를 정하고 공개 화면을 확인하며 오류를 제보했고, 코드 구현·수정·테스트·문서 작업에는 Codex를 활용했습니다. 2026-10-09에 테스트 83개, 8개 언어 키 검증, 타입체크와 빌드를 통과했고 린트에는 기존 경고 2개가 남았습니다. 현재 로그인 없이 계획·가이드·샘플 마켓을 시연할 수 있으며, 이메일 인증 운영 활성화와 상품·예약의 전체 서버 흐름 검증은 남아 있습니다.
+고려대학교 유학생이 여러 공식 사이트에 흩어진 정착 정보를 찾고 실제 준비로 이어 가기 어렵다는 문제에서 출발했습니다. 활동 당시 3인 팀이 함께 아이디어를 구체화하고 발표했으며, 이 단계에서는 MVP나 서비스 코드를 개발하지 않았습니다. 발표 이후에는 본인이 혼자 Codex를 활용해 MVP 개발과 웹 서비스 고도화를 진행하고, 입국부터 귀국까지의 개인화 체크리스트와 공식 출처 기반 생활 가이드를 연결했습니다. 개인 개발 단계에서 본인은 요구사항과 수정 우선순위를 정하고 공개 화면을 확인하며 오류를 제보했고, 코드 구현·수정·테스트·문서 작업에는 Codex를 활용했습니다. 2026-10-09에 테스트 83개, 8개 언어 키 검증, 타입체크와 빌드를 통과했고 린트에는 기존 경고 2개가 남았습니다. 현재 로그인 없이 계획·가이드·샘플 마켓을 시연할 수 있으며, 이메일 인증 운영 활성화와 상품·예약의 전체 서버 흐름 검증은 남아 있습니다.
 
 KU Settle is a multilingual settlement companion for international students preparing for arrival, adapting to campus life, and planning departure from Korea University. It turns scattered information into a sequence of small, actionable decisions: check an official notice, save a route, prepare a document, or record a marketplace request.
 
-This project started from a presentation idea about the gap between “knowing what information exists” and “being able to act on it.” The web service format makes that idea testable: a student can choose a lifecycle stage, open the relevant guide, record progress, and follow a link to the next action.
+The idea was developed and presented by a three-person team, focusing on the gap between “knowing what information exists” and “being able to act on it.” No MVP or service code was developed during that team activity. After the presentation, I independently developed the MVP and refined the web service using Codex. The web service format makes the idea testable: a student can choose a lifecycle stage, open the relevant guide, record progress, and follow a link to the next action.
 
 ## Project Overview
 
 - **Problem observed:** international students must combine university notices, immigration guidance, transport information, housing instructions, and everyday decisions across different sites and languages. The difficult part is often the next action, not the existence of information.
+- **Team idea and presentation stage:** three people worked together to develop the idea and deliver the presentation. This stage did not include MVP development or service coding.
+- **Individual MVP development and refinement stage:** after the presentation, I used that shared idea as the basis for independently developing the MVP and refining the web service, with Codex assisting implementation and verification.
 - **Product direction:** connect official-source guidance, a personalized checklist, local campus guidance, and a clearly labelled sample/live marketplace in one flow.
 - **Current scope:** a public Guest/Demo experience is available without an account. Supabase-backed account, marketplace, support, and operator flows exist in the codebase but remain subject to provider, environment, and operational verification.
 - **Languages:** 8 configured locales — English (`en`), 한국어 (`ko`), 日本語 (`ja`), 简体中文 (`zh-CN`), O‘zbekcha (`uz`), Tiếng Việt (`vi`), Монгол (`mn`), Bahasa Melayu (`ms`).
 
 ## My Contribution
 
-KU Settle is a personal project. Codex was the only AI tool used.
+### Team idea and presentation stage
+
+I participated in the three-person team that developed the idea and delivered the presentation. The team did not develop an MVP or service code during this stage.
+
+### Individual MVP development and refinement stage
+
+After the presentation, I carried out the MVP development and web service refinement independently, building on the team's shared idea. Codex was the only AI tool used in this development stage.
 
 - **My product decisions:** I specified the lifecycle and personalization requirements, prioritized fixes, requested official-source guidance and accurate completion criteria, and decided to keep email delivery disabled until the domain and provider were configured.
 - **My review and feedback:** I checked the public screens, reported reproducible problems such as setup reopening and ARC progress mismatches, and supplied error messages that guided subsequent fixes.
