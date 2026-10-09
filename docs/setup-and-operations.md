@@ -51,8 +51,8 @@ AUTH_EMAIL_DOMAIN_VERIFIED=false
 `ACCOUNT_SIGNUP_ENABLED` controls the KU Settle UI/API gate. It does not disable direct Supabase Auth signup. The production Supabase project must also have Authentication → Providers → Email → **Allow new users to sign up** disabled (`disable_signup=true`). The preflight command checks that provider setting:
 
 ```powershell
-$env:SUPABASE_URL = "https://<production-project-ref>.supabase.co"
-$env:SUPABASE_PUBLISHABLE_KEY = "<production-publishable-key>"
+$env:NEXT_PUBLIC_SUPABASE_URL = "https://<production-project-ref>.supabase.co"
+$env:NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "<production-publishable-key>"
 $env:EXPECTED_SUPABASE_PROJECT_REF = "<production-project-ref>"
 pnpm run check:auth-signup
 ```

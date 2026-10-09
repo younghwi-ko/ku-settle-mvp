@@ -1,5 +1,7 @@
 # KU Settle
 
+고려대학교 유학생이 여러 공식 사이트에 흩어진 정착 정보를 찾고 실제 준비로 이어 가기 어렵다는 문제에서 출발한 개인 프로젝트입니다. 발표 아이디어를 웹 서비스로 발전시켜, 입국부터 귀국까지의 개인화 체크리스트와 공식 출처 기반 생활 가이드를 연결했습니다. 본인은 요구사항과 수정 우선순위를 정하고 공개 화면을 확인하며 오류를 제보했고, 코드 구현·수정·테스트·문서 작업에는 Codex를 활용했습니다. 2026-10-09에 테스트 83개, 8개 언어 키 검증, 타입체크와 빌드를 통과했고 린트에는 기존 경고 2개가 남았습니다. 현재 로그인 없이 계획·가이드·샘플 마켓을 시연할 수 있으며, 이메일 인증 운영 활성화와 상품·예약의 전체 서버 흐름 검증은 남아 있습니다.
+
 KU Settle is a multilingual settlement companion for international students preparing for arrival, adapting to campus life, and planning departure from Korea University. It turns scattered information into a sequence of small, actionable decisions: check an official notice, save a route, prepare a document, or record a marketplace request.
 
 This project started from a presentation idea about the gap between “knowing what information exists” and “being able to act on it.” The web service format makes that idea testable: a student can choose a lifecycle stage, open the relevant guide, record progress, and follow a link to the next action.
@@ -13,14 +15,12 @@ This project started from a presentation idea about the gap between “knowing w
 
 ## My Contribution
 
-The repository and Git history support the following description of the work represented here:
+KU Settle is a personal project. Codex was the only AI tool used.
 
-- **Planning and product decisions visible in the implementation:** lifecycle-based onboarding; clear separation of Sample content and user-created listings; fail-closed email/account activation; explicit “implemented / operationally inactive / future” boundaries; and no unverified immigration dates, fees, or documents.
-- **Design and implementation:** responsive lifecycle cards, personalization fields, deep-linkable guide and listing detail views, multilingual resource structure, local-data migration, marketplace and support flows, Supabase API/RLS boundaries, and integration-test runners.
-- **Verification:** i18n key validation, unit/domain tests, API/source assertions, type checking, linting, production builds, public HTTP checks, and manual/browser review recorded in [Verification](#verification).
-- **AI-assisted workflow:** AI tools were used for code exploration, implementation drafts, test/documentation drafts, and verification assistance. The final scope decisions, safe defaults, claims in this README, and release boundaries are based on the source, configuration, test output, and deployment responses in this repository.
-
-Personal contribution percentage, team roles, and user outcome metrics are intentionally not inferred. Before submitting, replace or supplement this section with the role and contribution wording you personally want to claim.
+- **My product decisions:** I specified the lifecycle and personalization requirements, prioritized fixes, requested official-source guidance and accurate completion criteria, and decided to keep email delivery disabled until the domain and provider were configured.
+- **My review and feedback:** I checked the public screens, reported reproducible problems such as setup reopening and ARC progress mismatches, and supplied error messages that guided subsequent fixes.
+- **Codex-assisted implementation:** I used Codex to inspect and edit the code, prepare UI and multilingual content, implement persistence and API flows, investigate errors, write tests, and prepare documentation. The code and test execution described here were assisted by Codex.
+- **Verification evidence:** the executed checks and their limits are recorded in [Verification](#verification). A passing unit test, an API implementation, and a successfully operated account or transaction are reported separately.
 
 ## Key Features
 
@@ -31,7 +31,17 @@ Personal contribution percentage, team roles, and user outcome metrics are inten
 - Checklist progress, important-task recommendations, due-date notes, and local browser persistence.
 - Life Guide cards with official-source links, applicability, steps, preparation items, contact guidance, completion criteria, and source status.
 - Campus/local guidance with curated records and optional Kakao search configuration; place cards can open external Google Maps search/directions links.
-- Marketplace browsing with explicitly marked Sample data, local listing/reservation flow, shareable listing URLs, and mobile-responsive screens.
+- Marketplace browsing with explicitly marked Sample data, a listing form, shareable listing URLs, and mobile-responsive screens. The form's storage destination depends on session/server availability, as detailed below.
+
+### Marketplace storage and authentication boundaries
+
+| Path | Source behavior | Verification boundary |
+| --- | --- | --- |
+| Local experience | When the anonymous server connection is unavailable, Guest/Demo listings are retained in browser storage and marked as Sample. Reservation state also has a local browser representation. Built-in and local Sample detail screens do not offer a real reservation action. | Local state is tied to that browser. Sample content is not real inventory, and a local record is not proof of a server reservation. |
+| Anonymous session with server storage | After session bootstrap and state loading succeed, Guest/Demo listing creation calls `/api/marketplace/listings`, which inserts into `guest_listings` with `session_id`. For server-backed user-created listings, reservation requests call `/api/marketplace/listings/[id]/reservations` and write `guest_reservations`. Ownership is scoped by the HttpOnly session cookie. | These routes use an anonymous session rather than email verification. The listing GET route does not require a verified-student account. Cookie loss does not provide automatic cross-device recovery. This documentation pass inspected the code without creating production listings or reservations. |
+| Authenticated account | Supabase-authenticated users create and update their listings through `marketplace_items` with user ownership and RLS. Explicit import/claim paths exist for local and anonymous-session data. | Email delivery and public signup remain disabled. Account login, import/claim, recovery, and reservation interoperability across the account and anonymous tables require isolated end-to-end verification. |
+
+The current reservation UI updates local state before the server request resolves. A server failure can therefore leave a local reservation or saved notice visible; it is not a confirmed server reservation. The account listing and anonymous reservation paths also use different tables. This README does not claim that authenticated-account transactions or server failure recovery have been fully validated. Source references: [UI branches](app/page.tsx), [anonymous-session API](app/lib/server-session.ts), [listing API](app/api/marketplace/listings/route.ts), [reservation API](app/api/marketplace/listings/[id]/reservations/route.ts), and [account repository](app/lib/repository.ts).
 
 ### Implemented but operationally inactive or not fully verified
 
@@ -69,28 +79,34 @@ Login-free demo sequence:
 1. Open the public link with `?lang=ko`.
 2. Choose **나중에 설정** if the setup dialog appears, or open **라이프사이클** to inspect the checklist.
 3. Open **생활 가이드** and select **ARC 최신 안내 확인** to view source status, steps, and progress fields.
-4. Open **캠퍼스 마켓** to distinguish Sample data from the local listing/reservation flow. Detail pages can be refreshed or shared with their `listing=` URL parameter.
+4. Open **캠퍼스 마켓** to inspect Sample labels and a sample detail's `listing=` URL. Sample inventory is not available for real reservations. The listing form may save to the anonymous-session server, so browsing is the submission demo; do not submit a listing just to demonstrate the screen.
 
 Screenshots below were captured from the public demo on 2026-10-09. They contain no account credentials, tokens, or user records.
+The ARC screenshot shows the expanded detail card, including progress controls, steps, and completion criteria. Its capture blocked server API requests to prevent session/data writes; it verifies presentation, not server persistence or official-content freshness.
 
 ![KU Settle home](docs/screenshots/home-ko.png)
 
 ![Personalized lifecycle checklist](docs/screenshots/checklist-ko.png)
 
-![ARC life guide](docs/screenshots/guide-arc-ko.png)
+![Expanded ARC guide: applicability, completion criteria, progress controls, steps, and preparation](docs/screenshots/guide-arc-ko.png)
 
 ![Campus marketplace](docs/screenshots/marketplace-ko.png)
 
 ## Verification
 
-### Current verification — 2026-10-09
+### Code checks from the preceding README revision — 2026-10-09
 
 - `pnpm test` — passed; i18n validation covered 8 locales, 13 namespaces, 504 leaf keys, followed by 83 Vitest tests.
 - `pnpm run typecheck` — passed.
 - `pnpm run lint` — completed with 0 errors and 2 existing warnings in `app/page.tsx`.
 - `pnpm run build` — passed with Next.js 16.3.2; dynamic `/api/*` routes were included in the server deployment output.
-- Public demo HTTP check — Vercel responded successfully; the screenshots above were captured from the deployed URL.
-- Screenshot/link check — all four relative image paths exist in `docs/screenshots/` and render as repository assets.
+
+### Final documentation review — 2026-10-09
+
+- Compared the listing/reservation UI branches, anonymous-session APIs, and authenticated-account repository to document their distinct storage paths and unresolved integration limits. No production data writes were used.
+- Compared the signup-preflight example with `scripts/check-auth-signup-config.mjs`: it reads `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+- Captured the expanded ARC detail from the public demo (HTTP 200) and inspected the image for readable content. Server API requests were blocked during this capture.
+- Checked relative Markdown/document/image targets and the GitHub copies after publication. The application code was unchanged, so the earlier code checks above were not rerun for this documentation revision.
 
 ### Previous or environment-specific verification
 
@@ -126,9 +142,9 @@ Screenshots below were captured from the public demo on 2026-10-09. They contain
 ### 3. Guest/account data boundaries
 
 - **Problem:** Guest/Demo convenience must not silently become another user's server data.
-- **Choice:** keep Guest/Demo state in browser storage, require explicit account-claim confirmation, use session/user scoping and RLS for server state, and separate Sample listings from live/owned listings.
+- **Choice:** retain a local browser fallback, scope anonymous server records to a session cookie, require explicit account-claim confirmation, use user ownership and RLS for authenticated listings, and separate Sample listings from live/owned listings.
 - **Verification:** local-data, server API, migration, and security tests pass; the support runbook documents session isolation and admin-only updates.
-- **Remaining limit:** live operational review and a disposable remote DB test are still required before public account/operations claims.
+- **Remaining limit:** cookie loss, account/anonymous-table interoperability, and optimistic local reservation updates need isolated end-to-end review before claiming reliable transaction or recovery behavior.
 
 ## Limitations & Future Improvements
 
