@@ -31,7 +31,8 @@ import KakaoMap from "./components/kakao-map";
 import AdminServerPanel from "./components/admin-server-panel";
 import { dedupePlaces, isValidCoordinates, KU_CENTER, KU_SCIENCE_CENTER, matchesPlaceCategory, type KakaoSearchResponse, type CampusFilter } from "./lib/kakao";
 import { placeGuidance, placeVerificationRank } from "./lib/place-guidance";
-import { bootstrapRemote, createRemoteListing, createRemoteReservation, deleteRemoteListing, fetchRemoteListings, fetchRemoteState, importRemoteState, serverListingToProduct, serverReservationToLocal, serverServiceToLocal, updateRemoteLifecycle, updateRemoteListing, updateRemoteReservation, upsertRemoteService } from "./lib/remote-state";
+import { bootstrapRemote, createRemoteListing, deleteRemoteListing, fetchRemoteListings, fetchRemoteState, importRemoteState, serverListingToProduct, serverReservationToLocal, serverServiceToLocal, updateRemoteLifecycle, updateRemoteListing, upsertRemoteService } from "./lib/remote-state";
+import { applyServerReservation, cancelServerReservation, checkServerReservation, ReservationRequestError, saveServerReservation } from "./lib/reservation-request";
 
 type Page = "home" | "onboarding" | "marketplace" | "guide" | "life-guide" | "admin" | "operation-model";
 type Housing = "dorm" | "off-campus";
@@ -39,7 +40,8 @@ type UserProfile = StoredProfile;
 type MarketMode = "incoming" | "leaving";
 type ProductModalMode = "buyer" | "seller";
 type PickupSchedule = Pick<LocalReservation, "pickupDate" | "pickupStartTime" | "pickupEndTime">;
-type PendingReservation = { product: MarketProduct; reservation?: LocalReservation };
+type PendingReservation = { product: MarketProduct; reservation?: LocalReservation; requestKey: string };
+type ReservationIssue = "rejected" | "uncertain" | "notFound" | "inactive";
 type ReportReason = "false_info" | "price_mismatch" | "scam" | "inappropriate" | "schedule_issue" | "other";
 type StageStat = { stage: (typeof lifecycleStages)[number]; completed: number; total: number; progress: number };
 type NavigationIntent = { stage?: LifecycleStage; taskId?: string; highlight?: boolean; marketMode?: MarketMode; guideCategory?: string };
@@ -305,6 +307,11 @@ export default function Home() {
   const [editingProduct, setEditingProduct] = useState<MarketProduct | null>(null);
   const [reportProduct, setReportProduct] = useState<MarketProduct | null>(null);
   const [pendingReservation, setPendingReservation] = useState<PendingReservation | null>(null);
+  const [reservationBusy, setReservationBusy] = useState(false);
+  const [reservationIssue, setReservationIssue] = useState<ReservationIssue | null>(null);
+  const [reservationRefreshNeeded, setReservationRefreshNeeded] = useState(false);
+  const reservationLock = useRef(false);
+  const reservationPickup = useRef<PickupSchedule | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [marketMode, setMarketMode] = useState<MarketMode>("incoming");
   const [marketSearch, setMarketSearch] = useState("");
@@ -488,7 +495,7 @@ export default function Home() {
     const listing = params.get("listing");
     if (listing) {
       const product = marketplaceProducts.find((item) => String(item.id) === listing);
-      if (product) detailFrame = requestAnimationFrame(() => { setPage("marketplace"); setSelectedProduct(product); setSelectedProductMode(isOwnedMarketplaceProduct(product, appMode) ? "seller" : "buyer"); });
+      if (product) detailFrame = requestAnimationFrame(() => { if (new URLSearchParams(window.location.search).get("listing") !== String(product.id)) return; setPage("marketplace"); setSelectedProduct(product); setSelectedProductMode(isOwnedMarketplaceProduct(product, appMode) ? "seller" : "buyer"); });
     }
     const guide = params.get("guide");
     if (guide && expandedLifeGuideArticles.some((article) => article.id === guide)) detailFrame = requestAnimationFrame(() => { setPage("life-guide"); document.getElementById(`guide-${guide}`)?.scrollIntoView({ block: "start" }); });
@@ -619,28 +626,85 @@ export default function Home() {
     setAuthOpen(true); throw new Error("Authentication required");
   };
   const reserveMarketplaceProduct = (product: MarketProduct) => {
+    if (reservationLock.current) return;
+    if (product.source === "sample") { setServiceMessage("common:sampleOnly"); return; }
     if (product.serviceStatus === "sold" || product.status === "Reserved") { setServiceMessage("marketplace:soldUnavailable"); return; }
-    setPendingReservation({ product });
+    reservationPickup.current = null; setReservationIssue(null);
+    setPendingReservation({ product, requestKey: crypto.randomUUID() });
   };
-  const completeMarketplaceReservation = (product: MarketProduct, pickup: PickupSchedule, existingId?: string) => {
+  const recordServerReservation = (reservation: LocalReservation) => {
+    setLocalPreferences((current) => applyServerReservation(current, reservation));
+    setSelectedProduct((current) => String(current?.id) === reservation.productId ? { ...current!, status: reservation.status === "active" ? "Reserved" : "Available" } : current);
+  };
+  const finishServerReservation = (reservation: LocalReservation) => {
+    recordServerReservation(reservation);
+    if (reservation.status === "active") { setPendingReservation(null); setReservationIssue(null); setServiceMessage("common:saved"); }
+    else { setReservationIssue("inactive"); setServiceMessage(""); }
+  };
+  const completeMarketplaceReservation = async (product: MarketProduct, pickup: PickupSchedule, existingId?: string) => {
+    if (reservationLock.current || !pendingReservation || reservationIssue === "uncertain" || reservationIssue === "inactive") return;
     const productId = String(product.id);
     if (!isValidPickupSchedule(pickup)) { setServiceMessage("validation:pickupScheduleRequired"); return; }
+    if (product.source === "sample") { setServiceMessage("common:sampleOnly"); return; }
+    setServiceMessage(""); reservationPickup.current = pickup;
+    if (product.source === "live") {
+      if (!remoteReady || (existingId && existingId.startsWith("reservation-"))) { setReservationIssue("rejected"); return; }
+      reservationLock.current = true; setReservationBusy(true);
+      try { finishServerReservation(await saveServerReservation(productId, currentProfile.name, pickup, pendingReservation.requestKey, existingId)); }
+      catch (error) { setReservationIssue(error instanceof ReservationRequestError ? error.kind : "uncertain"); }
+      finally { reservationLock.current = false; setReservationBusy(false); }
+      return;
+    }
     const now = new Date().toISOString();
     const nextReservation = { id: existingId ?? `reservation-${Date.now()}`, productId, buyerName: currentProfile.name, status: "active" as const, createdAt: existingId ? (localPreferences.reservations.find((item) => item.id === existingId)?.createdAt ?? now) : now, updatedAt: now, ...pickup };
     setLocalPreferences((current) => ({ ...current, reservedProductIds: [...new Set([...current.reservedProductIds, productId])], reservations: [...current.reservations.filter((item) => !(item.productId === productId && item.status === "active")), nextReservation] }));
-    if (remoteReady && product.userCreated) void createRemoteReservation(product, currentProfile.name, pickup).catch(() => setServiceMessage("errors:generic"));
     setPendingReservation(null);
     setSelectedProduct((current) => current?.id === product.id ? { ...current, status: "Reserved" } : current);
     setServiceMessage("common:saved");
   };
-  const cancelMarketplaceReservation = (product: MarketProduct) => {
+  const checkMarketplaceReservation = async () => {
+    if (!pendingReservation || reservationLock.current) return;
+    reservationLock.current = true; setReservationBusy(true); setServiceMessage("");
+    try {
+      const result = await checkServerReservation(String(pendingReservation.product.id), pendingReservation.requestKey, pendingReservation.reservation?.id);
+      const pickup = reservationPickup.current;
+      if (!result || (result.status === "active" && pickup && (Object.keys(pickup) as (keyof PickupSchedule)[]).some((key) => result[key] !== pickup[key]))) setReservationIssue("notFound");
+      else finishServerReservation(result);
+    } catch { setReservationIssue("uncertain"); }
+    finally { reservationLock.current = false; setReservationBusy(false); }
+  };
+  const refreshMarketplaceReservations = async () => {
+    if (reservationLock.current) return;
+    reservationLock.current = true; setReservationBusy(true); setServiceMessage("");
+    try {
+      const remote = await fetchRemoteState();
+      const reservations = remote.reservations.map(serverReservationToLocal).filter((item): item is LocalReservation => Boolean(item));
+      setLocalPreferences((current) => ({ ...current, reservations, reservedProductIds: reservations.filter((item) => item.status === "active").map((item) => item.productId) }));
+      setReservationRefreshNeeded(false);
+      closeProduct();
+    } catch { setReservationRefreshNeeded(true); }
+    finally { reservationLock.current = false; setReservationBusy(false); }
+  };
+  const cancelMarketplaceReservation = async (product: MarketProduct) => {
+    if (reservationLock.current) return;
     const productId = String(product.id);
     const reservation = localPreferences.reservations.find((item) => item.productId === productId && item.status === "active");
+    if (product.source === "live") {
+      if (!remoteReady || !reservation || reservation.id.startsWith("reservation-")) { setServiceMessage("errors:generic"); return; }
+      reservationLock.current = true; setReservationBusy(true); setServiceMessage("");
+      try { recordServerReservation(await cancelServerReservation(reservation)); setServiceMessage("common:saved"); }
+      catch { setReservationRefreshNeeded(true); }
+      finally { reservationLock.current = false; setReservationBusy(false); }
+      return;
+    }
     setLocalPreferences((current) => ({ ...current, reservedProductIds: current.reservedProductIds.filter((id) => id !== productId), reservations: current.reservations.map((item) => item.productId === productId && item.status === "active" ? { ...item, status: "cancelled", cancelledAt: new Date().toISOString() } : item) }));
-    if (remoteReady && reservation && !reservation.id.startsWith("reservation-")) void updateRemoteReservation(reservation.id, { status: "cancelled" }).catch(() => setServiceMessage("errors:generic"));
     setSelectedProduct((current) => current?.id === product.id ? { ...current, status: "Available" } : current); setServiceMessage("common:saved");
   };
-  const editMarketplaceReservation = (product: MarketProduct, reservation: LocalReservation) => setPendingReservation({ product, reservation });
+  const editMarketplaceReservation = (product: MarketProduct, reservation: LocalReservation) => {
+    if (reservationLock.current) return;
+    reservationPickup.current = null; setReservationIssue(null);
+    setPendingReservation({ product, reservation, requestKey: crypto.randomUUID() });
+  };
   const submitReport = (product: MarketProduct, report: Omit<ReportDraft, "productId" | "createdAt" | "status">) => {
     const productId = String(product.id);
     if (localPreferences.reportDrafts.some((item) => item.productId === productId)) { setServiceMessage("marketplace:duplicateReport"); return; }
@@ -772,7 +836,8 @@ export default function Home() {
         <GuestImportModal t={t} candidate={guestCandidate} close={() => setImportOpen(false)} confirm={() => void completeGuestImport()}/>
       )}
       {selectedProduct && <ProductModal locale={locale} t={t} profile={currentProfile} mode={selectedProductMode} product={selectedProduct} reservation={localPreferences.reservations.find((item) => item.productId === String(selectedProduct.id) && item.status === "active")} serviceRequests={localPreferences.serviceRequests.filter((item) => item.productId === String(selectedProduct.id))} updateService={(serviceMode, updates) => updateServiceRequest({ productId: String(selectedProduct.id) }, serviceMode, updates)} close={closeProduct} contact={() => { closeProduct(); setContactOpen(true); }} reserve={() => reserveMarketplaceProduct(selectedProduct)} cancelReservation={() => cancelMarketplaceReservation(selectedProduct)} edit={() => { setEditingProduct(selectedProduct); closeProduct(); }} changeStatus={(status) => void changeMarketplaceStatus(selectedProduct, status)}/>}
-      {pendingReservation && <PickupScheduleModal t={t} product={pendingReservation.product} initial={pendingReservation.reservation} close={() => setPendingReservation(null)} reserve={(pickup) => completeMarketplaceReservation(pendingReservation.product, pickup, pendingReservation.reservation?.id)}/>}
+      {reservationRefreshNeeded && <div className="service-status error reservation-result" role="alert">{tr(t, "marketplace:reservationUncertain")}<button disabled={reservationBusy} onClick={() => void refreshMarketplaceReservations()}>{tr(t, "marketplace:checkReservation")}</button></div>}
+      {pendingReservation && <PickupScheduleModal t={t} product={pendingReservation.product} initial={pendingReservation.reservation} busy={reservationBusy} issue={reservationIssue} check={() => void checkMarketplaceReservation()} close={() => { if (!reservationLock.current) setPendingReservation(null); }} reserve={(pickup) => void completeMarketplaceReservation(pendingReservation.product, pickup, pendingReservation.reservation?.id)}/>}
       {reportProduct && <ReportModal t={t} product={reportProduct} reports={localPreferences.reportDrafts} close={() => setReportProduct(null)} submit={(report) => submitReport(reportProduct, report)}/>}
       {editingProduct && <ProductEditModal locale={locale} t={t} product={editingProduct} close={() => setEditingProduct(null)} save={updateLocalProduct}/>}
       {contactOpen && <ContactModal t={t} close={() => setContactOpen(false)}/>}
@@ -909,13 +974,13 @@ function Onboarding({ locale, t, activeTasks, stageStats, progress, done, manual
 function MyReservations({ locale, t, products, preferences, cancelReservation, selectReservation, editReservation }: { locale: Locale; t: TFunction; products: MarketProduct[]; preferences: LocalPreferences; cancelReservation: (product: MarketProduct) => void; selectReservation: (product: MarketProduct) => void; editReservation: (product: MarketProduct, reservation: LocalReservation) => void }) {
   const reservations = preferences.reservations;
   const [now] = useState(() => new Date());
-  return <section className="reservation-list section-pad" aria-label={tr(t, "marketplace:myReservations")}><div className="section-title"><span className="eyebrow"><CalendarClock size={14}/>{tr(t, "marketplace:myReservations")}</span><h2>{tr(t, "marketplace:reservationSummary")}</h2></div>{reservations.length ? <div className="reservation-cards">{reservations.map((reservation) => { const product = products.find((item) => String(item.id) === reservation.productId); if (!product) return null; const past = reservation.status === "active" && isPickupPast(reservation, now); const status = reservation.status === "completed" ? tr(t, "marketplace:reservationCompleted") : reservation.status === "cancelled" ? tr(t, "marketplace:reservationCancelled") : past ? tr(t, "marketplace:pickupPast") : tr(t, "marketplace:reservationActive"); return <article className={`reservation-card ${past ? "is-past" : ""}`} key={reservation.id}><button className="reservation-card-main" onClick={() => selectReservation(product)}><strong>{productName(product, t)}</strong><span>{formatCurrency(locale, product.priceKrw)} · {status}</span><span>{tr(t, "marketplace:seller")}: {product.seller ?? "—"}</span><span><CalendarDays size={14}/>{reservation.pickupDate ? `${reservation.pickupDate} ${reservation.pickupStartTime}–${reservation.pickupEndTime}` : tr(t, "marketplace:pickupNotSet")}</span><span><MapPin size={14}/>{productPickup(product, t)}</span></button>{reservation.status === "active" && <div className="reservation-card-actions"><button className="secondary" onClick={() => editReservation(product, reservation)}>{tr(t, "marketplace:changePickup")}</button><button className="secondary" onClick={() => cancelReservation(product)}>{tr(t, "marketplace:cancelReservation")}</button></div>}</article>; })}</div> : <EmptyState icon={CalendarClock} text={locale === "ko" ? "예약한 상품이 없습니다." : locale === "ja" ? "予約した商品はありません。" : locale === "zh-CN" ? "暂无预约商品。" : legacyCopy(locale, "You have no reservations yet.")}/>}</section>;
+  return <section className="reservation-list section-pad" aria-label={tr(t, "marketplace:myReservations")}><div className="section-title"><span className="eyebrow"><CalendarClock size={14}/>{tr(t, "marketplace:myReservations")}</span><h2>{tr(t, "marketplace:reservationSummary")}</h2></div>{reservations.length ? <div className="reservation-cards">{reservations.map((reservation) => { const product = products.find((item) => String(item.id) === reservation.productId); if (!product) return null; const past = reservation.status === "active" && isPickupPast(reservation, now); const status = reservation.status === "completed" ? tr(t, "marketplace:reservationCompleted") : reservation.status === "cancelled" ? tr(t, "marketplace:reservationCancelled") : reservation.status === "expired" ? tr(t, "marketplace:reservationExpired") : past ? tr(t, "marketplace:pickupPast") : tr(t, "marketplace:reservationActive"); return <article className={`reservation-card ${past ? "is-past" : ""}`} key={reservation.id}><button className="reservation-card-main" onClick={() => selectReservation(product)}><strong>{productName(product, t)}</strong><span>{formatCurrency(locale, product.priceKrw)} · {status}</span><span>{tr(t, "marketplace:seller")}: {product.seller ?? "—"}</span><span><CalendarDays size={14}/>{reservation.pickupDate ? `${reservation.pickupDate} ${reservation.pickupStartTime}–${reservation.pickupEndTime}` : tr(t, "marketplace:pickupNotSet")}</span><span><MapPin size={14}/>{productPickup(product, t)}</span></button>{reservation.status === "active" && <div className="reservation-card-actions"><button className="secondary" onClick={() => editReservation(product, reservation)}>{tr(t, "marketplace:changePickup")}</button><button className="secondary" onClick={() => cancelReservation(product)}>{tr(t, "marketplace:cancelReservation")}</button></div>}</article>; })}</div> : <EmptyState icon={CalendarClock} text={locale === "ko" ? "예약한 상품이 없습니다." : locale === "ja" ? "予約した商品はありません。" : locale === "zh-CN" ? "暂无预约商品。" : legacyCopy(locale, "You have no reservations yet.")}/>}</section>;
 }
 
-function PickupScheduleModal({ t, product, initial, close, reserve }: { t: TFunction; product: MarketProduct; initial?: LocalReservation; close: () => void; reserve: (pickup: PickupSchedule) => void }) {
+function PickupScheduleModal({ t, product, initial, close, reserve, busy, issue, check }: { t: TFunction; product: MarketProduct; initial?: LocalReservation; close: () => void; reserve: (pickup: PickupSchedule) => void; busy: boolean; issue: ReservationIssue | null; check: () => void }) {
   const [error, setError] = useState(false);
   const submit = (event: React.FormEvent<HTMLFormElement>) => { event.preventDefault(); const values = new FormData(event.currentTarget); const pickup = { pickupDate: String(values.get("pickupDate") || ""), pickupStartTime: String(values.get("pickupStartTime") || ""), pickupEndTime: String(values.get("pickupEndTime") || "") }; if (!pickup.pickupDate || !pickup.pickupStartTime || !pickup.pickupEndTime || pickup.pickupEndTime <= pickup.pickupStartTime) { setError(true); return; } reserve(pickup); };
-  return <Modal close={close} label={tr(t, "marketplace:pickupScheduleTitle")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><form onSubmit={submit}><h2>{tr(t, "marketplace:pickupScheduleTitle")}</h2><p>{product.name ? product.name : tr(t, product.nameKey as TranslationKey)}</p><label className="field"><span>{tr(t, "marketplace:pickupDate")}</span><input name="pickupDate" type="date" min={localIsoDate()} defaultValue={initial?.pickupDate ?? ""} required/></label><div className="time-fields"><label className="field"><span>{tr(t, "marketplace:pickupStart")}</span><input name="pickupStartTime" type="time" defaultValue={initial?.pickupStartTime ?? ""} required/></label><label className="field"><span>{tr(t, "marketplace:pickupEnd")}</span><input name="pickupEndTime" type="time" defaultValue={initial?.pickupEndTime ?? ""} required/></label></div>{error && <p className="error-text" role="alert">{tr(t, "validation:pickupScheduleRequired")}</p>}<button className="primary full" type="submit">{tr(t, initial ? "marketplace:savePickup" : "marketplace:confirmReservation")}</button></form></Modal>;
+  return <Modal close={close} label={tr(t, "marketplace:pickupScheduleTitle")}><button className="modal-close" disabled={busy} onClick={close} aria-label={tr(t, "common:close")}><X/></button><form onSubmit={submit} aria-busy={busy}><h2>{tr(t, "marketplace:pickupScheduleTitle")}</h2><p>{product.name ? product.name : tr(t, product.nameKey as TranslationKey)}</p><label className="field"><span>{tr(t, "marketplace:pickupDate")}</span><input name="pickupDate" type="date" min={localIsoDate()} defaultValue={initial?.pickupDate ?? ""} readOnly={busy || Boolean(issue)} required/></label><div className="time-fields"><label className="field"><span>{tr(t, "marketplace:pickupStart")}</span><input name="pickupStartTime" type="time" defaultValue={initial?.pickupStartTime ?? ""} readOnly={busy || Boolean(issue)} required/></label><label className="field"><span>{tr(t, "marketplace:pickupEnd")}</span><input name="pickupEndTime" type="time" defaultValue={initial?.pickupEndTime ?? ""} readOnly={busy || Boolean(issue)} required/></label></div>{error && <p className="error-text" role="alert">{tr(t, "validation:pickupScheduleRequired")}</p>}{issue && <div className="error-text reservation-feedback" role="alert"><p>{tr(t, `marketplace:reservation${issue[0].toUpperCase()}${issue.slice(1)}`)}</p>{issue === "uncertain" && <button type="button" className="secondary" disabled={busy} onClick={check}>{tr(t, "marketplace:checkReservation")}</button>}</div>}<button className="primary full" disabled={busy || issue === "uncertain" || issue === "inactive" || issue === "rejected"} type="submit">{tr(t, busy ? "common:saving" : issue === "notFound" ? "marketplace:retryReservation" : initial ? "marketplace:savePickup" : "marketplace:confirmReservation")}</button></form></Modal>;
 }
 
 function ReportModal({ t, product, reports, close, submit }: { t: TFunction; product: MarketProduct; reports: ReportDraft[]; close: () => void; submit: (report: Omit<ReportDraft, "productId" | "createdAt" | "status">) => void }) {

@@ -108,6 +108,13 @@
     }
   },
   "marketplace": {
+    "reservationRejected": "The request was rejected. No reservation was confirmed. Close this window and check the listing.",
+    "reservationUncertain": "The outcome is unknown. It may have been saved. Check the server before retrying the same request.",
+    "reservationNotFound": "The requested reservation or schedule change is not confirmed yet. You can retry the same request.",
+    "reservationInactive": "This reservation is cancelled, expired or completed. It was not confirmed as active.",
+    "checkReservation": "Check server reservation",
+    "retryReservation": "Retry same request",
+    "reservationExpired": "Expired reservation",
     "eyebrow": "CAMPUS MARKETPLACE",
     "title": "One student’s farewell is another’s fresh start",
     "body": "List and reserve items without signing in. Sample items and live listings are clearly labeled.",

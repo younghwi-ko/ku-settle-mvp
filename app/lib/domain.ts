@@ -69,9 +69,8 @@ export function isPickupPast(reservation: Pick<{ pickupDate: string; pickupEndTi
   return !Number.isNaN(end.getTime()) && end.getTime() < now.getTime();
 }
 export function isOwnedMarketplaceProduct(product: Pick<MarketProduct, "userCreated" | "source" | "ownedByCurrentUser">, appMode: AppMode) {
-  return appMode === "authenticated"
-    ? product.source === "live" && product.ownedByCurrentUser === true
-    : product.userCreated === true && product.source !== "sample";
+  if (product.source === "live") return product.ownedByCurrentUser === true;
+  return appMode !== "authenticated" && product.userCreated === true && product.source !== "sample";
 }
 export function toDbHousing(value: Housing): DbHousing { return value === "dorm" ? "dormitory" : "off_campus"; }
 export function fromDbHousing(value: DbHousing | null): Housing { return value === "off_campus" ? "off-campus" : "dorm"; }

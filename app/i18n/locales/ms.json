@@ -316,6 +316,13 @@
     }
   },
   "marketplace": {
+    "reservationRejected": "Permintaan ditolak. Tempahan belum disahkan. Tutup tetingkap dan semak penyenaraian.",
+    "reservationUncertain": "Keputusan belum diketahui. Data mungkin telah disimpan. Semak pelayan sebelum mencuba permintaan yang sama.",
+    "reservationNotFound": "Tempahan atau perubahan jadual belum disahkan. Anda boleh mencuba permintaan yang sama.",
+    "reservationInactive": "Tempahan ini dibatalkan, tamat tempoh atau selesai. Ia tidak disahkan sebagai aktif.",
+    "checkReservation": "Semak tempahan pelayan",
+    "retryReservation": "Cuba semula permintaan sama",
+    "reservationExpired": "Tempahan tamat tempoh",
     "eyebrow": "PASARAN KAMPUS",
     "title": "Barang yang tidak lagi diperlukan seorang pelajar mungkin berguna kepada pelajar lain",
     "body": "Senaraikan dan tempah item tanpa log masuk. Item contoh dan senarai sebenar ditandakan dengan jelas.",

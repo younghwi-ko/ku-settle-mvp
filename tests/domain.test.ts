@@ -17,6 +17,8 @@ describe("domain validation and migration", () => {
     expect(isOwnedMarketplaceProduct({ userCreated: true, source: "sample" }, "demo")).toBe(false);
     expect(isOwnedMarketplaceProduct({ userCreated: true, source: "live", ownedByCurrentUser: true }, "authenticated")).toBe(true);
     expect(isOwnedMarketplaceProduct({ userCreated: true, source: "live", ownedByCurrentUser: false }, "authenticated")).toBe(false);
+    expect(isOwnedMarketplaceProduct({ userCreated: true, source: "live", ownedByCurrentUser: false }, "guest")).toBe(false);
+    expect(isOwnedMarketplaceProduct({ userCreated: true, source: "live", ownedByCurrentUser: true }, "guest")).toBe(true);
   });
   it("creates encoded Google Maps links and validates image data", () => {
     expect(googleMapsSearchUrl("고려대 정문 & Gate")).toContain(encodeURIComponent("고려대 정문 & Gate"));

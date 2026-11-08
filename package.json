@@ -17,6 +17,7 @@
     "test:integration": "node scripts/integration-support.mjs",
     "test:integration:browser": "node scripts/integration-support-browser.mjs",
     "test:demo:browser": "node scripts/demo-browser-regression.mjs",
+    "test:reservation:browser": "node scripts/reservation-browser-regression.mjs",
     "check:auth-signup": "node scripts/check-auth-signup-config.mjs",
     "test:migration": "vitest run tests/migration.test.ts",
     "audit:anon": "node scripts/audit-anon-supabase.mjs",

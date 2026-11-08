@@ -316,6 +316,13 @@
     }
   },
   "marketplace": {
+    "reservationRejected": "So‘rov rad etildi. Band qilish tasdiqlanmadi. Oynani yoping va e’lon holatini tekshiring.",
+    "reservationUncertain": "Natija noma’lum. Ma’lumot saqlangan bo‘lishi mumkin. Ayni so‘rovni takrorlashdan oldin serverni tekshiring.",
+    "reservationNotFound": "So‘ralgan band qilish yoki vaqt o‘zgarishi hali tasdiqlanmadi. Ayni so‘rovni qayta yuborishingiz mumkin.",
+    "reservationInactive": "Bu band qilish bekor qilingan, muddati tugagan yoki yakunlangan. Faol deb tasdiqlanmadi.",
+    "checkReservation": "Serverdagi band qilishni tekshirish",
+    "retryReservation": "Ayni so‘rovni qayta yuborish",
+    "reservationExpired": "Muddati tugagan band qilish",
     "eyebrow": "KAMPUS BOZORI",
     "title": "Bir talabaning ortiqcha buyumi boshqasiga kerak bo‘lishi mumkin",
     "body": "Kirishsiz mahsulot joylang va band qiling. Namuna va haqiqiy e’lonlar alohida ko‘rsatiladi.",

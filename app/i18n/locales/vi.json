@@ -316,6 +316,13 @@
     }
   },
   "marketplace": {
+    "reservationRejected": "Yêu cầu bị từ chối. Chưa xác nhận đặt trước. Hãy đóng cửa sổ và kiểm tra tin đăng.",
+    "reservationUncertain": "Chưa rõ kết quả. Dữ liệu có thể đã được lưu. Hãy kiểm tra máy chủ trước khi gửi lại cùng yêu cầu.",
+    "reservationNotFound": "Chưa xác nhận đặt trước hoặc đổi lịch. Bạn có thể gửi lại cùng yêu cầu.",
+    "reservationInactive": "Đặt trước này đã hủy, hết hạn hoặc hoàn tất. Không được xác nhận là đang hoạt động.",
+    "checkReservation": "Kiểm tra đặt trước trên máy chủ",
+    "retryReservation": "Gửi lại cùng yêu cầu",
+    "reservationExpired": "Đặt trước hết hạn",
     "eyebrow": "CHỢ SINH VIÊN",
     "title": "Đồ không còn dùng của một sinh viên có thể hữu ích cho người khác",
     "body": "Đăng và đặt trước sản phẩm mà không cần đăng nhập. Dữ liệu mẫu và sản phẩm thật được phân biệt rõ.",

@@ -8,7 +8,8 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   const { id } = await context.params; if (!uuid(id)) return apiError("invalid_reservation_id", 422);
   const body = await jsonBody(request); if (!record(body)) return apiError("invalid_reservation", 422);
   const client = serverClient(); if (!client) return apiError("server_storage_not_configured", 503);
-  const { data: reservation } = await client.from("guest_reservations").select("*").eq("id", id).maybeSingle();
+  const { data: reservation, error: loadError } = await client.from("guest_reservations").select("*").eq("id", id).maybeSingle();
+  if (loadError) return apiError("reservation_load_failed", 502);
   if (!reservation) return apiError("reservation_not_found", 404);
   const { data: listing } = await client.from("guest_listings").select("id,session_id,status").eq("id", reservation.listing_id).single();
   const isBuyer = reservation.buyer_session_id === session.id; const isSeller = listing?.session_id === session.id;
@@ -26,7 +27,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   const date = typeof fields.pickup_date === "string" ? fields.pickup_date : String(reservation.pickup_date ?? "").slice(0, 10);
   const start = typeof fields.pickup_start_time === "string" ? fields.pickup_start_time : String(reservation.pickup_start_time ?? "").slice(0, 5);
   const end = typeof fields.pickup_end_time === "string" ? fields.pickup_end_time : String(reservation.pickup_end_time ?? "").slice(0, 5);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(start) || !/^\d{2}:\d{2}$/.test(end) || end < start) return apiError("invalid_pickup_schedule", 422);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(start) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(end) || end <= start) return apiError("invalid_pickup_schedule", 422);
   const { data, error } = await client.from("guest_reservations").update({ ...fields, version: reservation.version + 1 }).eq("id", id).eq("buyer_session_id", session.id).eq("status", "active").eq("version", reservation.version).select("*").single();
   return error ? apiError("reservation_update_failed", 409) : NextResponse.json({ reservation: data });
 }

@@ -103,6 +103,13 @@
     }
   },
   "marketplace": {
+    "reservationRejected": "预约被拒绝，尚未确认。请关闭窗口并检查商品状态。",
+    "reservationUncertain": "处理结果未知，可能已保存。请先查询服务器再重试同一请求。",
+    "reservationNotFound": "尚未确认此预约或时间修改，可以重试同一请求。",
+    "reservationInactive": "此预约已取消、过期或完成，未确认为有效预约。",
+    "checkReservation": "查询服务器预约",
+    "retryReservation": "重试同一请求",
+    "reservationExpired": "已过期预约",
     "eyebrow": "校园二手集市",
     "title": "一位同学的离开，也可以成为另一位同学的新开始",
     "body": "无需账号即可体验发布和预约流程的Demo模式。不进行支付或外部消息发送。",
