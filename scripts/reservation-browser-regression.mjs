@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
+import { readFileSync } from "node:fs";
 
 // 실제 Chromium UI + 모의 HTTP. 모든 API 요청을 가로채며 실제 DB 검증이 아니다.
 const base = new URL(process.env.RESERVATION_TEST_BASE_URL ?? "http://localhost:3001");
@@ -9,17 +10,19 @@ const reservationId = "22222222-2222-4222-8222-222222222222";
 const name = "예약 검증용 가상 상품";
 const initialListing = { id: productId, item_name: name, seller_name: "Fixture", price_krw: 1000, category: "home", condition: "good", pickup_location: "KU", status: "active" };
 const reservation = (status = "active", end = "11:00") => ({ id: reservationId, listing_id: productId, buyer_name: "Fixture", status, created_at: "2026-01-01T00:00:00Z", expires_at: "2099-01-01T12:00:00Z", pickup_date: "2099-01-01", pickup_start_time: "10:00:00", pickup_end_time: `${end}:00` });
-const copy = { ko: { reserve: "예약하기", confirm: "예약 확정", check: "서버 예약 확인", retry: "같은 요청 재시도", edit: "픽업 일정 변경", save: "픽업 일정 저장", cancel: "예약 취소" }, en: { reserve: "Reserve item", confirm: "Confirm reservation", check: "Check server reservation", retry: "Retry same request", edit: "Change pickup time", save: "Save pickup time", cancel: "Cancel reservation" } };
+const copy = { ko: { reserve: "예약하기", check: "서버 예약 확인", retry: "같은 요청 재시도" }, en: { reserve: "Reserve item", check: "Check server reservation", retry: "Retry same request" } };
 const browser = await chromium.launch({ headless: true });
 let passed = 0;
 const scenarios = ["success", "reject", "lost-found", "lost-retry", "lookup-failure", "server-502", "cancelled", "expired", "duplicate", "edit-cancel", "edit-lost", "cancel-lost", "cancel-reject"];
-const cases = [...scenarios.map((s) => [s, "ko", 390]), ["success", "en", 390], ["success", "ko", 1440], ["success", "en", 1440], ["success", "ko", 320], ["success", "en", 320], ["lookup-failure", "ko", 320], ["lookup-failure", "en", 320]];
+const cases = [...["initial-reserved-cancel", "initial-reserved-reject", "initial-reserved-other", "initial-reserved-sold", "initial-reserved-hidden", "initial-reserved-refetch"].flatMap((s) => ["ko", "en"].map((l) => [s, l, 390])), ...scenarios.map((s) => [s, "ko", 390]), ["success", "en", 390], ["success", "ko", 1440], ["success", "en", 1440], ["success", "ko", 320], ["success", "en", 320], ["lookup-failure", "ko", 320], ["lookup-failure", "en", 320]];
 try {
   for (const [scenario, locale, width] of cases) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, serviceWorkers: "block" });
     await context.addInitScript(() => localStorage.setItem("ku-settle-setup-skipped:guest", "1"));
-    let posts = 0; let patches = 0; let lookups = 0; let current = null; let release;
-    const keys = []; let stateLoaded = false;
+    const initialReserved = scenario.startsWith("initial-reserved");
+    let listing = { ...initialListing, status: initialReserved ? "reserved" : "active" };
+    let posts = 0; let patches = 0; let lookups = 0; let current = initialReserved ? reservation() : null; let release;
+    const keys = []; let stateLoaded = false; let refetchFailed = false;
     await context.route("**/*", async (route) => {
       const request = route.request(); const url = new URL(request.url());
       if (url.origin !== base.origin) return route.abort();
@@ -28,8 +31,11 @@ try {
       const path = url.pathname.replace(/\/$/, "");
       if (path === "/api/session/bootstrap") return reply({ ok: true });
       if (path === "/api/account/config") return reply({ emailDeliveryEnabled: false, signupEnabled: false });
-      if (path === "/api/session/state" && request.method() === "GET") { stateLoaded = true; return reply({ listings: [initialListing], myListings: [], reservations: current ? [current] : [], serviceRequests: [], lifecycle: [] }); }
-      if (path === "/api/marketplace/listings") return reply({ listings: [initialListing], pagination: { page: 1, pageSize: 20, total: 1, totalPages: 1 } });
+      if (path === "/api/session/state" && request.method() === "GET") {
+        if (scenario === "initial-reserved-refetch" && patches && !refetchFailed) { refetchFailed = true; return reply({}, 502); }
+        stateLoaded = true; return reply({ listings: listing.status === "hidden" ? [] : [listing], myListings: [], reservations: current ? [current] : [], serviceRequests: [], lifecycle: [] });
+      }
+      if (path === "/api/marketplace/listings") return reply({ listings: listing.status === "hidden" ? [] : [listing], pagination: { page: 1, pageSize: 20, total: 1, totalPages: 1 } });
       if (path === `/api/marketplace/listings/${productId}/reservations`) {
         if (request.method() === "GET") { lookups++; return scenario === "lookup-failure" ? reply({}, 502) : reply({ reservation: current }); }
         if (request.method() === "POST") {
@@ -37,17 +43,19 @@ try {
           assert.ok(stateLoaded, "초기 상태 조회 전 예약 요청");
           if (scenario === "reject") return reply({ error: "listing_unavailable" }, 409);
           if (scenario === "server-502") return reply({}, 502);
-          if (["lost-found", "lookup-failure"].includes(scenario)) { current = reservation(); return route.abort(); }
+          if (["lost-found", "lookup-failure"].includes(scenario)) { current = reservation(); listing.status = "reserved"; return route.abort(); }
           if (scenario === "lost-retry" && posts === 1) return route.abort();
           if (scenario === "duplicate") await new Promise((resolve) => { release = resolve; });
           current = reservation(["cancelled", "expired"].includes(scenario) ? scenario : "active");
+          listing.status = current.status === "active" ? "reserved" : "active";
           return reply({ reservation: current }, 201);
         }
       }
       if (path === `/api/reservations/${reservationId}` && request.method() === "PATCH") {
         patches++; const body = request.postDataJSON();
-        if (scenario === "cancel-reject") return reply({}, 409);
+        if (["cancel-reject", "initial-reserved-reject"].includes(scenario)) return reply({}, 409);
         current = body.status === "cancelled" ? reservation("cancelled", "12:00") : reservation("active", "12:00");
+        if (body.status === "cancelled") listing = { ...listing, status: scenario === "initial-reserved-other" ? "reserved" : scenario === "initial-reserved-sold" ? "sold" : scenario === "initial-reserved-hidden" ? "hidden" : "active" };
         if (["edit-lost", "cancel-lost"].includes(scenario)) return route.abort();
         return reply({ reservation: current });
       }
@@ -64,6 +72,51 @@ try {
     try {
       await page.goto(`${base.origin}/?lang=${locale}&page=marketplace`, { waitUntil: "networkidle" });
       await page.locator(".product-card").filter({ hasText: name }).click();
+      if (initialReserved) {
+        const card = page.locator(".product-card").filter({ hasText: name });
+        const labels = JSON.parse(readFileSync(new URL(`../app/i18n/locales/${locale}.json`, import.meta.url), "utf8"));
+        const settled = () => page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+        const snapshot = async () => ({ cardReserved: await card.locator(".availability").evaluate((el) => el.classList.contains("reserved")), detailReserved: await page.locator(".modal .availability").evaluate((el) => el.classList.contains("reserved")), cardLabel: await card.locator(".availability").textContent(), detailLabel: await page.locator(".modal .availability").textContent() });
+        const initial = { cardReserved: true, detailReserved: true, cardLabel: labels.common.reserved, detailLabel: labels.common.reserved };
+        assert.deepEqual(await snapshot(), initial);
+        await page.locator(".modal .product-actions .primary").click();
+        const rejected = scenario === "initial-reserved-reject";
+        if (rejected) { await page.locator(".reservation-result").waitFor(); assert.equal(await page.locator(".service-status[role=status]").count(), 0); }
+        else if (scenario === "initial-reserved-refetch") {
+          await page.locator(".reservation-result").waitFor(); await settled();
+          assert.deepEqual(await snapshot(), initial, "상품 재조회 실패를 Available로 추정함");
+          assert.equal(await page.locator(".service-status[role=status]").count(), 0, "상품 재조회 실패에 성공 배너 표시");
+          await page.locator(".reservation-result button").click();
+          await page.locator(".reservation-result").waitFor({ state: "hidden" });
+        } else await page.locator(".service-status[role=status]").waitFor();
+        await settled();
+        if (listing.status === "hidden") {
+          await page.locator(".modal").waitFor({ state: "hidden" });
+          assert.equal(await card.count(), 0); assert.equal(new URL(page.url()).searchParams.has("listing"), false);
+          await page.reload({ waitUntil: "networkidle" });
+          assert.equal(await card.count(), 0); assert.equal(await page.locator(".modal").count(), 0);
+        } else {
+        const reserved = listing.status === "reserved" || listing.status === "sold";
+        const label = listing.status === "sold" ? labels.marketplace.sold : listing.status === "reserved" ? labels.common.reserved : labels.common.available;
+        const expected = { cardReserved: reserved, detailReserved: reserved, cardLabel: label, detailLabel: label };
+        assert.equal(listing.status, rejected || scenario === "initial-reserved-other" ? "reserved" : scenario === "initial-reserved-sold" ? "sold" : "active");
+        assert.deepEqual(await snapshot(), expected, "취소 후 렌더링·상세 동기화가 끝나도 서버 상태와 불일치");
+        if (listing.status === "sold") {
+          assert.equal(await page.locator(".modal .product-actions .primary").isDisabled(), true);
+        }
+        if (scenario === "initial-reserved-other") assert.equal(await page.locator(".modal .product-actions .primary").isDisabled(), true, "타인의 예약을 취소할 수 있는 버튼 표시");
+        await page.locator(".modal-close").click();
+        await page.locator(".modal").waitFor({ state: "hidden" });
+        await card.click(); await page.locator(".modal").waitFor(); await settled();
+        assert.deepEqual(await snapshot(), expected, "닫았다 다시 연 상세 불일치");
+        await page.reload({ waitUntil: "networkidle" }); await page.locator(".modal").waitFor(); await settled();
+        assert.deepEqual(await snapshot(), expected, "서버 응답 기반 새로고침 불일치");
+        }
+        assert.equal((await data()).preferences.reservations[0].status, rejected ? "active" : "cancelled");
+        assert.equal(posts, 0); assert.equal(patches, 1);
+        console.log(`PASS 모의 HTTP 브라우저: ${scenario}, ${locale}, ${width}px`); passed++;
+        continue;
+      }
       await page.locator(".modal").last().getByRole("button", { name: copy[locale].reserve, exact: true }).click();
       const form = page.locator(".modal form").last();
       await form.locator('[name="pickupDate"]').fill("2099-01-01");
