@@ -156,7 +156,22 @@ try {
       await page.locator(".modal-backdrop").click({ position: { x: 2, y: 2 } });
       await dialog.waitFor({ state: "hidden" });
       assert.equal(new URL(page.url()).searchParams.has("listing"), false);
-      console.log(`PASS ${locale} ${width}px: home bounds, ARC bounds/progress/history/target, listing maps/share/close/history`);
+      // 실제 관리자 메뉴 진입과 현재 인증 화면만 확인한다. 인증 요청은 보내지 않는다.
+      await load(page, urlFor({ lang: locale }));
+      await page.locator('.profile-button[aria-expanded]').click();
+      assert.equal(await page.getByRole("menuitem", { name: locale === "ko" ? "관리자 패널" : "Admin panel", exact: true }).count(), 0, "일반 게스트에게 데모 관리자 메뉴가 표시됨");
+      // 새 테스트 컨텍스트의 로컬 데이터만 초기화해 기존 데모 모드 진입을 따른다.
+      await page.getByRole("menuitem", { name: locale === "ko" ? "내 데이터 초기화" : "Reset my data", exact: true }).click();
+      await page.locator(".modal .danger-button").click();
+      await page.locator('.profile-button[aria-expanded]').click();
+      await page.getByRole("menuitem", { name: locale === "ko" ? "관리자 패널" : "Admin panel", exact: true }).click();
+      const admin = page.locator(".admin-server-panel");
+      await admin.waitFor();
+      assert.equal(await admin.locator('.admin-auth-form input:not([type="password"])').count(), 1, "현재 관리자 화면의 운영자 이름 입력이 없음");
+      assert.equal(await admin.locator('input[type="password"]').count(), 1);
+      assert.equal(await admin.locator(".admin-auth-form button").isDisabled(), true);
+      assert.equal(await page.locator(".admin-server-panel-full").count(), 0, "인증 없이 관리자 데이터 화면이 열림");
+      console.log(`PASS ${locale} ${width}px: home bounds, ARC bounds/progress/history/target, listing maps/share/close/history, admin menu/auth gate`);
     } catch (error) {
       failures.push(`${locale} ${width}px: ${error.message}`);
       console.error(`FAIL ${locale} ${width}px: ${error.stack}`);
