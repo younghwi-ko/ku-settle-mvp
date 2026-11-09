@@ -7,6 +7,7 @@ out/
 supabase/.temp/
 .env*
 !.env.example
+!.env.integration.example
 *.log
 .DS_Store
 work/

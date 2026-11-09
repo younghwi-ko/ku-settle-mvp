@@ -6,7 +6,7 @@ export async function sessionOrError() {
   if (!serverClient()) return { session: null, response: apiError("server_storage_not_configured", 503) } as const;
   try {
     const session = await getOrCreateServerSession();
-    return session ? { session, response: null } as const : { session: null, response: apiError("server_storage_not_configured", 503) } as const;
+    return session ? { session, response: null } as const : { session: null, response: apiError("session_unavailable", 503) } as const;
   } catch { return { session: null, response: apiError("session_unavailable", 503) } as const; }
 }
 export async function jsonBody(request: Request) { try { return await request.json() as unknown; } catch { return null; } }

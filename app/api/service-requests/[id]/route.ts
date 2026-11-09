@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { apiError, jsonBody, optionalText, record, sessionOrError, uuid } from "@/app/lib/server-api";
 import { requireSameOrigin, serverClient } from "@/app/lib/server-session";
+import { publicServiceRequest } from "@/app/lib/public-service-request";
 const allowed = new Set(["not-selected", "method-selected", "consultation-ready", "quote-viewed", "application-ready", "in-progress", "completed", "cancelled"]);
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   if (!await requireSameOrigin(request)) return apiError("invalid_origin", 403);
@@ -13,8 +14,8 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   const userCancellation = status === "cancelled" && ["not-selected", "method-selected", "consultation-ready", "quote-viewed", "application-ready"].includes(current.status);
   if (!allowed.has(status) || (status !== current.status && !userCancellation)) return apiError("invalid_service_transition", 422);
   const updates: Record<string, unknown> = { status, version: current.version + 1, updated_at: new Date().toISOString() };
-  for (const [input, column, max] of [["deliveryMethod", "delivery_method", 20], ["origin", "origin", 200], ["destination", "destination", 200], ["storageDuration", "storage_duration", 10], ["storageLocation", "storage_location", 20], ["estimatedCostLabel", "estimated_cost_label", 120], ["termsNote", "terms_note", 500]] as const) if (body[input] !== undefined) updates[column] = optionalText(body[input], max);
-  const { data, error } = await client.from("guest_service_requests").update(updates).eq("id", id).eq("session_id", session.id).eq("version", current.version).select("*").single(); return error ? apiError("service_request_conflict", 409) : NextResponse.json({ serviceRequest: data });
+  for (const [input, column, max] of [["deliveryMethod", "delivery_method", 20], ["origin", "origin", 200], ["destination", "destination", 200], ["storageDuration", "storage_duration", 10], ["storageLocation", "storage_location", 20], ["termsNote", "terms_note", 500]] as const) if (body[input] !== undefined) updates[column] = optionalText(body[input], max);
+  const { data, error } = await client.from("guest_service_requests").update(updates).eq("id", id).eq("session_id", session.id).eq("version", current.version).select("*").single(); return error ? apiError("service_request_conflict", 409) : NextResponse.json({ serviceRequest: publicServiceRequest(data) });
 }
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   const headers = new Headers(request.headers);

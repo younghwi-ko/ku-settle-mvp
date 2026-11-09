@@ -68,7 +68,12 @@ export async function getOrCreateServerSession() {
   const existing = jar.get(SESSION_COOKIE)?.value;
   if (existing && /^[A-Za-z0-9_-]{40,100}$/.test(existing)) {
     const tokenHash = hashToken(existing);
-    const { data } = await client.from("anonymous_sessions").select("id, token_hash").eq("token_hash", tokenHash).is("revoked_at", null).maybeSingle();
+    let data: { id: string } | null;
+    try {
+      const lookup = await client.from("anonymous_sessions").select("id, token_hash").eq("token_hash", tokenHash).is("revoked_at", null).maybeSingle();
+      if (lookup.error) return null;
+      data = lookup.data;
+    } catch { return null; }
     if (data) {
       await client.from("anonymous_sessions").update({ last_seen_at: new Date().toISOString() }).eq("id", data.id);
       return { id: data.id as string, tokenHash } satisfies ServerSession;

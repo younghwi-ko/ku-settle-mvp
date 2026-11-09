@@ -32,7 +32,7 @@ describe("anonymous server input validation", () => {
   });
 
   it("keeps administrator notes out of the public session payload", () => {
-    expect(publicStateRoute).toContain('estimated_cost_label,terms_note,version,created_at,updated_at');
+    expect(publicStateRoute).toContain('.select(publicServiceRequestColumns)');
     expect(publicStateRoute).not.toContain('admin_note,admin_updated_at,admin_updated_by');
   });
 

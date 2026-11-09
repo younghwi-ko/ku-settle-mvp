@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { publicServiceRequestColumns } from "@/app/lib/public-service-request";
 import { apiError, jsonBody, record, sessionOrError, text, validImage } from "@/app/lib/server-api";
 import { requireSameOrigin, serverClient } from "@/app/lib/server-session";
 import { expireReservations } from "@/app/lib/reservation-expiry";
@@ -16,7 +17,7 @@ export async function GET() {
     client.from("guest_listings").select("*").in("status", ["active", "reserved", "sold"]).order("created_at", { ascending: false }),
     client.from("guest_listings").select("*").eq("session_id", session.id).order("updated_at", { ascending: false }),
     client.from("guest_reservations").select("*").eq("buyer_session_id", session.id).neq("status", "soft_deleted").order("updated_at", { ascending: false }),
-    client.from("guest_service_requests").select("id,reference_code,listing_id,task_id,service_type,status,delivery_method,origin,destination,storage_duration,storage_location,estimated_cost_label,terms_note,version,created_at,updated_at").eq("session_id", session.id).neq("status", "soft_deleted").order("updated_at", { ascending: false }),
+    client.from("guest_service_requests").select(publicServiceRequestColumns).eq("session_id", session.id).neq("status", "soft_deleted").order("updated_at", { ascending: false }),
     client.from("guest_lifecycle_progress").select("*").eq("session_id", session.id),
     client.from("guest_preferences").select("*").eq("session_id", session.id).maybeSingle(),
   ]);

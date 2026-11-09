@@ -37,6 +37,10 @@ TEST_INTEGRATION_SECRET=<same-test-only-secret>
 
 브라우저 검증을 처음 준비할 때는 테스트 개발 환경에서만 `pnpm add -D playwright`와 `pnpm exec playwright install chromium`을 실행합니다. 브라우저 러너는 390×844 모바일 뷰포트에서 실제 UI를 열고, `/api/integration/faults`에 같은 origin·테스트 비밀값으로 1회 재조회 실패를 arm합니다. 이 endpoint와 fault 상태는 `INTEGRATION_TEST_MODE=true`인 비-Production 환경에서만 동작합니다.
 
+브라우저 러너도 **앱을 열기 전에** Node의 HTTP 요청으로 같은 origin의 `/api/integration/environment/`를 확인합니다. HTTP 200, `isolated:true`, 기대한 프로젝트 ref가 모두 일치해야 브라우저를 시작합니다. 이 확인에는 토큰·쿠키를 보내지 않고 리디렉션을 따라가지 않습니다. 실패·잘못된 ref·잘못된 응답·리디렉션이면 종료 코드 2로 끝나며 앱 초기화·세션 생성·관리자 인증·데이터 변경·cleanup 요청을 보내지 않습니다. localhost만으로 안전하다고 간주하지 않습니다.
+
+`tests/integration-browser-safety.test.ts`는 격리 확인 실패 시 확인 GET 한 건만 발생하는지 실제 러너 프로세스와 로컬 HTTP 대역으로 검사합니다. 정상 확인 뒤에만 대역 페이지를 여는 양성 대조도 포함하지만, 이는 Supabase 통합 검증 통과가 아닙니다. 새 clone에는 비밀값이 비어 있는 `.env.integration.example`만 포함되며 실제 `.env.local`은 계속 제외됩니다.
+
 러너는 테스트 전용 문의를 생성한 뒤 검증이 끝나면 관리자 API로 soft-delete하여 격리 DB를 정리합니다. 제목·본문·쿠키·토큰은 로그에 출력하지 않습니다. `temporary-fleet-maroon-2opm8kt.vercel.app`과 모든 `*.vercel.app` 주소는 운영 오접속 방지를 위해 차단하며, 원격 격리 호스트는 `TEST_ALLOW_REMOTE=true TEST_CONFIRM_ISOLATED=true`를 함께 지정해야 합니다.
 
 ## 2. 요청 검증 순서

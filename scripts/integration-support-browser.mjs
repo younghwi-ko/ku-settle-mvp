@@ -16,6 +16,17 @@ if (parsedBase.protocol !== "http:" && parsedBase.protocol !== "https:") { conso
 if (parsedBase.hostname.endsWith(".vercel.app")) { console.error("browser integration setup failed: Production/temporary Vercel hosts are blocked."); process.exit(2); }
 const loopback = ["localhost", "127.0.0.1", "::1", "[::1]"].includes(parsedBase.hostname);
 if (!loopback && !(process.env.TEST_ALLOW_REMOTE === "true" && process.env.TEST_CONFIRM_ISOLATED === "true")) { console.error("browser integration setup failed: remote targets require TEST_ALLOW_REMOTE=true and TEST_CONFIRM_ISOLATED=true."); process.exit(2); }
+// 앱을 열기 전에 확인한다. 실패 시 브라우저·쿠키·인증·cleanup 경로를 만들지 않는다.
+try {
+  const response = await fetch(new URL("/api/integration/environment/", baseUrl), { headers: { origin: baseUrl }, redirect: "manual", signal: AbortSignal.timeout(10000) });
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(body?.isolated, true);
+  assert.equal(body?.projectRef, expectedProjectRef);
+} catch {
+  console.error("browser integration setup failed: isolated environment preflight failed; no app or data requests were sent.");
+  process.exit(2);
+}
 let playwright;
 try { playwright = await import("playwright"); } catch {
   console.error("browser integration setup failed: install the Playwright package and browser before running this test.");
@@ -66,10 +77,6 @@ try {
     await setupSkip.click();
     await setupSkip.waitFor({ state: "hidden" });
   }
-  const environment = await page.evaluate(async () => { const response = await fetch("/api/integration/environment", { cache: "no-store" }); return { status: response.status, body: await response.json().catch(() => null) }; });
-  assert.equal(environment.status, 200, "isolated environment check failed");
-  assert.equal(environment.body?.isolated, true, "app did not prove isolated mode");
-  assert.equal(environment.body?.projectRef, expectedProjectRef, "app Supabase project ref mismatch");
   await page.getByRole("button", { name: "운영 문의" }).click();
   await page.getByRole("heading", { name: "운영 문의" }).waitFor();
   await page.locator(".loading-state").waitFor({ state: "hidden" });

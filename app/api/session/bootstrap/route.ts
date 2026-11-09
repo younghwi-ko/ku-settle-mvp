@@ -6,7 +6,7 @@ export async function POST() {
   if (!serverClient()) return apiError("server_storage_not_configured", 503);
   try {
     const session = await getOrCreateServerSession();
-    if (!session) return apiError("server_storage_not_configured", 503);
+    if (!session) return apiError("session_unavailable", 503);
     return NextResponse.json({ sessionId: session.id, persistent: true });
   } catch { return apiError("session_unavailable", 503); }
 }

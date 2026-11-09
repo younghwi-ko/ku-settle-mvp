@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { apiError, jsonBody, optionalText, record, sessionOrError, uuid } from "@/app/lib/server-api";
 import { requireSameOrigin, serverClient } from "@/app/lib/server-session";
+import { publicServiceRequest } from "@/app/lib/public-service-request";
 const modes = new Set(["pickup", "delivery", "storage", "sale", "donation", "disposal"]);
 const statuses = new Set(["not-selected", "method-selected", "consultation-ready", "quote-viewed", "application-ready", "in-progress", "completed", "cancelled"]);
 export async function POST(request: Request) {
@@ -15,24 +16,24 @@ export async function POST(request: Request) {
   const listingId = body.listingId ?? null; const taskId = optionalText(body.taskId, 120); const query = client.from("guest_service_requests").select("*").eq("session_id", session.id).eq("service_type", body.serviceType);
   const existingResult = listingId ? await query.eq("listing_id", listingId).maybeSingle() : taskId ? await query.is("listing_id", null).eq("task_id", taskId).maybeSingle() : { data: null };
   const existing = existingResult.data;
-  const now = new Date().toISOString(); const payload = { session_id: session.id, listing_id: listingId, task_id: taskId, service_type: body.serviceType, status, delivery_method: optionalText(body.deliveryMethod, 20), origin: optionalText(body.origin, 200), destination: optionalText(body.destination, 200), storage_duration: optionalText(body.storageDuration, 10), storage_location: optionalText(body.storageLocation, 20), estimated_cost_label: optionalText(body.estimatedCostLabel, 120), terms_note: optionalText(body.termsNote, 500), idempotency_key: idempotencyKey, updated_at: now };
+  const now = new Date().toISOString(); const payload = { session_id: session.id, listing_id: listingId, task_id: taskId, service_type: body.serviceType, status, delivery_method: optionalText(body.deliveryMethod, 20), origin: optionalText(body.origin, 200), destination: optionalText(body.destination, 200), storage_duration: optionalText(body.storageDuration, 10), storage_location: optionalText(body.storageLocation, 20), terms_note: optionalText(body.termsNote, 500), idempotency_key: idempotencyKey, updated_at: now };
   if (existing) {
     const current = String(existing.status);
     const userCancellation = status === "cancelled" && ["not-selected", "method-selected", "consultation-ready", "quote-viewed", "application-ready"].includes(current);
     if (status !== current && !userCancellation) return apiError("invalid_service_transition", 409);
-    const unchanged = existing.status === payload.status && existing.delivery_method === payload.delivery_method && existing.origin === payload.origin && existing.destination === payload.destination && existing.storage_duration === payload.storage_duration && existing.storage_location === payload.storage_location && existing.estimated_cost_label === payload.estimated_cost_label && existing.terms_note === payload.terms_note;
-    if (idempotencyKey && existing.idempotency_key === idempotencyKey && unchanged) return NextResponse.json({ serviceRequest: existing });
+    const unchanged = existing.status === payload.status && existing.delivery_method === payload.delivery_method && existing.origin === payload.origin && existing.destination === payload.destination && existing.storage_duration === payload.storage_duration && existing.storage_location === payload.storage_location && existing.terms_note === payload.terms_note;
+    if (idempotencyKey && existing.idempotency_key === idempotencyKey && unchanged) return NextResponse.json({ serviceRequest: publicServiceRequest(existing) });
     const { data, error } = await client.from("guest_service_requests").update({ ...payload, version: existing.version + 1 }).eq("id", existing.id).eq("version", existing.version).select("*").single();
-    return error ? apiError("service_request_update_failed", 409) : NextResponse.json({ serviceRequest: data });
+    return error ? apiError("service_request_update_failed", 409) : NextResponse.json({ serviceRequest: publicServiceRequest(data) });
   }
-  if (idempotencyKey) { const { data: duplicate } = await client.from("guest_service_requests").select("*").eq("session_id", session.id).eq("idempotency_key", idempotencyKey).maybeSingle(); if (duplicate) return NextResponse.json({ serviceRequest: duplicate }); }
+  if (idempotencyKey) { const { data: duplicate } = await client.from("guest_service_requests").select("*").eq("session_id", session.id).eq("idempotency_key", idempotencyKey).maybeSingle(); if (duplicate) return NextResponse.json({ serviceRequest: publicServiceRequest(duplicate) }); }
   if (status !== "method-selected") return apiError("invalid_service_transition", 409);
   // The public reference must be unique independently of the request idempotency key.
   // A collision is unlikely, but retrying keeps the user-visible guarantee deterministic.
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const referenceCode = `REQ-${randomBytes(5).toString("hex").toUpperCase()}`;
     const { data, error } = await client.from("guest_service_requests").insert({ ...payload, reference_code: referenceCode, created_at: now, version: 1 }).select("*").single();
-    if (data && !error) return NextResponse.json({ serviceRequest: data }, { status: 201 });
+    if (data && !error) return NextResponse.json({ serviceRequest: publicServiceRequest(data) }, { status: 201 });
     if (error?.code !== "23505") return apiError("service_request_create_failed", 502);
   }
   return apiError("service_request_reference_unavailable", 503);
