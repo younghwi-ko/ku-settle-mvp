@@ -1,3 +1,4 @@
+import { reservationRpcError } from "@/app/lib/reservation-rpc";
 import { NextResponse } from "next/server";
 import { apiError, jsonBody, record, sessionOrError, uuid } from "@/app/lib/server-api";
 import { requireSameOrigin, serverClient } from "@/app/lib/server-session";
@@ -15,11 +16,13 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   const isBuyer = reservation.buyer_session_id === session.id; const isSeller = listing?.session_id === session.id;
   if (!isBuyer && !isSeller) return apiError("forbidden", 403);
   if (body.status === "cancelled") {
-    if (reservation.status !== "active") return NextResponse.json({ reservation });
-    const { data, error } = await client.from("guest_reservations").update({ status: "cancelled", cancelled_at: new Date().toISOString(), version: reservation.version + 1 }).eq("id", id).eq("version", reservation.version).select("*").single();
-    if (error) return apiError("reservation_update_failed", 409);
-    await client.from("guest_listings").update({ status: "active", availability: "available" }).eq("id", reservation.listing_id).eq("status", "reserved");
-    return NextResponse.json({ reservation: data });
+    const { data, error } = await client.rpc("transition_guest_reservation", {
+      p_id: id, p_session_id: session.id, p_status: "cancelled",
+      p_version: reservation.version, p_mode: "user",
+    });
+    if (error) return reservationRpcError(error, "reservation_update_failed");
+    if (!data?.reservation) return apiError("reservation_update_failed", 502);
+    return NextResponse.json({ reservation: data.reservation });
   }
   if (!isBuyer || (body.status !== undefined && body.status !== "active")) return apiError("invalid_reservation_update", 422);
   const fields: Record<string, unknown> = {};
