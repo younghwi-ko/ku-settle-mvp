@@ -59,9 +59,9 @@ supabase migration repair 202611100001 --status applied --db-url <테스트 Sess
 - 이전 앱 빌드와 모의 Chromium 회귀 32개/데모 6개 통과. 이번 이력/문서 작업을 새 빌드·브라우저 통과로 표시하지 않는다.
 - 실제 이메일 계정 로그인·운영 부하·실기기 검증은 위 근거에 포함되지 않는다.
 
-## 3. Vercel 실제 읽기 확인 — 차단·drain 입증은 미준비
+## 3. Vercel 사전 읽기 확인과 운영 조건
 
-2026-11-10 로그인된 Vercel Dashboard에서 아래 내용을 읽었다. 설정 저장·규칙 추가/Publish·Pause·Threshold의 Set·배포/복원은 실행하지 않았다. 소스의 전역 유지보수 기능과 `vercel.json`의 차단·cron·함수 실행 시간 설정은 없으며 새 코드를 추가하지 않았다.
+아래 표는 2026-11-10 **운영 승인 전** 로그인된 Vercel Dashboard에서 읽은 결과다. 그 읽기 단계에서는 설정 저장·Publish·Pause·Threshold·배포를 실행하지 않았다. 이후 실제 변경·검증 결과는 8절과 구분한다. 소스의 전역 유지보수 기능과 `vercel.json`의 차단·cron·함수 실행 시간 설정은 없으며 새 유지보수 코드를 추가하지 않았다.
 
 ### 프로젝트·배포 목록
 
@@ -121,7 +121,7 @@ HTTP 메서드가 GET이라고 읽기 전용으로 취급하면 안 된다. 운�
 
 현재 추적한 예약 경로에는 별도 cron/`after`/`waitUntil` 작업이 없다. 그렇다고 운영 외부 작업도 없다고 가정하지 않는다. 운영자 수동 SQL·외부 스크립트·다른 프로젝트의 같은 DB 연결은 별도 목록으로 확인하고 전환 중 중단한다. 공개 가입 플래그는 예약 쓰기 중지 장치가 아니다.
 
-## 5. 운영 실행 절차 — 별도 승인 후에만
+## 5. 운영 실행 절차 — 사용자 승인 및 관문 통과 후
 
 ### A. 적용 전 대상 고정
 
@@ -193,7 +193,7 @@ supabase db push --skip-vault --db-url <같은 승인된 URL>
 
 ### F. 새 앱에만 쓰기 재개
 
-1. D·E 증거를 검토한 담당자의 별도 재개 승인을 기록한다.
+1. D·E 증거를 검토한다. 이번에는 사용자가 조건 통과 시 재개까지 승인했으므로 추가 승인 질문 없이 진행한다. 이후 별도 작업에는 해당 작업의 승인 범위를 적용한다.
 2. 새 production alias·새 deployment만 대상으로 임시 차단을 해제한다. 구버전 hostname Deny와 API 고정 키 Deny는 유지한다. 프로젝트 전체를 일괄 Resume/규칙 삭제해 구버전까지 열지 않는다. 재개 후에도 고정 요청과 직접 구버전 URL에 대한 비변경 probe를 다시 확인한다.
 3. 신규 오류·충돌·정합성 후보를 관찰하되 운영 테스트 데이터를 만들지 않는다. 쓰기 재개와 함께 GET 지연 만료도 재개된다는 점을 기록한다.
 
@@ -214,9 +214,9 @@ supabase db push --skip-vault --db-url <같은 승인된 URL>
 - [x] 릴리스 파일 목록·커밋/푸시 및 실제 배포 승인 — **사용자가 조건부 운영 적용을 승인함**.
 - [x] Vercel 프로젝트·배포·접근 보호·Firewall·함수 설정·로그 화면 읽기 확인 — **완료**, 실제 쓰기 권한/효과 검증과 구분.
 - [x] 이메일 재인증 후 현재 Production의 공개 Supabase URL ref `exdyfbqhsnreridjbfgo` 확인 — **완료**, 환경변수·키 변경 없음.
-- [ ] 과거 배포별 ref/추가 alias·Team ID, 실제 `Dmax` 확정 — **일부 미확인**. DB ref 미확인 배포는 모두 차단 대상으로 포함.
-- [ ] 구버전 URL Deny·새 배포 Threshold·임시 전체 차단의 저장/전파와 안전 probe — **미실행**. UI 제공만 확인했으며 비용/권한에 막히면 중단.
-- [ ] 진행 중 함수·DB 요청 drain 관측과 다른 쓰기 주체 중단 확보 — **미준비**. 로그 읽기 권한은 확인했지만 종료/활성 0은 입증하지 않음.
+- [x] 실제 요금제와 배포 실행 방식으로 함수 상한 300초 확정. 과거 배포별 DB ref는 단정하지 않고 **모든 비허용 hostname을 차단**한다. Team ID·과거 개별 ref 미확인은 이 차단을 우회할 근거가 아니다.
+- [x] 구버전 URL·고정 키 API Deny와 임시 전체 차단을 실제 HTTP/인증된 브라우저의 안전 probe로 검증. Threshold·유료 구매 없음.
+- [x] 차단 이후 상한 경과·실제 DB 0건·앱 로그 무추가를 함께 확인. 별도의 Vercel 활성 실행 수 카운터 조회로 확대해 보고하지 않음.
 - [x] 운영 DB 읽기 사전 점검·해당 migration 적용/이력 확인 승인 — **사용자 승인 범위**.
 - [x] 필수 검증 통과 후 **새 앱만** 쓰기 재개 승인 — **사용자 승인 범위**, 단계별 재질문 불필요.
 
@@ -230,6 +230,12 @@ supabase db push --skip-vault --db-url <같은 승인된 URL>
 - CLI 일괄 `db push`는 사용하지 않았다. 운영 ledger는 초기 `202608280001` 한 건뿐이므로 다른 과거 SQL을 pending이라는 이유로 재실행하지 않았다. **선정한 SQL 한 건 + 해당 ledger INSERT만 한 트랜잭션**으로 적용했고 `Success. No rows returned` 응답을 확인했다. 인증·환경변수·기존 사용자 행에 대한 DML은 실행하지 않았다.
 - 이력 원문 생성 시 JavaScript replacement의 `$$` 해석으로 metadata 문자열만 달라진 것을 발견했다. 설치된 함수 정의는 검증본과 일치했다. 해당 버전·이름·기존 hash로 한정해 **ledger의 statements 한 행만** 정정했으며 SQL 함수 설치를 재실행하지 않았다. RETURNING 1행과 최종 정규화 source checksum 일치를 확인했다.
 - 두 함수의 정규화 정의 SHA256은 1절의 격리 검증본과 일치한다. `SECURITY INVOKER`, `search_path=public`, PUBLIC/anon/authenticated 실행 false, service_role true 확인. ledger는 초기 버전과 `202611100001` 각 한 건이다.
-- 현재 단계: **SQL/이력/권한 검증 완료, 전체 차단 유지, 범위 내 GitHub 반영과 새 앱 전환 진행 중**. 이후 완료 여부는 실제 배포·probe 결과로만 갱신한다. 이전 테스트/빌드/격리 검증은 재실행하지 않았다.
+- 서비스 커밋 **`a8f21fc04bfc6a143037d7cb6489f4e7aa0efe83`**, 선정 파일 16개만 GitHub main 반영. 스킬·별도 감사 자료 네 항목은 미커밋 상태로 보존했다. 이전 테스트/격리 검증을 반복하지 않았고 staged diff 검사·문서 상대 링크 검사 통과.
+- Vercel 배포 **`BQ7hJkerRdjw5UDkt1WUfcU8QNtd`**, 고유 hostname `temporary-fleet-maroon-2opm8kt-axepmwwa4-younghwi-ko.vercel.app`, **23초 빌드 / Ready / Production Current / a8f21fc** 확인. 공개·main alias가 이 배포로 이동한 것을 Dashboard와 실제 probe HTML의 `data-dpl-id`로 대조했다.
+- `Audit 2 current release hosts only` (`rule_audit_2_current_release_hosts_only_pAxUFR`): 공개 alias·main alias·위 수정 배포 hostname **세 개 이외는 모든 path/method Deny**. Hobby의 세 번째 Custom Rule로 실제 Publish 성공. 새 Preview/고유 배포 URL은 이 목록에 넣기 전까지 차단되므로, 향후 배포 때 운영 DB 연결과 코드 버전을 확인한 뒤 허용 목록을 관리해야 한다.
+- 임시 전체 Deny에 probe prefix만 예외로 열어 영구 규칙을 독립 확인했다. 공개 probe의 GET·빈 POST는 **새 배포 ID가 포함된 404**, 구버전 고유 hostname 네 개는 인증된 Vercel 브라우저에서도 **403**, API 고정 Header/Query/Cookie는 **403**. 같은 시점의 루트·실제 config는 아직 403이었다.
+- 그 후 **임시 전체 규칙만 비활성화해 Publish**했다. 고정 API/비허용 hostname 두 규칙은 활성 유지. **23:01:23 KST 재개 후 확인**: 공개 HTML 200 / KU Settle / 새 deployment ID, 공개 `/api/account/config/` 200. `signupEnabled=false`, `passwordAuthEnabled=false`, `emailDeliveryEnabled=false` 유지. 정상 probe 404, 세 고정 방식 403 재확인.
+- 공개 URL: [KU Settle](https://temporary-fleet-maroon-2opm8kt.vercel.app/?lang=ko). 공개 확인은 JS를 실행하지 않는 HTML·config·안전 probe에 한정했다. 운영에서 실제 예약 생성/취소/만료를 시험하거나 테스트 상품·문의·사용자 데이터를 만들지 않았다. 해당 쓰기 동작 근거는 이미 완료된 격리 실제 HTTP/DB 검증이다.
+- 기존 데이터의 과거 불일치를 자동 보정하지 않았다. 이전 수동 적용분의 migration 이력 정리는 별도 범위로 남겼으며, 초기 이력과 이번 버전 외의 이력을 임의로 추가하지 않았다. 실제 사용자 데이터/인증/환경변수 변경 없이 이번 범위만 완료했다.
 
-따라서 현재 판정은 **개발/격리 검증/격리 이력 정리 완료, Vercel 실제 읽기 확인과 조건부 전환 절차 반영 완료, 운영 쓰기 차단·drain 보장은 미완료**다. 새로운 유지보수 기능·서비스 코드·운영 설정을 추가하지 않았다. ‘Pause만으로 전체 정지’, ‘GET은 읽기’, ‘alias 전환/hostname 차단만으로 pinning 종료’, ‘빈 로그=drain 완료’, ‘placeholder=실제 함수 제한’, ‘repair=SQL 롤백’으로 판단하지 않는다. 기존 테스트·격리 이력 보정·빌드는 변경이 없어 반복하지 않았다.
+현재 판정은 **감사 2번 수정안의 운영 SQL·앱 전환 완료**다. 실제 결과가 준비 단계의 미완료 표기를 대체한다. ‘Pause만으로 전체 정지’, ‘GET은 읽기’, ‘hostname 차단만으로 pinning 종료’, ‘빈 로그=drain 완료’, ‘placeholder=실제 함수 제한’, ‘repair=SQL 롤백’으로 판단하지 않았다. 기존 테스트·격리 이력 보정은 반복하지 않았고 새 커밋의 Vercel 빌드만 실제 실행됐다.
