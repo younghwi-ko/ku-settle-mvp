@@ -105,6 +105,7 @@
   "marketplace": {
     "sold": "已售出",
     "reservationRejected": "预约被拒绝，尚未确认。请关闭窗口并检查商品状态。",
+    "cancelRejected": "服务器拒绝了取消预约的请求。请确认当前预约后再试。",
     "reservationUncertain": "处理结果未知，可能已保存。请先查询服务器再重试同一请求。",
     "reservationNotFound": "尚未确认此预约或时间修改，可以重试同一请求。",
     "reservationInactive": "此预约已取消、过期或完成，未确认为有效预约。",
@@ -208,6 +209,7 @@
     "positivePrice": "请输入大于零的价格。", "nameRequired": "请输入不超过80个字符的姓名。", "invalidDate": "请输入有效日期。", "itemRequired": "请输入商品名称。", "validPrice": "请输入有效的韩元价格。", "pickupRequired": "请输入取货地点。", "otpLength": "请输入6位验证码。"
   },
   "errors": {
+    "listingOutcomeUnknown": "商品更改可能已保存。请刷新页面并确认商品状态后再试。",
     "generic": "出现问题，请重试。", "imageInvalid": "请选择有效的图片文件。", "storageQuota": "浏览器存储空间不足。请删除较大的图片后重试。",
     "storage": "无法读取已保存的数据，已恢复为安全的默认值。",
     "missingTranslation": "该内容暂时以英语显示。", "supabaseNotConfigured": "账号服务尚未连接。需要配置Supabase公开URL和publishable key后才能登录。", "emailDeliveryDisabled": "邮箱验证暂时不可用。运营人员完成邮件提供商和Auth Hook设置后才能登录。", "emailProviderUnverified": "邮件提供商设置尚未验证。运营人员确认前将保持禁用。", "emailDomainUnverified": "发送域名尚未验证。完成DNS和提供商检查前将保持禁用。", "signupDisabled": "新账号注册目前关闭。启用邮件发送后，现有账号可以登录。", "rateLimit": "尝试次数过多，请稍后再试。", "sessionExpired": "登录会话已过期，请重新登录。", "permissionDenied": "您无权执行此操作。", "offline": "网络似乎已断开，修改未保存。", "supabaseUnavailable": "账号服务暂时不可用。", "invalidOtp": "验证码错误或已过期，请获取新验证码。", "saveFailed": "商品未保存，请重试。", "imageTooLarge": "请选择小于2MB的图片。"

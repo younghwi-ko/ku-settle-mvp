@@ -13,7 +13,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   if (body.description !== undefined) { if (typeof body.description !== "string" || body.description.length > 2000) return apiError("invalid_listing", 422); updates.description = body.description.trim(); }
   if (body.pickupLocation !== undefined) { const value = text(body.pickupLocation, 200); if (!value) return apiError("invalid_listing", 422); updates.pickup_location = value; }
   if (body.priceKrw !== undefined) { if (!Number.isInteger(body.priceKrw) || Number(body.priceKrw) <= 0 || Number(body.priceKrw) > 100_000_000) return apiError("invalid_listing", 422); updates.price_krw = body.priceKrw; }
-  if (body.imageDataUrl !== undefined) { if (!validImage(body.imageDataUrl)) return apiError("invalid_listing_image", 422); updates.image_data_url = body.imageDataUrl ?? null; }
+  if (body.imageDataUrl !== undefined) { if (!validImage(body.imageDataUrl)) return apiError("invalid_listing_image", 422); updates.image_data_url = body.imageDataUrl ?? null; updates.image_path = null; }
   if (body.imagePath !== undefined) { if (typeof body.imagePath !== "string" || !body.imagePath.startsWith(`${session.id}/`) || !/^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(body.imagePath)) return apiError("invalid_listing_image", 422); updates.image_path = body.imagePath; updates.image_data_url = null; }
   if (body.status !== undefined) { if (!statuses.has(String(body.status))) return apiError("invalid_listing_status", 422); updates.status = body.status; updates.availability = body.status === "active" ? "available" : body.status === "reserved" ? "reserved" : "available"; }
   const client = serverClient(); if (!client) return apiError("server_storage_not_configured", 503);
@@ -30,7 +30,8 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
   const { session, response } = await sessionOrError(); if (response || !session) return response ?? apiError("session_unavailable", 503);
   const { id } = await context.params; if (!uuid(id)) return apiError("invalid_listing_id", 422);
   const client = serverClient(); if (!client) return apiError("server_storage_not_configured", 503);
-  const { error } = await client.from("guest_listings").update({ status: "deleted", availability: "available", version: undefined }).eq("id", id).eq("session_id", session.id);
+  const { data, error } = await client.from("guest_listings").update({ status: "deleted", availability: "available" }).eq("id", id).eq("session_id", session.id).select("*").maybeSingle();
   if (error) return apiError("listing_delete_failed", 502);
-  return NextResponse.json({ ok: true });
+  if (!data) return apiError("listing_conflict_or_not_found", 409);
+  return NextResponse.json({ ok: true, listing: data });
 }

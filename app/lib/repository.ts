@@ -3,6 +3,7 @@ import type { Locale } from "../i18n";
 import type { MarketProduct } from "../data";
 import { getSupabaseClient } from "./supabase";
 import { marketplaceRowToProduct, normalizeKuEmail, productToMarketplaceInsert, type MarketplaceRow, type ProfileRow, type StoredProfile } from "./domain";
+import { marketplaceFailure, MarketplaceRequestError } from "./remote-state";
 
 function requiredClient() { const client = getSupabaseClient(); if (!client) throw new Error("Supabase is not configured"); return client; }
 
@@ -35,13 +36,19 @@ export async function verifyEmailOtp(email: string, token: string) {
 
 export async function loadAccount(user: User) {
   const client = requiredClient();
-  const [{ data: profile, error: profileError }, { data: progress, error: progressError }, { data: items, error: itemsError }] = await Promise.all([
+  const [{ data: profile, error: profileError }, { data: progress, error: progressError }, products] = await Promise.all([
     client.from("profiles").select("*").eq("user_id", user.id).single(),
     client.from("lifecycle_progress").select("task_id,completed").eq("user_id", user.id),
-    client.from("marketplace_items").select("*").order("created_at", { ascending: false })
+    loadMarketplaceItems(user.id),
   ]);
-  if (profileError) throw profileError; if (progressError) throw progressError; if (itemsError) throw itemsError;
-  return { profile: profile as ProfileRow, done: (progress ?? []).filter((row) => row.completed).map((row) => row.task_id as string), products: (items as MarketplaceRow[]).filter((row) => row.status === "active" || row.status === "sold").map((row) => marketplaceRowToProduct(row, user.id)) };
+  if (profileError) throw profileError; if (progressError) throw progressError;
+  return { profile: profile as ProfileRow, done: (progress ?? []).filter((row) => row.completed).map((row) => row.task_id as string), products };
+}
+
+export async function loadMarketplaceItems(userId: string) {
+  const { data, error } = await requiredClient().from("marketplace_items").select("*").order("created_at", { ascending: false }).abortSignal(AbortSignal.timeout(12000));
+  if (error) throw error;
+  return (data as MarketplaceRow[]).map((row) => marketplaceRowToProduct(row, userId));
 }
 
 export async function saveProfile(userId: string, profile: StoredProfile, locale: Locale) {
@@ -75,10 +82,14 @@ export async function createMarketplaceItem(product: MarketProduct, userId: stri
   return marketplaceRowToProduct(data as MarketplaceRow, userId);
 }
 
-export async function updateMarketplaceItemStatus(itemId: string, status: "active" | "sold" | "hidden" | "deleted", userId: string) {
-  const { data, error } = await requiredClient().from("marketplace_items").update({ status }).eq("id", itemId).eq("seller_id", userId).select("*").single();
-  if (error) throw error;
-  return marketplaceRowToProduct(data as MarketplaceRow, userId);
+export async function updateMarketplaceItem(product: MarketProduct, userId: string, status?: MarketProduct["serviceStatus"]) {
+  const fields = status ? { status } : { item_name: product.name, price_krw: product.priceKrw, pickup_location: product.pickup };
+  const result = await requiredClient().from("marketplace_items").update(fields).eq("id", String(product.id)).eq("seller_id", userId)
+    .select("*").abortSignal(AbortSignal.timeout(12000)).single();
+  if (result.error) throw marketplaceFailure(result.status);
+  const row = result.data as MarketplaceRow | null;
+  if (row?.id !== product.id || row.seller_id !== userId || (status && row.status !== status)) throw new MarketplaceRequestError("uncertain");
+  return marketplaceRowToProduct(row, userId);
 }
 
 export async function importGuestData(userId: string, serverProfile: ProfileRow, profile: StoredProfile, done: string[], products: MarketProduct[], allowedTaskIds: string[], locale: Locale) {

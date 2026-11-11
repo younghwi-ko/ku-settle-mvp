@@ -105,6 +105,7 @@
   "marketplace": {
     "sold": "売却済み",
     "reservationRejected": "予約は拒否されました。確定していません。画面を閉じて商品の状態を確認してください。",
+    "cancelRejected": "サーバーが予約の取り消しを拒否しました。再試行する前に現在の予約を確認してください。",
     "reservationUncertain": "処理結果が不明です。保存済みの可能性があるため、サーバーで確認してから同じリクエストを再試行してください。",
     "reservationNotFound": "予約または日時変更をまだ確認できません。同じリクエストを再試行できます。",
     "reservationInactive": "キャンセル・期限切れ・完了の予約です。有効な予約として確定していません。",
@@ -208,6 +209,7 @@
     "positivePrice": "0より大きい価格を入力してください。", "nameRequired": "80文字以内で名前を入力してください。", "invalidDate": "正しい日付を入力してください。", "itemRequired": "商品名を入力してください。", "validPrice": "正しいウォン価格を入力してください。", "pickupRequired": "受け取り場所を入力してください。", "otpLength": "6桁の認証コードを入力してください。"
   },
   "errors": {
+    "listingOutcomeUnknown": "商品への変更が保存された可能性があります。再試行する前にページを更新し、商品を確認してください。",
     "generic": "問題が発生しました。もう一度お試しください。", "imageInvalid": "有効な画像ファイルを選択してください。", "storageQuota": "ブラウザの保存容量が不足しています。大きな画像を削除して再試行してください。",
     "storage": "保存データを読み込めなかったため、安全な初期値に戻しました。",
     "missingTranslation": "この内容は一時的に英語で表示されています。", "supabaseNotConfigured": "アカウントサービスはまだ接続されていません。ログインにはSupabaseの公開URLとpublishable keyが必要です。", "emailDeliveryDisabled": "メール認証は一時的に利用できません。運営者がメールプロバイダーとAuth Hookを設定するまでログインは無効です。", "emailProviderUnverified": "メールプロバイダーの設定がまだ確認されていません。確認が完了するまでログインは無効です。", "emailDomainUnverified": "送信ドメインがまだ確認されていません。DNSとプロバイダーの確認が完了するまでログインは無効です。", "signupDisabled": "新規アカウント登録は現在停止中です。メール配信が有効になると既存アカウントでログインできます。", "rateLimit": "試行回数が多すぎます。しばらく待ってから再度お試しください。", "sessionExpired": "セッションの有効期限が切れました。再度ログインしてください。", "permissionDenied": "この操作を行う権限がありません。", "offline": "オフラインのようです。変更は保存されませんでした。", "supabaseUnavailable": "アカウントサービスを一時的に利用できません。", "invalidOtp": "コードが正しくないか期限切れです。新しいコードを取得してください。", "saveFailed": "商品を保存できませんでした。もう一度お試しください。", "imageTooLarge": "2MB未満の画像を選択してください。"

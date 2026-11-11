@@ -317,6 +317,7 @@
   },
   "marketplace": {
     "reservationRejected": "So‘rov rad etildi. Band qilish tasdiqlanmadi. Oynani yoping va e’lon holatini tekshiring.",
+    "cancelRejected": "Server bandlovni bekor qilishni rad etdi. Qayta urinishdan oldin joriy bandlovni tekshiring.",
     "reservationUncertain": "Natija noma’lum. Ma’lumot saqlangan bo‘lishi mumkin. Ayni so‘rovni takrorlashdan oldin serverni tekshiring.",
     "reservationNotFound": "So‘ralgan band qilish yoki vaqt o‘zgarishi hali tasdiqlanmadi. Ayni so‘rovni qayta yuborishingiz mumkin.",
     "reservationInactive": "Bu band qilish bekor qilingan, muddati tugagan yoki yakunlangan. Faol deb tasdiqlanmadi.",
@@ -644,6 +645,7 @@
     "otpLength": "Olti xonali kodni kiriting."
   },
   "errors": {
+    "listingOutcomeUnknown": "Mahsulotdagi o‘zgarish saqlangan bo‘lishi mumkin. Qayta urinishdan oldin sahifani yangilab, mahsulotni tekshiring.",
     "generic": "Xatolik yuz berdi. Qayta urinib ko‘ring.",
     "imageInvalid": "To‘g‘ri rasm faylini tanlang.",
     "missingTranslation": "Bu mazmun vaqtincha ingliz tilida ko‘rsatilmoqda.",

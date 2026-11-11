@@ -23,7 +23,7 @@ import {
 import { legacyCopy, normalizePublicCopy } from "./i18n/legacy-copy";
 import { getSupabaseClient, isSupabaseConfigured } from "./lib/supabase";
 import { accountFetch } from "./lib/account-api";
-import { createMarketplaceItem, deleteAccount, importGuestData, loadAccount, saveProfile, saveProgress, sendEmailOtp, signOut, updateMarketplaceItemStatus, verifyEmailOtp } from "./lib/repository";
+import { createMarketplaceItem, deleteAccount, importGuestData, loadAccount, loadMarketplaceItems, saveProfile, saveProgress, sendEmailOtp, signOut, updateMarketplaceItem, verifyEmailOtp } from "./lib/repository";
 import { googleMapsDirectionsUrl, googleMapsSearchUrl, isKuEmail, isOwnedMarketplaceProduct, isPickupPast, isValidImageDataUrl, isValidPickupSchedule, mapServiceError, profileRowToStored, validateMarketplaceInput, type AppMode, type ProfileRow, type StoredProfile } from "./lib/domain";
 import { shouldShowVerifiedBadge } from "./lib/verification";
 import { emptyPreferences, isRetiredQaListing, migrateLocalData, readLocalData, writeLocalData, type GuideProgress, type LocalPreferences, type LocalReservation, type ReportDraft, type LocalServiceRequest, type ServiceRequestMode } from "./lib/local-data";
@@ -31,7 +31,7 @@ import KakaoMap from "./components/kakao-map";
 import AdminServerPanel from "./components/admin-server-panel";
 import { dedupePlaces, isValidCoordinates, KU_CENTER, KU_SCIENCE_CENTER, matchesPlaceCategory, type KakaoSearchResponse, type CampusFilter } from "./lib/kakao";
 import { placeGuidance, placeVerificationRank } from "./lib/place-guidance";
-import { bootstrapRemote, createRemoteListing, deleteRemoteListing, fetchRemoteListings, fetchRemoteState, importRemoteState, serverListingToProduct, serverReservationToLocal, serverServiceToLocal, updateRemoteLifecycle, updateRemoteListing, upsertRemoteService } from "./lib/remote-state";
+import { bootstrapRemote, createRemoteListing, fetchRemoteListings, fetchRemoteState, importRemoteState, MarketplaceRequestError, serverListingToProduct, serverReservationToLocal, serverServiceToLocal, updateRemoteLifecycle, updateRemoteListing, upsertRemoteService } from "./lib/remote-state";
 import { applyServerReservation, cancelServerReservation, checkServerReservation, ReservationRequestError, saveServerReservation, type PickupSchedule } from "./lib/reservation-request";
 
 type Page = "home" | "onboarding" | "marketplace" | "guide" | "life-guide" | "admin" | "operation-model";
@@ -228,6 +228,7 @@ function normalizeUserProducts(value: unknown): MarketProduct[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((item) => {
     if (!isRecord(item) || (typeof item.id !== "string" && typeof item.id !== "number")) return [];
+    if (item.source === "live") return [];
     if (!productCategories.includes(item.category as ProductCategory) || !Object.hasOwn(productIcons, String(item.icon))) return [];
     if (item.status !== "Available" && item.status !== "Reserved") return [];
     const category = item.category as ProductCategory;
@@ -235,7 +236,8 @@ function normalizeUserProducts(value: unknown): MarketProduct[] {
     const status = item.status as ProductStatus;
 
     if (typeof item.name === "string" && typeof item.pickup === "string" && typeof item.priceKrw === "number" && item.priceKrw > 0 && productConditions.includes(item.condition as ProductCondition)) {
-      return [{ id: item.id, name: item.name, pickup: item.pickup, priceKrw: Math.round(item.priceKrw), category, condition: item.condition as ProductCondition, status, icon, userCreated: true, ownedByCurrentUser: true }];
+      const serviceStatus = item.serviceStatus === "sold" || item.serviceStatus === "hidden" ? item.serviceStatus : "active";
+      return [{ id: item.id, name: item.name, pickup: item.pickup, priceKrw: Math.round(item.priceKrw), category, condition: item.condition as ProductCondition, status, icon, userCreated: true, ownedByCurrentUser: true, serviceStatus, description: typeof item.description === "string" ? item.description : undefined, availableHours: typeof item.availableHours === "string" ? item.availableHours : undefined, imageDataUrl: isValidImageDataUrl(item.imageDataUrl) ? item.imageDataUrl : undefined }];
     }
 
     if (isLegacyBilingual(item.name) && isLegacyBilingual(item.pickup) && isLegacyBilingual(item.condition) && typeof item.price === "string") {
@@ -302,13 +304,12 @@ export default function Home() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<MarketProduct | null>(null);
-  const [selectedProductMode, setSelectedProductMode] = useState<ProductModalMode>("buyer");
   const [editingProduct, setEditingProduct] = useState<MarketProduct | null>(null);
   const [reportProduct, setReportProduct] = useState<MarketProduct | null>(null);
   const [pendingReservation, setPendingReservation] = useState<PendingReservation | null>(null);
   const [reservationBusy, setReservationBusy] = useState(false);
   const [reservationIssue, setReservationIssue] = useState<ReservationIssue | null>(null);
-  const [reservationRefreshNeeded, setReservationRefreshNeeded] = useState(false);
+  const [reservationRefreshNeeded, setReservationRefreshNeeded] = useState<"rejected" | "uncertain" | null>(null);
   const reservationLock = useRef(false);
   const reservationPickup = useRef<PickupSchedule | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
@@ -324,6 +325,7 @@ export default function Home() {
   const [verifyError, setVerifyError] = useState(false);
   const [appMode, setAppMode] = useState<AppMode>("guest");
   const [authUser, setAuthUser] = useState<User | null>(null);
+  const accountId = useRef<string | null>(null);
   const [serverProfile, setServerProfile] = useState<ProfileRow | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -333,6 +335,7 @@ export default function Home() {
   const guestCandidateRef = useRef<{ profile: UserProfile; done: string[]; products: MarketProduct[] } | null>(null);
   const [serviceMessage, setServiceMessage] = useState<string | null>(null);
   const [serverBusy, setServerBusy] = useState(false);
+  const listingWrite = useRef(false);
   const [remoteReady, setRemoteReady] = useState(false);
   const [remotePublicProducts, setRemotePublicProducts] = useState<MarketProduct[]>([]);
   const [remoteListingPage, setRemoteListingPage] = useState(1);
@@ -363,6 +366,7 @@ export default function Home() {
     setServerBusy(true);
     try {
       const account = await loadAccount(user);
+      accountId.current = user.id;
       setAuthUser(user); setServerProfile(account.profile); setProfile(profileRowToStored(account.profile)); setDone(account.done); setUserProducts(account.products); setAppMode("authenticated");
       setSetupOpen(!account.profile.onboarding_completed && localStorage.getItem(`ku-settle-setup-skipped:${user.id}`) !== "1");
       if (candidate?.profile.mode === "personalized" && !account.profile.guest_data_imported_at && (candidate.done.length || candidate.products.length || !account.profile.onboarding_completed)) {
@@ -372,8 +376,23 @@ export default function Home() {
     finally { setServerBusy(false); }
   }, []);
 
+  const applyGuestMarketplace = useCallback((remote: Awaited<ReturnType<typeof fetchRemoteState>>) => {
+    setRemotePublicProducts(remote.listings.map((item) => ({ ...serverListingToProduct(item), ownedByCurrentUser: false })));
+    if (!accountId.current) {
+      const own = remote.myListings ?? [];
+      const serverIds = new Set([...remote.listings.map((item) => item.id), ...own.flatMap((item) => item.client_id ? [item.id, item.client_id] : [item.id])]);
+      setUserProducts((current) => [...current.filter((item) => item.source !== "live" && !serverIds.has(String(item.id))), ...own.map(serverListingToProduct)]);
+    }
+    const reservations = remote.reservations.map(serverReservationToLocal).filter((item): item is LocalReservation => Boolean(item));
+    setLocalPreferences((current) => {
+      const combined = [...current.reservations.filter((item) => item.id.startsWith("reservation-")), ...reservations];
+      return { ...current, reservations: combined, reservedProductIds: combined.filter((item) => item.status === "active").map((item) => item.productId) };
+    });
+  }, []);
+
   useEffect(() => {
     const supabase = getSupabaseClient();
+    let current = true;
     const hydrationTimer = window.setTimeout(() => {
       const migrated = readLocalData(localStorage, storageKeys);
       const savedProfile = migrated.profile ? JSON.stringify(migrated.profile) : null;
@@ -392,7 +411,7 @@ export default function Home() {
         setSetupOpen(localStorage.getItem("ku-settle-setup-skipped:guest") !== "1");
       }
       if (savedProducts) { try { loadedProducts = normalizeUserProducts(JSON.parse(savedProducts)).map((product) => ({ ...product, source: "sample", ownedByCurrentUser: true })); } catch { loadedProducts = []; } }
-      setUserProducts(loadedProducts);
+      if (!accountId.current) setUserProducts(loadedProducts);
       if (loadedProfile?.mode === "personalized") {
         candidate = { profile: loadedProfile, done: loadedDone, products: loadedProducts };
         setGuestCandidate(candidate);
@@ -404,16 +423,16 @@ export default function Home() {
         if (!await bootstrapRemote()) return;
         try {
           const remote = await fetchRemoteState();
-          if (remote.myListings?.length) setUserProducts(remote.myListings.map(serverListingToProduct));
-          else if (loadedProducts.length || loadedProfile) await importRemoteState({ profile: loadedProfile, done: loadedDone, products: loadedProducts, preferences: migrated.preferences, locale });
-          setRemotePublicProducts(remote.listings.filter((item) => !remote.myListings?.some((mine) => mine.id === item.id)).map((item) => ({ ...serverListingToProduct(item), ownedByCurrentUser: false })));
-          const reservations = remote.reservations.map(serverReservationToLocal).filter((item): item is LocalReservation => Boolean(item));
+          if (!current) return;
+          applyGuestMarketplace(remote);
+          if (!accountId.current && !remote.myListings?.length && (loadedProducts.length || loadedProfile)) await importRemoteState({ profile: loadedProfile, done: loadedDone, products: loadedProducts, preferences: migrated.preferences, locale });
+          if (!current) return;
           const services = remote.serviceRequests.map(serverServiceToLocal).filter((item): item is LocalServiceRequest => Boolean(item));
           // A successful server response is authoritative, including an empty list
           // after an administrator has soft-deleted or completed prior requests.
-          setLocalPreferences((current) => ({ ...current, reservations, reservedProductIds: reservations.filter((item) => item.status === "active").map((item) => item.productId), serviceRequests: services }));
+          setLocalPreferences((current) => ({ ...current, serviceRequests: services }));
           setRemoteReady(true);
-        } catch { setRemoteReady(false); }
+        } catch { if (current) setRemoteReady(false); }
       })();
       if (supabase) void supabase.auth.getSession().then(async ({ data }) => {
         if (!data.session) return;
@@ -422,11 +441,11 @@ export default function Home() {
       });
     }, 0);
     const subscription = supabase?.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_OUT") { setAuthUser(null); setServerProfile(null); setAppMode("guest"); setProfile(null); setDone([]); setUserProducts([]); setSetupOpen(false); }
+      if (event === "SIGNED_OUT") { accountId.current = null; setAuthUser(null); setServerProfile(null); setAppMode("guest"); setProfile(null); setDone([]); setUserProducts([]); setSetupOpen(false); }
       else if (session?.user && event !== "INITIAL_SESSION") void applyAuthenticatedAccount(session.user, guestCandidateRef.current);
     }).data.subscription;
-    return () => { window.clearTimeout(hydrationTimer); subscription?.unsubscribe(); };
-  }, [applyAuthenticatedAccount, locale]);
+    return () => { current = false; window.clearTimeout(hydrationTimer); subscription?.unsubscribe(); };
+  }, [applyAuthenticatedAccount, applyGuestMarketplace, locale]);
 
   useEffect(() => { if (hydrated && appMode !== "authenticated") localStorage.setItem(storageKeys.checklist, JSON.stringify(done)); }, [done, hydrated, appMode]);
   useEffect(() => { if (hydrated && appMode !== "authenticated") localStorage.setItem(storageKeys.verified, String(verified)); }, [verified, hydrated, appMode]);
@@ -467,8 +486,7 @@ export default function Home() {
   }, [hydrated, locale, localeReady, t]);
 
   const currentProfile = profile ?? { ...demoProfile, name: tr(t, "profile:guestName"), mode: "personalized" as const };
-  const openProduct = (product: MarketProduct) => { setSelectedProductMode(isOwnedMarketplaceProduct(product, appMode) ? "seller" : "buyer"); setSelectedProduct(product); const url = new URL(window.location.href); url.searchParams.set("page", "marketplace"); url.searchParams.set("listing", String(product.id)); window.history.pushState({ page: "marketplace", listing: String(product.id) }, "", `${url.pathname}${url.search}${url.hash}`); };
-  const openSellerProduct = (product: MarketProduct) => { setSelectedProductMode("seller"); setSelectedProduct(product); const url = new URL(window.location.href); url.searchParams.set("page", "marketplace"); url.searchParams.set("listing", String(product.id)); window.history.pushState({ page: "marketplace", listing: String(product.id) }, "", `${url.pathname}${url.search}${url.hash}`); };
+  const openProduct = (product: MarketProduct) => { setSelectedProduct(product); const url = new URL(window.location.href); url.searchParams.set("page", "marketplace"); url.searchParams.set("listing", String(product.id)); window.history.pushState({ page: "marketplace", listing: String(product.id) }, "", `${url.pathname}${url.search}${url.hash}`); };
   const closeProduct = () => {
     setSelectedProduct(null);
     const url = new URL(window.location.href);
@@ -493,27 +511,32 @@ export default function Home() {
     const params = new URLSearchParams(window.location.search);
     const listing = params.get("listing");
     if (listing) {
-      const product = marketplaceProducts.find((item) => String(item.id) === listing);
-      if (product) detailFrame = requestAnimationFrame(() => { if (new URLSearchParams(window.location.search).get("listing") !== String(product.id)) return; setPage("marketplace"); setSelectedProduct(product); setSelectedProductMode(isOwnedMarketplaceProduct(product, appMode) ? "seller" : "buyer"); });
+      const product = marketplaceProducts.find((item) => String(item.id) === listing && item.serviceStatus !== "deleted");
+      detailFrame = requestAnimationFrame(() => {
+        if (new URLSearchParams(window.location.search).get("listing") !== listing) return;
+        if (product) setPage("marketplace");
+        setSelectedProduct(product ?? null);
+      });
     }
     const guide = params.get("guide");
     if (guide && expandedLifeGuideArticles.some((article) => article.id === guide)) detailFrame = requestAnimationFrame(() => { setPage("life-guide"); document.getElementById(`guide-${guide}`)?.scrollIntoView({ block: "start" }); });
     return () => { if (detailFrame) cancelAnimationFrame(detailFrame); };
-  }, [appMode, marketplaceProducts]);
+  }, [marketplaceProducts]);
   useEffect(() => {
     const syncDetail = () => {
       const params = new URLSearchParams(window.location.search);
       const listing = params.get("listing");
       if (listing) {
-        const product = marketplaceProducts.find((item) => String(item.id) === listing);
-        if (product) { setPage("marketplace"); setSelectedProduct(product); setSelectedProductMode(isOwnedMarketplaceProduct(product, appMode) ? "seller" : "buyer"); }
+        const product = marketplaceProducts.find((item) => String(item.id) === listing && item.serviceStatus !== "deleted");
+        if (product) setPage("marketplace");
+        setSelectedProduct(product ?? null);
       } else setSelectedProduct(null);
       const guide = params.get("guide");
       if (guide && expandedLifeGuideArticles.some((article) => article.id === guide)) setPage("life-guide");
     };
     window.addEventListener("popstate", syncDetail);
     return () => window.removeEventListener("popstate", syncDetail);
-  }, [appMode, marketplaceProducts]);
+  }, [marketplaceProducts]);
   const loadMoreMarketplace = useCallback(async () => {
     if (remoteListingsLoading || remoteListingPage >= remoteListingTotalPages) return;
     const page = remoteListingPage + 1; setRemoteListingsLoading(true);
@@ -585,8 +608,43 @@ export default function Home() {
     setResetOpen(false); setProfileOpen(false); setProfileMenuOpen(false); setPage("home"); setSetupOpen(false); window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const saveLiveListing = async (product: MarketProduct, status?: MarketProduct["serviceStatus"]) => {
+    if (listingWrite.current) return "errors:saveFailed";
+    const owner = accountId.current;
+    listingWrite.current = true;
+    setServerBusy(true);
+    setServiceMessage(null);
+    try {
+      const updated = owner ? await updateMarketplaceItem(product, owner, status) : await updateRemoteListing(product, status);
+      if (accountId.current !== owner) return "errors:sessionExpired";
+      setUserProducts((current) => current.map((item) => item.id === updated.id ? updated : item));
+      setRemotePublicProducts((current) => current.flatMap((item) => {
+        if (item.id !== updated.id) return [item];
+        return status === "deleted" || status === "hidden" ? [] : [{ ...updated, ownedByCurrentUser: false }];
+      }));
+      if (status === "deleted" && new URLSearchParams(location.search).get("listing") === String(updated.id)) closeProduct();
+      return null;
+    } catch (error) {
+      if (error instanceof MarketplaceRequestError && error.kind === "rejected") return "errors:saveFailed";
+      try {
+        if (owner) {
+          const items = await loadMarketplaceItems(owner);
+          if (accountId.current === owner) setUserProducts(items);
+        } else {
+          const remote = await fetchRemoteState();
+          if (!accountId.current) applyGuestMarketplace(remote);
+        }
+      } catch { /* Keep the last confirmed view until the next successful read. */ }
+      return "errors:listingOutcomeUnknown";
+    } finally {
+      listingWrite.current = false;
+      setServerBusy(false);
+    }
+  };
+
   const changeMarketplaceStatus = async (product: MarketProduct, status: "active" | "sold" | "hidden" | "deleted") => {
-    if (appMode !== "authenticated" && product.userCreated && product.ownedByCurrentUser) {
+    if (!isOwnedMarketplaceProduct(product, appMode) || listingWrite.current) return;
+    if (product.source !== "live") {
       setUserProducts((current) => status === "deleted"
         ? current.filter((item) => item.id !== product.id)
         : current.map((item) => item.id === product.id ? { ...item, serviceStatus: status, status: status === "sold" ? "Reserved" : "Available" } : item));
@@ -594,23 +652,10 @@ export default function Home() {
       if (status === "deleted") setLocalPreferences((current) => ({ ...current, reservedProductIds: current.reservedProductIds.filter((id) => id !== String(product.id)), reservations: current.reservations.filter((item) => item.productId !== String(product.id)), reportDrafts: current.reportDrafts.filter((item) => item.productId !== String(product.id)), serviceRequests: current.serviceRequests.filter((item) => item.productId !== String(product.id)) }));
       if (status === "deleted") closeProduct();
       else setSelectedProduct((current) => current?.id === product.id ? { ...current, serviceStatus: status, status: status === "sold" ? "Reserved" : "Available" } : current);
-      if (remoteReady && typeof product.id === "string" && product.id.includes("-")) {
-        const sync = status === "deleted" ? deleteRemoteListing(product.id) : updateRemoteListing({ ...product, serviceStatus: status }, status);
-        void sync.catch(() => setServiceMessage("errors:generic"));
-      }
       setServiceMessage("common:saved");
       return;
     }
-    if (!authUser || product.source !== "live" || !product.ownedByCurrentUser) return;
-    setServerBusy(true);
-    try {
-      const updated = await updateMarketplaceItemStatus(String(product.id), status, authUser.id);
-      setUserProducts((current) => status === "deleted" ? current.filter((item) => item.id !== product.id) : current.map((item) => item.id === product.id ? updated : item));
-      if (status === "deleted") closeProduct();
-      else setSelectedProduct((current) => current?.id === product.id ? { ...current, ...updated } : current);
-      setServiceMessage("common:saved");
-    } catch (error) { setServiceMessage(mapServiceError(error)); }
-    finally { setServerBusy(false); }
+    setServiceMessage(await saveLiveListing(product, status) ?? "common:saved");
   };
 
   const addMarketplaceProduct = async (product: MarketProduct) => {
@@ -677,18 +722,12 @@ export default function Home() {
     try {
       if (reservationToCancel) recordServerReservation(await cancelServerReservation(reservationToCancel));
       const remote = await fetchRemoteState();
-      const reservations = remote.reservations.map(serverReservationToLocal).filter((item): item is LocalReservation => Boolean(item));
-      setRemotePublicProducts(remote.listings.filter((item) => !remote.myListings?.some((mine) => mine.id === item.id)).map((item) => ({ ...serverListingToProduct(item), ownedByCurrentUser: false })));
-      setUserProducts((current) => current.map((product) => {
-        const row = [...(remote.myListings ?? []), ...remote.listings].find((item) => item.id === String(product.id));
-        return product.source === "live" && row ? { ...serverListingToProduct(row), ownedByCurrentUser: product.ownedByCurrentUser } : product;
-      }));
-      setLocalPreferences((current) => ({ ...current, reservations, reservedProductIds: reservations.filter((item) => item.status === "active").map((item) => item.productId) }));
-      setReservationRefreshNeeded(false);
+      applyGuestMarketplace(remote);
+      setReservationRefreshNeeded(null);
       if (reservationToCancel) setServiceMessage("common:saved");
       const openId = new URLSearchParams(window.location.search).get("listing");
       if (openId && (reservationToCancel?.productId === openId || (selectedProduct?.source === "live" && String(selectedProduct.id) === openId)) && ![...remote.listings, ...(remote.myListings ?? [])].some((item) => item.id === openId)) closeProduct();
-    } catch { setReservationRefreshNeeded(true); }
+    } catch (error) { setReservationRefreshNeeded(error instanceof ReservationRequestError ? error.kind : "uncertain"); }
     finally { reservationLock.current = false; setReservationBusy(false); }
   };
   const cancelMarketplaceReservation = async (product: MarketProduct) => {
@@ -714,12 +753,17 @@ export default function Home() {
     setLocalPreferences((current) => ({ ...current, reportDrafts: [...current.reportDrafts, { productId, ...report, status: "new", createdAt: new Date().toISOString() }] }));
     setReportProduct(null); setServiceMessage("marketplace:reportSubmitted");
   };
-  const updateLocalProduct = (product: MarketProduct) => {
-    const validation = validateMarketplaceInput(product);
-    if (!validation.valid) { setServiceMessage(validation.error); return; }
-    setUserProducts((current) => current.map((item) => item.id === product.id ? { ...item, ...product, source: "sample", ownedByCurrentUser: true } : item));
-    if (remoteReady && typeof product.id === "string" && product.id.includes("-")) void updateRemoteListing(product).catch(() => setServiceMessage("errors:generic"));
-    setEditingProduct(null); setSelectedProduct(null); setServiceMessage("common:saved");
+  const updateListing = async (product: MarketProduct) => {
+    if (!isOwnedMarketplaceProduct(product, appMode)) return "errors:permissionDenied";
+    if (product.source === "live") {
+      const error = await saveLiveListing(product);
+      if (error) return error;
+    } else {
+      setUserProducts((current) => current.map((item) => item.id === product.id ? product : item));
+    }
+    setEditingProduct(null);
+    setServiceMessage("common:saved");
+    return null;
   };
   const toggleProductFavorite = (product: MarketProduct) => {
     const id = String(product.id);
@@ -804,7 +848,7 @@ export default function Home() {
       <main>
         {page === "home" && <Dashboard locale={locale} t={t} profile={currentProfile} activeTasks={activeTasks} done={effectiveDone} stageStats={stageStats} progress={progress} completedCount={completedCount} recommendedTask={recommendedTask} go={go}/>}
         {page === "onboarding" && <Onboarding locale={locale} t={t} activeTasks={activeTasks} stageStats={stageStats} progress={progress} done={effectiveDone} manualDone={done} recommendedTask={recommendedTask} selectedStage={selectedStage} setSelectedStage={setSelectedStage} focusTaskId={focusTaskId} highlightTaskId={highlightTaskId} go={go} openTaskAction={openTaskAction} toggleTask={toggleTask} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
-        {page === "marketplace" && <Marketplace locale={locale} t={t} profile={currentProfile} appMode={appMode} products={marketplaceProducts} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} addProduct={addMarketplaceProduct} selectProduct={openProduct} selectSellerProduct={openSellerProduct} changeStatus={changeMarketplaceStatus} preferences={localPreferences} setPreferences={setLocalPreferences} toggleFavorite={toggleProductFavorite} loadMoreLive={loadMoreMarketplace} liveHasMore={remoteListingPage < remoteListingTotalPages} liveLoading={remoteListingsLoading}/>}
+        {page === "marketplace" && <Marketplace locale={locale} t={t} profile={currentProfile} appMode={appMode} products={marketplaceProducts} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} addProduct={addMarketplaceProduct} selectProduct={openProduct} cancelReservation={cancelMarketplaceReservation} changeStatus={changeMarketplaceStatus} preferences={localPreferences} setPreferences={setLocalPreferences} toggleFavorite={toggleProductFavorite} loadMoreLive={loadMoreMarketplace} liveHasMore={remoteListingPage < remoteListingTotalPages} liveLoading={remoteListingsLoading}/>}
         {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go} preferences={localPreferences} setPreferences={setLocalPreferences} done={effectiveDone}/>}
         {page === "guide" && <LocalGuide locale={locale} t={t} category={guideCategory} setCategory={setGuideCategory} search={guideSearch} setSearch={setGuideSearch} places={localPlaces} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
         {page === "operation-model" && <OperationModel locale={locale} />}
@@ -838,11 +882,11 @@ export default function Home() {
       {importOpen && guestCandidate && (
         <GuestImportModal t={t} candidate={guestCandidate} close={() => setImportOpen(false)} confirm={() => void completeGuestImport()}/>
       )}
-      {selectedProduct && <ProductModal locale={locale} t={t} profile={currentProfile} mode={selectedProductMode} product={selectedProduct} reservation={localPreferences.reservations.find((item) => item.productId === String(selectedProduct.id) && item.status === "active")} serviceRequests={localPreferences.serviceRequests.filter((item) => item.productId === String(selectedProduct.id))} updateService={(serviceMode, updates) => updateServiceRequest({ productId: String(selectedProduct.id) }, serviceMode, updates)} close={closeProduct} contact={() => { closeProduct(); setContactOpen(true); }} reserve={() => reserveMarketplaceProduct(selectedProduct)} cancelReservation={() => cancelMarketplaceReservation(selectedProduct)} edit={() => { setEditingProduct(selectedProduct); closeProduct(); }} changeStatus={(status) => void changeMarketplaceStatus(selectedProduct, status)}/>}
-      {reservationRefreshNeeded && <div className="service-status error reservation-result" role="alert">{tr(t, "marketplace:reservationUncertain")}<button disabled={reservationBusy} onClick={() => void refreshMarketplaceReservations()}>{tr(t, "marketplace:checkReservation")}</button></div>}
+      {selectedProduct && <ProductModal locale={locale} t={t} profile={currentProfile} mode={isOwnedMarketplaceProduct(selectedProduct, appMode) ? "seller" : "buyer"} product={selectedProduct} reservation={localPreferences.reservations.find((item) => item.productId === String(selectedProduct.id) && item.status === "active")} serviceRequests={localPreferences.serviceRequests.filter((item) => item.productId === String(selectedProduct.id))} updateService={(serviceMode, updates) => updateServiceRequest({ productId: String(selectedProduct.id) }, serviceMode, updates)} close={closeProduct} contact={() => { closeProduct(); setContactOpen(true); }} reserve={() => reserveMarketplaceProduct(selectedProduct)} cancelReservation={() => cancelMarketplaceReservation(selectedProduct)} edit={() => { setEditingProduct(selectedProduct); closeProduct(); }} changeStatus={(status) => void changeMarketplaceStatus(selectedProduct, status)}/>}
+      {reservationRefreshNeeded && <div className="service-status error reservation-result" role="alert">{tr(t, reservationRefreshNeeded === "rejected" ? "marketplace:cancelRejected" : "marketplace:reservationUncertain")}<button disabled={reservationBusy} onClick={() => void refreshMarketplaceReservations()}>{tr(t, "marketplace:checkReservation")}</button></div>}
       {pendingReservation && <PickupScheduleModal t={t} product={pendingReservation.product} initial={pendingReservation.reservation} busy={reservationBusy} issue={reservationIssue} check={() => void checkMarketplaceReservation()} close={() => { if (!reservationLock.current) setPendingReservation(null); }} reserve={(pickup) => void completeMarketplaceReservation(pendingReservation.product, pickup, pendingReservation.reservation?.id)}/>}
       {reportProduct && <ReportModal t={t} product={reportProduct} reports={localPreferences.reportDrafts} close={() => setReportProduct(null)} submit={(report) => submitReport(reportProduct, report)}/>}
-      {editingProduct && <ProductEditModal locale={locale} t={t} product={editingProduct} close={() => setEditingProduct(null)} save={updateLocalProduct}/>}
+      {editingProduct && <ProductEditModal locale={locale} t={t} product={editingProduct} close={() => setEditingProduct(null)} save={updateListing} accountListing={appMode === "authenticated"}/>}
       {contactOpen && <ContactModal t={t} close={() => setContactOpen(false)}/>}
     </div>
   );
@@ -1011,12 +1055,11 @@ function LifecycleSummary({ locale, t, activeTasks, done, preferences, products,
   return <section className="lifecycle-summary section-pad" aria-label={tr(t, "home:todaySummary")}><div className="section-title"><span className="eyebrow"><CalendarClock size={14}/>{tr(t, "home:todaySummary")}</span><h2>{hasItems ? tr(t, "home:urgentItems") : tr(t, "home:noUpcoming")}</h2></div><div className="summary-metrics"><span>{tr(t, "home:incompleteCount", { count: activeTasks.filter((task) => !done.includes(task.id)).length })}</span><span>{tr(t, "home:progressSummaryShort", { progress: Math.round((done.length / Math.max(1, activeTasks.length)) * 100) })}</span></div>{hasItems ? <div className="summary-items">{due.slice(0, 4).map(({ task, due }) => <button key={task.id} onClick={() => go("onboarding", { stage: task.stage, taskId: task.id, highlight: true })}><strong>{due < today ? tr(t, "home:overdue") : due === today ? tr(t, "home:dueToday") : tr(t, "home:dueSoon")}</strong><span>{tr(t, task.titleKey)}</span></button>)}{reservations.slice(0, 3).map((reservation) => { const product = products.find((item) => String(item.id) === reservation.productId); return product ? <button key={reservation.id} onClick={() => go("marketplace")}><strong>{tr(t, "marketplace:myReservations")}</strong><span>{productName(product, t)}</span></button> : null; })}{services.slice(0, 3).map((service) => <button key={service.id} onClick={() => go(service.productId ? "marketplace" : "onboarding", service.productId ? {} : { stage: "departure" })}><strong>{serviceStatusUi(locale, service.status)}</strong><span>{serviceUi(locale, service.mode)}</span></button>)}</div> : <p className="empty-copy">{tr(t, "home:noUpcoming")}</p>}</section>;
 }
 
-function Marketplace({ locale, t, profile, appMode, products: marketplaceProducts, search, setSearch, category, setCategory, mode, setMode, addProduct, selectProduct: buyerSelectProduct, selectSellerProduct, changeStatus, preferences, setPreferences, toggleFavorite, loadMoreLive, liveHasMore, liveLoading }: { locale: Locale; t: TFunction; profile: UserProfile; appMode: AppMode; products: MarketProduct[]; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; mode: MarketMode; setMode: (value: MarketMode) => void; addProduct: (product: MarketProduct) => Promise<void>; selectProduct: (product: MarketProduct) => void; selectSellerProduct: (product: MarketProduct) => void; changeStatus: (product: MarketProduct, status: "active" | "sold" | "hidden" | "deleted") => Promise<void>; preferences: LocalPreferences; setPreferences: Dispatch<SetStateAction<LocalPreferences>>; toggleFavorite: (product: MarketProduct) => void; loadMoreLive: () => Promise<void>; liveHasMore: boolean; liveLoading: boolean }) {
+function Marketplace({ locale, t, profile, appMode, products: marketplaceProducts, search, setSearch, category, setCategory, mode, setMode, addProduct, selectProduct, cancelReservation, changeStatus, preferences, setPreferences, toggleFavorite, loadMoreLive, liveHasMore, liveLoading }: { locale: Locale; t: TFunction; profile: UserProfile; appMode: AppMode; products: MarketProduct[]; search: string; setSearch: (value: string) => void; category: string; setCategory: (value: string) => void; mode: MarketMode; setMode: (value: MarketMode) => void; addProduct: (product: MarketProduct) => Promise<void>; selectProduct: (product: MarketProduct) => void; cancelReservation: (product: MarketProduct) => Promise<void>; changeStatus: (product: MarketProduct, status: "active" | "sold" | "hidden" | "deleted") => Promise<void>; preferences: LocalPreferences; setPreferences: Dispatch<SetStateAction<LocalPreferences>>; toggleFavorite: (product: MarketProduct) => void; loadMoreLive: () => Promise<void>; liveHasMore: boolean; liveLoading: boolean }) {
   const [success, setSuccess] = useState(false);
   const [sort, setSort] = useState<"latest" | "price">("latest");
   const [sourceFilter, setSourceFilter] = useState<"all" | "live" | "sample">("all");
   const categories = ["All", ...productCategories];
-  const selectProduct = mode === "leaving" ? selectSellerProduct : buyerSelectProduct;
   const categoryLabel = (value: string) => value === "All" ? tr(t, "marketplace:all") : tr(t, `marketplace:categories.${value}`);
   const filtered = useMemo(() => [...marketplaceProducts.filter((product) => product.serviceStatus !== "hidden" && product.serviceStatus !== "deleted" && (sourceFilter === "all" || product.source === sourceFilter) && (category === "All" || product.category === category) && productName(product, t).toLocaleLowerCase(locale).includes(search.toLocaleLowerCase(locale)))].sort((a, b) => sort === "price" ? a.priceKrw - b.priceKrw : Number(b.id) - Number(a.id)), [marketplaceProducts, sourceFilter, category, search, locale, t, sort]);
 const changeMode = (nextMode: MarketMode) => { setMode(nextMode); setSuccess(false); };
@@ -1025,7 +1068,7 @@ const changeMode = (nextMode: MarketMode) => { setMode(nextMode); setSuccess(fal
   return <section className="page section-pad market-page">
 <div className="page-hero market-hero"><div><span className="eyebrow"><ShoppingBag size={14}/>{tr(t, "marketplace:eyebrow")}</span><h1>{tr(t, "marketplace:title")}</h1><p>{tr(t, "marketplace:body")}</p></div><div className="mode-switch" aria-label={tr(t, "accessibility:marketMode")}><button aria-pressed={mode === "incoming"} className={mode === "incoming" ? "active" : ""} onClick={() => changeMode("incoming")}><ShoppingBag size={18}/>{tr(t, "marketplace:incoming")}</button><button aria-pressed={mode === "leaving"} className={mode === "leaving" ? "active" : ""} onClick={() => changeMode("leaving")}><Tag size={18}/>{tr(t, "marketplace:leaving")}</button></div><button className="primary market-list-cta" onClick={() => changeMode("leaving")}><Tag size={17}/>{tr(t, "marketplace:form.submit")}</button></div>
     <div className="market-flow">{(["verification", "listing", "pickup", "transaction"] as const).map((step, index) => <div key={step}><span>{index === 0 ? <BadgeCheck/> : index === 1 ? <ShoppingBag/> : index === 2 ? <MapPin/> : <Banknote/>}</span><strong>{tr(t, `marketplace:flow.${step}`)}</strong>{index < 3 && <ChevronRight/>}</div>)}</div>
-{mode === "leaving" ? !(["authenticated", "demo", "guest"] as AppMode[]).includes(appMode) ? <article className="listing-form auth-gate"><ShieldCheck/><h2>{tr(t, "marketplace:authRequiredTitle")}</h2><p>{tr(t, "marketplace:authRequiredBody")}</p></article> : <><ListingForm locale={locale} t={t} submit={completeListing}/><UserListingManager locale={locale} t={t} products={marketplaceProducts} preferences={preferences} selectProduct={selectProduct} restore={(product) => changeStatus(product, "active")} cancelReservation={(product) => setPreferences((current) => ({ ...current, reservedProductIds: current.reservedProductIds.filter((id) => id !== String(product.id)), reservations: current.reservations.map((item) => item.productId === String(product.id) && item.status === "active" ? { ...item, status: "cancelled", cancelledAt: new Date().toISOString() } : item) }))}/></> : <>
+{mode === "leaving" ? !(["authenticated", "demo", "guest"] as AppMode[]).includes(appMode) ? <article className="listing-form auth-gate"><ShieldCheck/><h2>{tr(t, "marketplace:authRequiredTitle")}</h2><p>{tr(t, "marketplace:authRequiredBody")}</p></article> : <><ListingForm locale={locale} t={t} submit={completeListing}/><UserListingManager locale={locale} t={t} products={marketplaceProducts} appMode={appMode} preferences={preferences} selectProduct={selectProduct} restore={(product) => changeStatus(product, "active")} cancelReservation={cancelReservation}/></> : <>
       {success && <div className="success-banner" role="status"><CheckCircle2 size={18}/>{tr(t, "marketplace:form.success")}</div>}
       <div className="filters"><label className="search-box"><Search size={19}/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr(t, "marketplace:search")}/>{search && <button onClick={() => setSearch("")} aria-label={tr(t, "marketplace:clearSearch")}><X size={16}/></button>}</label><label className="sort-control"><span>{locale === "ko" ? "정렬" : legacyCopy(locale, "Sort")}</span><select value={sort} onChange={(event) => setSort(event.target.value as "latest" | "price")}><option value="latest">{locale === "ko" ? "최신순" : legacyCopy(locale, "Latest")}</option><option value="price">{locale === "ko" ? "가격순" : legacyCopy(locale, "Price")}</option></select></label><div className="chips source-filter"><button aria-pressed={sourceFilter === "all"} className={sourceFilter === "all" ? "active" : ""} onClick={() => setSourceFilter("all")}>{locale === "ko" ? "전체" : legacyCopy(locale, "All")}</button><button aria-pressed={sourceFilter === "live"} className={sourceFilter === "live" ? "active" : ""} onClick={() => setSourceFilter("live")}>{locale === "ko" ? "실제 등록 상품" : legacyCopy(locale, "Live listings")}</button><button aria-pressed={sourceFilter === "sample"} className={sourceFilter === "sample" ? "active" : ""} onClick={() => setSourceFilter("sample")}>{locale === "ko" ? "샘플 데이터" : legacyCopy(locale, "Sample data")}</button></div><div className="chips">{categories.map((item) => <button key={item} aria-pressed={category === item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{categoryLabel(item)}</button>)}</div></div>
       {preferences.reservedProductIds.length > 0 && <section className="reservation-summary"><strong>{locale === "ko" ? "내 예약 상품" : legacyCopy(locale, "My reservations")}</strong><span>{preferences.reservedProductIds.length}</span><button className="secondary" onClick={() => setPreferences((current) => ({ ...current, reservedProductIds: [] }))}>{locale === "ko" ? "예약 전체 취소" : legacyCopy(locale, "Cancel all")}</button></section>}
@@ -1038,10 +1081,10 @@ const changeMode = (nextMode: MarketMode) => { setMode(nextMode); setSuccess(fal
   </section>;
 }
 
-function UserListingManager({ t, products: userProducts, preferences, selectProduct, restore, cancelReservation }: { locale: Locale; t: TFunction; products: MarketProduct[]; preferences: LocalPreferences; selectProduct: (product: MarketProduct) => void; restore: (product: MarketProduct) => Promise<void>; cancelReservation: (product: MarketProduct) => void }) {
+function UserListingManager({ t, products: userProducts, appMode, preferences, selectProduct, restore, cancelReservation }: { locale: Locale; t: TFunction; products: MarketProduct[]; appMode: AppMode; preferences: LocalPreferences; selectProduct: (product: MarketProduct) => void; restore: (product: MarketProduct) => Promise<void>; cancelReservation: (product: MarketProduct) => void }) {
   const [includeDeleted, setIncludeDeleted] = useState(false);
-  const mine = userProducts.filter((product) => product.userCreated && (includeDeleted || product.serviceStatus !== "deleted"));
-  return <section className="listing-manager" aria-label={tr(t, "marketplace:myListings")}><div className="listing-manager-heading"><h2>{tr(t, "marketplace:myListings")}</h2><span>{mine.length}</span><button className="secondary" aria-pressed={includeDeleted} onClick={() => setIncludeDeleted((value) => !value)}>{tr(t, includeDeleted ? "marketplace:hideDeleted" : "marketplace:showDeleted")}</button></div>{mine.length ? <div className="my-listing-list">{mine.map((product) => { const reservation = preferences.reservations.find((item) => item.productId === String(product.id) && item.status === "active"); const deleted = product.serviceStatus === "deleted"; return <div className="my-listing-row" key={product.id}><button className="my-listing-row-main" disabled={deleted} onClick={() => selectProduct(product)}><span>{product.imageDataUrl ? <img src={product.imageDataUrl} alt=""/> : <Tag size={18}/>}</span><strong>{product.name}</strong><small>{deleted ? tr(t, "marketplace:deleted") : product.serviceStatus === "sold" ? tr(t, "marketplace:sold") : reservation ? tr(t, "common:reserved") : product.serviceStatus === "hidden" ? tr(t, "marketplace:hidden") : tr(t, "common:available")}</small>{!deleted && <ArrowRight size={16}/>}</button>{deleted ? <button className="secondary" onClick={() => void restore(product)}><RotateCcw size={15}/>{tr(t, "marketplace:restoreListing")}</button> : reservation && <div className="listing-reservation"><span>{tr(t, "marketplace:reservedBy", { name: reservation.buyerName })}</span><button className="secondary" onClick={() => cancelReservation(product)}>{tr(t, "marketplace:cancelReservation")}</button></div>}</div>; })}</div> : <p className="empty-copy">{tr(t, "marketplace:noOwnListings")}</p>}</section>;
+  const mine = userProducts.filter((product) => isOwnedMarketplaceProduct(product, appMode) && (includeDeleted || product.serviceStatus !== "deleted"));
+  return <section className="listing-manager" aria-label={tr(t, "marketplace:myListings")}><div className="listing-manager-heading"><h2>{tr(t, "marketplace:myListings")}</h2><span>{mine.length}</span><button className="secondary" aria-pressed={includeDeleted} onClick={() => setIncludeDeleted((value) => !value)}>{tr(t, includeDeleted ? "marketplace:hideDeleted" : "marketplace:showDeleted")}</button></div>{mine.length ? <div className="my-listing-list">{mine.map((product) => { const reservation = preferences.reservations.find((item) => item.productId === String(product.id) && item.status === "active"); const deleted = product.serviceStatus === "deleted"; return <div className="my-listing-row" key={product.id}><button className="my-listing-row-main" disabled={deleted} onClick={() => selectProduct(product)}><span>{product.imageDataUrl ? <img src={product.imageDataUrl} alt=""/> : <Tag size={18}/>}</span><strong>{product.name}</strong><small>{deleted ? tr(t, "marketplace:deleted") : product.serviceStatus === "sold" ? tr(t, "marketplace:sold") : product.serviceStatus === "hidden" ? tr(t, "marketplace:hidden") : tr(t, reservation || product.status === "Reserved" ? "common:reserved" : "common:available")}</small>{!deleted && <ArrowRight size={16}/>}</button>{deleted ? <button className="secondary" onClick={() => void restore(product)}><RotateCcw size={15}/>{tr(t, "marketplace:restoreListing")}</button> : reservation && <div className="listing-reservation"><span>{tr(t, "marketplace:reservedBy", { name: reservation.buyerName })}</span><button className="secondary" onClick={() => cancelReservation(product)}>{tr(t, "marketplace:cancelReservation")}</button></div>}</div>; })}</div> : <p className="empty-copy">{tr(t, "marketplace:noOwnListings")}</p>}</section>;
 }
 
 function ListingForm({ locale, t, submit }: { locale: Locale; t: TFunction; submit: (product: MarketProduct) => Promise<void> }) {
@@ -1341,10 +1384,11 @@ function PublicInfoModal({ locale, page, close }: { locale: Locale; page: "about
   return <Modal close={close} label={content[0]}><button className="modal-close" onClick={close} aria-label={locale === "ko" ? "닫기" : locale === "ja" ? "閉じる" : locale === "zh-CN" ? "关闭" : legacyCopy(locale, "Close")}><X/></button><h2>{content[0]}</h2><p>{content[1]}</p></Modal>;
 }
 
-function ProductEditModal({ locale, t, product, close, save }: { locale: Locale; t: TFunction; product: MarketProduct; close: () => void; save: (product: MarketProduct) => void }) {
+function ProductEditModal({ locale, t, product, close, save, accountListing }: { locale: Locale; t: TFunction; product: MarketProduct; close: () => void; save: (product: MarketProduct) => Promise<string | null>; accountListing: boolean }) {
   const [name, setName] = useState(product.name ?? ""); const [description, setDescription] = useState(product.description ?? ""); const [price, setPrice] = useState(String(product.priceKrw)); const [pickup, setPickup] = useState(product.pickup ?? ""); const [hours, setHours] = useState(product.availableHours ?? ""); const [imageDataUrl, setImageDataUrl] = useState(product.imageDataUrl ?? ""); const [error, setError] = useState<string | null>(null);
-  const submit = () => { const next = { ...product, name: name.trim(), description: description.trim(), priceKrw: Number(price.trim()), pickup: pickup.trim(), availableHours: hours.trim(), imageDataUrl }; const validation = validateMarketplaceInput(next); if (!validation.valid) { setError(validation.error); return; } save(next); };
-  return <Modal close={close} label={locale === "ko" ? "상품 수정" : legacyCopy(locale, "Edit listing")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><h2>{locale === "ko" ? "상품 수정" : locale === "ja" ? "商品を編集" : locale === "zh-CN" ? "编辑商品" : legacyCopy(locale, "Edit listing")}</h2><label className="field"><span>{locale === "ko" ? "상품명" : legacyCopy(locale, "Item name")}</span><input value={name} onChange={(e) => setName(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "설명" : legacyCopy(locale, "Description")}</span><textarea value={description} onChange={(e) => setDescription(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "가격" : legacyCopy(locale, "Price")}</span><input inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "픽업 장소" : legacyCopy(locale, "Pickup")}</span><input value={pickup} onChange={(e) => setPickup(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "거래 가능 시간" : legacyCopy(locale, "Available hours")}</span><input value={hours} onChange={(e) => setHours(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "상품 이미지" : legacyCopy(locale, "Product image")}</span><input type="file" accept="image/png,image/jpeg,image/webp" onChange={(e) => { const file = e.target.files?.[0]; if (!file) return; void compressImage(file).then(setImageDataUrl).catch((error) => setError(error instanceof Error ? error.message : "errors:imageInvalid")); e.currentTarget.value = ""; }}/>{imageDataUrl && <><img className="listing-image-preview" src={imageDataUrl} alt=""/><button type="button" className="skip-button" onClick={() => setImageDataUrl("")}><Trash2 size={14}/>{tr(t, "marketplace:removeImage")}</button></>}</label>{error && <p className="error-text" role="alert">{tr(t, error)}</p>}<button className="primary full" onClick={submit}>{locale === "ko" ? "저장" : locale === "ja" ? "保存" : locale === "zh-CN" ? "保存" : legacyCopy(locale, "Save")}</button></Modal>;
+  const [saving, setSaving] = useState(false);
+  const submit = async () => { if (saving) return; const next = { ...product, name: name.trim(), description: description.trim(), priceKrw: Number(price.trim()), pickup: pickup.trim(), availableHours: hours.trim(), imageDataUrl }; const validation = validateMarketplaceInput(next); if (!validation.valid) { setError(validation.error); return; } setSaving(true); setError(await save(next)); setSaving(false); };
+  return <Modal close={close} label={locale === "ko" ? "상품 수정" : legacyCopy(locale, "Edit listing")}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><h2>{locale === "ko" ? "상품 수정" : locale === "ja" ? "商品を編集" : locale === "zh-CN" ? "编辑商品" : legacyCopy(locale, "Edit listing")}</h2><label className="field"><span>{locale === "ko" ? "상품명" : legacyCopy(locale, "Item name")}</span><input value={name} onChange={(e) => setName(e.target.value)}/></label>{!accountListing && <label className="field"><span>{locale === "ko" ? "설명" : legacyCopy(locale, "Description")}</span><textarea value={description} onChange={(e) => setDescription(e.target.value)}/></label>}<label className="field"><span>{locale === "ko" ? "가격" : legacyCopy(locale, "Price")}</span><input inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)}/></label><label className="field"><span>{locale === "ko" ? "픽업 장소" : legacyCopy(locale, "Pickup")}</span><input value={pickup} onChange={(e) => setPickup(e.target.value)}/></label>{product.source !== "live" && <label className="field"><span>{locale === "ko" ? "거래 가능 시간" : legacyCopy(locale, "Available hours")}</span><input value={hours} onChange={(e) => setHours(e.target.value)}/></label>}{!accountListing && <label className="field"><span>{locale === "ko" ? "상품 이미지" : legacyCopy(locale, "Product image")}</span><input type="file" accept="image/png,image/jpeg,image/webp" onChange={(e) => { const file = e.target.files?.[0]; if (!file) return; void compressImage(file).then(setImageDataUrl).catch((error) => setError(error instanceof Error ? error.message : "errors:imageInvalid")); e.currentTarget.value = ""; }}/>{imageDataUrl && <><img className="listing-image-preview" src={imageDataUrl} alt=""/><button type="button" className="skip-button" onClick={() => setImageDataUrl("")}><Trash2 size={14}/>{tr(t, "marketplace:removeImage")}</button></>}</label>}{error && <p className="error-text" role="alert">{tr(t, error)}</p>}<button className="primary full" disabled={saving} onClick={submit}>{locale === "ko" ? "저장" : locale === "ja" ? "保存" : locale === "zh-CN" ? "保存" : legacyCopy(locale, "Save")}</button></Modal>;
 }
 
 function serviceNextGuide(locale: Locale, status: LocalServiceRequest["status"]) {
@@ -1361,9 +1405,9 @@ function ServiceOptions({ locale, requests, update }: { locale: Locale; requests
   return <div className="service-demo-box"><strong>{serviceUi(locale, "method")}</strong><div className="service-option-grid">{modes.map((mode) => { const request = requests.find((item) => item.mode === mode); return <button key={mode} className={request ? "active" : ""} disabled={Boolean(request)} onClick={() => update(mode, { status: "method-selected", ...(mode === "delivery" ? { deliveryMethod: "undecided", estimatedCostLabel: locale === "ko" ? "견적 확인 필요" : legacyCopy(locale, "Quote required") } : {}), ...(mode === "storage" ? { storageDuration: "30", storageLocation: "campus", estimatedCostLabel: locale === "ko" ? "견적 확인 필요" : legacyCopy(locale, "Quote required") } : {}) })}>{request ? `${serviceUi(locale, mode)} · ${serviceStatusUi(locale, request.status)}` : serviceUi(locale, mode)}</button>; })}</div><p className="muted-copy">{locale === "ko" ? "신청 후 운영자가 상태와 견적 안내를 갱신합니다. 결제는 이 서비스에서 진행하지 않습니다." : legacyCopy(locale, "After submission, the operations team updates the status and estimate guidance. Payments are not processed in this service.")}</p>{rules.length > 0 && <div className="operation-rule-list">{rules.map((rule) => <article key={rule.id}><strong>{rule.operation_type === "storage" ? (locale === "ko" ? "보관" : legacyCopy(locale, "Storage")) : (locale === "ko" ? "배송" : legacyCopy(locale, "Delivery"))} · {rule.title}</strong><span>{rule.address} · {rule.cost_label}</span><small>{rule.rules} · {locale === "ko" ? `확인일 ${rule.checked_at}` : legacyCopy(locale, `Checked ${rule.checked_at}`)}</small></article>)}</div>}{requests.map((request) => <div className="service-demo-details" key={request.id}><strong>{serviceUi(locale, request.mode)} · {serviceStatusUi(locale, request.status)}</strong>{request.referenceCode && <span className="service-reference">{locale === "ko" ? "접수번호: " : legacyCopy(locale, "Reference: ")}{request.referenceCode}</span>}<span>{serviceNextGuide(locale, request.status)}</span>{request.estimatedCostLabel && <span>{locale === "ko" ? "비용 안내: " : legacyCopy(locale, "Cost guidance: ")}{request.estimatedCostLabel}</span>}<time dateTime={request.createdAt}>{locale === "ko" ? "신청 시각: " : legacyCopy(locale, "Submitted: ")}{new Date(request.createdAt ?? request.updatedAt).toLocaleString(locale)}</time><time dateTime={request.updatedAt}>{locale === "ko" ? "최근 갱신: " : legacyCopy(locale, "Last updated: ")}{new Date(request.updatedAt).toLocaleString(locale)}</time>{request.mode === "delivery" && <label>{locale === "ko" ? "배송 방식" : locale === "ja" ? "配送方法" : locale === "zh-CN" ? "配送方式" : legacyCopy(locale, "Delivery method")}<select disabled={!canCancel(request.status)} value={request.deliveryMethod ?? "undecided"} onChange={(event) => update("delivery", { deliveryMethod: event.target.value as "parcel" | "courier" | "undecided" })}><option value="undecided">{locale === "ko" ? "선택 전" : legacyCopy(locale, "Not selected")}</option><option value="parcel">{locale === "ko" ? "택배" : legacyCopy(locale, "Parcel")}</option><option value="courier">{locale === "ko" ? "퀵·당일 배송" : legacyCopy(locale, "Courier")}</option></select></label>}{request.mode === "storage" && <><label>{serviceUi(locale, "duration")}<select disabled={!canCancel(request.status)} value={request.storageDuration ?? "30"} onChange={(event) => update("storage", { storageDuration: event.target.value as "7" | "30" | "90" })}><option value="7">7{days}</option><option value="30">30{days}</option><option value="90">90{days}</option></select></label><label>{serviceUi(locale, "location")}<select disabled={!canCancel(request.status)} value={request.storageLocation ?? "campus"} onChange={(event) => update("storage", { storageLocation: event.target.value as "campus" | "partner" })}><option value="campus">{locale === "ko" ? "캠퍼스 보관소" : legacyCopy(locale, "Campus storage")}</option><option value="partner">{locale === "ko" ? "제휴 보관소" : legacyCopy(locale, "Partner storage")}</option></select></label></>}{canCancel(request.status) && <button className="danger-link" onClick={() => update(request.mode, { status: "cancelled" })}>{locale === "ko" ? "신청 취소" : legacyCopy(locale, "Cancel request")}</button>}</div>)}</div>;
 }
 
-function ProductModal({ locale, t, profile, mode, product: rawProduct, reservation, serviceRequests, updateService, close, contact, changeStatus, reserve, cancelReservation, edit }: { locale: Locale; t: TFunction; profile: UserProfile; mode: ProductModalMode; product: MarketProduct; reservation?: import("./lib/local-data").LocalReservation; serviceRequests: LocalServiceRequest[]; updateService: (mode: ServiceRequestMode, updates?: Partial<LocalServiceRequest>) => void; close: () => void; contact: () => void; reserve: () => void; cancelReservation: () => void; edit: () => void; changeStatus: (status: "active" | "sold" | "hidden" | "deleted") => void }) {
-  const product = { ...rawProduct, ownedByCurrentUser: mode === "seller" }; const isSample = product.source === "sample"; const Icon = productIcons[product.icon]; const SellerIcon = product.userCreated ? Tag : BadgeCheck; const name = productName(product, t); const reservationLabel = reservation ? reservation.buyerName : "";
- return <Modal close={close} label={name}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className={`modal-product-visual ${product.userCreated ? "tone-user" : `tone-${product.id}`}`}><Icon/><span className={`availability ${product.status === "Reserved" || product.serviceStatus === "sold" ? "reserved" : ""}`}>{tr(t, product.serviceStatus === "sold" ? "marketplace:sold" : product.status === "Available" ? "common:available" : "common:reserved")}</span></div><span className="seller"><SellerIcon size={16}/>{product.source === "live" ? tr(t, "common:liveData") : tr(t, "common:sampleData")}</span><h2>{name}</h2><strong className="modal-price">{formatCurrency(locale, product.priceKrw)}</strong>{product.imageDataUrl && <img className="modal-listing-image" src={product.imageDataUrl} alt={name}/>} {product.description && <p className="listing-description">{product.description}</p>} {product.availableHours && <p className="listing-hours">{product.availableHours}</p>}<div className="product-modal-details"><div><span>{tr(t, "marketplace:condition")}</span><strong>{tr(t, `marketplace:conditions.${product.condition}`)}</strong></div><div><span>{tr(t, "marketplace:pickup")}</span><strong><MapPin size={16}/>{productPickup(product, t)}</strong></div><div><span>{tr(t, "marketplace:seller")}</span><strong>{productSeller(product, t, profile)}</strong></div></div><ShareLink locale={locale} page="marketplace" id={String(product.id)}/>{productPickup(product, t) && <MapActionBar t={t} place={productPickup(product, t)}/>} {isSample ? <p className="sample-notice" role="note">{tr(t, "common:sampleOnly")}</p> : <ServiceOptions locale={locale} requests={serviceRequests} update={updateService}/>} {mode === "seller" ? <div className="owner-listing-actions">{reservation && <div className="reservation-owner-note"><strong>{tr(t, "marketplace:reservationHolder")}</strong><span>{reservationLabel}</span><button className="secondary" onClick={cancelReservation}>{tr(t, "marketplace:cancelReservation")}</button></div>}<button className="secondary" onClick={edit}>{locale === "ko" ? "상품 수정" : locale === "ja" ? "商品を編集" : locale === "zh-CN" ? "编辑商品" : legacyCopy(locale, "Edit listing")}</button><button className="secondary" onClick={() => changeStatus(product.serviceStatus === "sold" ? "active" : "sold")}>{tr(t, product.serviceStatus === "sold" ? "marketplace:cancelSold" : "marketplace:markSold")}</button><button className="secondary" onClick={() => changeStatus(product.serviceStatus === "hidden" ? "active" : "hidden")}>{tr(t, product.serviceStatus === "hidden" ? "marketplace:showListing" : "marketplace:hideListing")}</button><button className="danger-link" onClick={() => changeStatus("deleted")}>{tr(t, "marketplace:deleteListing")}</button></div> : isSample ? <p className="muted-copy">{tr(t, "common:sampleOnly")}</p> : <div className="product-actions"><button className="primary full" disabled={product.serviceStatus === "sold" || (product.status === "Reserved" && !reservation)} onClick={product.status === "Reserved" ? cancelReservation : reserve}>{product.status === "Reserved" && !reservation ? tr(t, "common:reserved") : locale === "ko" ? (product.status === "Reserved" ? "예약 취소" : "예약하기") : locale === "ja" ? (product.status === "Reserved" ? "予約を取り消す" : "予約する") : locale === "zh-CN" ? (product.status === "Reserved" ? "取消预约" : "预约商品") : legacyCopy(locale, (product.status === "Reserved" ? "Cancel reservation" : "Reserve item"))}</button><button className="secondary full" onClick={contact}><MessageCircle size={18}/>{tr(t, "marketplace:contact")}</button><button className="danger-link" onClick={() => window.localStorage.setItem(`ku-settle-market-report-${product.id}`, "draft")}>{locale === "ko" ? "상품 신고" : locale === "ja" ? "商品を報告" : locale === "zh-CN" ? "举报商品" : legacyCopy(locale, "Report listing")}</button></div>}</Modal>;
+function ProductModal({ locale, t, profile, mode, product, reservation, serviceRequests, updateService, close, contact, changeStatus, reserve, cancelReservation, edit }: { locale: Locale; t: TFunction; profile: UserProfile; mode: ProductModalMode; product: MarketProduct; reservation?: import("./lib/local-data").LocalReservation; serviceRequests: LocalServiceRequest[]; updateService: (mode: ServiceRequestMode, updates?: Partial<LocalServiceRequest>) => void; close: () => void; contact: () => void; reserve: () => void; cancelReservation: () => void; edit: () => void; changeStatus: (status: "active" | "sold" | "hidden" | "deleted") => void }) {
+  const isSample = product.source === "sample"; const Icon = productIcons[product.icon]; const SellerIcon = product.userCreated ? Tag : BadgeCheck; const name = productName(product, t); const reservationLabel = reservation ? reservation.buyerName : "";
+ return <Modal close={close} label={name}><button className="modal-close" onClick={close} aria-label={tr(t, "common:close")}><X/></button><div className={`modal-product-visual ${product.userCreated ? "tone-user" : `tone-${product.id}`}`}><Icon/><span className={`availability ${product.status === "Reserved" || product.serviceStatus === "sold" ? "reserved" : ""}`}>{tr(t, product.serviceStatus === "sold" ? "marketplace:sold" : product.serviceStatus === "hidden" ? "marketplace:hidden" : product.status === "Reserved" ? "common:reserved" : "common:available")}</span></div><span className="seller"><SellerIcon size={16}/>{product.source === "live" ? tr(t, "common:liveData") : tr(t, "common:sampleData")}</span><h2>{name}</h2><strong className="modal-price">{formatCurrency(locale, product.priceKrw)}</strong>{product.imageDataUrl && <img className="modal-listing-image" src={product.imageDataUrl} alt={name}/>} {product.description && <p className="listing-description">{product.description}</p>} {product.availableHours && <p className="listing-hours">{product.availableHours}</p>}<div className="product-modal-details"><div><span>{tr(t, "marketplace:condition")}</span><strong>{tr(t, `marketplace:conditions.${product.condition}`)}</strong></div><div><span>{tr(t, "marketplace:pickup")}</span><strong><MapPin size={16}/>{productPickup(product, t)}</strong></div><div><span>{tr(t, "marketplace:seller")}</span><strong>{productSeller(product, t, profile)}</strong></div></div><ShareLink locale={locale} page="marketplace" id={String(product.id)}/>{productPickup(product, t) && <MapActionBar t={t} place={productPickup(product, t)}/>} {isSample ? <p className="sample-notice" role="note">{tr(t, "common:sampleOnly")}</p> : <ServiceOptions locale={locale} requests={serviceRequests} update={updateService}/>} {mode === "seller" ? <div className="owner-listing-actions">{reservation && <div className="reservation-owner-note"><strong>{tr(t, "marketplace:reservationHolder")}</strong><span>{reservationLabel}</span><button className="secondary" onClick={cancelReservation}>{tr(t, "marketplace:cancelReservation")}</button></div>}<button className="secondary" onClick={edit}>{locale === "ko" ? "상품 수정" : locale === "ja" ? "商品を編集" : locale === "zh-CN" ? "编辑商品" : legacyCopy(locale, "Edit listing")}</button><button className="secondary" onClick={() => changeStatus(product.serviceStatus === "sold" ? "active" : "sold")}>{tr(t, product.serviceStatus === "sold" ? "marketplace:cancelSold" : "marketplace:markSold")}</button><button className="secondary" onClick={() => changeStatus(product.serviceStatus === "hidden" ? "active" : "hidden")}>{tr(t, product.serviceStatus === "hidden" ? "marketplace:showListing" : "marketplace:hideListing")}</button><button className="danger-link" onClick={() => changeStatus("deleted")}>{tr(t, "marketplace:deleteListing")}</button></div> : isSample ? <p className="muted-copy">{tr(t, "common:sampleOnly")}</p> : <div className="product-actions"><button className="primary full" disabled={product.serviceStatus === "sold" || (product.status === "Reserved" && !reservation)} onClick={product.status === "Reserved" ? cancelReservation : reserve}>{product.status === "Reserved" && !reservation ? tr(t, "common:reserved") : locale === "ko" ? (product.status === "Reserved" ? "예약 취소" : "예약하기") : locale === "ja" ? (product.status === "Reserved" ? "予約を取り消す" : "予約する") : locale === "zh-CN" ? (product.status === "Reserved" ? "取消预约" : "预约商品") : legacyCopy(locale, (product.status === "Reserved" ? "Cancel reservation" : "Reserve item"))}</button><button className="secondary full" onClick={contact}><MessageCircle size={18}/>{tr(t, "marketplace:contact")}</button><button className="danger-link" onClick={() => window.localStorage.setItem(`ku-settle-market-report-${product.id}`, "draft")}>{locale === "ko" ? "상품 신고" : locale === "ja" ? "商品を報告" : locale === "zh-CN" ? "举报商品" : legacyCopy(locale, "Report listing")}</button></div>}</Modal>;
 }
 
 function ContactModal({ t, close }: { t: TFunction; close: () => void }) {

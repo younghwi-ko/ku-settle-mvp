@@ -317,6 +317,7 @@
   },
   "marketplace": {
     "reservationRejected": "Yêu cầu bị từ chối. Chưa xác nhận đặt trước. Hãy đóng cửa sổ và kiểm tra tin đăng.",
+    "cancelRejected": "Máy chủ từ chối yêu cầu hủy. Hãy kiểm tra lượt đặt trước hiện tại trước khi thử lại.",
     "reservationUncertain": "Chưa rõ kết quả. Dữ liệu có thể đã được lưu. Hãy kiểm tra máy chủ trước khi gửi lại cùng yêu cầu.",
     "reservationNotFound": "Chưa xác nhận đặt trước hoặc đổi lịch. Bạn có thể gửi lại cùng yêu cầu.",
     "reservationInactive": "Đặt trước này đã hủy, hết hạn hoặc hoàn tất. Không được xác nhận là đang hoạt động.",
@@ -644,6 +645,7 @@
     "otpLength": "Nhập mã gồm sáu chữ số."
   },
   "errors": {
+    "listingOutcomeUnknown": "Thay đổi sản phẩm có thể đã được lưu. Hãy tải lại trang và kiểm tra sản phẩm trước khi thử lại.",
     "generic": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "imageInvalid": "Chọn tệp ảnh hợp lệ.",
     "missingTranslation": "Nội dung này tạm thời được hiển thị bằng tiếng Anh.",

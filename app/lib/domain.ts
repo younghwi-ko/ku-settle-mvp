@@ -70,7 +70,7 @@ export function isPickupPast(reservation: Pick<{ pickupDate: string; pickupEndTi
 }
 export function isOwnedMarketplaceProduct(product: Pick<MarketProduct, "userCreated" | "source" | "ownedByCurrentUser">, appMode: AppMode) {
   if (product.source === "live") return product.ownedByCurrentUser === true;
-  return appMode !== "authenticated" && product.userCreated === true && product.source !== "sample";
+  return appMode !== "authenticated" && product.userCreated === true && (product.source !== "sample" || product.ownedByCurrentUser === true);
 }
 export function toDbHousing(value: Housing): DbHousing { return value === "dorm" ? "dormitory" : "off_campus"; }
 export function fromDbHousing(value: DbHousing | null): Housing { return value === "off_campus" ? "off-campus" : "dorm"; }

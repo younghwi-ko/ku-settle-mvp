@@ -317,6 +317,7 @@
   },
   "marketplace": {
     "reservationRejected": "Permintaan ditolak. Tempahan belum disahkan. Tutup tetingkap dan semak penyenaraian.",
+    "cancelRejected": "Pelayan menolak pembatalan. Semak tempahan semasa sebelum mencuba semula.",
     "reservationUncertain": "Keputusan belum diketahui. Data mungkin telah disimpan. Semak pelayan sebelum mencuba permintaan yang sama.",
     "reservationNotFound": "Tempahan atau perubahan jadual belum disahkan. Anda boleh mencuba permintaan yang sama.",
     "reservationInactive": "Tempahan ini dibatalkan, tamat tempoh atau selesai. Ia tidak disahkan sebagai aktif.",
@@ -644,6 +645,7 @@
     "otpLength": "Masukkan kod enam digit."
   },
   "errors": {
+    "listingOutcomeUnknown": "Perubahan item mungkin telah disimpan. Muat semula halaman dan semak item sebelum mencuba semula.",
     "generic": "Sesuatu telah berlaku. Cuba lagi.",
     "imageInvalid": "Pilih fail gambar yang sah.",
     "missingTranslation": "Kandungan ini dipaparkan sementara dalam bahasa Inggeris.",
