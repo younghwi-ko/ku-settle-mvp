@@ -4,6 +4,7 @@ import { parseEnv } from 'node:util';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { spawn, execFileSync } from 'node:child_process';
 import { createServer } from 'node:net';
+import { getCACertificates } from 'node:tls';
 import pg from 'pg';
 import { chromium } from 'playwright';
 
@@ -18,8 +19,8 @@ try {
   const jwt = JSON.parse(Buffer.from(env.SUPABASE_SERVICE_ROLE_KEY.split('.')[1],'base64url'));
   assert.equal(jwt.ref,ref); assert.equal(jwt.role,'service_role'); assert.ok(jwt.exp * 1000 > Date.now());
 } catch { console.error('격리 URL/ref/서버 키 확인 실패. 앱 실행·쓰기 없이 종료'); process.exit(2); }
-const db = new pg.Client({ host:`db.${ref}.supabase.co`,user:'postgres',database:'postgres',password:env.SUPABASE_DB_PASSWORD,
-  ssl:{ca:readFileSync(env.TEST_DB_CA_FILE,'utf8'),rejectUnauthorized:true},connectionTimeoutMillis:10000 });
+const db = new pg.Client({ host:'aws-0-ap-northeast-2.pooler.supabase.com',user:`postgres.${ref}`,database:'postgres',password:env.SUPABASE_DB_PASSWORD,
+  ssl:{ca:[...getCACertificates('system'),readFileSync(env.TEST_DB_CA_FILE,'utf8')],rejectUnauthorized:true},connectionTimeoutMillis:10000 });
 const run = `reservation-http-${randomUUID()}`, adminToken = randomBytes(32).toString('hex');
 const sha = value=>createHash('sha256').update(value).digest('hex');
 const sessions = new Set(), rateKeys = new Set();
@@ -105,7 +106,7 @@ try {
     if old.key_hash=any(array[${oldKeys.map(x=>`'${x}'`).join(',')}]::text[]) then return null; end if; return old; end $$`);
   await db.query(`create trigger ${guard} before delete on public.admin_rate_limit_buckets for each row execute function pg_temp.${guard}()`); guarded=true;
   // 생성하는 비밀값은 자식 프로세스 환경에서만 사용한다. 로그/파일/셸 인자에 넣지 않는다.
-  child=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--hostname','127.0.0.1','--port','3102'],{
+  child=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port','3102'],{
     env:{...env,NODE_ENV:'development',ADMIN_API_TOKEN:adminToken,INTEGRATION_TEST_SECRET:randomBytes(32).toString('hex'),ACCOUNT_SIGNUP_ENABLED:'false',EMAIL_DELIVERY_ENABLED:'false',EMAIL_PROVIDER_VERIFIED:'false',AUTH_EMAIL_DOMAIN_VERIFIED:'false'},stdio:'ignore',windowsHide:true,
   });
   let ready=false;
@@ -153,11 +154,119 @@ try {
   await page.evaluate(()=>{const d=JSON.parse(localStorage.getItem('ku-settle-local-data-v6'));d.preferences.reservations=[];d.preferences.reservedProductIds=[];localStorage.setItem('ku-settle-local-data-v6',JSON.stringify(d));});
   await page.reload({waitUntil:'networkidle'});await restored();await page.locator('.modal .availability.reserved').waitFor();
   await stateMatches(r1,'active','reserved');passed('실제 Chromium reload 후 HTTP 서버 예약 ID·상태 복구와 상세 표시');
+  stage='판매자 수정과 타인 상품 제외';
+  const openMarket = async (c, id) => {
+    await c.addInitScript(() => localStorage.setItem('ku-settle-setup-skipped:guest','1'));
+    const tab = await c.newPage();
+    tab.setDefaultTimeout(20000);
+    await tab.goto(`${origin}/?lang=ko&page=marketplace${id ? `&listing=${id}` : ''}`,{waitUntil:'networkidle',timeout:60000});
+    return tab;
+  };
+  const leaving = tab => tab.getByRole('button',{name:'곧 출국해요',exact:true}).click();
+  const sellerPage=await openMarket(seller),otherPage=await openMarket(other,listing.id);
+  stage='타인 상품 상세 소유권';
+  await otherPage.getByRole('dialog',{name:run,exact:true}).waitFor();
+  assert.equal(await otherPage.locator('.owner-listing-actions').count(),0);
+  await otherPage.keyboard.press('Escape');await leaving(otherPage);
+  stage='타인 상품 내 목록 제외';
+  assert.equal(await otherPage.locator('.my-listing-row').filter({hasText:run}).count(),0);
+  const rowFor = name => sellerPage.locator('.my-listing-row').filter({hasText:name});
+  const listingRow = async id => (await db.query('select item_name,status,availability from public.guest_listings where id=$1 and session_id=$2',[id,sellerId])).rows[0];
+  const listingPath = `/api/marketplace/listings/${listing.id}`;
+  const match = (response,path,method) => new URL(response.url()).pathname===`${path}/` && response.request().method()===method;
+  const clickPatch = async (button,path,status) => {
+    const pending=sellerPage.waitForResponse(response=>match(response,path,'PATCH'));
+    await button.click();
+    const response=await pending;
+    const body=await response.json();
+    if(response.status()!==status) console.error(`브라우저 PATCH HTTP ${response.status()} (기대 ${status})`);
+    assert.equal(response.status(),status);return body;
+  };
+  const reloadSeller = async () => { await sellerPage.reload({waitUntil:'networkidle'});await leaving(sellerPage); };
+  const editName = `${run}-edited`;
+  stage='판매자 상세 열기';
+  await leaving(sellerPage);
+  await rowFor(run).filter({has:sellerPage.getByText(run,{exact:true})}).locator('.my-listing-row-main').click();
+  stage='판매자 편집 폼 열기';
+  await sellerPage.getByRole('button',{name:'상품 수정',exact:true}).click();
+  const editor=sellerPage.getByRole('dialog',{name:'상품 수정',exact:true});
+  await editor.getByLabel('상품명',{exact:true}).fill(editName);
+  stage='판매자 편집 PATCH';
+  const edited=(await clickPatch(editor.getByRole('button',{name:'저장',exact:true}),listingPath,200)).listing;
+  stage='편집 응답과 DB 대조';
+  assert.equal(edited.item_name,editName);assert.equal((await listingRow(listing.id)).item_name,editName);
+  await reloadSeller();await rowFor(editName).waitFor();
+  stage='타인 편집 거부와 DB 보존';
+  assert.equal((await expected(other,listingPath,'PATCH',{itemName:'거부 대상'},409)).error,'listing_conflict_or_not_found');
+  assert.equal((await listingRow(listing.id)).item_name,editName);
+  passed('실제 판매자 상품 편집·새로고침, 타인 상품 내 목록·판매자 상세 제외와 변경 거부');
+  stage='숨김·복원 및 다른 구매자 표시';
+  await rowFor(editName).locator('.my-listing-row-main').click();
+  const hidden=(await clickPatch(sellerPage.getByRole('button',{name:'상품 숨기기',exact:true}),listingPath,200)).listing;
+  assert.equal(hidden.status,'hidden');assert.equal((await listingRow(listing.id)).status,'hidden');
+  const publicRows = async () => (await expected(other,`/api/marketplace/listings?search=${encodeURIComponent(editName)}`,'GET',undefined,200)).listings;
+  assert.equal((await publicRows()).some(row=>row.id===listing.id),false);
+  await sellerPage.keyboard.press('Escape');await reloadSeller();
+  await rowFor(editName).getByText(/^(숨김|Hidden)$/).waitFor();
+  await rowFor(editName).locator('.my-listing-row-main').click();
+  const reopened=(await clickPatch(sellerPage.getByRole('button',{name:'상품 다시 공개',exact:true}),listingPath,200)).listing;
+  await otherPage.goto(`${origin}/?lang=ko&page=marketplace&listing=${listing.id}`,{waitUntil:'networkidle'});
+  const detail=otherPage.getByRole('dialog',{name:editName,exact:true});
+  await detail.waitFor();
+  const actual=await listingRow(listing.id);
+  const publicRow=(await publicRows()).find(row=>row.id===listing.id);
+  const canBook=await detail.getByRole('button',{name:'예약하기',exact:true}).count()>0;
+  console.log(`다시 공개: PATCH ${reopened.status}, DB ${actual.status}/${actual.availability}, 공개 API ${publicRow?.status}, 다른 구매자 예약 버튼 ${canBook ? '있음' : '없음'}`);
+  assert.equal(reopened.status,'reserved');
+  assert.equal(actual.status,'reserved');assert.equal(actual.availability,'reserved');assert.equal(publicRow?.status,'reserved');assert.equal(canBook,false);
+  await sellerPage.locator('.service-status[role=status]').getByText('저장됨',{exact:true}).waitFor();
+  assert.equal(await detail.locator('.product-actions .primary').isDisabled(),true);
+  await reserve(other,listing.id,randomUUID(),409);
+  await stateMatches(r1,'active','reserved');
+  await sellerPage.keyboard.press('Escape');await reloadSeller();await rowFor(editName).locator('.listing-reservation').waitFor();
+  passed('활성 예약 상품 숨김·다시 공개·새로고침 및 다른 구매자의 예약 가능 표시와 중복 요청 차단');
+  stage='판매자 목록 취소와 새로고침';
+  const sellerCancelledFromList=(await clickPatch(rowFor(editName).getByRole('button',{name:'예약 취소',exact:true}),userPath,200)).reservation;
+  await stateMatches(sellerCancelledFromList,'cancelled','active');
+  await rowFor(editName).locator('.listing-reservation').waitFor({state:'hidden'});
+  await reloadSeller();await rowFor(editName).waitFor();
+  assert.equal(await rowFor(editName).locator('.listing-reservation').count(),0);
+  await sellerPage.waitForFunction(id=>JSON.parse(localStorage.getItem('ku-settle-local-data-v6')??'null')?.preferences.reservations.some(x=>x.id===id&&x.status==='cancelled'),r1.id);
+  await stateMatches(sellerCancelledFromList,'cancelled','active');
+  passed('판매자 목록 버튼의 실제 취소 PATCH와 새로고침 후 예약·상품 DB 상태 일치');
+  stage='취소와 재공개 동시 요청';
+  const concurrent=await reserve(buyer,listing.id);
+  await expected(seller,listingPath,'PATCH',{status:'hidden'},200);
+  const blocker=(await db.query('select pg_backend_pid() as pid')).rows[0].pid;
+  await db.query('begin');
+  let concurrentReopen;
+  try {
+    await db.query("select public.transition_guest_reservation($1,$2,'cancelled',$3,'user')",[concurrent.id,buyerId,concurrent.version]);
+    concurrentReopen=expected(seller,listingPath,'PATCH',{status:'active'},200);
+    void concurrentReopen.catch(()=>{});
+    let blocked=false;
+    for(let attempt=0;attempt<25&&!blocked;attempt++) {
+      blocked=(await db.query("select exists(select 1 from pg_stat_activity where wait_event_type='Lock' and $1=any(pg_blocking_pids(pid))) as blocked",[blocker])).rows[0].blocked;
+      if(!blocked) await new Promise(resolve=>setTimeout(resolve,200));
+    }
+    assert.equal(blocked,true,'재공개 요청이 취소 트랜잭션의 상품 잠금을 기다려야 함');
+    await db.query('commit');
+  } catch(error) {
+    await db.query('rollback');
+    await concurrentReopen?.catch(()=>{});
+    throw error;
+  }
+  assert.equal((await concurrentReopen).listing.status,'active');
+  assert.equal((await listingRow(listing.id)).availability,'available');
+  assert.equal((await db.query('select status from public.guest_reservations where id=$1',[concurrent.id])).rows[0].status,'cancelled');
+  passed('취소가 상품 행 잠금을 해제한 뒤 대기 중인 재공개 요청은 available로 저장');
   stage='취소와 관리자 종료';
-  const cancelled=(await expected(buyer,userPath,'PATCH',{status:'cancelled'},200)).reservation;await stateMatches(cancelled,'cancelled','active');
-  const repeat=(await expected(buyer,userPath,'PATCH',{status:'cancelled'},200)).reservation;assert.equal(repeat.version,cancelled.version);
+  const buyerReservation=await reserve(buyer,listing.id);
+  const buyerPath=`/api/reservations/${buyerReservation.id}`;
+  const cancelled=(await expected(buyer,buyerPath,'PATCH',{status:'cancelled'},200)).reservation;await stateMatches(cancelled,'cancelled','active');
+  const repeat=(await expected(buyer,buyerPath,'PATCH',{status:'cancelled'},200)).reservation;assert.equal(repeat.version,cancelled.version);
   const r2=await reserve(buyer,listing.id);
-  const cleaned=(await expected(admin,adminPath,'PATCH',{status:'soft_deleted',version:cancelled.version},200)).reservation;
+  const cleaned=(await expected(admin,adminPath,'PATCH',{status:'soft_deleted',version:sellerCancelledFromList.version},200)).reservation;
   await stateMatches(cleaned,'soft_deleted','reserved');await stateMatches(r2,'active','reserved');
   await expected(admin,`/api/admin/reservations/${r2.id}`,'PATCH',{status:'completed',version:r2.version+1},409);
   const completed=(await expected(admin,`/api/admin/reservations/${r2.id}`,'PATCH',{status:'completed',version:r2.version},200)).reservation;
@@ -181,6 +290,8 @@ try {
   assert.deepEqual(retained.sort((a,b)=>a.key_hash.localeCompare(b.key_hash)),before.sort((a,b)=>a.key_hash.localeCompare(b.key_hash)));
 } catch(error) {
   failed=true;console.error(`검증 실패 단계: ${stage}; ${error.code??error.name??'unknown'}`);
+  const browserError = error.message?.match(/^(?:locator|page)\.[^:\n]+: [^\n]+/);
+  if (browserError) console.error(browserError[0].slice(0,240));
 } finally {
   if(browser)await browser.close().catch(()=>{cleanupFailed=true;});
   if(child?.pid) { try { if(process.platform==='win32')execFileSync('taskkill',['/PID',String(child.pid),'/T','/F'],{stdio:'ignore'});else child.kill(); } catch { cleanupFailed=true; } }

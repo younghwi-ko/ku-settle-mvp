@@ -50,7 +50,8 @@ export async function updateRemoteListing(product: MarketProduct, status?: Marke
     method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(fields),
   });
   const row = body?.listing;
-  if (row?.id !== product.id || (status && row.status !== status) || !["active", "reserved", "sold", "hidden", "deleted"].includes(row.status)
+  if (row?.id !== product.id || (status && row.status !== status && !(status === "active" && row.status === "reserved"))
+    || !["active", "reserved", "sold", "hidden", "deleted"].includes(row.status)
     || typeof row.item_name !== "string" || !Number.isInteger(row.price_krw) || typeof row.pickup_location !== "string"
     || !Object.hasOwn(category, row.category) || !Object.hasOwn(condition, row.condition)) throw new MarketplaceRequestError("uncertain");
   return serverListingToProduct(row);
