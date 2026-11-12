@@ -100,10 +100,12 @@ export function profileRowToStored(row: ProfileRow): StoredProfile {
   return { name: row.display_name ?? "", arrivalDate: row.expected_arrival_date ?? "", housing: fromDbHousing(row.housing_type), mode: "personalized", arrivalPhase: row.arrival_phase ?? undefined, studyTrack: row.study_track ?? undefined, departureDate: row.departure_date ?? undefined };
 }
 
+export const accountListingReportPrefix = "account-listing:";
+
 export function marketplaceRowToProduct(row: MarketplaceRow, currentUserId?: string): MarketProduct {
   return {
     id: row.id, name: row.item_name, priceKrw: row.price_krw, category: categoryFromDb[row.category], condition: conditionFromDb[row.condition],
-    pickup: row.pickup_location, seller: row.seller_display_name, status: row.status === "sold" || row.availability === "reserved" ? "Reserved" : "Available", icon: row.category === "kitchen" ? "cooking" : row.category === "electronics" ? "fan" : row.category === "bedding" ? "bed" : "box", userCreated: true, source: "live", ownedByCurrentUser: row.seller_id === currentUserId, serviceStatus: row.status
+    pickup: row.pickup_location, seller: row.seller_display_name, status: row.status === "sold" || row.availability === "reserved" ? "Reserved" : "Available", icon: row.category === "kitchen" ? "cooking" : row.category === "electronics" ? "fan" : row.category === "bedding" ? "bed" : "box", userCreated: true, source: "live", accountListing: true, ownedByCurrentUser: row.seller_id === currentUserId, serviceStatus: row.status
   };
 }
 

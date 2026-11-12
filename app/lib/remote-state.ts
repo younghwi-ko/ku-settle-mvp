@@ -1,5 +1,7 @@
 import type { MarketProduct } from "../data";
 import type { LocalPreferences, LocalReservation, LocalServiceRequest } from "./local-data";
+import { authHeaders } from "./account-api";
+import { accountListingReportPrefix } from "./domain";
 
 type ServerListing = { id: string; client_id?: string | null; seller_name: string; item_name: string; description?: string; price_krw: number; category: "home" | "kitchen" | "electronics" | "bedding"; condition: "like_new" | "good" | "used" | "clean"; pickup_location: string; status: "active" | "reserved" | "sold" | "hidden" | "deleted"; image_data_url?: string | null; image_path?: string | null; updated_at?: string };
 type ServerState = { listings: ServerListing[]; myListings?: ServerListing[]; reservations: Array<Record<string, unknown>>; serviceRequests: Array<Record<string, unknown>>; lifecycle: Array<{ task_id: string; completed: boolean }>; preferences?: Record<string, unknown> | null; serverVersion?: number };
@@ -9,13 +11,29 @@ export class MarketplaceRequestError extends Error {
 export function marketplaceFailure(status: number) {
   return new MarketplaceRequestError(status >= 400 && status < 500 && ![408, 429].includes(status) ? "rejected" : "uncertain");
 }
-export async function marketplaceRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function marketplaceRequest<T>(path: string, init: RequestInit = {}, expectedStatus?: number): Promise<T> {
   try {
     const response = await fetch(path, { ...init, credentials: "include", cache: "no-store", signal: AbortSignal.timeout(12000) });
     if (!response.ok) throw marketplaceFailure(response.status);
+    if (expectedStatus !== undefined && response.status !== expectedStatus) throw new MarketplaceRequestError("uncertain");
     return await response.json() as T;
   } catch (error) {
     if (error instanceof MarketplaceRequestError) throw error;
+    throw new MarketplaceRequestError("uncertain");
+  }
+}
+export async function createRemoteReport(product: Pick<MarketProduct, "id" | "accountListing">, reason: string, detail: string) {
+  const id = String(product.id);
+  const subject = product.accountListing ? { accountListingId: id } : { listingId: id };
+  const { report } = await marketplaceRequest<{ report?: Record<string, unknown> }>("/api/reports", {
+    method: "POST",
+    headers: product.accountListing ? await authHeaders() : { "content-type": "application/json" },
+    body: JSON.stringify({ ...subject, reason, detail }),
+  }, 201) ?? {};
+  if (!report || typeof report.id !== "string" || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(report.id)
+    || report.listing_id !== (product.accountListing ? null : id) || report.place_key !== (product.accountListing ? accountListingReportPrefix + id : null)
+    || report.status !== "new" || report.reason !== reason || report.detail !== detail
+    || typeof report.created_at !== "string" || !Number.isFinite(Date.parse(report.created_at))) {
     throw new MarketplaceRequestError("uncertain");
   }
 }

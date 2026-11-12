@@ -2,7 +2,7 @@
 
 import { getSupabaseClient } from "./supabase";
 
-async function authHeaders(): Promise<Headers> {
+export async function authHeaders(): Promise<Headers> {
   const client = getSupabaseClient();
   const { data } = await client?.auth.getSession() ?? { data: { session: null } };
   const result = new Headers({ "content-type": "application/json" });

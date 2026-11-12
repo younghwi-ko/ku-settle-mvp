@@ -35,6 +35,7 @@ export type MarketProduct = {
   icon: ProductIcon;
   userCreated?: boolean;
   source?: "sample" | "demo" | "live";
+  accountListing?: boolean;
   ownedByCurrentUser?: boolean;
   serviceStatus?: "active" | "sold" | "hidden" | "deleted";
   description?: string;

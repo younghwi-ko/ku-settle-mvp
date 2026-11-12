@@ -7,6 +7,7 @@ import { createServer } from 'node:net';
 import { getCACertificates } from 'node:tls';
 import pg from 'pg';
 import { chromium } from 'playwright';
+import { createClient } from '@supabase/supabase-js';
 
 const env = { ...parseEnv(readFileSync('.env.local', 'utf8')), ...process.env };
 const ref = 'nlzcikoxttenpcflikpd', origin = 'http://127.0.0.1:3102';
@@ -24,8 +25,9 @@ const db = new pg.Client({ host:'aws-0-ap-northeast-2.pooler.supabase.com',user:
 const run = `reservation-http-${randomUUID()}`, adminToken = randomBytes(32).toString('hex');
 const sha = value=>createHash('sha256').update(value).digest('hex');
 const sessions = new Set(), rateKeys = new Set();
+const authAdmin = createClient(env.NEXT_PUBLIC_SUPABASE_URL,env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}}).auth.admin;
 const guard = `http_guard_${randomUUID().replaceAll('-','')}`;
-let browser, child, guarded=false, appVerified=false, stage='격리 사전 확인', failed=false, cleanupFailed=false, checks=0;
+let browser, child, fixtureAccountId, guarded=false, appVerified=false, stage='격리 사전 확인', failed=false, cleanupFailed=false, checks=0;
 const initialHashes = new Map();
 const initialNextEnv = readFileSync('next-env.d.ts');
 for (const p of ['AGENTS.md','.env.local','.agents/skills/ponytail/SKILL.md','.agents/skills/ponytail-audit/SKILL.md','docs/ponytail-audit-2026-11-10.md','docs/ponytail-development-usage.md']) initialHashes.set(p,sha(readFileSync(p)));
@@ -167,6 +169,93 @@ try {
   stage='타인 상품 상세 소유권';
   await otherPage.getByRole('dialog',{name:run,exact:true}).waitFor();
   assert.equal(await otherPage.locator('.owner-listing-actions').count(),0);
+  stage='실제 상품 신고 거절·연속 제출·관리자 목록';
+  const reportRoute=/\/api\/reports\/?$/;
+  const reportModal=otherPage.getByRole('dialog',{name:'상품 신고',exact:true});
+  const reportButton=reportModal.getByRole('button',{name:'신고 제출',exact:true});
+  const reportDetail=reportModal.locator('textarea');
+  const reportSuccess=otherPage.getByRole('status').filter({hasText:'신고가 접수되었습니다.'});
+  const reportRows=async()=> (await db.query('select id,listing_id,reason,detail,status from public.guest_reports where session_id=$1 order by created_at',[otherId])).rows;
+  const fillReport=async detail=>{
+    await otherPage.getByRole('button',{name:'상품 신고',exact:true}).click();
+    await reportModal.locator('select').selectOption('other');
+    await reportDetail.fill(detail);
+  };
+  await otherPage.evaluate(({id,detail})=>{
+    const key='ku-settle-local-data-v6', state=JSON.parse(localStorage.getItem(key));
+    state.preferences.reportDrafts=[{productId:id,reason:'other',detail,status:'new',createdAt:new Date().toISOString()}];
+    localStorage.setItem(key,JSON.stringify(state));
+  },{id:listing.id,detail:run});
+  await otherPage.reload({waitUntil:'networkidle'});
+  await otherPage.getByRole('button',{name:'상품 신고',exact:true}).click();
+  await reportModal.getByText('이 초안은 이 기기에 저장되어 있으며 운영자에게 전달되지 않았습니다.',{exact:true}).waitFor();
+  assert.equal(await reportModal.locator('select').inputValue(),'other');
+  assert.equal(await reportDetail.inputValue(),run);
+  stage='신고 422 응답과 입력 유지';
+  const invalidReport=route=>route.continue({postData:{...route.request().postDataJSON(),reason:''}});
+  await otherPage.route(reportRoute,invalidReport);
+  await reportButton.click();
+  await reportModal.getByRole('alert').filter({hasText:'서버가 신고 요청을 거절했습니다.'}).waitFor();
+  assert.equal(await reportDetail.inputValue(),run);
+  assert.equal(await reportSuccess.count(),0);
+  assert.equal((await reportRows()).length,0);
+  await otherPage.unroute(reportRoute,invalidReport);
+
+  stage='신고 연속 제출과 관리자 목록';
+  const reportResponse=otherPage.waitForResponse(response=>new URL(response.url()).pathname==='/api/reports/'&&response.status()===201);
+  await reportModal.locator('form').evaluate(form=>{form.requestSubmit();form.requestSubmit();});
+  const {report:createdReport}=await (await reportResponse).json();
+  await reportSuccess.waitFor();
+  assert.deepEqual(await reportRows(),[{id:createdReport.id,listing_id:listing.id,reason:'other',detail:run,status:'new'}]);
+  const adminReports=await expected(admin,`/api/admin/reports?search=${run}`,'GET',undefined,200);
+  assert.ok(adminReports.reports.some(report=>report.id===createdReport.id&&report.listing_id===listing.id));
+  passed('실제 신고 거절 뒤 입력 유지, 같은 폼 연속 제출 시 DB 한 행, 관리자 신고 목록에서 접수 확인');
+
+  stage='실제 신고 응답 유실과 샘플';
+  const lostDetail=`${run}-lost`;
+  await fillReport(lostDetail);
+  let lostStatus;
+  const dropReportResponse=async route=>{
+    try { lostStatus=(await route.fetch({url:`${origin}/api/reports/`,maxRedirects:0})).status(); }
+    finally { await route.abort('connectionreset'); }
+  };
+  await otherPage.route(reportRoute,dropReportResponse);
+  await reportButton.click();
+  await reportModal.getByRole('alert').filter({hasText:'신고 접수 여부를 확인하지 못했습니다.'}).waitFor();
+  assert.equal(lostStatus,201);
+  assert.equal(await reportDetail.inputValue(),lostDetail);
+  assert.equal(await reportButton.isDisabled(),true);
+  assert.equal(await reportSuccess.count(),0);
+  assert.equal((await reportRows()).filter(report=>report.detail===lostDetail).length,1);
+  await otherPage.unroute(reportRoute,dropReportResponse);
+  await otherPage.goto(`${origin}/?lang=ko&page=marketplace&listing=1`,{waitUntil:'networkidle'});
+  await otherPage.getByText('샘플 상품의 신고는 운영자에게 전달되지 않습니다.',{exact:true}).waitFor();
+  assert.equal(await otherPage.getByRole('button',{name:'상품 신고',exact:true}).count(),0);
+  assert.equal((await reportRows()).length,2);
+  passed('서버 저장 후 응답을 끊으면 접수 미확인과 입력 유지, 샘플은 운영자에게 전달하지 않음');
+  stage='계정 상품의 신고 참조와 인증 확인';
+  const email=`${run}@korea.ac.kr`, password=randomBytes(24).toString('hex');
+  const fixture=await authAdmin.createUser({email,password,email_confirm:true});
+  if(fixture.error||!fixture.data.user) throw Error('isolated_account_create_failed');
+  fixtureAccountId=fixture.data.user.id;
+  const accountListing=(await db.query(`insert into public.marketplace_items
+    (seller_id,seller_display_name,item_name,price_krw,category,condition,pickup_location,availability)
+    values ($1,'격리 테스트',$2,1000,'home','good','격리 장소','available') returning id`,[fixtureAccountId,run])).rows[0];
+  const accountReport={accountListingId:accountListing.id,reason:'other',detail:`${run}-account`};
+  await expected(other,'/api/reports','POST',accountReport,401);
+  const authClient=createClient(env.NEXT_PUBLIC_SUPABASE_URL,env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+  const signedIn=await authClient.auth.signInWithPassword({email,password});
+  if(signedIn.error||!signedIn.data.session) throw Error('isolated_account_sign_in_failed');
+  const {report:accountReceipt}=await expected(other,'/api/reports','POST',accountReport,201,{authorization:`Bearer ${signedIn.data.session.access_token}`});
+  assert.equal(accountReceipt.listing_id,null);
+  assert.equal(accountReceipt.place_key,`account-listing:${accountListing.id}`);
+  const accountAdmin=await expected(admin,`/api/admin/reports?search=${run}-account`,'GET',undefined,200);
+  assert.ok(accountAdmin.reports.some(report=>report.id===accountReceipt.id&&report.place_key===accountReceipt.place_key));
+  await db.query("update public.marketplace_items set status='hidden' where id=$1 and seller_id=$2",[accountListing.id,fixtureAccountId]);
+  await expected(other,'/api/reports','POST',accountReport,404,{authorization:`Bearer ${signedIn.data.session.access_token}`});
+  passed('계정 상품 신고는 인증 후 같은 관리자 목록에 상품 참조와 함께 기록');
+  await otherPage.goto(`${origin}/?lang=ko&page=marketplace&listing=${listing.id}`,{waitUntil:'networkidle'});
+  await otherPage.getByRole('dialog',{name:run,exact:true}).waitFor();
   await otherPage.keyboard.press('Escape');await leaving(otherPage);
   stage='타인 상품 내 목록 제외';
   assert.equal(await otherPage.locator('.my-listing-row').filter({hasText:run}).count(),0);
@@ -298,17 +387,25 @@ try {
   if(appVerified) {
     try {
       await db.query('delete from public.admin_audit_log where actor=$1',[run]);
+      await db.query('delete from public.guest_reports where session_id=any($1::uuid[])',[[...sessions]]);
       await db.query('delete from public.anonymous_sessions where id=any($1::uuid[])',[[...sessions]]);
       await db.query('delete from public.admin_rate_limit_buckets where key_hash=any($1::text[])',[[...rateKeys]]);
       const left=(await db.query(`select (select count(*) from public.anonymous_sessions where id=any($1::uuid[]))+
         (select count(*) from public.guest_listings where session_id=any($1::uuid[]))+
         (select count(*) from public.guest_reservations where buyer_session_id=any($1::uuid[]))+
+        (select count(*) from public.guest_reports where session_id=any($1::uuid[]) or detail in ($2,$2||'-lost',$2||'-account'))+
         (select count(*) from public.user_notifications where session_id=any($1::uuid[]))+
         (select count(*) from public.admin_audit_log where actor=$2)+
         (select count(*) from public.admin_rate_limit_buckets where key_hash=any($3::text[])) as n`,[[...sessions],run,[...rateKeys]])).rows[0].n;
-      assert.equal(Number(left),0);console.log('이번 실행의 세션·상품·예약·알림·감사·rate-limit 행 정리 확인');
+      assert.equal(Number(left),0);console.log('이번 실행의 세션·상품·예약·신고·알림·감사·rate-limit 행 정리 확인');
     }catch(error){cleanupFailed=true;console.error(`정리 실패: ${error.code??error.name}`);}
   }
+  if(fixtureAccountId)try{
+    const deleted=await authAdmin.deleteUser(fixtureAccountId);
+    if(deleted.error) throw deleted.error;
+    const left=(await db.query('select (select count(*) from auth.users where id=$1)+(select count(*) from public.marketplace_items where seller_id=$1) as n',[fixtureAccountId])).rows[0].n;
+    assert.equal(Number(left),0);console.log('이번 계정 상품 신고 검증 계정과 상품 정리 확인');
+  }catch(error){cleanupFailed=true;console.error(`격리 계정 정리 실패: ${error.code??error.name}`);}
   if(guarded)try{
     await db.query(`drop trigger ${guard} on public.admin_rate_limit_buckets`);
     assert.equal((await db.query('select count(*)::int as n from pg_trigger where tgname=$1',[guard])).rows[0].n,0);
@@ -322,5 +419,5 @@ try {
   }
   for(const [p,hash]of initialHashes)if(sha(readFileSync(p))!==hash){failed=true;console.error('보존 대상 파일 변경 감지');}
 }
-console.log(`최종: 실제 HTTP→DB ${checks}개 그룹 ${failed?'실패':'통과'}, 정리 ${cleanupFailed?'실패':'완료'}. 이메일 계정 로그인 검증 아님.`);
+console.log(`최종: 실제 HTTP→DB ${checks}개 그룹 ${failed?'실패':'통과'}, 정리 ${cleanupFailed?'실패':'완료'}. 운영 로그인·이메일 발송 검증 아님.`);
 process.exitCode=failed||cleanupFailed?1:0;
