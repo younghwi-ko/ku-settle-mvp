@@ -102,6 +102,11 @@ export function profileRowToStored(row: ProfileRow): StoredProfile {
 
 export const accountListingReportPrefix = "account-listing:";
 
+export function listingClientId(id: unknown): string | null {
+  if (typeof id === "string") return id.slice(0, 160) || null;
+  return typeof id === "number" && Number.isFinite(id) ? String(id) : null;
+}
+
 export function marketplaceRowToProduct(row: MarketplaceRow, currentUserId?: string): MarketProduct {
   return {
     id: row.id, name: row.item_name, priceKrw: row.price_krw, category: categoryFromDb[row.category], condition: conditionFromDb[row.condition],

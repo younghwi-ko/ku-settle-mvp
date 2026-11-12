@@ -3,6 +3,7 @@ import { publicServiceRequestColumns } from "@/app/lib/public-service-request";
 import { apiError, jsonBody, record, sessionOrError, text, validImage } from "@/app/lib/server-api";
 import { requireSameOrigin, serverClient } from "@/app/lib/server-session";
 import { expireReservations } from "@/app/lib/reservation-expiry";
+import { listingClientId } from "@/app/lib/domain";
 
 const categories: Record<string, string> = { Home: "home", Kitchen: "kitchen", Electronics: "electronics", Bedding: "bedding" };
 const conditions: Record<string, string> = { likeNew: "like_new", good: "good", used: "used", clean: "clean" };
@@ -57,8 +58,30 @@ export async function PUT(request: Request) {
   }
   if (Array.isArray(body.products)) for (const item of body.products) {
     if (!record(item) || !text(item.name, 120) || !Number.isInteger(item.priceKrw) || Number(item.priceKrw) <= 0 || !categories[item.category as string] || !conditions[item.condition as string] || !text(item.pickup, 200) || !validImage(item.imageDataUrl)) continue;
-    const { error } = await client.from("guest_listings").upsert({ session_id: session.id, client_id: item.id === undefined ? null : String(item.id).slice(0, 160), seller_name: text(profile?.name, 80) ?? "Alex", item_name: item.name, description: typeof item.description === "string" ? item.description.slice(0, 2000) : "", price_krw: item.priceKrw, category: categories[item.category as string], condition: conditions[item.condition as string], pickup_location: item.pickup, availability: "available", status: item.serviceStatus === "sold" ? "sold" : item.serviceStatus === "hidden" ? "hidden" : "active", image_data_url: item.imageDataUrl ?? null }, { onConflict: "session_id,client_id" });
-    if (error) importErrors.push(error);
+    const clientId = listingClientId(item.id);
+    if (!clientId) { importErrors.push("listing_client_id_required"); continue; }
+    const { error } = await client.from("guest_listings").insert({
+      session_id: session.id,
+      client_id: clientId,
+      seller_name: text(profile?.name, 80) ?? text(body.sellerName, 80) ?? "Alex",
+      item_name: item.name,
+      description: typeof item.description === "string" ? item.description.slice(0, 2000) : "",
+      price_krw: item.priceKrw,
+      category: categories[item.category as string],
+      condition: conditions[item.condition as string],
+      pickup_location: item.pickup,
+      availability: "available",
+      status: item.serviceStatus === "sold" ? "sold" : item.serviceStatus === "hidden" ? "hidden" : "active",
+      image_data_url: item.imageDataUrl ?? null,
+    });
+    if (!error) continue;
+    // The partial unique index protects concurrent imports. Preserve the existing server row on replay.
+    if (error.code === "23505") {
+      const { data: existing, error: lookupError } = await client.from("guest_listings").select("id")
+        .eq("session_id", session.id).eq("client_id", clientId).maybeSingle();
+      if (!lookupError && existing) continue;
+    }
+    importErrors.push(error);
   }
   if (importErrors.length) return apiError("state_import_failed", 502);
   return NextResponse.json({ ok: true, imported: true });

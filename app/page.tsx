@@ -24,7 +24,7 @@ import { legacyCopy, normalizePublicCopy } from "./i18n/legacy-copy";
 import { getSupabaseClient, isSupabaseConfigured } from "./lib/supabase";
 import { accountFetch } from "./lib/account-api";
 import { createMarketplaceItem, deleteAccount, importGuestData, loadAccount, loadMarketplaceItems, saveProfile, saveProgress, sendEmailOtp, signOut, updateMarketplaceItem, verifyEmailOtp } from "./lib/repository";
-import { googleMapsDirectionsUrl, googleMapsSearchUrl, isKuEmail, isOwnedMarketplaceProduct, isPickupPast, isValidImageDataUrl, isValidPickupSchedule, mapServiceError, profileRowToStored, validateMarketplaceInput, type AppMode, type ProfileRow, type StoredProfile } from "./lib/domain";
+import { googleMapsDirectionsUrl, googleMapsSearchUrl, isKuEmail, isOwnedMarketplaceProduct, isPickupPast, isValidImageDataUrl, isValidPickupSchedule, listingClientId, mapServiceError, profileRowToStored, validateMarketplaceInput, type AppMode, type ProfileRow, type StoredProfile } from "./lib/domain";
 import { shouldShowVerifiedBadge } from "./lib/verification";
 import { emptyPreferences, isRetiredQaListing, migrateLocalData, readLocalData, writeLocalData, type GuideProgress, type LocalPreferences, type LocalReservation, type ReportDraft, type LocalServiceRequest, type ServiceRequestMode } from "./lib/local-data";
 import KakaoMap from "./components/kakao-map";
@@ -381,7 +381,7 @@ export default function Home() {
     if (!accountId.current) {
       const own = remote.myListings ?? [];
       const serverIds = new Set([...remote.listings.map((item) => item.id), ...own.flatMap((item) => item.client_id ? [item.id, item.client_id] : [item.id])]);
-      setUserProducts((current) => [...current.filter((item) => item.source !== "live" && !serverIds.has(String(item.id))), ...own.map(serverListingToProduct)]);
+      setUserProducts((current) => [...current.filter((item) => item.source !== "live" && !serverIds.has(listingClientId(item.id) ?? "")), ...own.map(serverListingToProduct)]);
     }
     const reservations = remote.reservations.map(serverReservationToLocal).filter((item): item is LocalReservation => Boolean(item));
     setLocalPreferences((current) => {
@@ -422,11 +422,26 @@ export default function Home() {
       void (async () => {
         if (!await bootstrapRemote()) return;
         try {
-          const remote = await fetchRemoteState();
+          let remote = await fetchRemoteState();
           if (!current) return;
           applyGuestMarketplace(remote);
-          if (!accountId.current && !remote.myListings?.length && (loadedProducts.length || loadedProfile)) await importRemoteState({ profile: loadedProfile, done: loadedDone, products: loadedProducts, preferences: migrated.preferences, locale });
-          if (!current) return;
+          const importedIds = new Set(remote.myListings?.map((item) => item.client_id).filter(Boolean));
+          const pendingProducts = loadedProducts.filter((product) => !importedIds.has(listingClientId(product.id) ?? ""));
+          const restoreFullState = !remote.myListings?.length;
+          if (!accountId.current && (pendingProducts.length || (restoreFullState && loadedProfile))) {
+            await importRemoteState({
+              ...(restoreFullState ? { profile: loadedProfile, done: loadedDone, preferences: migrated.preferences } : {}),
+              products: pendingProducts,
+              sellerName: loadedProfile?.name,
+              locale,
+            });
+            if (!current) return;
+            if (pendingProducts.length) {
+              remote = await fetchRemoteState();
+              if (!current) return;
+              applyGuestMarketplace(remote);
+            }
+          }
           const services = remote.serviceRequests.map(serverServiceToLocal).filter((item): item is LocalServiceRequest => Boolean(item));
           // A successful server response is authoritative, including an empty list
           // after an administrator has soft-deleted or completed prior requests.

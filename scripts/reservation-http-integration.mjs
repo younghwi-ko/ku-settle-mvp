@@ -27,7 +27,8 @@ const sha = value=>createHash('sha256').update(value).digest('hex');
 const sessions = new Set(), rateKeys = new Set();
 const authAdmin = createClient(env.NEXT_PUBLIC_SUPABASE_URL,env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}}).auth.admin;
 const guard = `http_guard_${randomUUID().replaceAll('-','')}`;
-let browser, child, fixtureAccountId, guarded=false, appVerified=false, stage='격리 사전 확인', failed=false, cleanupFailed=false, checks=0;
+const importGuard = `${guard}_import`;
+let browser, child, fixtureAccountId, guarded=false, importGuarded=false, appVerified=false, stage='격리 사전 확인', failed=false, cleanupFailed=false, checks=0;
 const initialHashes = new Map();
 const initialNextEnv = readFileSync('next-env.d.ts');
 for (const p of ['AGENTS.md','.env.local','.agents/skills/ponytail/SKILL.md','.agents/skills/ponytail-audit/SKILL.md','docs/ponytail-audit-2026-11-10.md','docs/ponytail-development-usage.md']) initialHashes.set(p,sha(readFileSync(p)));
@@ -125,6 +126,79 @@ try {
   const seller=await context(),buyer=await context(),other=await context(),admin=await context();
   const sellerId=await bootstrap(seller),buyerId=await bootstrap(buyer),otherId=await bootstrap(other);
   assert.equal(new Set([sellerId,buyerId,otherId]).size,3);
+  stage='로컬 상품 이관';
+  const importing=await context(),importSessionId=await bootstrap(importing);
+  const sourceProduct={id:`local-${randomUUID()}`,name:'격리 이관 상품',priceKrw:1000,category:'Home',condition:'good',pickup:'격리 장소',status:'Available',icon:'box'};
+  const importedRows=async()=> (await db.query('select id,client_id,item_name,price_krw,seller_name,status from public.guest_listings where session_id=$1 order by client_id',[importSessionId])).rows;
+  const importResult=await request(importing,'/api/session/state','PUT',{products:[sourceProduct]});
+  const firstImportRows=await importedRows();
+  console.log(`로컬 상품 이관: HTTP ${importResult.status}, 저장 ${firstImportRows.length}건`);
+  assert.equal(importResult.status,200);
+  assert.equal(importResult.body.imported,true);
+  assert.equal(firstImportRows.length,1);
+  assert.equal(firstImportRows[0].client_id,sourceProduct.id);
+  passed('PUT /api/session/state 실제 로컬 상품 이관');
+  stage='같은 상품 재전송 및 동시 이관';
+  await expected(importing,`/api/marketplace/listings/${firstImportRows[0].id}`,'PATCH',{priceKrw:1800},200);
+  await expected(importing,'/api/session/state','PUT',{products:[sourceProduct]},200);
+  assert.deepEqual(await importedRows(),[{...firstImportRows[0],price_krw:1800}]);
+  const concurrentProduct={...sourceProduct,id:`local-${randomUUID()}`};
+  await Promise.all(Array.from({length:2},()=>expected(importing,'/api/session/state','PUT',{products:[concurrentProduct]},200)));
+  assert.equal((await importedRows()).filter(row=>row.client_id===concurrentProduct.id).length,1);
+  passed('같은 상품 재전송과 신규 상품 동시 제출은 각 한 행, 서버에서 수정한 가격 보존');
+
+  stage='부분 저장 실패 후 브라우저 원본 재이관';
+  const partialProduct={...sourceProduct,id:`local-${randomUUID()}`,name:'격리 부분 이관 상품'};
+  const retryProduct={...sourceProduct,id:Date.now(),name:'격리 재시도 상품'};
+  await db.query(`create function pg_temp.${importGuard}() returns trigger language plpgsql as $$
+    begin
+      if new.session_id = '${importSessionId}' and new.client_id = '${retryProduct.id}' then
+        raise exception 'isolated_import_failure';
+      end if;
+      return new;
+    end $$`);
+  await db.query(`create trigger ${importGuard} before insert on public.guest_listings for each row execute function pg_temp.${importGuard}()`);
+  importGuarded=true;
+  await importing.addInitScript(products=>{
+    localStorage.setItem('ku-settle-setup-skipped:guest','1');
+    const key='ku-settle-local-data-v6';
+    if(!localStorage.getItem(key)) localStorage.setItem(key,JSON.stringify({products,profile:{name:'격리 판매자',mode:'personalized',housing:'dorm',arrivalDate:''}}));
+  },[partialProduct,retryProduct]);
+  const importPage=await importing.newPage();
+  const importResponse=status=>importPage.waitForResponse(response=>new URL(response.url()).pathname==='/api/session/state/'&&response.request().method()==='PUT'&&response.status()===status);
+  const rejectedImport=importResponse(502);
+  await importPage.goto(`${origin}/?lang=ko&page=marketplace`,{waitUntil:'networkidle',timeout:60000});
+  assert.equal((await (await rejectedImport).json()).error,'state_import_failed');
+  const partiallySaved=await importedRows();
+  const savedPartial=partiallySaved.find(row=>row.client_id===partialProduct.id);
+  assert.ok(savedPartial);
+  assert.equal(partiallySaved.some(row=>row.client_id===String(retryProduct.id)),false);
+  await importPage.waitForFunction(product=>{
+    const stored=JSON.parse(localStorage.getItem('ku-settle-local-data-v6')??'null')?.products;
+    return stored?.some(row=>row.id===product.id&&row.name===product.name&&row.priceKrw===product.priceKrw&&row.source==='sample');
+  },retryProduct);
+  await db.query(`drop trigger ${importGuard} on public.guest_listings`);importGuarded=false;
+  const acceptedImport=importResponse(200);
+  await importPage.reload({waitUntil:'networkidle'});
+  const retried=await acceptedImport;
+  const retryBody=retried.request().postDataJSON();
+  assert.deepEqual(retryBody.products.map(product=>product.id),[retryProduct.id]);
+  assert.equal(retryBody.profile,undefined);
+  const allImported=await importedRows();
+  assert.deepEqual(allImported.find(row=>row.client_id===partialProduct.id),savedPartial);
+  const savedRetry=allImported.find(row=>row.client_id===String(retryProduct.id));
+  assert.ok(savedRetry);
+  assert.equal(savedRetry.item_name,retryProduct.name);
+  assert.equal(savedRetry.price_krw,retryProduct.priceKrw);
+  assert.equal(savedRetry.seller_name,'격리 판매자');
+  await importPage.waitForFunction(({localId,serverId})=>{
+    const stored=JSON.parse(localStorage.getItem('ku-settle-local-data-v6')??'null')?.products;
+    return stored?.some(row=>row.id===serverId&&row.source==='live')&&!stored.some(row=>row.id===localId);
+  },{localId:retryProduct.id,serverId:savedRetry.id});
+  await importPage.reload({waitUntil:'networkidle'});
+  assert.deepEqual(await importedRows(),allImported);
+  await importPage.close();
+  passed('부분 저장 502 뒤 브라우저 원본 유지, 새로고침 시 남은 상품만 재전송 및 서버 저장본 반영');
   stage='관리자 인증';
   await expected(admin,'/api/admin/session','POST',{token:adminToken+'invalid',operatorName:run},403);
   assert.equal((await admin.cookies()).some(x=>x.name==='ku_settle_admin'),false);
@@ -384,6 +458,7 @@ try {
 } finally {
   if(browser)await browser.close().catch(()=>{cleanupFailed=true;});
   if(child?.pid) { try { if(process.platform==='win32')execFileSync('taskkill',['/PID',String(child.pid),'/T','/F'],{stdio:'ignore'});else child.kill(); } catch { cleanupFailed=true; } }
+  if(importGuarded)try { await db.query(`drop trigger ${importGuard} on public.guest_listings`); }catch{cleanupFailed=true;}
   if(appVerified) {
     try {
       await db.query('delete from public.admin_audit_log where actor=$1',[run]);
