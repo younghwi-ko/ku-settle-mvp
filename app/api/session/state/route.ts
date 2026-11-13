@@ -4,6 +4,7 @@ import { apiError, jsonBody, record, sessionOrError, text, validImage } from "@/
 import { requireSameOrigin, serverClient } from "@/app/lib/server-session";
 import { expireReservations } from "@/app/lib/reservation-expiry";
 import { listingClientId } from "@/app/lib/domain";
+import { isLocale } from "@/app/i18n/types";
 
 const categories: Record<string, string> = { Home: "home", Kitchen: "kitchen", Electronics: "electronics", Bedding: "bedding" };
 const conditions: Record<string, string> = { likeNew: "like_new", good: "good", used: "used", clean: "clean" };
@@ -42,9 +43,11 @@ export async function PUT(request: Request) {
   const client = serverClient(); if (!client) return apiError("server_storage_not_configured", 503);
   const profile = record(body.profile) ? body.profile : null;
   if (profile) {
+    const locale = typeof body.locale === "string" ? body.locale : "en";
+    if (!isLocale(locale)) return apiError("invalid_state", 422);
     const displayName = text(profile.name, 80) ?? "Alex";
     const housing = profile.housing === "off-campus" ? "off_campus" : "dormitory";
-    const { error } = await client.from("guest_profiles").upsert({ session_id: session.id, display_name: displayName, arrival_date: typeof profile.arrivalDate === "string" && profile.arrivalDate ? profile.arrivalDate : null, housing_type: housing, locale: typeof body.locale === "string" ? body.locale : "en", version: 1 }, { onConflict: "session_id" });
+    const { error } = await client.from("guest_profiles").upsert({ session_id: session.id, display_name: displayName, arrival_date: typeof profile.arrivalDate === "string" && profile.arrivalDate ? profile.arrivalDate : null, housing_type: housing, locale, version: 1 }, { onConflict: "session_id" });
     if (error) return apiError("state_import_failed", 502);
   }
   const importErrors: unknown[] = [];

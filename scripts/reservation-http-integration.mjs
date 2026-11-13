@@ -11,6 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const env = { ...parseEnv(readFileSync('.env.local', 'utf8')), ...process.env };
 const ref = 'nlzcikoxttenpcflikpd', origin = 'http://127.0.0.1:3102';
+const profilesOnly = process.argv.includes('--profiles');
 const missing = ['NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_DB_PASSWORD','TEST_DB_CA_FILE'].filter(k=>!env[k]);
 if (missing.length) { console.error(`미설정: ${missing.join(', ')}`); process.exit(2); }
 try {
@@ -82,6 +83,8 @@ try {
   // 기존 앱이 같은 포트에 있으면 앱/DB를 호출하기 전에 종료한다.
   await new Promise((resolve,reject)=>{const probe=createServer();probe.once('error',reject);probe.listen(3102,'127.0.0.1',()=>probe.close(resolve));});
   await db.connect(); await db.query("set statement_timeout='15s'; set lock_timeout='10s'");
+  let before=[], oldKeys=[];
+  if(!profilesOnly) {
   const migration=readFileSync('supabase/migrations/202611100001_atomic_guest_reservations.sql','utf8').replaceAll('\r\n','\n');
   for(const name of ['create_guest_reservation','transition_guest_reservation']) {
     const rows=(await db.query(`select p.oid,p.prosrc,p.prosecdef,p.proconfig,p.prorettype::regtype::text as result_type,
@@ -102,12 +105,14 @@ try {
   const applied=new Set((await db.query('select version from supabase_migrations.schema_migrations')).rows.map(x=>x.version));
   console.log('로컬 파일 중 이력 미등록 버전:',readdirSync('supabase/migrations').filter(x=>x.endsWith('.sql')).map(x=>x.split('_')[0]).filter(x=>!applied.has(x)).sort().join(', '));
   assert.equal((await db.query("select count(*)::int as n from public.guest_reservations where status='active' and expires_at<=now()+interval '20 minutes'")).rows[0].n,0,'기존 예약의 자동 만료 위험');
-  const before=(await db.query('select key_hash,window_started_at,request_count from public.admin_rate_limit_buckets')).rows;
+  before=(await db.query('select key_hash,window_started_at,request_count from public.admin_rate_limit_buckets')).rows;
+  oldKeys=before.map(x=>x.key_hash);
   // 기존 자동 정리 대상도 보존한다. 새 요청의 카운트/인증/RLS/RPC grant는 변경하지 않는다.
-  const oldKeys=before.map(x=>x.key_hash); assert.ok(oldKeys.every(x=>/^[a-f0-9]{64}$/.test(x)));
+  assert.ok(oldKeys.every(x=>/^[a-f0-9]{64}$/.test(x)));
   await db.query(`create function pg_temp.${guard}() returns trigger language plpgsql as $$ begin
     if old.key_hash=any(array[${oldKeys.map(x=>`'${x}'`).join(',')}]::text[]) then return null; end if; return old; end $$`);
   await db.query(`create trigger ${guard} before delete on public.admin_rate_limit_buckets for each row execute function pg_temp.${guard}()`); guarded=true;
+  }
   // 생성하는 비밀값은 자식 프로세스 환경에서만 사용한다. 로그/파일/셸 인자에 넣지 않는다.
   child=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port','3102'],{
     env:{...env,NODE_ENV:'development',ADMIN_API_TOKEN:adminToken,INTEGRATION_TEST_SECRET:randomBytes(32).toString('hex'),ACCOUNT_SIGNUP_ENABLED:'false',EMAIL_DELIVERY_ENABLED:'false',EMAIL_PROVIDER_VERIFIED:'false',AUTH_EMAIL_DOMAIN_VERIFIED:'false'},stdio:'ignore',windowsHide:true,
@@ -121,8 +126,38 @@ try {
       assert.equal(body.isolated,true); assert.equal(body.projectRef,ref); ready=true; break;
     }catch { await new Promise(resolve=>setTimeout(resolve,500)); }
   }
-  assert.equal(ready,true); appVerified=true; passed('DB/ref/함수 및 동일 origin 앱 격리 확인 — 브라우저 진입 전');
+  assert.equal(ready,true); appVerified=true; passed('격리 DB/ref 및 동일 origin 앱 확인 — 브라우저 진입 전');
   browser=await chromium.launch({headless:true});
+  if(profilesOnly) {
+    stage='계정 프로필 저장 및 로컬 프로필 이관';
+    const user=await context(),sessionId=await bootstrap(user);
+    const email=`${run}@korea.ac.kr`, password=randomBytes(24).toString('hex');
+    const fixture=await authAdmin.createUser({email,password,email_confirm:true});
+    if(fixture.error||!fixture.data.user) throw Error('isolated_account_create_failed');
+    fixtureAccountId=fixture.data.user.id;
+    const authClient=createClient(env.NEXT_PUBLIC_SUPABASE_URL,env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+    const signedIn=await authClient.auth.signInWithPassword({email,password});
+    if(signedIn.error||!signedIn.data.session) throw Error('isolated_account_sign_in_failed');
+    const headers={authorization:`Bearer ${signedIn.data.session.access_token}`};
+    const profile={name:'격리 프로필',arrivalDate:'2099-01-01',housing:'dorm'};
+    const locales=['en','ko','ja','zh-CN','uz','vi','mn','ms'];
+    const mismatches=[];
+    for(const locale of locales) {
+      const account=await request(user,'/api/account/profile','PUT',{...profile,locale},headers);
+      const guest=await request(user,'/api/session/state','PUT',{profile,locale});
+      const accountLanguage=(await db.query('select preferred_language from public.profiles where user_id=$1',[fixtureAccountId])).rows[0].preferred_language;
+      const guestLanguage=(await db.query('select locale from public.guest_profiles where session_id=$1',[sessionId])).rows[0]?.locale;
+      if(account.status!==200||account.body.profile?.preferred_language!==locale||accountLanguage!==locale||guest.status!==200||!guest.body.imported||guestLanguage!==locale) {
+        mismatches.push(`${locale}: 계정 HTTP ${account.status}/${accountLanguage}, 이관 HTTP ${guest.status}/${guestLanguage??'없음'}`);
+      }
+    }
+    if(mismatches.length) console.error(mismatches.join('\n'));
+    assert.deepEqual(mismatches,[]);
+    const invalid=await expected(user,'/api/session/state','PUT',{profile,locale:'unsupported'},422);
+    assert.equal(invalid.error,'invalid_state');
+    assert.equal((await db.query('select locale from public.guest_profiles where session_id=$1',[sessionId])).rows[0].locale,'ms');
+    passed('계정 프로필 저장과 익명 프로필 이관의 HTTP 응답·DB 저장값 8개 언어 일치');
+  } else {
   const seller=await context(),buyer=await context(),other=await context(),admin=await context();
   const sellerId=await bootstrap(seller),buyerId=await bootstrap(buyer),otherId=await bootstrap(other);
   assert.equal(new Set([sellerId,buyerId,otherId]).size,3);
@@ -451,6 +486,7 @@ try {
   // 기존 rate-limit 데이터의 값도 그대로인지 확인한다.
   const retained=(await db.query('select key_hash,window_started_at,request_count from public.admin_rate_limit_buckets where key_hash=any($1::text[])',[oldKeys])).rows;
   assert.deepEqual(retained.sort((a,b)=>a.key_hash.localeCompare(b.key_hash)),before.sort((a,b)=>a.key_hash.localeCompare(b.key_hash)));
+  }
 } catch(error) {
   failed=true;console.error(`검증 실패 단계: ${stage}; ${error.code??error.name??'unknown'}`);
   const browserError = error.message?.match(/^(?:locator|page)\.[^:\n]+: [^\n]+/);
@@ -466,6 +502,7 @@ try {
       await db.query('delete from public.anonymous_sessions where id=any($1::uuid[])',[[...sessions]]);
       await db.query('delete from public.admin_rate_limit_buckets where key_hash=any($1::text[])',[[...rateKeys]]);
       const left=(await db.query(`select (select count(*) from public.anonymous_sessions where id=any($1::uuid[]))+
+        (select count(*) from public.guest_profiles where session_id=any($1::uuid[]))+
         (select count(*) from public.guest_listings where session_id=any($1::uuid[]))+
         (select count(*) from public.guest_reservations where buyer_session_id=any($1::uuid[]))+
         (select count(*) from public.guest_reports where session_id=any($1::uuid[]) or detail in ($2,$2||'-lost',$2||'-account'))+
@@ -478,8 +515,8 @@ try {
   if(fixtureAccountId)try{
     const deleted=await authAdmin.deleteUser(fixtureAccountId);
     if(deleted.error) throw deleted.error;
-    const left=(await db.query('select (select count(*) from auth.users where id=$1)+(select count(*) from public.marketplace_items where seller_id=$1) as n',[fixtureAccountId])).rows[0].n;
-    assert.equal(Number(left),0);console.log('이번 계정 상품 신고 검증 계정과 상품 정리 확인');
+    const left=(await db.query('select (select count(*) from auth.users where id=$1)+(select count(*) from public.profiles where user_id=$1)+(select count(*) from public.marketplace_items where seller_id=$1) as n',[fixtureAccountId])).rows[0].n;
+    assert.equal(Number(left),0);console.log('이번 검증 계정·프로필 정리 확인');
   }catch(error){cleanupFailed=true;console.error(`격리 계정 정리 실패: ${error.code??error.name}`);}
   if(guarded)try{
     await db.query(`drop trigger ${guard} on public.admin_rate_limit_buckets`);

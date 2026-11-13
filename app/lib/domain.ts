@@ -1,4 +1,5 @@
 import type { Locale } from "../i18n";
+import { isLocale } from "../i18n/types";
 import type { MarketProduct, ProductCategory, ProductCondition } from "../data";
 
 export type AppMode = "guest" | "demo" | "authenticated";
@@ -48,7 +49,6 @@ export type MarketplaceRow = {
   updated_at: string;
 };
 
-const localeSet = new Set(["en", "ko", "ja", "zh-CN"]);
 const categoryMap: Record<ProductCategory, MarketplaceRow["category"]> = { Home: "home", Kitchen: "kitchen", Electronics: "electronics", Bedding: "bedding" };
 const categoryFromDb: Record<MarketplaceRow["category"], ProductCategory> = { home: "Home", kitchen: "Kitchen", electronics: "Electronics", bedding: "Bedding" };
 const conditionMap: Record<ProductCondition, MarketplaceRow["condition"]> = { likeNew: "like_new", good: "good", used: "used", clean: "clean" };
@@ -56,7 +56,7 @@ const conditionFromDb: Record<MarketplaceRow["condition"], ProductCondition> = {
 
 export function normalizeKuEmail(value: string) { return value.trim().toLowerCase(); }
 export function isKuEmail(value: string) { return /^[^@\s]+@korea\.ac\.kr$/.test(normalizeKuEmail(value)); }
-export function normalizeLocale(value: unknown): Locale { return typeof value === "string" && localeSet.has(value) ? value as Locale : "en"; }
+export function normalizeLocale(value: unknown): Locale { return typeof value === "string" && isLocale(value) ? value : "en"; }
 export function googleMapsSearchUrl(place: string) { return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.trim())}`; }
 export function googleMapsDirectionsUrl(place: string) { return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.trim())}`; }
 export function isValidImageDataUrl(value: unknown, maxLength = 3_000_000) { return typeof value === "string" && (!value || value.length <= maxLength && /^data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(value)); }

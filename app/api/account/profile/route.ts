@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { apiError, jsonBody, record, text } from "@/app/lib/server-api";
 import { authenticatedPrincipal, serverClient } from "@/app/lib/server-session";
-
-const locales = new Set(["en", "ko", "ja", "zh-CN"]);
+import { normalizeLocale } from "@/app/lib/domain";
 
 export async function PUT(request: Request) {
   const principal = await authenticatedPrincipal(request);
@@ -15,7 +14,7 @@ export async function PUT(request: Request) {
   const arrivalPhase = body.arrivalPhase === "already-arrived" ? "already-arrived" : "before-arrival";
   const studyTrack = body.studyTrack === "degree" ? "degree" : "exchange";
   const departureDate = typeof body.departureDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.departureDate) ? body.departureDate : null;
-  const locale = typeof body.locale === "string" && locales.has(body.locale) ? body.locale : "en";
+  const locale = normalizeLocale(body.locale);
   if (!name || !arrivalDate || !housing) return apiError("invalid_profile", 422);
   const client = serverClient();
   if (!client) return apiError("server_storage_not_configured", 503);
