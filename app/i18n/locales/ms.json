@@ -41,10 +41,10 @@
   },
   "home": {
     "eyebrow": "PEMBANTU KEHIDUPAN PELAJAR ANTARABANGSA",
-    "greeting": "Selamat datang ke Korea University, {{name}}",
+    "title": "Senarai semak untuk pelajar antarabangsa Korea University",
     "lead": "Pelan peribadi anda dari ketibaan hingga pulang.",
-    "body": "Lihat apa yang perlu disediakan, langkah seterusnya dan tempat untuk bertindak sepanjang kehidupan anda di KU.",
-    "primaryAction": "Buka pelan saya",
+    "body": "Semak perkara yang perlu disediakan dan langkah seterusnya, dari sebelum tiba hingga pulang.",
+    "primaryAction": "Buka senarai semak saya",
     "secondaryAction": "Lihat pasaran kampus",
     "trust": {
       "account": "Tidak perlu akaun",

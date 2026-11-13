@@ -41,10 +41,10 @@
   },
   "home": {
     "eyebrow": "XALQARO TALABA YORDAMCHISI",
-    "greeting": "Korea University’ga xush kelibsiz, {{name}}",
+    "title": "Korea University xalqaro talabalari uchun tayyorgarlik ro‘yxati",
     "lead": "Kelishdan ketishgacha shaxsiy rejangiz.",
-    "body": "Universitet hayotida nimani tayyorlash, keyin nima qilish va qayerda bajarishni bir joyda ko‘ring.",
-    "primaryAction": "Rejamni ochish",
+    "body": "Koreyaga kelishdan oldingi tayyorgarlikdan uyga qaytishgacha kerakli ishlarni bosqichma-bosqich ko‘ring.",
+    "primaryAction": "Ro‘yxatimni ochish",
     "secondaryAction": "Kampus bozorini ko‘rish",
     "trust": {
       "account": "Hisobsiz foydalanish",

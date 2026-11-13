@@ -35,10 +35,10 @@
   },
   "home": {
     "eyebrow": "留学生ライフサイクルサポート",
-    "greeting": "{{name}}さん、高麗大学へようこそ",
+    "title": "高麗大学留学生の生活チェックリスト",
     "lead": "入国準備から帰国まで、あなただけの留学生活プラン。",
-    "body": "高麗大学での留学生活を通して、何を準備し、次に何を行い、どこから実行できるかを一か所で確認できます。",
-    "primaryAction": "ライフサイクルプランを開く",
+    "body": "渡韓前の準備から帰国まで、必要なことを段階ごとに確認し、次にやることを見つけましょう。",
+    "primaryAction": "チェックリストを開く",
     "secondaryAction": "マーケットを見る",
     "trust": { "account": "アカウント登録不要", "languages": "8言語に対応", "journey": "入国準備から帰国まで" },
     "progressTitle": "留学生活全体の進捗", "todaySummary": "今日と今後の予定", "urgentItems": "確認が必要な項目", "noUpcoming": "今日の予定はありません。", "incompleteCount": "未完了タスク {{count}}件", "progressSummaryShort": "{{progress}}%完了", "overdue": "期限超過", "dueToday": "今日が期限", "dueSoon": "期限間近",

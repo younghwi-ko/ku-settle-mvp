@@ -857,7 +857,7 @@ export default function Home() {
       {menuOpen && <nav className="mobile-nav" aria-label={tr(t, "navigation:mobileLabel")}>{navItems.map(({ key, labelKey, icon: Icon }) => <button key={key} onClick={() => { go(key); setMenuOpen(false); }} className={page === key ? "active" : ""}><Icon size={18}/>{labelKey === "__operationModel" ? serviceUi(locale, "operation") : tr(t, labelKey)}</button>)}</nav>}
 
       <main>
-        {page === "home" && <Dashboard locale={locale} t={t} profile={currentProfile} activeTasks={activeTasks} done={effectiveDone} stageStats={stageStats} progress={progress} completedCount={completedCount} recommendedTask={recommendedTask} go={go}/>}
+        {page === "home" && <Dashboard locale={locale} t={t} activeTasks={activeTasks} done={effectiveDone} stageStats={stageStats} progress={progress} completedCount={completedCount} recommendedTask={recommendedTask} go={go}/>}
         {page === "onboarding" && <Onboarding locale={locale} t={t} activeTasks={activeTasks} stageStats={stageStats} progress={progress} done={effectiveDone} manualDone={done} recommendedTask={recommendedTask} selectedStage={selectedStage} setSelectedStage={setSelectedStage} focusTaskId={focusTaskId} highlightTaskId={highlightTaskId} go={go} openTaskAction={openTaskAction} toggleTask={toggleTask} preferences={localPreferences} setPreferences={setLocalPreferences}/>}
         {page === "marketplace" && <Marketplace locale={locale} t={t} profile={currentProfile} appMode={appMode} products={marketplaceProducts} search={marketSearch} setSearch={setMarketSearch} category={marketCategory} setCategory={setMarketCategory} mode={marketMode} setMode={setMarketMode} addProduct={addMarketplaceProduct} selectProduct={openProduct} cancelReservation={cancelMarketplaceReservation} changeStatus={changeMarketplaceStatus} preferences={localPreferences} setPreferences={setLocalPreferences} toggleFavorite={toggleProductFavorite} loadMoreLive={loadMoreMarketplace} liveHasMore={remoteListingPage < remoteListingTotalPages} liveLoading={remoteListingsLoading}/>}
         {page === "life-guide" && <LifeGuide locale={locale} search={lifeGuideSearch} setSearch={setLifeGuideSearch} category={lifeGuideCategory} setCategory={setLifeGuideCategory} go={go} preferences={localPreferences} setPreferences={setLocalPreferences} done={effectiveDone}/>}
@@ -944,43 +944,44 @@ function OperationModel({ locale }: { locale: Locale }) {
   return <section className="page section-pad"><div className="page-hero"><div><span className="eyebrow"><Banknote size={14}/>{serviceUi(locale, "operation")}</span><h1>{serviceUi(locale, "operation")}</h1><p>{serviceUi(locale, "notice")}</p></div></div><div className="feature-grid">{rows.map((row) => <article className="feature-card" key={row.title}><h2>{row.title}</h2><ul>{row.items.map((item) => <li key={item}>{item}</li>)}</ul></article>)}</div></section>;
 }
 
-function Dashboard({ locale, t, profile, activeTasks, done, stageStats, progress, completedCount, recommendedTask, go }: { locale: Locale; t: TFunction; profile: UserProfile; activeTasks: Task[]; done: string[]; stageStats: StageStat[]; progress: number; completedCount: number; recommendedTask: Task | null; go: (page: Page, intent?: NavigationIntent) => void }) {
-  const recommendedIndex = recommendedTask ? activeTasks.findIndex((task) => task.id === recommendedTask.id) : -1;
+function Dashboard({ locale, t, activeTasks, done, stageStats, progress, completedCount, recommendedTask, go }: { locale: Locale; t: TFunction; activeTasks: Task[]; done: string[]; stageStats: StageStat[]; progress: number; completedCount: number; recommendedTask: Task | null; go: (page: Page, intent?: NavigationIntent) => void }) {
   const recommendedStage = recommendedTask ? lifecycleStages.find((stage) => stage.id === recommendedTask.stage) : null;
   const nextTasks = activeTasks.filter((task) => !done.includes(task.id)).slice(0, 3);
   return <>
     <section className="hero section-pad">
       <div className="hero-copy">
-        <span className="eyebrow"><Sparkles size={14}/>{tr(t, "home:eyebrow")}</span>
-        <h1>{tr(t, "home:greeting", { name: profile.name })}</h1><p className="hero-lead">{tr(t, "home:lead")}</p><p className="hero-body">{tr(t, "home:body")}</p>
-        <div className="hero-actions"><button className="primary" onClick={() => go("onboarding")}>{tr(t, "home:primaryAction")}<ArrowRight size={18}/></button><button className="secondary" onClick={() => go("marketplace")}>{tr(t, "home:secondaryAction")}</button></div>
-        <div className="trust-row">{["account", "languages", "journey"].map((item) => <span key={item}><Check size={14}/>{tr(t, `home:trust.${item}`)}</span>)}</div>
+        <h1>{tr(t, "home:title")}</h1>
+        <p className="hero-body">{tr(t, "home:body")}</p>
+        <div className="hero-actions"><button className="primary" onClick={() => go("onboarding")}>{tr(t, "home:primaryAction")}<ArrowRight size={18} aria-hidden="true"/></button><button className="secondary" onClick={() => go("marketplace")}>{tr(t, "home:secondaryAction")}</button></div>
+        <p className="trust-row">{tr(t, "home:trust.account")} · {tr(t, "home:trust.languages")}</p>
       </div>
       <div className="setup-card">
-        <div className="setup-top"><div><span>{tr(t, "home:progressTitle")}</span><strong>{formatPercent(locale, progress)}</strong></div><div className="progress-ring" style={{ "--progress": `${progress * 3.6}deg` } as React.CSSProperties}><span>{formatPercent(locale, progress)}</span></div></div>
-        <div className="progress-track"><i style={{ width: `${progress}%` }}/></div>
-        <div className="setup-label"><span>{tr(t, "home:progressSummary", { completed: formatNumber(locale, completedCount), total: formatNumber(locale, activeTasks.length) })}</span><b>{formatPercent(locale, progress)}</b></div>
-        <div className="home-lifecycle" aria-label={tr(t, "home:lifecycleLabel")}>{stageStats.map(({ stage, completed, total, progress: stageProgress }) => {
+        <div className="setup-top">
+          <h2>{tr(t, "home:progressTitle")}</h2>
+          <strong>{formatPercent(locale, progress)}</strong>
+        </div>
+        <div className="progress-track" aria-hidden="true"><i style={{ width: `${progress}%` }}/></div>
+        <p className="setup-label">{tr(t, "home:progressSummary", { completed: formatNumber(locale, completedCount), total: formatNumber(locale, activeTasks.length) })}</p>
+        <ol className="home-lifecycle" role="list" aria-label={tr(t, "home:lifecycleLabel")}>{stageStats.map(({ stage, completed, total, progress: stageProgress }) => {
           const stageLabel = tr(t, stage.labelKey);
           const percent = formatPercent(locale, stageProgress);
-          return <button key={stage.id} onClick={() => go("onboarding", { stage: stage.id })} aria-label={tr(t, "accessibility:stageProgress", { stage: stageLabel, completed: formatNumber(locale, completed), total: formatNumber(locale, total), progress: percent })}><span className="lifecycle-number">{stage.number}</span><span><strong>{stageLabel}</strong><small>{tr(t, "common:countOfTotal", { completed: formatNumber(locale, completed), total: formatNumber(locale, total) })} · {percent}</small></span><ChevronRight size={15}/></button>;
-        })}</div>
-        <button className="text-button" onClick={() => go("onboarding")}>{tr(t, "home:openPlan")}<ChevronRight size={16}/></button>
+          const count = { completed: formatNumber(locale, completed), total: formatNumber(locale, total) };
+          return <li key={stage.id}><button onClick={() => go("onboarding", { stage: stage.id })} aria-label={tr(t, "accessibility:stageProgress", { stage: stageLabel, ...count, progress: percent })}><span className="lifecycle-number" aria-hidden="true">{stage.number}</span><strong>{stageLabel}</strong><small>{tr(t, "common:countOfTotal", count)}</small><ChevronRight size={16} aria-hidden="true"/></button></li>;
+        })}</ol>
       </div>
     </section>
     <section className="dashboard-grid single section-pad compact">
       <button className={`next-card next-card-button ${recommendedTask ? "" : "all-complete"}`} onClick={() => go("onboarding", recommendedTask ? { stage: recommendedTask.stage, taskId: recommendedTask.id, highlight: true } : { stage: "departure" })}>
         <span className="next-icon">{recommendedTask ? <FileCheck2/> : <CheckCircle2/>}</span><span className="next-content"><span className="label">{tr(t, "home:recommended")}{recommendedStage ? ` · ${tr(t, recommendedStage.labelKey)}` : ""}</span><strong className="next-title">{recommendedTask ? tr(t, recommendedTask.titleKey) : tr(t, "home:allCompletedTitle")}</strong><span className="next-description">{recommendedTask ? tr(t, recommendedTask.descriptionKey) : tr(t, "home:allCompletedBody")}</span><span className="next-link">{tr(t, recommendedTask ? "home:viewRecommended" : "home:reviewCompleted")}<ArrowRight size={17}/></span></span>
-        <span className="step-badge">{recommendedTask ? String(recommendedIndex + 1).padStart(2, "0") : "✓"}</span>
       </button>
     </section>
-    <section className="dashboard-grid section-pad compact" aria-label={locale === "ko" ? "지금 해야 할 작업" : legacyCopy(locale, "Top tasks")}>
-      <div className="section-title"><span className="eyebrow"><Zap size={14}/>{locale === "ko" ? "지금 해야 할 일" : legacyCopy(locale, "Do this next")}</span><h2>{locale === "ko" ? "중요한 작업 3개" : legacyCopy(locale, "Your top three tasks")}</h2></div>
+    <section className="dashboard-grid single section-pad compact" aria-label={locale === "ko" ? "지금 해야 할 작업" : legacyCopy(locale, "Top tasks")}>
+      <div className="section-title"><h2>{locale === "ko" ? "중요한 작업 3개" : legacyCopy(locale, "Your top three tasks")}</h2></div>
       <div className="next-task-grid">{nextTasks.length ? nextTasks.map((task, index) => <button className="next-task-card" key={task.id} onClick={() => go("onboarding", { stage: task.stage, taskId: task.id, highlight: true })}><span className="step-badge">{String(index + 1).padStart(2, "0")}</span><span><strong>{tr(t, task.titleKey)}</strong><small>{tr(t, task.descriptionKey)}</small></span><ArrowRight size={16}/></button>) : <p className="empty-copy">{locale === "ko" ? "모든 작업을 완료했습니다. 귀국 준비와 저장한 안내를 다시 확인해 보세요." : legacyCopy(locale, "Everything is complete. Review your saved guidance and departure plan.")}</p>}</div>
     </section>
-    <section className="feature-section section-pad compact"><div className="section-title"><span className="eyebrow">{tr(t, "home:informationToAction")}</span><h2>{tr(t, "home:connectedJourney")}</h2></div><div className="feature-grid">{([
-      ["onboarding", FileCheck2, "navigation:onboarding", "home:features.onboarding", "01"], ["marketplace", ShoppingBag, "navigation:marketplace", "home:features.marketplace", "02"], ["guide", MapPin, "navigation:localGuide", "home:features.localGuide", "03"]
-    ] as const).map(([target, Icon, titleKey, bodyKey, number]) => <button className="feature-card" key={target} onClick={() => go(target)}><span className="feature-number">{number}</span><span className="feature-icon"><Icon/></span><h3>{tr(t, titleKey)}</h3><p>{tr(t, bodyKey)}</p><span className="learn">{tr(t, "home:explore")}<ArrowRight size={17}/></span></button>)}</div></section>
+    <section className="feature-section section-pad compact"><div className="section-title"><h2>{tr(t, "home:connectedJourney")}</h2></div><div className="feature-grid">{([
+      ["onboarding", FileCheck2, "navigation:onboarding", "home:features.onboarding"], ["marketplace", ShoppingBag, "navigation:marketplace", "home:features.marketplace"], ["guide", MapPin, "navigation:localGuide", "home:features.localGuide"]
+    ] as const).map(([target, Icon, titleKey, bodyKey]) => <button className="feature-card" key={target} onClick={() => go(target)}><span className="feature-icon" aria-hidden="true"><Icon/></span><h3>{tr(t, titleKey)}</h3><p>{tr(t, bodyKey)}</p><span className="learn">{tr(t, "home:explore")}<ArrowRight size={16} aria-hidden="true"/></span></button>)}</div></section>
   </>;
 }
 

@@ -41,10 +41,10 @@
   },
   "home": {
     "eyebrow": "TRỢ LÝ ĐỜI SỐNG DU HỌC SINH",
-    "greeting": "Chào mừng {{name}} đến Korea University",
+    "title": "Danh sách việc cần làm cho du học sinh Đại học Korea",
     "lead": "Lộ trình cá nhân từ khi đến đến khi rời đi.",
-    "body": "Xem tại một nơi những gì cần chuẩn bị, việc cần làm tiếp theo và nơi thực hiện trong thời gian học tại KU.",
-    "primaryAction": "Mở lộ trình của tôi",
+    "body": "Xem từng việc cần chuẩn bị và bước tiếp theo, từ trước khi đến Hàn Quốc cho đến lúc về nước.",
+    "primaryAction": "Mở danh sách của tôi",
     "secondaryAction": "Xem chợ sinh viên",
     "trust": {
       "account": "Không cần tài khoản",
