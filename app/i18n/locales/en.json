@@ -1,5 +1,6 @@
 {
   "common": {
+    "supportIntro": "Check your ticket status and the operator’s reply here. Response times vary.",
     "complete": "Complete",
     "completed": "Completed",
     "notStarted": "Not started",
@@ -159,6 +160,7 @@
     }
   },
   "localGuide": {
+    "placeList": "View place list",
     "eyebrow": "LOCAL GUIDE",
     "title": "Feel at home around Anam",
     "body": "A practical guide to places near KU. Kakao search candidates and internally verified places are shown together.",

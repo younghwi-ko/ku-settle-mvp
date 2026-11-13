@@ -1,5 +1,6 @@
 {
   "common": {
+    "supportIntro": "可在此查看咨询状态和运营人员的回复。回复时间因咨询而异。",
     "complete": "完成",
     "completed": "已完成",
     "notStarted": "未开始",
@@ -151,6 +152,7 @@
     }
   },
   "localGuide": {
+    "placeList": "查看地点列表",
     "eyebrow": "生活指南",
     "title": "在安岩轻松开启日常生活",
     "body": "高丽大学周边的实用地点指南。将同时显示 Kakao 搜索候选和内部验证地点。",

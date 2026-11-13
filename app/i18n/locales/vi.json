@@ -1,5 +1,6 @@
 {
   "common": {
+    "supportIntro": "Xem trạng thái yêu cầu và phản hồi của bộ phận vận hành tại đây. Thời gian trả lời tùy từng yêu cầu.",
     "complete": "Hoàn tất",
     "completed": "Đã hoàn tất",
     "notStarted": "Chưa bắt đầu",
@@ -477,6 +478,7 @@
     }
   },
   "localGuide": {
+    "placeList": "Xem danh sách địa điểm",
     "eyebrow": "HƯỚNG DẪN ĐỊA PHƯƠNG",
     "title": "Sống thuận tiện quanh Anam",
     "body": "Hướng dẫn thực tế về các địa điểm gần KU. Kết quả tìm kiếm Kakao và địa điểm được kiểm tra nội bộ được hiển thị cùng nhau.",

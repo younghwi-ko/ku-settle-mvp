@@ -1,5 +1,6 @@
 {
   "common": {
+    "supportIntro": "Murojaat holati va operator javobini shu yerda ko‘ring. Javob berish vaqti murojaatga bog‘liq.",
     "complete": "Tugallash",
     "completed": "Tugallandi",
     "notStarted": "Boshlanmagan",
@@ -477,6 +478,7 @@
     }
   },
   "localGuide": {
+    "placeList": "Joylar ro‘yxatini ko‘rish",
     "eyebrow": "MAHALLIY QO‘LLANMA",
     "title": "Anam atrofida qulay yashang",
     "body": "KU yaqinidagi joylar uchun amaliy qo‘llanma. Kakao qidiruv natijalari va ichki tekshirilgan joylar birga ko‘rsatiladi.",

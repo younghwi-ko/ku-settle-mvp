@@ -1,5 +1,6 @@
 {
   "common": {
+    "supportIntro": "Semak status pertanyaan dan balasan pengendali di sini. Masa balasan bergantung pada pertanyaan.",
     "complete": "Selesai",
     "completed": "Telah selesai",
     "notStarted": "Belum bermula",
@@ -477,6 +478,7 @@
     }
   },
   "localGuide": {
+    "placeList": "Lihat senarai tempat",
     "eyebrow": "PANDUAN TEMPATAN",
     "title": "Hidup dengan selesa di sekitar Anam",
     "body": "Panduan praktikal tempat berhampiran KU. Calon carian Kakao dan tempat yang disemak secara dalaman dipaparkan bersama.",

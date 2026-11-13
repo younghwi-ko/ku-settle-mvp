@@ -196,8 +196,6 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .lifecycle-tabs button > span { grid-row: 1 / 3; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: #edf3ff; color: var(--blue); font-size: 10px; font-weight: 850; }
 .lifecycle-tabs strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .lifecycle-tabs small { color: var(--muted); font-size: 8px; }
-.lifecycle-tabs i { grid-column: 1 / -1; height: 3px; border-radius: 999px; background: #e7edf6; overflow: hidden; }
-.lifecycle-tabs i b { display: block; height: 100%; border-radius: inherit; background: var(--blue); transition: width .35s ease; }
 .timeline-note { background: #fff8e6; color: #7a5b12; border: 1px solid #f0dfaf; display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-radius: 12px; margin-bottom: 17px; font-size: 11px; font-weight: 650; }
 .timeline-note > span { flex: 1; }
 .timeline-note button { border: 0; background: transparent; color: #8d6410; display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; cursor: pointer; }
@@ -380,10 +378,6 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .field select { height: 44px; border: 1px solid var(--line); border-radius: 11px; padding: 0 12px; font-size: 11px; color: var(--ink); background: white; }
 .listing-submit { margin-top: 20px; }
 
-.guide-visual { display: flex; align-items: center; gap: 8px; min-width: 270px; justify-content: center; }
-.guide-visual span, .guide-visual b { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: white; border: 1px solid var(--line); color: var(--blue); }
-.guide-visual b { background: var(--navy); color: white; }
-.guide-visual i { height: 2px; width: 25px; background: #cdd7e6; }
 .guide-chips { margin-bottom: 23px; }
 .place-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
 .place-card { background: white; border: 1px solid var(--line); border-radius: 17px; padding: 20px; }
@@ -526,7 +520,6 @@ footer { max-width: 1172px; margin: 0 auto; padding: 24px 0 38px; border-top: 1p
   .timeline-note button { margin-left: 30px; }
   .task-action { width: 100%; justify-content: center; }
   .official-guidance { align-items: flex-start; flex-direction: column; gap: 10px; }
-  .guide-visual { display: none; }
   .modal { padding: 23px; }
   .modal-product-visual { margin: -23px -23px 17px; }
   footer { flex-direction: column; align-items: flex-start; gap: 15px; }
@@ -619,7 +612,6 @@ button:not(:disabled), a { touch-action: manipulation; }
 .guide-details { border-top-color: #dfe7f2; }
 .guide-details-toggle { border: 1px solid transparent; padding: 10px 12px; margin: 8px -12px 0; }
 .guide-details-toggle:hover, .guide-details[open] .guide-details-toggle { color: #174fae; background: #eef5ff; border-color: #d5e5ff; }
-.guide-details-hint { padding: 4px 7px; border-radius: 7px; background: #f4f7fc; }
 
 .guide-page > .search-field { min-height: 48px; }
 .guide-page > .chips { box-shadow: inset 0 0 0 1px #e0e8f3; }
@@ -990,7 +982,6 @@ body { background: linear-gradient(180deg, #f7f9fd 0%, #f3f6fb 42%, #f8fafc 100%
 .guide-details-toggle { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 46px; padding: 10px 10px 0; margin: 0 -10px; border-radius: 10px; color: #245fd1; cursor: pointer; font-size: 12px; font-weight: 800; }
 .guide-details-toggle:hover { background: #f2f6fc; }
 .guide-details-toggle:focus-visible { outline: 3px solid #a9c7ff; outline-offset: 2px; }
-.guide-details-hint { display: inline-flex; align-items: center; gap: 6px; color: #5b79a2; font-size: 10px; }
 .guide-details summary::-webkit-details-marker { display: none; }
 .guide-details summary svg { transition: transform .18s ease; }
 .guide-details[open] summary svg { transform: rotate(180deg); }
@@ -998,7 +989,7 @@ body { background: linear-gradient(180deg, #f7f9fd 0%, #f3f6fb 42%, #f8fafc 100%
 .guide-article { grid-template-columns: minmax(0, 1fr); }
 .guide-details, .guide-details-content > *, .guide-progress > * { min-width: 0; }
 .guide-details-toggle > span { min-width: 0; overflow-wrap: anywhere; }
-.guide-details-hint svg, .guide-card-top svg { flex-shrink: 0; }
+.guide-details-toggle svg, .guide-card-top svg { flex-shrink: 0; }
 .modal .map-action-inline { position: static; transform: none; width: 100%; margin: 12px 0; }
 @media (max-width: 390px) {
   .guide-progress label:has(select) { flex-direction: column; }
@@ -1063,4 +1054,107 @@ body { background: linear-gradient(180deg, #f7f9fd 0%, #f3f6fb 42%, #f8fafc 100%
 /* Keep the guide feed readable on phones; this override follows the wider breakpoint rules above. */
 @media (max-width: 760px) {
   .guide-article-grid { grid-template-columns: 1fr; }
+}
+
+.topbar { background: var(--paper); backdrop-filter: none; box-shadow: none; }
+.brand-mark, .desktop-nav button.active, .header-actions button { box-shadow: none; }
+.desktop-nav, .mobile-nav, .profile-menu { border-color: var(--line); background: var(--paper); }
+.desktop-nav button.active, .mobile-nav button.active { background: var(--blue-light); color: var(--blue); }
+.header-actions > button, .language-trigger { border-radius: 10px; }
+.primary { box-shadow: none; transition: background-color .15s ease; }
+.primary:hover { transform: none; }
+.setup-link { min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--blue); font-size: 14px; font-weight: 600; cursor: pointer; }
+.setup-link:hover { text-decoration: underline; }
+.public-page { padding-top: 32px; }
+.public-page .page-hero { gap: 16px; margin-bottom: 16px; }
+.public-page .page-hero h1 { margin: 0 0 8px; font-size: clamp(28px, 4vw, 48px); font-weight: 500; }
+.public-page .page-hero p { margin: 0; font-size: 15px; }
+
+.public-page .filters { gap: 8px; }
+.public-page .search-field, .public-page .search-box {
+  display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0;
+  min-height: 44px; padding: 0 12px; border: 1px solid var(--line);
+  border-radius: 10px; background: var(--paper); color: var(--muted); box-shadow: none;
+}
+.public-page .filters :is(.search-field, .search-box) { flex: 1 1 240px; width: auto; }
+.public-page :is(.search-field, .search-box) svg { flex: none; }
+.public-page :is(.search-field, .search-box) input { flex: 1; min-width: 0; width: 100%; border: 0; background: transparent; font-size: 14px; color: var(--ink); }
+.public-page :is(.search-field, .search-box):focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
+.public-page :is(.search-field, .search-box) input:focus-visible { outline: none; box-shadow: none; }
+.public-page .chips { gap: 8px; padding: 4px 4px 8px; margin-inline: -4px; background: transparent; box-shadow: none; }
+.public-page .chips button { min-height: 36px; padding-inline: 10px; border-radius: 8px; background: var(--paper); font-size: 12px; font-weight: 600; }
+.public-page .chips button:is(.active, [aria-pressed="true"]) { border-color: #acc5f3; background: var(--blue-light); color: var(--blue); box-shadow: none; }
+.public-page .sort-control select { min-height: 44px; border-radius: 10px; font-size: 13px; }
+
+.checklist-page .progress-panels { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; min-width: 0; }
+.checklist-page .progress-summary { min-width: 0; padding: 12px; border-radius: 12px; box-shadow: none; }
+.progress-summary > div:first-child { gap: 8px; flex-wrap: wrap; }
+.checklist-page .progress-summary strong { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.checklist-page .progress-summary span, .checklist-page .progress-summary small { font-size: 12px; }
+.checklist-page .progress-track { height: 4px; margin: 4px 0 8px; }
+.checklist-page .progress-track i { background: var(--blue); transition: none; }
+.checklist-page .lifecycle-tabs { display: grid; gap: 8px; margin: 0 0 12px; padding: 0; overflow: visible; }
+.checklist-page .lifecycle-tabs button { min-width: 0; min-height: 52px; padding: 8px; border-radius: 10px; transition: background-color .15s ease; }
+.checklist-page .lifecycle-tabs button.active { background: var(--blue-light); box-shadow: none; }
+.checklist-page .lifecycle-tabs strong { white-space: normal; overflow-wrap: anywhere; font-size: 13px; font-weight: 600; }
+.checklist-page .lifecycle-tabs small { font-size: 12px; font-variant-numeric: tabular-nums; }
+
+.life-guide-page .guide-recommendation { gap: 4px; margin-bottom: 12px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--blue-light); box-shadow: none; }
+.life-guide-page .guide-recommendation::after { content: none; }
+.life-guide-page .guide-recommendation h2 { font-size: 18px; font-weight: 600; }
+.life-guide-page .guide-recommendation .eyebrow { text-transform: none; letter-spacing: 0; }
+.guide-article .guide-summary { margin-bottom: 0; }
+.guide-article .guide-details { margin-top: 0; border: 0; }
+.guide-article .guide-details-toggle { justify-content: flex-start; width: fit-content; min-height: 40px; padding: 8px 12px; margin: 0; color: var(--blue); background: var(--blue-light); border-color: var(--line); font-size: 14px; font-weight: 600; }
+.guide-article .guide-details-content { padding-block: 12px 0; }
+.guide-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.guide-links .share-link { margin: 0; min-width: 0; }
+.guide-links .share-link button { background: transparent; border-color: transparent; color: var(--muted); }
+.guide-article .guide-primary-cta { margin-top: 0; box-shadow: none; }
+.guide-summary-badges .guide-badge { background: transparent; border-color: transparent; color: var(--muted); padding: 0; }
+
+.guide-page .kakao-guide-toolbar { margin-block: 8px; }
+.guide-page .map-result-summary { background: transparent; border-color: var(--line); color: var(--muted); }
+.guide-page .kakao-map-shell.map-unavailable { min-height: 0; height: auto; background: var(--paper); box-shadow: none; }
+.kakao-map[hidden] { display: none; }
+.map-fallback { display: grid; gap: 8px; padding: 12px; }
+.map-fallback p { margin: 0; color: var(--muted); font-size: 14px; }
+.map-fallback > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.guide-page .map-error button { flex: none; }
+#local-place-results { scroll-margin-top: 84px; }
+
+.market-page .mode-switch { box-shadow: none; border: 1px solid var(--line); background: var(--paper); padding: 4px; }
+.market-page .mode-switch button.active { box-shadow: none; background: var(--blue-light); color: var(--blue); }
+.market-page .market-flow { margin: 16px 0 0; border: 1px solid var(--line); background: var(--paper); color: var(--muted); }
+.market-page .market-flow > div > span { background: var(--blue-light); color: var(--blue); }
+.market-page .market-flow > div > svg { color: var(--muted); }
+.market-page .filters { padding: 8px; background: var(--paper); border-radius: 12px; }
+.market-page .filters .chips { padding-bottom: 4px; }
+
+.operation-scope { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.operation-scope h2 { margin: 0 0 8px; color: var(--navy); font-size: 18px; font-weight: 600; }
+.operation-scope ul { display: grid; gap: 4px; margin: 0; padding-left: 20px; list-style: disc; color: var(--muted); }
+.operation-scope:first-child { border-top: 3px solid var(--blue); }
+.modal-backdrop { backdrop-filter: none; }
+.modal { border-radius: 16px; max-height: calc(100dvh - 32px); }
+.modal > h2 { padding-right: 44px; color: var(--navy); font-weight: 600; }
+.modal > p { font-size: 14px; }
+.modal .field span { font-size: 13px; font-weight: 600; color: var(--muted); }
+.modal .field :is(input, textarea, select) { min-width: 0; border: 1px solid var(--line); border-radius: 10px; font-size: 14px; }
+.modal .field textarea { min-height: 88px; resize: vertical; }
+.modal .housing-options label:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
+.support-modal .admin-data-list { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+.support-modal .error-text { margin-top: 12px; font-size: 13px; }
+
+@media (max-width: 700px) {
+  .public-page { padding-top: 20px; }
+  .public-page .page-hero { gap: 12px; margin-bottom: 12px; }
+  .public-page .page-hero h1 { font-size: clamp(26px, 8vw, 36px); }
+  .checklist-page .lifecycle-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .public-page .filters :is(.search-field, .search-box) { flex: none; width: 100%; }
+  .public-page .search-field input, .public-page .search-box input, .modal .field :is(input, textarea, select) { font-size: 16px; }
+  .public-page .chips { padding-inline: 4px; }
+  .market-page .market-hero { grid-template-columns: minmax(0, 1fr) auto; }
+  .market-hero > div:first-child { grid-column: 1 / -1; }
+  .market-page .market-list-cta { white-space: normal; padding-inline: 8px; }
 }
